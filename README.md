@@ -37,7 +37,7 @@ each choice (see [`DESIGN.md`](DESIGN.md) and [`docs/research-brief.md`](docs/re
   agent re-runs every `run-to-prove` from a clean state. (`claims.md` is untrusted.)
 - **Two-layer done-gate** — a hard gate (tests/lint/build, deterministic) plus a soft committee
   (architect + security + code-review). The rubric can never override a failing test.
-- **Gate on the project's own suite in a clean sandbox** — never benchmarks, never self-report.
+- **Gate on the project's own suite** (run in the workspace; the Verify agent independently re-runs from a clean state) — never benchmarks, never self-report.
 - **Bounded retry + circuit breaker** — same error 3× → stop, root-cause, escalate. No infinite loops.
 
 ## The non-negotiable gates

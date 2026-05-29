@@ -4,7 +4,8 @@ The load-bearing concern in agentic coding is **verification**, not generation. 
 discredited (training-data contamination; **59.4% of SWE-bench hard tasks have flawed tests**; OpenAI
 retired SWE-bench Verified for SWE-bench Pro — arxiv 2509.16941; morphllm.com). Real autonomous
 completion runs ~14-15% on complex tasks. So: **never gate on benchmarks or the agent's own claim of
-success. Gate only on the project's own tests, run in a clean sandbox.**
+success — gate on the project's own tests, independently re-run by a fresh Verify agent from a clean
+state.**
 
 ## The two-layer done-gate
 
@@ -15,7 +16,8 @@ arxiv 2506.17208):
 Build + lint + the project's test suite must pass. This is `templates/delivery-gate.sh` — a literal
 shell script that exits non-zero on any failure. The agent **cannot mark done unless it exits 0**,
 and **must never edit the gate to make it pass** (oh-my-symphony Deliver-gate invariant). Paste the
-real output as evidence.
+real output as evidence. The script runs the suite in the **current workspace** — it does not create
+an isolated sandbox; reproducing from a genuinely clean state is the Verify agent's job (below).
 
 ### 2. Soft gate — quality (LLM rubric / committee)
 A committee of reviewers with distinct mandates (correctness / security / maintainability) scores

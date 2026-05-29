@@ -4,14 +4,14 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>/just-do-it — one objective in, a verified result out</title>
-<meta name="description" content="A Claude Code skill that takes one objective through a full, gated dev process with expert subagents — and refuses to declare success until a machine-checkable gate passes." />
+<meta name="description" content="A Claude Code skill that takes one objective through a full, gated dev process with expert subagents — and refuses to declare success until a machine-checkable gate passes. Bilingual EN / 한국어." />
 <style>
   :root{
     --bg:#0a0c10; --panel:#11151c; --panel2:#0d1117; --line:#1e2630;
     --ink:#e6edf3; --dim:#9aa7b4; --faint:#6b7884;
     --acc:#4ade80; --acc2:#38bdf8; --warn:#fbbf24; --red:#f87171;
     --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
-    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Pretendard","Noto Sans KR",Roboto,Helvetica,Arial,sans-serif;
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -25,20 +25,34 @@
   code,kbd{font-family:var(--mono);font-size:.92em}
   .mono{font-family:var(--mono)}
 
+  /* bilingual toggle — show only the active language */
+  html[lang="en"] .ko{display:none !important}
+  html[lang="ko"] .en{display:none !important}
+  html[lang="ko"] .ko{word-break:keep-all}        /* avoid awkward mid-word Korean wraps */
+
   /* top gate bar */
   .gatebar{border-bottom:1px solid var(--line);background:rgba(10,12,16,.7);backdrop-filter:blur(6px);
     position:sticky;top:0;z-index:10;font-family:var(--mono);font-size:13px}
   .gatebar .wrap{display:flex;gap:14px;align-items:center;height:44px;color:var(--dim)}
-  .dot{width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc)}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc);flex:0 0 auto}
   .gatebar .pass{color:var(--acc)}
   .gatebar .sp{margin-left:auto}
   .gatebar a{color:var(--dim)}
+  .langtoggle{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex:0 0 auto}
+  .langtoggle button{font-family:var(--mono);font-size:12px;padding:5px 10px;background:transparent;
+    color:var(--dim);border:0;cursor:pointer;line-height:1}
+  .langtoggle button+button{border-left:1px solid var(--line)}
+  .langtoggle button[aria-pressed="true"]{background:var(--panel);color:var(--ink)}
+  .langtoggle button:hover{color:var(--ink)}
+  .langtoggle button:focus-visible{outline:2px solid var(--acc2);outline-offset:-2px}
+  @media(max-width:720px){.gatebar .g{display:none}}
+  @media(max-width:560px){.gatebar .pass{display:none}}
 
   header.hero{padding:84px 0 56px}
   .eyebrow{font-family:var(--mono);color:var(--acc);font-size:13px;letter-spacing:.12em;text-transform:uppercase}
   h1{font-size:clamp(40px,8vw,76px);line-height:1.02;margin:14px 0 0;letter-spacing:-.02em;font-weight:800}
   h1 .slash{color:var(--faint)}
-  .tag{font-size:clamp(18px,2.6vw,24px);color:var(--ink);margin:18px 0 0;max-width:30ch;font-weight:600}
+  .tag{font-size:clamp(18px,2.6vw,24px);color:var(--ink);margin:18px 0 0;max-width:34ch;font-weight:600}
   .sub{color:var(--dim);max-width:62ch;margin:16px 0 0;font-size:17px}
   .cta{margin-top:30px;display:flex;gap:12px;flex-wrap:wrap}
   .btn{font-family:var(--mono);font-size:14px;padding:11px 16px;border-radius:10px;border:1px solid var(--line);
@@ -55,7 +69,7 @@
 
   section{padding:54px 0;border-top:1px solid var(--line)}
   h2{font-size:clamp(24px,4vw,34px);margin:0 0 8px;letter-spacing:-.01em}
-  .lead{color:var(--dim);max-width:64ch;margin:0 0 26px}
+  .lead{color:var(--dim);max-width:66ch;margin:0 0 26px}
 
   .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
   @media(max-width:820px){.grid3{grid-template-columns:1fr}}
@@ -80,12 +94,12 @@
   .gate{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px dashed var(--line)}
   .gate .n{font-family:var(--mono);color:var(--acc);font-size:13px;min-width:22px}
   .gate b{display:block}
-  .gate span{color:var(--dim);font-size:14px}
+  .gate span span{color:var(--dim);font-size:14px}
 
   .evi{border:1px solid var(--line);border-radius:14px;background:var(--panel2);padding:6px 0;font-family:var(--mono);font-size:13.5px}
   .evi .row{padding:13px 18px;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
   .evi .row:last-child{border-bottom:0}
-  .evi .badge{padding:2px 8px;border-radius:6px;font-size:11px;letter-spacing:.06em}
+  .evi .badge{padding:2px 8px;border-radius:6px;font-size:11px;letter-spacing:.06em;flex:0 0 auto}
   .evi .b-green{background:#0f2a1a;color:#86efac;border:1px solid #1f5132}
   .evi .b-red{background:#2a1414;color:#fca5a5;border:1px solid #5b2626}
   .evi .b-blue{background:#0e2433;color:#bae6fd;border:1px solid #1d4d66}
@@ -113,133 +127,173 @@
 <body>
 
 <div class="gatebar"><div class="wrap">
-  <span class="dot"></span><span>delivery-gate.sh</span>
+  <span class="dot"></span><span class="mono">delivery-gate.sh</span>
   <span class="g">— artifacts ok · verification GREEN · suite green</span>
   <span class="pass">== GATE PASS ==</span>
   <span class="sp"></span>
+  <div class="langtoggle" role="group" aria-label="Language / 언어">
+    <button type="button" data-lang="en">EN</button>
+    <button type="button" data-lang="ko">한국어</button>
+  </div>
   <a href="https://github.com/cskwork/just-do-it-skill">GitHub →</a>
 </div></div>
 
 <div class="wrap">
 <header class="hero">
-  <div class="eyebrow">Claude Code skill</div>
+  <div class="eyebrow"><span class="en">Claude Code skill</span><span class="ko">Claude Code 스킬</span></div>
   <h1><span class="slash">/</span>just-do-it</h1>
-  <p class="tag">One objective in, a verified result out.</p>
-  <p class="sub">Hand it a whole objective — "build X", "fix this bug", "add this feature". It splits the
+  <p class="tag"><span class="en">One objective in, a verified result out.</span><span class="ko">목표 하나를 넣으면, 검증된 결과가 나옵니다.</span></p>
+  <p class="sub en">Hand it a whole objective — "build X", "fix this bug", "add this feature". It splits the
     work into phases, sends each to a focused expert subagent, and <b>won't say "done" until a script —
     not the agent's own opinion — confirms the work passes</b>. The skill directs the work; it never
     writes the production code itself, and the agent that writes code never gets to approve it.</p>
+  <p class="sub ko">"이걸 만들어줘", "이 버그 고쳐줘", "이 기능 추가해줘" 같은 목표를 통째로 맡기세요. 작업을
+    단계로 나눠 각 단계를 전담 전문가 서브에이전트에게 보내고, <b>에이전트의 의견이 아니라 스크립트가
+    통과를 확인하기 전까지는 "완료"라고 말하지 않습니다</b>. 스킬은 작업을 지휘만 할 뿐 프로덕션 코드를
+    직접 쓰지 않으며, 코드를 작성한 에이전트는 그 코드를 승인할 수 없습니다.</p>
   <div class="cta">
-    <a class="btn primary" href="#quickstart">▸ Get started</a>
-    <a class="btn" href="#lifecycle">How it works</a>
-    <a class="btn" href="#proof">See what it caught</a>
-    <a class="btn" href="https://github.com/cskwork/just-do-it-skill">Source</a>
+    <a class="btn primary" href="#quickstart"><span class="en">▸ Get started</span><span class="ko">▸ 시작하기</span></a>
+    <a class="btn" href="#lifecycle"><span class="en">How it works</span><span class="ko">동작 방식</span></a>
+    <a class="btn" href="#proof"><span class="en">See what it caught</span><span class="ko">무엇을 잡아냈나</span></a>
+    <a class="btn" href="https://github.com/cskwork/just-do-it-skill"><span class="en">Source</span><span class="ko">소스</span></a>
   </div>
 
   <div class="term">
     <div class="bar"><i></i><i></i><i></i></div>
-<pre><span class="p">›</span> <span class="c">/just-do-it</span> build a production URL shortener and ship it
+<pre class="en"><span class="p">›</span> <span class="c">/just-do-it</span> build a production URL shortener and ship it
 <span class="g">  mode: GREENFIELD · Validate → Plan → Build → Verify → QA → Deliver</span>
 <span class="g">  build → 43 tests pass (builder's own report — not yet trusted)</span>
 <span class="w">  verify → RED: 2 real SSRF holes the tests missed → back to Build</span>
 <span class="ok">  verify → GREEN · review APPROVE · gate exit 0 → shipped</span></pre>
+<pre class="ko"><span class="p">›</span> <span class="c">/just-do-it</span> 프로덕션급 URL 단축기를 만들고 출시해줘
+<span class="g">  mode: GREENFIELD · Validate → Plan → Build → Verify → QA → Deliver</span>
+<span class="g">  build → 테스트 43개 통과 (구현자 자가 보고 — 아직 신뢰 안 함)</span>
+<span class="w">  verify → RED: 테스트가 놓친 진짜 SSRF 취약점 2건 → Build로 복귀</span>
+<span class="ok">  verify → GREEN · review APPROVE · gate exit 0 → 출시 완료</span></pre>
   </div>
 </header>
 </div>
 
 <section id="quickstart"><div class="wrap">
-  <h2>Get started</h2>
-  <p class="lead">You need <b>Claude Code</b> and <b>Node 18+</b>. Two commands to install, one to run —
+  <h2><span class="en">Get started</span><span class="ko">시작하기</span></h2>
+  <p class="lead en">You need <b>Claude Code</b> and <b>Node 18+</b>. Two commands to install, one to run —
     no service, no config.</p>
+  <p class="lead ko">필요한 건 <b>Claude Code</b>와 <b>Node 18+</b>뿐입니다. 설치는 명령어 두 개, 실행은 하나 —
+    별도 서비스도 설정도 없습니다.</p>
   <div class="steps">
-    <div class="step"><div class="num">01</div><h3>Clone</h3><p>This repo <em>is</em> the skill — grab it anywhere on disk.</p></div>
-    <div class="step"><div class="num">02</div><h3>Link</h3><p>Symlink it into Claude Code's skills folder (a symlink keeps it auto-updated).</p></div>
-    <div class="step"><div class="num">03</div><h3>Run</h3><p>In any project, type <code>/just-do-it</code> and your objective.</p></div>
+    <div class="step"><div class="num">01</div>
+      <h3><span class="en">Clone</span><span class="ko">클론</span></h3>
+      <p class="en">This repo <em>is</em> the skill — grab it anywhere on disk.</p>
+      <p class="ko">이 저장소가 곧 스킬입니다 — 디스크 어디에 두어도 됩니다.</p></div>
+    <div class="step"><div class="num">02</div>
+      <h3><span class="en">Link</span><span class="ko">연결</span></h3>
+      <p class="en">Symlink it into Claude Code's skills folder (a symlink keeps it auto-updated).</p>
+      <p class="ko">Claude Code 스킬 폴더에 심볼릭 링크로 걸어두세요(심볼릭 링크면 항상 최신 상태 유지).</p></div>
+    <div class="step"><div class="num">03</div>
+      <h3><span class="en">Run</span><span class="ko">실행</span></h3>
+      <p class="en">In any project, type <code>/just-do-it</code> and your objective.</p>
+      <p class="ko">아무 프로젝트에서나 <code>/just-do-it</code> 뒤에 목표를 입력하세요.</p></div>
   </div>
   <div class="term">
     <div class="bar"><i></i><i></i><i></i></div>
-<pre><span class="p">›</span> git clone https://github.com/cskwork/just-do-it-skill.git
+<pre class="en"><span class="p">›</span> git clone https://github.com/cskwork/just-do-it-skill.git
 <span class="p">›</span> ln -s "$(pwd)/just-do-it-skill" ~/.claude/skills/just-do-it
 <span class="g"># then, in Claude Code, hand it one objective:</span>
 <span class="p">›</span> <span class="c">/just-do-it</span> build a CLI todo app and ship it</pre>
+<pre class="ko"><span class="p">›</span> git clone https://github.com/cskwork/just-do-it-skill.git
+<span class="p">›</span> ln -s "$(pwd)/just-do-it-skill" ~/.claude/skills/just-do-it
+<span class="g"># 그다음 Claude Code에서 목표 하나를 건네세요:</span>
+<span class="p">›</span> <span class="c">/just-do-it</span> CLI 할 일 앱을 만들고 출시해줘</pre>
   </div>
   <p style="margin-top:18px">
-    <span class="pill">zero dependencies</span><span class="pill">no external orchestrator</span>
-    <span class="pill">no TUI / service</span><span class="pill">runs in-session</span>
+    <span class="pill"><span class="en">zero dependencies</span><span class="ko">의존성 없음</span></span><span class="pill"><span class="en">no external orchestrator</span><span class="ko">외부 오케스트레이터 없음</span></span>
+    <span class="pill"><span class="en">no TUI / service</span><span class="ko">TUI·서비스 없음</span></span><span class="pill"><span class="en">runs in-session</span><span class="ko">세션 안에서 실행</span></span>
   </p>
 </div></section>
 
 <section id="modes"><div class="wrap">
-  <h2>Three modes, one command</h2>
-  <p class="lead">The skill reads your objective and picks the right pipeline — and how much to
+  <h2><span class="en">Three modes, one command</span><span class="ko">세 가지 모드, 하나의 명령</span></h2>
+  <p class="lead en">The skill reads your objective and picks the right pipeline — and how much to
     parallelize. Broad work (research, scaffolding several files) fans out to many agents at once;
     focused work (one bug, one feature) stays with a single driver and asks for your approval before
     touching code.</p>
+  <p class="lead ko">스킬이 목표를 읽고 알맞은 파이프라인과 병렬화 수준을 고릅니다. 폭넓은 작업(리서치, 여러 파일
+    스캐폴딩)은 여러 에이전트로 한꺼번에 펼치고, 집중된 작업(버그 하나, 기능 하나)은 단일 드라이버가 맡아
+    코드를 건드리기 전에 당신의 승인을 요청합니다.</p>
   <div class="grid3">
     <div class="card green">
       <div class="mode">greenfield</div>
-      <h3>Ship a new app</h3>
-      <p>Check there's real demand before building anything, then plan → build → prove → ship.</p>
+      <h3><span class="en">Ship a new app</span><span class="ko">새 앱 출시</span></h3>
+      <p class="en">Check there's real demand before building anything, then plan → build → prove → ship.</p>
+      <p class="ko">무엇이든 만들기 전에 실제 수요부터 확인하고, 계획 → 구현 → 증명 → 출시 순으로 진행합니다.</p>
       <div class="pipe">Intake → <b>Validate</b> → Plan → Build → Verify → QA → Deliver</div>
     </div>
     <div class="card amber">
       <div class="mode">debug</div>
-      <h3>Root-cause a hard bug</h3>
-      <p>Reproduce it first, weigh competing explanations with evidence, then fix — only after you
+      <h3><span class="en">Root-cause a hard bug</span><span class="ko">까다로운 버그 근본 원인 추적</span></h3>
+      <p class="en">Reproduce it first, weigh competing explanations with evidence, then fix — only after you
         approve. Read-only until then.</p>
+      <p class="ko">먼저 재현하고, 경쟁하는 가설을 증거로 따져본 뒤 — 당신이 승인해야 — 고칩니다. 그전까진 읽기 전용입니다.</p>
       <div class="pipe">Intake → Reproduce → <b>Diagnose</b> (approve) → Fix → Verify → Deliver</div>
     </div>
     <div class="card blue">
       <div class="mode">legacy</div>
-      <h3>Add to existing code</h3>
-      <p>Map what the change touches, plan a small surgical edit, and prove the existing tests still
+      <h3><span class="en">Add to existing code</span><span class="ko">기존 코드에 기능 추가</span></h3>
+      <p class="en">Map what the change touches, plan a small surgical edit, and prove the existing tests still
         pass — no regressions.</p>
+      <p class="ko">변경이 닿는 범위를 파악하고, 최소한의 외과적 수정안을 계획한 뒤, 기존 테스트가 그대로
+        통과함을 증명합니다 — 회귀 없음.</p>
       <div class="pipe">Intake → Explore → Plan → Build → Verify → QA → Deliver</div>
     </div>
   </div>
 </div></section>
 
 <section id="lifecycle"><div class="wrap">
-  <h2>How it works</h2>
-  <p class="lead">The skill is the <b>director</b> — it never writes production code. It picks the mode,
+  <h2><span class="en">How it works</span><span class="ko">동작 방식</span></h2>
+  <p class="lead en">The skill is the <b>director</b> — it never writes production code. It picks the mode,
     hands each phase to a fresh expert subagent, and reads back only short summaries (never full
     transcripts). The subagents never talk to each other; they pass work through one shared folder, the
     <b>vault</b>. Phases run <b>forward only</b>: the next phase opens only after the current one passes
     its check, and going backward happens only as an explicit, logged rewind.</p>
+  <p class="lead ko">스킬은 <b>디렉터</b>입니다 — 프로덕션 코드를 직접 쓰지 않습니다. 모드를 정하고, 각 단계를 새
+    전문가 서브에이전트에게 넘기며, 전체 기록이 아닌 짧은 요약만 돌려받습니다. 서브에이전트끼리는 서로
+    대화하지 않고, 하나의 공유 폴더인 <b>볼트(vault)</b>를 통해 작업을 주고받습니다. 단계는 <b>앞으로만</b>
+    진행됩니다 — 현재 단계가 검사를 통과해야 다음 단계가 열리고, 되돌아가는 일은 명시적으로 기록된
+    되감기로만 일어납니다.</p>
 
-  <h3 class="sub2">GREENFIELD — ship a new app</h3>
+  <h3 class="sub2"><span class="en">GREENFIELD — ship a new app</span><span class="ko">GREENFIELD — 새 앱 출시</span></h3>
   <div class="flow">
-    <div class="step">Intake<small>brief.md</small></div><div class="arr">→</div>
-    <div class="step">Validate<small>demand · Decision: GO</small></div><div class="arr">→</div>
-    <div class="step">Plan<small>frozen plan.md</small></div><div class="arr">→</div>
-    <div class="step">Build<small>code + claims</small></div><div class="arr">→</div>
-    <div class="step">Verify<small>adversary re-runs</small></div><div class="arr">→</div>
-    <div class="step">QA<small>black-box</small></div><div class="arr">→</div>
-    <div class="step gate">Deliver<small>gate exits 0</small></div>
+    <div class="step">Intake<small class="en">brief.md</small><small class="ko">brief.md</small></div><div class="arr">→</div>
+    <div class="step">Validate<small class="en">demand · Decision: GO</small><small class="ko">수요 · Decision: GO</small></div><div class="arr">→</div>
+    <div class="step">Plan<small class="en">frozen plan.md</small><small class="ko">고정된 plan.md</small></div><div class="arr">→</div>
+    <div class="step">Build<small class="en">code + claims</small><small class="ko">코드 + 주장</small></div><div class="arr">→</div>
+    <div class="step">Verify<small class="en">adversary re-runs</small><small class="ko">검증자가 재실행</small></div><div class="arr">→</div>
+    <div class="step">QA<small class="en">black-box</small><small class="ko">블랙박스</small></div><div class="arr">→</div>
+    <div class="step gate">Deliver<small class="en">gate exits 0</small><small class="ko">게이트 exit 0</small></div>
   </div>
 
-  <h3 class="sub2">DEBUG — root-cause a hard bug</h3>
+  <h3 class="sub2"><span class="en">DEBUG — root-cause a hard bug</span><span class="ko">DEBUG — 까다로운 버그 근본 원인 추적</span></h3>
   <div class="flow">
-    <div class="step">Intake<small>symptom</small></div><div class="arr">→</div>
-    <div class="step">Reproduce<small>failing test (red)</small></div><div class="arr">→</div>
-    <div class="step gate">Diagnose<small>cause + your approval</small></div><div class="arr">→</div>
-    <div class="step">Fix<small>root cause</small></div><div class="arr">→</div>
-    <div class="step">Verify<small>repro green + suite</small></div><div class="arr">→</div>
+    <div class="step">Intake<small class="en">symptom</small><small class="ko">증상</small></div><div class="arr">→</div>
+    <div class="step">Reproduce<small class="en">failing test (red)</small><small class="ko">실패 테스트(red)</small></div><div class="arr">→</div>
+    <div class="step gate">Diagnose<small class="en">cause + your approval</small><small class="ko">원인 + 당신의 승인</small></div><div class="arr">→</div>
+    <div class="step">Fix<small class="en">root cause</small><small class="ko">근본 원인</small></div><div class="arr">→</div>
+    <div class="step">Verify<small class="en">repro green + suite</small><small class="ko">재현 green + 스위트</small></div><div class="arr">→</div>
     <div class="step gate">Deliver</div>
   </div>
 
-  <h3 class="sub2">LEGACY — add to existing code</h3>
+  <h3 class="sub2"><span class="en">LEGACY — add to existing code</span><span class="ko">LEGACY — 기존 코드에 기능 추가</span></h3>
   <div class="flow">
-    <div class="step">Intake<small>spec</small></div><div class="arr">→</div>
-    <div class="step">Explore<small>map what it touches</small></div><div class="arr">→</div>
-    <div class="step gate">approve<small>surgical plan</small></div><div class="arr">→</div>
-    <div class="step">Build<small>backward-compat</small></div><div class="arr">→</div>
-    <div class="step">Verify<small>no regressions</small></div><div class="arr">→</div>
-    <div class="step">QA<small>+ nearby flows</small></div><div class="arr">→</div>
+    <div class="step">Intake<small class="en">spec</small><small class="ko">명세</small></div><div class="arr">→</div>
+    <div class="step">Explore<small class="en">map what it touches</small><small class="ko">영향 범위 파악</small></div><div class="arr">→</div>
+    <div class="step gate">approve<small class="en">surgical plan</small><small class="ko">외과적 수정안</small></div><div class="arr">→</div>
+    <div class="step">Build<small class="en">backward-compat</small><small class="ko">하위 호환</small></div><div class="arr">→</div>
+    <div class="step">Verify<small class="en">no regressions</small><small class="ko">회귀 없음</small></div><div class="arr">→</div>
+    <div class="step">QA<small class="en">+ nearby flows</small><small class="ko">+ 주변 플로우</small></div><div class="arr">→</div>
     <div class="step gate">Deliver</div>
   </div>
 
-  <h3 class="sub2">Why it catches real bugs: the builder never grades itself</h3>
+  <h3 class="sub2"><span class="en">Why it catches real bugs: the builder never grades itself</span><span class="ko">진짜 버그를 잡는 이유: 구현자는 자기 일을 채점하지 않습니다</span></h3>
   <div class="diagram"><pre>
    Builder  (writes the code)             Verifier  (a fresh, separate agent)
    ──────────────────────────             ──────────────────────────────────
@@ -255,85 +309,169 @@
                          error 3× → STOP &                             must approve, then
                          escalate to you)                              the delivery gate
   </pre></div>
-  <p class="note">In live testing this caught 2 SSRF holes and a concurrency race that all passed the
+  <p class="note en">In live testing this caught 2 SSRF holes and a concurrency race that all passed the
     builder's own green tests. Separating who writes from who approves is the whole point.</p>
+  <p class="note ko">실제 테스트에서 이 구조가 구현자의 green 테스트를 모두 통과한 SSRF 취약점 2건과 동시성
+    레이스 1건을 잡아냈습니다. 누가 작성하느냐와 누가 승인하느냐를 분리하는 것이 핵심입니다.
+    (다이어그램은 정렬 유지를 위해 영어로 표기.)</p>
 
-  <h3 class="sub2">The delivery gate — a script the agent can't fake</h3>
-  <p style="color:var(--dim)"><code>delivery-gate.sh</code> is a plain shell script the agent is forbidden
+  <h3 class="sub2"><span class="en">The delivery gate — a script the agent can't fake</span><span class="ko">딜리버리 게이트 — 에이전트가 위조할 수 없는 스크립트</span></h3>
+  <p class="en" style="color:var(--dim)"><code>delivery-gate.sh</code> is a plain shell script the agent is forbidden
     to edit. It exits 0 only when, in order: (1) the required files exist (<code>brief.md</code>,
     <code>plan.md</code>, <code>verification.md</code>); (2) <code>verification.md</code> says
     <code>verdict: GREEN</code> with no leftover <code>verdict: RED</code>; (3) for a new app, the
     <code>Decision:</code> is <code>GO</code>; (4) the project's own tests pass right here in the
     workspace. Nothing is called "done" until that exit-0 output is shown as proof.</p>
+  <p class="ko" style="color:var(--dim)"><code>delivery-gate.sh</code>는 에이전트가 편집할 수 없는 평범한 셸
+    스크립트입니다. 다음을 순서대로 만족할 때만 exit 0이 됩니다: (1) 필수 파일 존재(<code>brief.md</code>,
+    <code>plan.md</code>, <code>verification.md</code>); (2) <code>verification.md</code>가
+    <code>verdict: GREEN</code>이고 남은 <code>verdict: RED</code>가 없음; (3) 새 앱이라면
+    <code>Decision:</code>가 <code>GO</code>; (4) 프로젝트 자체 테스트가 바로 이 워크스페이스에서 통과.
+    이 exit 0 출력이 증거로 제시되기 전까지는 무엇도 "완료"라 부르지 않습니다.</p>
 </div></section>
 
 <section id="vaultsec"><div class="wrap">
-  <h2>The vault — the one shared file store</h2>
-  <p class="lead">Each phase is a fresh context, so a single folder
+  <h2><span class="en">The vault — the one shared file store</span><span class="ko">볼트 — 단 하나의 공유 파일 저장소</span></h2>
+  <p class="lead en">Each phase is a fresh context, so a single folder
     <code>docs/changelog/&lt;date-slug&gt;/</code> (committed as the run's changelog) is the only hand-off —
     just six files. Two rules keep it honest: <b>claims are untrusted</b> (only the Verifier marks a
     verdict, by re-running the proof) and <b>frozen files stay frozen</b> (the plan can't drift
     mid-build — it's hashed and re-checked). On a re-run, <code>state.json</code> resumes where it left off.</p>
+  <p class="lead ko">각 단계는 새 컨텍스트라서, 단 하나의 폴더 <code>docs/changelog/&lt;date-slug&gt;/</code>(실행의
+    체인지로그로 커밋됨)가 유일한 인계 수단입니다 — 파일 여섯 개뿐. 두 규칙이 정직성을 지킵니다:
+    <b>주장은 신뢰하지 않음</b>(검증자만이 증명을 재실행해 판정을 매김), <b>고정된 파일은 고정된 채로</b>(계획은
+    빌드 도중 변하지 않음 — 해시로 재확인). 재실행 시 <code>state.json</code>이 멈춘 지점부터 이어갑니다.</p>
   <table class="tbl">
-    <tr><th>File</th><th>Written by</th><th>Holds</th></tr>
-    <tr><td><code>README.md</code></td><td>any</td><td>run narrative + decisions, hypotheses, escalations — the audit log &amp; folder index</td></tr>
-    <tr><td><code>brief.md</code></td><td>Analyst</td><td>goal, audience, acceptance criteria + a <code>## Validation</code> section ending in <code>Decision: GO/NO-GO</code> (greenfield)</td></tr>
-    <tr><td><code>plan.md</code></td><td>Architect</td><td>frozen plan (+ architecture &amp; contracts) — or the approved fix plan in DEBUG</td></tr>
-    <tr><td><code>claims.md</code></td><td>Builder</td><td>append-only, <b>untrusted</b> — each slice + a <code>run-to-prove</code> command</td></tr>
-    <tr><td><code>verification.md</code></td><td>Verifier + QA</td><td>per-claim verdicts + a final <code>verdict: GREEN</code>, plus a <code>## QA</code> section</td></tr>
-    <tr><td><code>state.json</code></td><td>director</td><td>mode, phase, cycle counters, plan hash, approval, resume point</td></tr>
+    <tr>
+      <th><span class="en">File</span><span class="ko">파일</span></th>
+      <th><span class="en">Written by</span><span class="ko">작성자</span></th>
+      <th><span class="en">Holds</span><span class="ko">내용</span></th>
+    </tr>
+    <tr class="en"><td><code>README.md</code></td><td>any</td><td>run narrative + decisions, hypotheses, escalations — the audit log &amp; folder index</td></tr>
+    <tr class="ko"><td><code>README.md</code></td><td>모두</td><td>실행 서사 + 결정·가설·에스컬레이션 — 감사 로그이자 폴더 인덱스</td></tr>
+    <tr class="en"><td><code>brief.md</code></td><td>Analyst</td><td>goal, audience, acceptance criteria + a <code>## Validation</code> section ending in <code>Decision: GO/NO-GO</code> (greenfield)</td></tr>
+    <tr class="ko"><td><code>brief.md</code></td><td>분석가</td><td>목표·대상·인수 기준 + <code>Decision: GO/NO-GO</code>로 끝나는 <code>## Validation</code> 섹션(그린필드)</td></tr>
+    <tr class="en"><td><code>plan.md</code></td><td>Architect</td><td>frozen plan (+ architecture &amp; contracts) — or the approved fix plan in DEBUG</td></tr>
+    <tr class="ko"><td><code>plan.md</code></td><td>아키텍트</td><td>고정된 계획(+ 아키텍처·계약) — DEBUG에서는 승인된 수정 계획</td></tr>
+    <tr class="en"><td><code>claims.md</code></td><td>Builder</td><td>append-only, <b>untrusted</b> — each slice + a <code>run-to-prove</code> command</td></tr>
+    <tr class="ko"><td><code>claims.md</code></td><td>구현자</td><td>추가 전용, <b>신뢰하지 않음</b> — 각 슬라이스 + <code>run-to-prove</code> 명령</td></tr>
+    <tr class="en"><td><code>verification.md</code></td><td>Verifier + QA</td><td>per-claim verdicts + a final <code>verdict: GREEN</code>, plus a <code>## QA</code> section</td></tr>
+    <tr class="ko"><td><code>verification.md</code></td><td>검증자 + QA</td><td>주장별 판정 + 최종 <code>verdict: GREEN</code>, 그리고 <code>## QA</code> 섹션</td></tr>
+    <tr class="en"><td><code>state.json</code></td><td>director</td><td>mode, phase, cycle counters, plan hash, approval, resume point</td></tr>
+    <tr class="ko"><td><code>state.json</code></td><td>디렉터</td><td>모드·단계·사이클 카운터·계획 해시·승인·재개 지점</td></tr>
   </table>
 </div></section>
 
 <section id="experts"><div class="wrap">
-  <h2>Expert roster</h2>
-  <p class="lead">Each role maps to an existing Claude Code agent type, runs on a model tier matched to
+  <h2><span class="en">Expert roster</span><span class="ko">전문가 구성</span></h2>
+  <p class="lead en">Each role maps to an existing Claude Code agent type, runs on a model tier matched to
     the difficulty of the task, and reads only the part of the vault it needs — so a reviewer never
     inherits the coder's assumptions.</p>
+  <p class="lead ko">각 역할은 기존 Claude Code 에이전트 타입에 대응되고, 작업 난이도에 맞춘 모델 티어에서
+    돌며, 볼트에서 필요한 부분만 읽습니다 — 그래서 리뷰어가 코더의 가정을 물려받는 일이 없습니다.</p>
   <table class="tbl">
-    <tr><th>Role</th><th>Agent type</th><th>Tier</th><th>Job</th></tr>
-    <tr><td>Analyst</td><td><code>analyst</code></td><td>Opus</td><td>intake + demand validation</td></tr>
-    <tr><td>Architect</td><td><code>architect</code></td><td>Opus</td><td>plan, codebase map, contracts</td></tr>
-    <tr><td>Builder</td><td><code>executor</code></td><td>Sonnet*</td><td>implement a slice + write a claim</td></tr>
-    <tr><td>Verifier</td><td><code>verifier</code> / <code>critic</code></td><td>Opus</td><td>adversarially re-run every claim</td></tr>
-    <tr><td>Committee</td><td><code>security-reviewer</code> · <code>code-reviewer</code></td><td>Sonnet</td><td>independent review before Deliver</td></tr>
-    <tr><td>QA</td><td><code>qa-tester</code></td><td>Sonnet</td><td>black-box exercise the running app</td></tr>
-    <tr><td>Debugger</td><td><code>debugger</code> / <code>tracer</code></td><td>Opus</td><td>reproduce + find the root cause</td></tr>
+    <tr>
+      <th><span class="en">Role</span><span class="ko">역할</span></th>
+      <th><span class="en">Agent type</span><span class="ko">에이전트 타입</span></th>
+      <th><span class="en">Tier</span><span class="ko">티어</span></th>
+      <th><span class="en">Job</span><span class="ko">하는 일</span></th>
+    </tr>
+    <tr class="en"><td>Analyst</td><td><code>analyst</code></td><td>Opus</td><td>intake + demand validation</td></tr>
+    <tr class="ko"><td>분석가</td><td><code>analyst</code></td><td>Opus</td><td>인테이크 + 수요 검증</td></tr>
+    <tr class="en"><td>Architect</td><td><code>architect</code></td><td>Opus</td><td>plan, codebase map, contracts</td></tr>
+    <tr class="ko"><td>아키텍트</td><td><code>architect</code></td><td>Opus</td><td>계획·코드베이스 맵·계약</td></tr>
+    <tr class="en"><td>Builder</td><td><code>executor</code></td><td>Sonnet*</td><td>implement a slice + write a claim</td></tr>
+    <tr class="ko"><td>구현자</td><td><code>executor</code></td><td>Sonnet*</td><td>슬라이스 구현 + 주장 작성</td></tr>
+    <tr class="en"><td>Verifier</td><td><code>verifier</code> / <code>critic</code></td><td>Opus</td><td>adversarially re-run every claim</td></tr>
+    <tr class="ko"><td>검증자</td><td><code>verifier</code> / <code>critic</code></td><td>Opus</td><td>모든 주장을 적대적으로 재실행</td></tr>
+    <tr class="en"><td>Committee</td><td><code>security-reviewer</code> · <code>code-reviewer</code></td><td>Sonnet</td><td>independent review before Deliver</td></tr>
+    <tr class="ko"><td>심사위원단</td><td><code>security-reviewer</code> · <code>code-reviewer</code></td><td>Sonnet</td><td>Deliver 전 독립 리뷰</td></tr>
+    <tr class="en"><td>QA</td><td><code>qa-tester</code></td><td>Sonnet</td><td>black-box exercise the running app</td></tr>
+    <tr class="ko"><td>QA</td><td><code>qa-tester</code></td><td>Sonnet</td><td>실행 중인 앱을 블랙박스로 점검</td></tr>
+    <tr class="en"><td>Debugger</td><td><code>debugger</code> / <code>tracer</code></td><td>Opus</td><td>reproduce + find the root cause</td></tr>
+    <tr class="ko"><td>디버거</td><td><code>debugger</code> / <code>tracer</code></td><td>Opus</td><td>재현 + 근본 원인 추적</td></tr>
   </table>
-  <p class="note">*Opus when the slice is new or algorithm-heavy.</p>
+  <p class="note en">*Opus when the slice is new or algorithm-heavy.</p>
+  <p class="note ko">*새롭거나 알고리즘이 무거운 슬라이스에는 Opus.</p>
 </div></section>
 
 <section id="gates"><div class="wrap">
-  <h2>The non-negotiable gates</h2>
-  <p class="lead">The spine — never weakened, never skipped. Two are literal scripts the agent can't edit
+  <h2><span class="en">The non-negotiable gates</span><span class="ko">타협 불가 게이트</span></h2>
+  <p class="lead en">The spine — never weakened, never skipped. Two are literal scripts the agent can't edit
     to pass: <code>validate-gate.sh</code> (before Build) and <code>delivery-gate.sh</code> (before "done").</p>
+  <p class="lead ko">이 스킬의 척추 — 절대 약화되지도, 건너뛰어지지도 않습니다. 그중 둘은 에이전트가 통과시키려고
+    편집할 수 없는 리터럴 스크립트입니다: <code>validate-gate.sh</code>(Build 전)와
+    <code>delivery-gate.sh</code>("완료" 전).</p>
   <div class="gates">
-    <div class="gate"><span class="n">1</span><span><b>Validate before build</b><span>For a new app, <code>validate-gate.sh</code> must confirm a <code>Decision: GO</code> (real demand + a scoped MVP) before Build opens.</span></span></div>
-    <div class="gate"><span class="n">2</span><span><b>Plan freezes scope</b><span>Written once, then hashed and re-checked; Build implements it and can't quietly redesign mid-flight.</span></span></div>
-    <div class="gate"><span class="n">3</span><span><b>Builder ≠ Verifier</b><span>A fresh, separate agent re-runs every claim from a clean state. <code>claims.md</code> is untrusted.</span></span></div>
-    <div class="gate"><span class="n">4</span><span><b>Committee review</b><span>security + code-review run in parallel before Deliver; all must approve.</span></span></div>
-    <div class="gate"><span class="n">5</span><span><b>Literal delivery gate</b><span><code>delivery-gate.sh</code> exits 0 — the project's own tests pass, re-run from a clean state — or it isn't done.</span></span></div>
-    <div class="gate"><span class="n">6</span><span><b>Bounded retry</b><span>The same error 3× trips <code>circuit-breaker.mjs</code> → stop, root-cause, escalate to you. No infinite loops.</span></span></div>
+    <div class="gate"><span class="n">1</span>
+      <span class="en"><b>Validate before build</b><span>For a new app, <code>validate-gate.sh</code> must confirm a <code>Decision: GO</code> (real demand + a scoped MVP) before Build opens.</span></span>
+      <span class="ko"><b>구현 전 검증</b><span>새 앱이라면 Build가 열리기 전에 <code>validate-gate.sh</code>가 <code>Decision: GO</code>(실제 수요 + 범위가 정해진 MVP)를 확인해야 합니다.</span></span></div>
+    <div class="gate"><span class="n">2</span>
+      <span class="en"><b>Plan freezes scope</b><span>Written once, then hashed and re-checked; Build implements it and can't quietly redesign mid-flight.</span></span>
+      <span class="ko"><b>계획이 범위를 고정</b><span>한 번 작성한 뒤 해시로 재확인합니다. Build는 그대로 구현할 뿐, 도중에 몰래 재설계할 수 없습니다.</span></span></div>
+    <div class="gate"><span class="n">3</span>
+      <span class="en"><b>Builder ≠ Verifier</b><span>A fresh, separate agent re-runs every claim from a clean state. <code>claims.md</code> is untrusted.</span></span>
+      <span class="ko"><b>구현자 ≠ 검증자</b><span>별도의 새 에이전트가 모든 주장을 깨끗한 상태에서 재실행합니다. <code>claims.md</code>는 신뢰하지 않습니다.</span></span></div>
+    <div class="gate"><span class="n">4</span>
+      <span class="en"><b>Committee review</b><span>security + code-review run in parallel before Deliver; all must approve.</span></span>
+      <span class="ko"><b>위원회 리뷰</b><span>Deliver 전에 보안 + 코드리뷰가 병렬로 돌고, 전원이 승인해야 합니다.</span></span></div>
+    <div class="gate"><span class="n">5</span>
+      <span class="en"><b>Literal delivery gate</b><span><code>delivery-gate.sh</code> exits 0 — the project's own tests pass, re-run from a clean state — or it isn't done.</span></span>
+      <span class="ko"><b>리터럴 딜리버리 게이트</b><span><code>delivery-gate.sh</code>가 exit 0 — 프로젝트 자체 테스트가 깨끗한 상태에서 재실행되어 통과 — 아니면 완료가 아닙니다.</span></span></div>
+    <div class="gate"><span class="n">6</span>
+      <span class="en"><b>Bounded retry</b><span>The same error 3× trips <code>circuit-breaker.mjs</code> → stop, root-cause, escalate to you. No infinite loops.</span></span>
+      <span class="ko"><b>제한된 재시도</b><span>같은 오류가 3번이면 <code>circuit-breaker.mjs</code>가 작동 → 멈추고 근본 원인을 찾아 당신에게 보고합니다. 무한 루프 없음.</span></span></div>
   </div>
 </div></section>
 
 <section id="proof"><div class="wrap">
-  <h2>Proof it works</h2>
-  <p class="lead">All three modes were run end-to-end on one real, zero-dependency service (68 tests).
+  <h2><span class="en">Proof it works</span><span class="ko">동작 증명</span></h2>
+  <p class="lead en">All three modes were run end-to-end on one real, zero-dependency service (68 tests).
     The adversarial check caught a real defect in 2 of 3 runs — bugs that passed the builder's own
     green tests. The full audit trail ships in <code>examples/url-shortener/docs/changelog/</code>.</p>
+  <p class="lead ko">세 모드 모두 실제 무의존성 서비스 하나(테스트 68개)에서 엔드투엔드로 돌렸습니다. 적대적
+    검증이 3번 중 2번에서 진짜 결함을 잡아냈습니다 — 구현자 자신의 green 테스트를 통과한 버그들입니다.
+    전체 감사 기록은 <code>examples/url-shortener/docs/changelog/</code>에 함께 담겨 있습니다.</p>
   <div class="evi">
-    <div class="row"><span class="badge b-green">GREENFIELD</span><span class="what"><b>2 real SSRF holes + an unauth 500</b> caught by the verifier — all passed the builder's 43 green tests. Fixed before shipping.</span></div>
-    <div class="row"><span class="badge b-red">DEBUG</span><span class="what">Given only a symptom, reproduced a <b>lost-update race</b> (200 hits → counted 1), found the cause, fixed it, re-verified 0 lost across repeated runs.</span></div>
-    <div class="row"><span class="badge b-blue">LEGACY</span><span class="what">Added link-expiry (TTL) with <b>zero regressions</b> — still works with records saved before the field existed. Review-approved, gate-green.</span></div>
+    <div class="row"><span class="badge b-green">GREENFIELD</span>
+      <span class="what en"><b>2 real SSRF holes + an unauth 500</b> caught by the verifier — all passed the builder's 43 green tests. Fixed before shipping.</span>
+      <span class="what ko"><b>진짜 SSRF 취약점 2건 + 인증 없는 500 오류</b>를 검증자가 포착 — 모두 구현자의 green 테스트 43개를 통과한 것들. 출시 전 수정 완료.</span></div>
+    <div class="row"><span class="badge b-red">DEBUG</span>
+      <span class="what en">Given only a symptom, reproduced a <b>lost-update race</b> (200 hits → counted 1), found the cause, fixed it, re-verified 0 lost across repeated runs.</span>
+      <span class="what ko">증상만 주어진 상태에서 <b>lost-update 레이스</b>(조회 200회 → 1회로 집계)를 재현하고, 원인을 찾아 고친 뒤, 반복 실행에서 0건 손실로 재검증.</span></div>
+    <div class="row"><span class="badge b-blue">LEGACY</span>
+      <span class="what en">Added link-expiry (TTL) with <b>zero regressions</b> — still works with records saved before the field existed. Review-approved, gate-green.</span>
+      <span class="what ko">링크 만료(TTL)를 <b>회귀 0건</b>으로 추가 — 필드가 생기기 전에 저장된 레코드와도 여전히 동작. 리뷰 승인, 게이트 green.</span></div>
   </div>
 </div></section>
 
 <footer><div class="wrap">
-  Concept &amp; workflow adapted from <a href="https://github.com/cskwork/oh-my-symphony">oh-my-symphony</a>
+  <span class="en">Concept &amp; workflow adapted from <a href="https://github.com/cskwork/oh-my-symphony">oh-my-symphony</a>
   — gated lanes, shared vault, adversarial verify, literal delivery gate — rebuilt self-contained for
-  Claude Code. MIT licensed. Built by <a href="https://github.com/cskwork">cskwork</a>.
+  Claude Code. MIT licensed. Built by <a href="https://github.com/cskwork">cskwork</a>.</span>
+  <span class="ko">개념과 워크플로는 <a href="https://github.com/cskwork/oh-my-symphony">oh-my-symphony</a>에서
+  가져왔습니다 — 게이트 레인, 공유 볼트, 적대적 검증, 리터럴 딜리버리 게이트 — Claude Code용으로 독립
+  실행되게 재구성했습니다. MIT 라이선스. 제작: <a href="https://github.com/cskwork">cskwork</a>.</span>
 </div></footer>
+
+<script>
+(function(){
+  var root = document.documentElement;
+  var btns = document.querySelectorAll('.langtoggle button');
+  function set(lang){
+    root.setAttribute('lang', lang);
+    try{ localStorage.setItem('jdi-lang', lang); }catch(e){}
+    btns.forEach(function(b){ b.setAttribute('aria-pressed', String(b.getAttribute('data-lang') === lang)); });
+  }
+  var saved;
+  try{ saved = localStorage.getItem('jdi-lang'); }catch(e){}
+  var initial = saved || (((navigator.language || '').toLowerCase().indexOf('ko') === 0) ? 'ko' : 'en');
+  set(initial);
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){ set(b.getAttribute('data-lang')); });
+  });
+})();
+</script>
 
 </body>
 </html>

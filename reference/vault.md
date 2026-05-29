@@ -12,14 +12,14 @@ Intake) so vault scratch never pollutes the repo; the final commit carries only 
 
 | File | Written by | Mutability | Purpose |
 |---|---|---|---|
-| `state.json` | orchestrator | live | mode, current phase, cycle counters, error signatures, GO/NO-GO. See `templates/state.json` |
+| `state.json` | orchestrator | live | mode, current phase, per-phase cycle counters (keys vary by mode: GREENFIELD/LEGACY Build/Verify/QA/Fix, or DEBUG's Reproduce/Diagnose/Fix/Verify), error signatures, `go_decision`, and `approval` (set when a human approves the fix/build plan — required before the first write in DEBUG/LEGACY). See `templates/state.json` |
 | `brief.md` | Analyst | frozen after Intake | goal, audience, acceptance criteria, non-goals |
 | `validation.md` | Analyst | frozen after Validate | demand evidence + GO/NO-GO (GREENFIELD only) |
-| `plan.md` | Architect | **frozen after Plan** | task table of slices, each with an acceptance check |
+| `plan.md` | Architect (DEBUG: from Diagnose) | **frozen once written** | GREENFIELD/LEGACY: task table of slices, each with an acceptance check. DEBUG: the approved root-cause + fix plan. **Required by the delivery gate in every mode.** |
 | `architecture.md` | Architect | living | stack, structure, codebase map (LEGACY) |
 | `contracts.md` | Architect | living | interfaces/API shapes each slice owns |
 | `claims.md` | Builder | **append-only, UNTRUSTED** | one entry per slice: what was done + a `run-to-prove` command |
-| `verification.md` | Verifier | append-only | per-claim `verdict: GREEN\|RED` + evidence |
+| `verification.md` | Verifier | append-only | per-claim lines `claim <id>: GREEN\|RED` + evidence, then ONE final aggregate line `verdict: GREEN` (or `verdict: RED`). The delivery gate reads the aggregate; on re-verify, rewrite so no line-start `verdict: RED` lingers. |
 | `qa-report.md` | QA | append-only | black-box results, screenshots/log refs |
 | `decisions.log` | any | append-only | key choices, hypotheses, skips, escalations (the audit trail) |
 

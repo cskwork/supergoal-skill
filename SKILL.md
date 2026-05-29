@@ -67,8 +67,9 @@ These are the spine. Never weaken or skip them; never edit a gate to make it pas
    Verify** agent re-runs every `run-to-prove` command in `claims.md` from a clean state.
 4. **Multi-expert review before deliver**: architect + security-reviewer + code-reviewer run in
    parallel; ALL must approve (`reference/experts.md`).
-5. **Literal delivery gate**: `templates/delivery-gate.sh` must exit 0 (artifacts exist, tests pass,
-   `verdict: GREEN` present). The skill cannot announce "done" otherwise.
+5. **Literal delivery gate**: `templates/delivery-gate.sh` must exit 0 — required artifacts present,
+   an aggregate `verdict: GREEN` with no line-start `verdict: RED`, `Decision: GO` for greenfield, and
+   the project's own tests pass. The skill cannot announce "done" otherwise.
 6. **Bounded retry + circuit breaker**: max 5 fix cycles per phase; the SAME error 3× → stop, write
    the root cause to `decisions.log`, escalate to the user. Never loop forever.
 

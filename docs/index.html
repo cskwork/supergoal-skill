@@ -91,6 +91,20 @@
   footer{padding:40px 0 70px;color:var(--faint);font-size:14px;border-top:1px solid var(--line)}
   footer a{color:var(--dim)}
   .pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-family:var(--mono);font-size:12px;color:var(--dim);margin:0 6px 6px 0}
+  h3.sub2{font-size:16px;margin:28px 0 10px;color:var(--ink)}
+  .diagram{border:1px solid var(--line);border-radius:14px;background:var(--panel2);padding:18px;overflow-x:auto}
+  .diagram pre{margin:0;font-family:var(--mono);font-size:12.5px;line-height:1.5;color:#cdd6df}
+  .note{color:var(--faint);font-size:13px;margin-top:12px}
+  .flow{display:flex;align-items:stretch;overflow-x:auto;padding:4px 0 12px;font-family:var(--mono);font-size:12.5px}
+  .flow .step{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:10px 12px;min-width:120px;text-align:center;color:var(--ink);flex:0 0 auto}
+  .flow .step small{display:block;color:var(--faint);font-size:10.5px;margin-top:3px}
+  .flow .step.gate{border-color:#1f5132;background:#0f1f15}
+  .flow .arr{display:flex;align-items:center;color:var(--faint);padding:0 8px;flex:0 0 auto}
+  .tbl{width:100%;border-collapse:collapse;font-size:14px}
+  .tbl th,.tbl td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  .tbl th{color:var(--dim);font-weight:600;font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;text-transform:uppercase}
+  .tbl td code{color:var(--acc2)}
+  .tbl tr:last-child td{border-bottom:0}
 </style>
 </head>
 <body>
@@ -114,6 +128,7 @@
     musicians prove every note.</p>
   <div class="cta">
     <a class="btn primary" href="#install">▸ Install</a>
+    <a class="btn" href="#lifecycle">How it works</a>
     <a class="btn" href="#proof">See what it caught</a>
     <a class="btn" href="https://github.com/cskwork/just-do-it-skill">Source</a>
   </div>
@@ -159,6 +174,144 @@
   </div>
 </div></section>
 
+<section id="architecture"><div class="wrap">
+  <h2>Architecture</h2>
+  <p class="lead">A conductor and its musicians. The skill is the <b>orchestrator</b> — it never writes
+    production code. It detects the mode, dispatches role-scoped <b>expert subagents</b>, and reads back
+    only their compressed summaries (never raw transcripts). The subagents never talk to each other;
+    they coordinate through one shared file store, the <b>vault</b>.</p>
+  <div class="diagram"><pre>
+                          ┌────────────────────────────────────────────────┐
+   objective  ──────────▶ │   ORCHESTRATOR   (the skill / conductor)         │
+                          │   detect mode · dispatch phases · run gates      │
+                          └──────┬──────────────────────────────────▲───────┘
+            dispatch (locked     │   summaries only                  │
+            role + model tier)   ▼   (never raw transcripts)         │ read / write
+        ┌─────────┬─────────┬─────────┬─────────┬─────────┬─────────┤ (role-scoped)
+        │ analyst │architect│executor │verifier │security │   qa    │
+        │ (Opus)  │ (Opus)  │(Sonnet) │ (Opus)  │ -review │ -tester │
+        └────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┘
+             └─────────┴─────────┴────┬────┴─────────┴─────────┘
+                                      ▼
+              ┌───────────────────────────────────────────────┐
+              │   VAULT   ./.just-do-it/&lt;slug&gt;/                 │  one shared blackboard.
+              │   brief · validation · plan (frozen)           │  every phase is a fresh
+              │   claims (untrusted) · verification            │  context, so the vault is
+              │   qa-report · decisions.log · state.json       │  how phases hand off.
+              └───────────────────────────────────────────────┘
+  </pre></div>
+  <p class="note">Why this shape (the converged 2026 multi-agent pattern): an orchestrator that ingests
+    only summaries keeps its context clean and cost predictable — token spend explains ~80% of
+    multi-agent performance variance. Role-scoped reads stop a critic inheriting the coder's
+    rationalizations.</p>
+</div></section>
+
+<section id="lifecycle"><div class="wrap">
+  <h2>How the harness works</h2>
+  <p class="lead">One objective runs <b>forward-only</b> through phases. A phase opens only when the
+    prior phase's <b>machine-checkable exit gate</b> passes; backward edges exist only as explicit
+    rewinds. Step 0 is always mode detection — and <em>task topology picks the architecture</em>:
+    wide-and-shallow work (validation, scaffolding) fans out; deep-and-narrow work (one bug, one
+    feature) stays single-driver and opens read-only, with human approval before the first write.</p>
+
+  <h3 class="sub2">GREENFIELD — ship a new app (fans out)</h3>
+  <div class="flow">
+    <div class="step">Intake<small>brief.md</small></div><div class="arr">→</div>
+    <div class="step">Validate<small>demand · Decision: GO</small></div><div class="arr">→</div>
+    <div class="step">Plan<small>frozen plan.md</small></div><div class="arr">→</div>
+    <div class="step">Build<small>code + claims</small></div><div class="arr">→</div>
+    <div class="step">Verify<small>adversary re-runs</small></div><div class="arr">→</div>
+    <div class="step">QA<small>black-box</small></div><div class="arr">→</div>
+    <div class="step gate">Deliver<small>gate exits 0</small></div>
+  </div>
+
+  <h3 class="sub2">DEBUG — root-cause a hard bug (single-driver)</h3>
+  <div class="flow">
+    <div class="step">Intake<small>symptom</small></div><div class="arr">→</div>
+    <div class="step">Reproduce<small>failing test (red)</small></div><div class="arr">→</div>
+    <div class="step">Diagnose<small>competing hypotheses</small></div><div class="arr">→</div>
+    <div class="step gate">approve<small>human · before write</small></div><div class="arr">→</div>
+    <div class="step">Fix<small>root cause</small></div><div class="arr">→</div>
+    <div class="step">Verify<small>repro green + suite</small></div><div class="arr">→</div>
+    <div class="step gate">Deliver</div>
+  </div>
+
+  <h3 class="sub2">LEGACY — add to existing code (single-driver)</h3>
+  <div class="flow">
+    <div class="step">Intake<small>spec</small></div><div class="arr">→</div>
+    <div class="step">Explore<small>map blast radius</small></div><div class="arr">→</div>
+    <div class="step gate">approve<small>surgical plan</small></div><div class="arr">→</div>
+    <div class="step">Build<small>backward-compat</small></div><div class="arr">→</div>
+    <div class="step">Verify<small>no regressions</small></div><div class="arr">→</div>
+    <div class="step">QA<small>+ adjacent flows</small></div><div class="arr">→</div>
+    <div class="step gate">Deliver</div>
+  </div>
+
+  <h3 class="sub2">The Build → Verify loop (why it catches real bugs)</h3>
+  <div class="diagram"><pre>
+   Builder  (executor)                    Verifier  (fresh adversary)
+   ───────────────────                    ──────────────────────────
+   writes code + a CLAIM:                 reads ONLY claims.md + the code,
+     run-to-prove: npm test    ───────▶   re-runs every run-to-prove from a
+     (self-report — UNTRUSTED)            CLEAN state, tries to REFUTE it,
+                                          and validates the test suite itself
+                                                       │
+                          verdict: RED  ◀──────────────┴──────────────▶  verdict: GREEN
+                               │                                              │
+                        rewind to Build                                committee review
+                        (max 5 cycles; same                            architect + security
+                         error 3× → STOP,                              + code-review, all
+                         root-cause, escalate)                         approve → Deliver gate
+  </pre></div>
+  <p class="note">The builder never grades its own work — that separation is the whole point. In live
+    validation it caught 2 SSRF bypasses and a concurrency race that all passed the builder's own
+    green tests.</p>
+
+  <h3 class="sub2">The literal delivery gate — what it actually checks</h3>
+  <p style="color:var(--dim)"><code>delivery-gate.sh</code> is a shell script the agent cannot edit to
+    pass. It exits 0 only when, in order: (1) required artifacts exist (<code>brief.md</code>,
+    <code>plan.md</code>, <code>verification.md</code>); (2) <code>verification.md</code> has an
+    aggregate <code>verdict: GREEN</code> and no line-start <code>verdict: RED</code>; (3) for
+    greenfield, the <code>Decision:</code> line is <code>GO</code>; (4) the project's own test suite
+    passes in the workspace. No "done" is announced until that output is pasted as evidence.</p>
+</div></section>
+
+<section id="vaultsec"><div class="wrap">
+  <h2>The vault — the only shared state</h2>
+  <p class="lead">Two rules make it trustworthy: <b>claims.md is untrusted</b> (only the Verifier sets a
+    verdict, by re-running the proof) and <b>frozen files stay frozen</b> (the plan can't drift
+    mid-build). On a re-run, <code>state.json</code> resumes at the current phase.</p>
+  <table class="tbl">
+    <tr><th>File</th><th>Written by</th><th>Holds</th></tr>
+    <tr><td><code>brief.md</code></td><td>Analyst</td><td>goal, audience, machine-checkable acceptance criteria</td></tr>
+    <tr><td><code>validation.md</code></td><td>Analyst</td><td>demand evidence + a <code>Decision: GO/NO-GO</code> line (greenfield)</td></tr>
+    <tr><td><code>plan.md</code></td><td>Architect</td><td>frozen slice plan — or the approved fix plan in DEBUG</td></tr>
+    <tr><td><code>claims.md</code></td><td>Builder</td><td>append-only, <b>untrusted</b> — each slice + a <code>run-to-prove</code> command</td></tr>
+    <tr><td><code>verification.md</code></td><td>Verifier</td><td>per-claim verdicts + a final aggregate <code>verdict: GREEN</code></td></tr>
+    <tr><td><code>qa-report.md</code></td><td>QA</td><td>black-box results, screenshot/log refs</td></tr>
+    <tr><td><code>decisions.log</code></td><td>any</td><td>choices, hypotheses, escalations — the audit trail</td></tr>
+    <tr><td><code>state.json</code></td><td>orchestrator</td><td>mode, phase, cycle counters, approval gate, resume point</td></tr>
+  </table>
+</div></section>
+
+<section id="experts"><div class="wrap">
+  <h2>Expert roster</h2>
+  <p class="lead">Roles map to existing Claude Code agent types, each pinned to a model tier matched to
+    task complexity, each reading only its slice of the vault.</p>
+  <table class="tbl">
+    <tr><th>Role</th><th>Agent type</th><th>Tier</th><th>Job</th></tr>
+    <tr><td>Analyst</td><td><code>analyst</code></td><td>Opus</td><td>intake + demand validation</td></tr>
+    <tr><td>Architect</td><td><code>architect</code></td><td>Opus</td><td>plan, codebase map, contracts</td></tr>
+    <tr><td>Builder</td><td><code>executor</code></td><td>Sonnet*</td><td>implement a slice + write a claim</td></tr>
+    <tr><td>Verifier</td><td><code>verifier</code> / <code>critic</code></td><td>Opus</td><td>adversarially re-run every claim</td></tr>
+    <tr><td>Committee</td><td><code>security-reviewer</code> · <code>code-reviewer</code></td><td>Sonnet</td><td>distinct-mandate review before Deliver</td></tr>
+    <tr><td>QA</td><td><code>qa-tester</code></td><td>Sonnet</td><td>black-box exercise the running app</td></tr>
+    <tr><td>Debugger</td><td><code>debugger</code> / <code>tracer</code></td><td>Opus</td><td>reproduce + hypothesis-driven root cause</td></tr>
+  </table>
+  <p class="note">*Opus when the slice is novel or algorithmic. Architect→editor split inside Build: a
+    reasoning pass plans the diff, a precise pass writes it.</p>
+</div></section>
+
 <section id="gates"><div class="wrap">
   <h2>The non-negotiable gates</h2>
   <p class="lead">The spine. Never weakened, never skipped — and the delivery gate is a literal shell
@@ -168,7 +321,7 @@
     <div class="gate"><span class="n">2</span><span><b>Plan freezes scope</b><span>Written once; Build implements it, never redesigns mid-flight.</span></span></div>
     <div class="gate"><span class="n">3</span><span><b>Builder ≠ Verifier</b><span>A fresh adversary re-runs every claim from a clean state. <code>claims.md</code> is untrusted.</span></span></div>
     <div class="gate"><span class="n">4</span><span><b>Committee review</b><span>architect + security + code-review in parallel; all must approve.</span></span></div>
-    <div class="gate"><span class="n">5</span><span><b>Literal delivery gate</b><span><code>delivery-gate.sh</code> exits 0 — tests green in a clean sandbox — or it isn't done.</span></span></div>
+    <div class="gate"><span class="n">5</span><span><b>Literal delivery gate</b><span><code>delivery-gate.sh</code> exits 0 — the project's own tests green (the Verify agent re-runs from a clean state) — or it isn't done.</span></span></div>
     <div class="gate"><span class="n">6</span><span><b>Bounded retry</b><span>Same error 3× → stop, root-cause, escalate. No infinite loops.</span></span></div>
   </div>
 </div></section>

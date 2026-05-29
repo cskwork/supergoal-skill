@@ -33,10 +33,10 @@ Log every skip to `decisions.log`.
 | Phase | Goal | Reads | Writes | Exit gate (must pass to advance) |
 |---|---|---|---|---|
 | **Intake** | Turn objective into a brief (goal, audience, done-criteria, non-goals) | objective | `brief.md`, `state.json` | `brief.md` has explicit, machine-checkable acceptance criteria |
-| **Validate** | Prove real demand + scope an MVP (see `market-research.md`) | `brief.md` | `validation.md` | `validation.md` shows demand evidence + a GO/NO-GO line. **NO-GO → stop, report.** Do not build on spec |
-| **Plan** | Decompose into independently-testable slices; choose stack; define contracts | `brief.md`,`validation.md` | `plan.md` (frozen), `architecture.md` | `plan.md` task table exists, every slice ≤5 files / ≤~500 lines, each has an acceptance check |
+| **Validate** | Prove real demand + scope an MVP (see `market-research.md`) | `brief.md` | `validation.md` | `validation.md` ends with exactly one `Decision: GO` / `Decision: NO-GO` line. **NO-GO → stop, report.** Do not build on spec |
+| **Plan** | Decompose into independently-testable slices; choose stack; define contracts | `brief.md`,`validation.md` | `plan.md` (frozen), `architecture.md`, `contracts.md` | `plan.md` task table exists, every slice ≤5 files / ≤~500 lines, each has an acceptance check |
 | **Build** | Implement each slice (architect→editor split); write a claim per slice | `plan.md`,`architecture.md`,`contracts.md` | code, `claims.md` (append-only) | local tests for the slice pass + a `claims.md` entry with a `run-to-prove` command |
-| **Verify** | Adversary re-runs every claim from clean state (see `quality-gates.md`) | `claims.md`, code | `verification.md` | every claim has `verdict: GREEN`; any RED rewinds to Build |
+| **Verify** | Adversary re-runs every claim from clean state (see `quality-gates.md`) | `claims.md`, code | `verification.md` | every claim GREEN, ending in one aggregate `verdict: GREEN` line (no line-start `verdict: RED`); any RED rewinds to Build |
 | **QA** | Black-box exercise the running app (conditional on app type) | running app | `qa-report.md` | golden + edge + a11y pass for browser apps; CLI/lib: integration smoke passes |
 | **Deliver** | Run the literal gate; package | all | commit / PR | `templates/delivery-gate.sh` exits 0 — paste output |
 
@@ -50,13 +50,17 @@ Single-driver topology. Open in Plan Mode (read-only) through Diagnose; get appr
 |---|---|---|---|---|
 | **Intake** | Capture symptom, environment, expected vs actual | objective | `brief.md` | symptom + expected behavior stated |
 | **Reproduce** | Get a deterministic, **failing** reproduction | repo, logs | a failing test / repro script, `claims.md` | repro **fails** on current code in a clean sandbox (red proven) |
-| **Diagnose** | Hypothesis-driven root cause (see `debugging.md`) | repo, repro | `decisions.log` (hypotheses + evidence) | one hypothesis confirmed by evidence; **human approves the fix plan** |
+| **Diagnose** | Hypothesis-driven root cause (see `debugging.md`) | repo, repro | `decisions.log` (hypotheses + evidence), `plan.md` (approved fix plan, frozen) | one hypothesis confirmed by evidence; **human approves the fix plan** |
 | **Fix** | Smallest change at the root cause | confirmed cause | code patch | the previously-failing repro now **passes** |
-| **Verify** | Re-run repro + full suite in clean sandbox; regression review | patch, suite | `verification.md` | repro GREEN + full suite GREEN + no new failures |
+| **Verify** | Re-run repro + full suite in clean sandbox; regression review | patch, suite | `verification.md` | repro GREEN + full suite GREEN + no new failures; ends in one aggregate `verdict: GREEN` line |
 | **Deliver** | Gate + package | all | commit / PR | `delivery-gate.sh` exits 0 |
 
 A "fixed" claim is only valid as **failing-before → passing-after in a clean sandbox** (arxiv
 2509.16941 on flawed tests; Anthropic verification practice).
+
+DEBUG's Diagnose writes `plan.md` (the approved root-cause + minimal-fix plan). The delivery gate
+requires `brief.md` + `plan.md` + `verification.md` in **every** mode, so `plan.md` is universal: the
+slice plan in GREENFIELD/LEGACY, the fix plan in DEBUG.
 
 ---
 

@@ -91,3 +91,7 @@ blast radius + regression-safety on top of existing tests.
 All three modes are live-validated. Adversarial verification caught a real defect in 2 of 3 runs
 (SSRF + concurrency race); the LEGACY run shipped clean because Explore-first + a frozen surgical plan
 kept the change correct on the first build.
+
+> Note: the commit SHAs above (`c3d74f6`, `0ce82a1`, `b2c897f`) refer to the ephemeral
+> `/tmp/jdi-live/url-shortener` working copy used during validation, not this repository's history.
+> The validated source + full audit trail are vendored under `examples/url-shortener/`.

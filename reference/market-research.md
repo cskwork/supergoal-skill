@@ -23,7 +23,9 @@ bounded objectives, not a hands-off autonomous engineer (openaitoolshub.org Devi
 3. **Riskiest assumption** — the one belief that, if false, sinks the product. Name it.
 4. **MVP scope** — the smallest thing that tests the riskiest assumption and delivers the core JTBD.
    Everything not essential to that → explicit non-goal.
-5. **GO / NO-GO line** (the exit gate):
+5. **Decision line** (the exit gate). End `validation.md` with exactly one line — `Decision: GO` or
+   `Decision: NO-GO` — because the delivery gate matches that line, not prose. Put the reasoning
+   above it:
    - **GO** — demand evidence is real, no adequate existing solution, MVP scope is bounded.
    - **NO-GO** — an existing tool already does it / no demand signal / objective too vague after one
      clarifying question. → **Stop and report. Do not build on spec.**

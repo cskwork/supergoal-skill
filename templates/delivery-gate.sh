@@ -34,11 +34,14 @@ if grep -qi '^verdict:[[:space:]]*RED' "$VAULT/verification.md"; then
 fi
 pass "verification GREEN, no RED"
 
-# 3) GREENFIELD only: a GO decision must exist (NO-GO must never reach delivery).
+# 3) GREENFIELD only: the decision line must be GO (NO-GO must never reach delivery).
+#    Match the explicit "Decision:" line, not prose — so a validation.md that merely discusses
+#    NO-GO criteria still passes when its decision is GO.
 if [ -f "$VAULT/validation.md" ]; then
-  grep -qiE '\b(GO)\b' "$VAULT/validation.md" || fail "validation.md present but no GO decision"
-  if grep -qiE '\bNO-?GO\b' "$VAULT/validation.md"; then
-    fail "validation.md says NO-GO — building on spec is forbidden"
+  grep -qiE '^(#+[[:space:]]*)?Decision:[[:space:]]*GO\b' "$VAULT/validation.md" \
+    || fail "no 'Decision: GO' line in validation.md"
+  if grep -qiE '^(#+[[:space:]]*)?Decision:[[:space:]]*NO-?GO\b' "$VAULT/validation.md"; then
+    fail "validation.md decision is NO-GO — building on spec is forbidden"
   fi
   pass "validation GO"
 fi

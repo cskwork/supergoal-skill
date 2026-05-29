@@ -21,3 +21,12 @@ and be treated as never-expiring. No data migration required.
    non-expired ttl link still redirects; stats includes expiresAt; a record with no expiresAt
    (old format) never expires; invalid ttlSeconds -> 400.
 3. Change is surgical: matches existing module boundaries/style; no unrelated refactors.
+
+## Validation
+- All 68 tests pass (0 fail, 0 cancelled, 0 skipped).
+- Live probes confirmed TTL=1 expiry flow: 201 create, 302 before expiry, 410 after, hits unchanged.
+- Backward-compat probe: legacy record (no expiresAt) loads intact, never treated as expired.
+- Surgical diff: exactly 7 planned files changed, 231 insertions, no unrelated churn.
+- Committee: security APPROVE, code-review APPROVE (LOW only).
+
+Decision: GO

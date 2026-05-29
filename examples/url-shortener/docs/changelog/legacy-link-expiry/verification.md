@@ -77,4 +77,18 @@ A record persisted WITHOUT an `expiresAt` field must be treated as never-expire.
 - Source diff inspected: pure additions (validateTtl, defaultTtlSeconds config line, create(url, expiresAt=null), redirect expiry-check-before-increment, stats expiresAt/expired). One comment header updated on validate.js. NO reformatting/churn of unrelated code.
 - `git status --porcelain` after probe cleanup: only the 7 M files; no stray untracked artifacts.
 
+## QA
+| Check | Result |
+|---|---|
+| Full suite (68 tests) | PASS |
+| Regression: hits counted on valid redirect | PASS |
+| Regression: concurrency guard (200 concurrent hits) | PASS |
+| Regression: unknown code returns 404 not 410 | PASS |
+| Regression: auth / SSRF / ratelimit | PASS |
+| Feature: TTL=1 expiry flow (201/302/410 sequence) | PASS |
+| Feature: no-TTL link (302, expiresAt null) | PASS |
+| Feature: invalid ttlSeconds -> 400 | PASS |
+| Backward-compat: legacy record (no expiresAt) never expires | PASS |
+| Surgical diff: only 7 planned files changed | PASS |
+
 verdict: GREEN

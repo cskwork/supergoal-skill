@@ -6,6 +6,8 @@
   "current_phase": "Deliver",
   "phases_completed": ["Intake", "Validate", "Plan", "Build", "Verify", "QA", "Review"],
   "go_decision": "GO",
+  "approval": { "phase": "Build", "status": "APPROVED" },
+  "plan_hash": null,
   "cycles": { "Build": 3, "Verify": 3, "QA": 1, "Fix": 2 },
   "max_cycles_per_phase": 5,
   "error_signatures": { "ssrf-bypass-v1": 1, "malformed-path-500": 1 },

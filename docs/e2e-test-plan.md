@@ -1,0 +1,224 @@
+# /just-do-it — full E2E test plan
+
+Purpose: prove the skill drives an objective through its gated pipeline correctly in all three modes,
+that **every gate actually gates**, that the vault is produced correctly at
+`docs/changelog/<date-slug>/` (6 files), and that failure modes (NO-GO stop, RED rewind, circuit
+breaker, approval gate) behave as specified. Evidence over assertion — each test states the exact
+command/observation and its pass criterion.
+
+## 0. Preconditions
+
+- Skill installed at `~/.claude/skills/just-do-it` (or symlinked from this repo).
+- `gh` not required. Node ≥18 available (fixtures use the zero-dep `examples/url-shortener`).
+- A throwaway dir per E2E run (`git init`), so nothing touches real repos. Use `mktemp -d`.
+- Budget note: a full pass spawns many subagents (each mode runs analyst/architect/executor/
+  verifier/committee/qa). Run tier A (unit) on every change; tiers B-F before a release.
+
+## Test taxonomy
+
+| Tier | What | Cost | Automatable |
+|---|---|---|---|
+| A | `delivery-gate.sh` unit scenarios | trivial | fully (bash) |
+| B | Per-mode happy-path E2E (GREENFIELD / DEBUG / LEGACY) | high | semi (drive + inspect) |
+| C | Guardrail / failure-mode tests | high | semi |
+| D | Vault & artifact-layout tests | low | fully (after a B run) |
+| E | Verification-adequacy tests (does Verify catch real bugs?) | med | semi |
+| F | Docs/consistency lint | trivial | fully (grep) |
+
+---
+
+## Tier A — delivery-gate.sh unit tests (deterministic)
+
+Run `templates/delivery-gate.sh <vault> <test-cmd>` against hand-built vault fixtures. `<test-cmd>`
+is `true`/`false` to isolate gate logic from a real suite.
+
+| # | Vault fixture | Expect |
+|---|---|---|
+| A1 | empty dir | FAIL "brief.md missing" |
+| A2 | brief only | FAIL "plan.md missing" |
+| A3 | brief+plan, no verification | FAIL "verification.md missing" |
+| A4 | verification with no `verdict: GREEN` line | FAIL "no 'verdict: GREEN'" |
+| A5 | verification has a line-start `verdict: RED` | FAIL "verdict: RED remains" |
+| A6 | brief has `Decision: GO` + prose mentioning NO-GO | PASS |
+| A7 | brief has `Decision: NO-GO` | FAIL "decision is NO-GO" |
+| A8 | brief has no `Decision:` line (DEBUG/LEGACY) | PASS (validation skipped) |
+| A9 | all artifacts valid + test-cmd `false` | FAIL "test suite did not pass" |
+| A10 | all artifacts valid + test-cmd `true` | PASS, exit 0 |
+| A11 | valid artifacts, no test-cmd, no detectable runner | FAIL "no test command…" |
+
+Harness (paste-run):
+
+```bash
+GATE=~/.claude/skills/just-do-it/templates/delivery-gate.sh
+T=$(mktemp -d); cd "$T"; mkdir v
+ok(){ printf 'p\n'>v/plan.md; printf 'verdict: GREEN\n'>v/verification.md; printf 'g\n'>v/brief.md; }
+run(){ bash "$GATE" ./v "${1:-true}" >/tmp/g.out 2>&1; echo "exit=$? $(grep -m1 -E 'GATE (FAIL|PASS)' /tmp/g.out)"; }
+ok; printf 'g\n## Decision: GO\nNO-GO if exists\n'>v/brief.md; run true      # A6 -> PASS
+ok; printf 'g\n## Decision: NO-GO\n'>v/brief.md; run true                    # A7 -> FAIL
+ok; run false                                                               # A9 -> FAIL
+ok; run true                                                                # A10 -> PASS
+```
+
+Pass criterion: all 11 rows match. (A6/A7/A9/A10 verified during development; the rest are quick.)
+
+---
+
+## Tier B — per-mode happy-path E2E
+
+For each, run `/just-do-it <objective>` in a fresh `git init` dir and inspect the vault + gate output.
+
+### B1 — GREENFIELD (ship a new app)
+- Objective: `build a small CLI todo app with JSON persistence and ship it`.
+- Expect: mode stated GREENFIELD; topology fans out at Validate; `docs/changelog/<date>-cli-todo*/`
+  created with the 6 files; `brief.md` has a `## Validation` ending `Decision: GO`; `plan.md` frozen;
+  `claims.md` has ≥1 entry with `run-to-prove`; `verification.md` ends `verdict: GREEN`; committee
+  approves; **`delivery-gate.sh` exits 0** (paste output); a commit exists.
+- Pass: gate exit 0 + suite green + 6-file vault present + a working `todo add/list/done`.
+
+### B2 — DEBUG (root-cause a hard bug)
+- Fixture: copy `examples/url-shortener`, apply the **lost-update fixture** (Appendix 1). The suite
+  still passes (the bug is concurrency-only) — this is the realistic trap.
+- Objective: `stats undercount hits on popular links under concurrent traffic — fix it`.
+- Expect: mode DEBUG, single-driver; **read-only until approval** (no source edit before the
+  approval line in `state.json`); Reproduce writes a *failing* concurrency test; Diagnose records
+  competing hypotheses in `README.md` and the fix plan in `plan.md`; after approval, Fix; Verify
+  re-runs repro GREEN + full suite + stability (no flake); gate exit 0.
+- Pass: failing-before → passing-after repro; zero source edits before approval; verification GREEN.
+
+### B3 — LEGACY (add a feature to existing code)
+- Fixture: clean `examples/url-shortener`.
+- Objective: `add an optional per-link click cap (max redirects) to the existing shortener`.
+- Expect: mode LEGACY; Explore writes a file:line code map to `README.md`; surgical frozen `plan.md`
+  with backward-compat note; approval before Build; Build matches existing style (no unrelated
+  churn); Verify confirms the **pre-existing suite still passes** + new tests; gate exit 0.
+- Pass: no regressions (old tests green) + new behavior tested + minimal diff.
+
+### B4 — GREENFIELD NO-GO (the validate gate stops a bad idea)
+- Objective: `build yet another generic todo app identical to the dozens that exist`.
+- Expect: Validate concludes `Decision: NO-GO`; the harness **STOPS and reports**; **no Build, no
+  code written**; the gate is never reached.
+- Pass: zero source files created; a NO-GO rationale is produced.
+
+---
+
+## Tier C — guardrail / failure-mode tests
+
+### C1 — builder ≠ verifier catches a real bug
+- Inject an SSRF gap (Appendix 2) so the builder's own tests pass but an adversarial probe fails.
+- Expect: Verify returns RED with the specific bypass → rewind to Build → fix → Verify GREEN.
+- Pass: the bug never reaches Deliver; the rewind is recorded in `README.md`.
+
+### C2 — circuit breaker
+- Force an unfixable failure (e.g., a test that asserts an impossible postcondition).
+- Expect: after the **same error 3×**, the harness STOPS, writes the root cause to `README.md`, and
+  escalates to the user. No infinite loop; ≤5 cycles total.
+- Pass: run terminates with an escalation, not a hang.
+
+### C3 — frozen plan
+- Mid-Build, introduce a requirement that contradicts `plan.md`.
+- Expect: the change is flagged as scope drift, not silently absorbed; plan stays frozen (a re-plan
+  is an explicit step, logged).
+- Pass: `plan.md` unchanged during Build.
+
+### C4 — approval gate (DEBUG/LEGACY)
+- Expect: `state.json.approval` is `null` until the user approves; no file under the project's
+  source tree is modified while it is `null`.
+- Pass: `git status` shows no source changes before approval is recorded.
+
+### C5 — read-scope isolation
+- Inspect the dispatched Verifier subagent prompt.
+- Expect: its READ set is `claims.md` + code only — never `plan.md`/`brief.md`.
+- Pass: prompt contains no plan/brief content.
+
+---
+
+## Tier D — vault & artifact-layout tests (run after any Tier B)
+
+- D1: vault is at `docs/changelog/<date>-<slug>/` (not `./.just-do-it/`).
+- D2: exactly six files: `README.md`, `brief.md`, `plan.md`, `claims.md`, `verification.md`,
+  `state.json` (no separate `validation.md`/`architecture.md`/`contracts.md`/`qa-report.md`/
+  `decisions.log`).
+- D3: `brief.md` contains a `## Validation` section (greenfield) ending in a `Decision:` line.
+- D4: `verification.md` contains a `## QA` section (when QA ran) and a final aggregate `verdict:`.
+- D5: the vault is **committed** with the code (not gitignored) — `git ls-files` lists it.
+
+Check: `ls docs/changelog/*/` and `git ls-files docs/changelog/`.
+
+---
+
+## Tier E — verification adequacy ("a green suite is not proof")
+
+- E1 — failing-before requirement: for B2/C1, confirm the new test **fails on the unfixed code** and
+  passes after the fix (Verify must record this).
+- E2 — suite sanity: temporarily break the implementation; the relevant test must go RED. A test
+  that stays green on broken code is rejected by Verify.
+- Pass: Verify explicitly demonstrates red-before / green-after, not just a final green.
+
+---
+
+## Tier F — docs/consistency lint (cheap, run on every change)
+
+- F1: every file named in `SKILL.md`'s reference map exists.
+- F2: no canonical skill doc references a removed vault file as a *current* artifact
+  (`validation.md`/`qa-report.md`/`decisions.log`/`architecture.md`/`contracts.md` may appear only in
+  migration notes). Grep: `grep -rnE '(validation|qa-report|architecture|contracts)\.md|decisions\.log' SKILL.md reference/ templates/delivery-gate.sh`.
+- F3: `delivery-gate.sh` passes `bash -n` and the Tier A matrix.
+- F4: landing `docs/index.html` has balanced `<section>`/`</section>` and the vault table lists the 6 files.
+
+---
+
+## Execution checklist
+
+```
+[ ] A  delivery-gate.sh 11/11 scenarios
+[ ] B1 GREENFIELD reaches gate exit 0
+[ ] B2 DEBUG: failing→passing repro, no pre-approval edits
+[ ] B3 LEGACY: zero regressions, minimal diff
+[ ] B4 NO-GO halts before Build
+[ ] C1 adversarial Verify catches the planted bug (RED→rewind)
+[ ] C2 circuit breaker terminates (no hang)
+[ ] C3 frozen plan holds
+[ ] C4 no source edits before approval
+[ ] C5 Verifier read-scope = claims + code only
+[ ] D  6-file vault at docs/changelog/<slug>/, committed
+[ ] E  red-before/green-after demonstrated
+[ ] F  docs lint clean
+```
+
+Overall PASS = every box checked. Any FAIL → file an issue with the exact gate output / vault diff.
+
+---
+
+## Appendix 1 — DEBUG fixture: lost-update race (reusable)
+
+In `examples/url-shortener/src/store.js`, move the read OUTSIDE the mutex so concurrent hits lose
+updates (suite still green; only a concurrency test exposes it):
+
+```js
+async function incrementHit(code) {
+  ensureInit();
+  const existing = links.get(code);          // <-- read hoisted out of enqueue() = the bug
+  if (!existing) return null;
+  return enqueue(async () => {
+    const updated = Object.freeze({ ...existing, hits: existing.hits + 1 });
+    links.set(code, updated);
+    await persist();
+    return updated;
+  });
+}
+```
+Symptom to feed DEBUG mode: "stats undercount hits on popular links under concurrent traffic."
+
+## Appendix 2 — guardrail fixture: SSRF gap
+
+In `src/validate.js`, drop the IPv6 / FQDN-dot handling so `http://[::ffff:127.0.0.1]/` and
+`http://localhost./` are accepted. The builder's unit tests pass; an adversarial Verify probe of
+those hosts must fail → RED → rewind. (This is the real defect the GREENFIELD live run caught.)
+
+## Non-goals / limitations of this plan
+
+- Tier B Validate depends on live web-search availability; offline, demand evidence is degraded
+  (the gate still works, but the Validate content is weaker).
+- Browser QA (Playwright/a11y) applies only to browser apps; CLI/library targets use integration
+  smoke instead.
+- Tiers B/C are token-heavy (many subagents) — run on releases, not every edit.

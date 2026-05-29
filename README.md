@@ -66,7 +66,7 @@ SKILL.md            thin spine: mode detection, gates, reference map
 reference/          pipeline · experts · vault · market-research · quality-gates · debugging
 templates/          delivery-gate.sh (the literal gate) · state.json
 DESIGN.md           research → decision mapping (cited)
-docs/               research-brief.md (fact-checked) + index.html (landing page)
+docs/               research-brief.md · e2e-test-plan.md · changelog/ · index.html (landing)
 examples/url-shortener/   a real service the harness built/debugged/extended, with harness-audit/
 ```
 

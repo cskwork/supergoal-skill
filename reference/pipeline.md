@@ -79,7 +79,7 @@ through Explore; approval before Build.
 | **Plan** | Surgical change plan: smallest blast radius, reuse existing utilities | map | `plan.md` (frozen) | plan touches only what the feature requires; reuse noted; **human approves** |
 | **Build** | Implement matching existing style; no unrelated refactors | plan | code, `claims.md` | slice tests pass; no formatting/rename churn in unrelated files |
 | **Verify** | Adversary re-runs claims; full existing suite must stay green | claims, suite | `verification.md` | all claims GREEN + pre-existing suite still GREEN (no regressions) |
-| **QA** | Exercise the new feature + smoke the surrounding flows | running app | `qa-report.md` | feature works + adjacent flows unbroken |
+| **QA** | Exercise the new feature + smoke the surrounding flows | running app | `verification.md` (`## QA`) | feature works + adjacent flows unbroken |
 | **Deliver** | Gate + package | all | commit / PR | `delivery-gate.sh` exits 0 |
 
 ---

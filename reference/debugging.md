@@ -23,7 +23,7 @@ repro state and destroy the evidence. Get the user's approval on the fix plan be
 2. **Localize.** Narrow to the smallest code region. `git bisect` to find the introducing commit when
    it's a regression; binary-search the input/state space; add instrumentation/logging rather than
    guessing.
-3. **Hypothesize (compete).** Write 2-3 candidate root causes to `decisions.log`, each with the
+3. **Hypothesize (compete).** Write 2-3 candidate root causes to `README.md`, each with the
    evidence **for and against**. Track uncertainty explicitly. Pick the next probe that best
    discriminates between them — don't tunnel on the first idea (the `tracer` agent's method).
 4. **Confirm.** One hypothesis must be backed by direct evidence (a log line, a failing assertion at
@@ -37,12 +37,12 @@ repro state and destroy the evidence. Get the user's approval on the fix plan be
 
 ## Circuit breaker
 
-Same error signature 3× → STOP. Write what was tried and the leading hypothesis to `decisions.log`
+Same error signature 3× → STOP. Write what was tried and the leading hypothesis to `README.md`
 and escalate to the user with the evidence. Thrashing on a wrong model wastes the most tokens of any
 failure mode; bound it.
 
 ## Persist everything to the vault
 
-Every probe result goes to `decisions.log` so a re-run or follow-up never re-investigates solved
+Every probe result goes to `README.md` so a re-run or follow-up never re-investigates solved
 ground (shared-blackboard finding, arxiv 2510.01285). Full isolation that discards findings forces
 redundant rework — the vault is what prevents it.

@@ -60,8 +60,8 @@ Mode with human approval before the first write**. Details in `reference/pipelin
 These are the spine. Never weaken or skip them; never edit a gate to make it pass
 (`reference/quality-gates.md`).
 
-1. **Validate-before-build** (GREENFIELD): no Build ticket opens until `validation.md` shows real
-   demand evidence and a scoped MVP. Kills "nobody wanted this" failures.
+1. **Validate-before-build** (GREENFIELD): no Build opens until brief.md's `## Validation` section
+   shows real demand evidence, a scoped MVP, and a `Decision: GO`. Kills "nobody wanted this" failures.
 2. **Plan freezes scope**: `plan.md` is written once and frozen; Build implements it, does not redesign.
 3. **Builder ≠ Verifier**: the agent that writes code does not get to approve it. A fresh **adversarial
    Verify** agent re-runs every `run-to-prove` command in `claims.md` from a clean state.
@@ -71,14 +71,16 @@ These are the spine. Never weaken or skip them; never edit a gate to make it pas
    an aggregate `verdict: GREEN` with no line-start `verdict: RED`, `Decision: GO` for greenfield, and
    the project's own tests pass. The skill cannot announce "done" otherwise.
 6. **Bounded retry + circuit breaker**: max 5 fix cycles per phase; the SAME error 3× → stop, write
-   the root cause to `decisions.log`, escalate to the user. Never loop forever.
+   the root cause to the run's `README.md`, escalate to the user. Never loop forever.
 
 ## The vault (only cross-phase state)
 
-Every run creates `./.just-do-it/<slug>/` — the single blackboard every phase reads from and writes
-to. Phases run as fresh subagent contexts, so the vault is how they communicate. Full contract in
-`reference/vault.md`. Core files: `brief.md`, `validation.md` (greenfield), `plan.md` (frozen),
-`claims.md` (append-only, untrusted), `verification.md` (verdicts), `decisions.log`, `state.json`.
+Every run creates `docs/changelog/<date>-<slug>/` in the target repo — the single blackboard every
+phase reads from and writes to, committed as the run's permanent changelog. Phases run as fresh
+subagent contexts, so the vault is how they communicate. Full contract in `reference/vault.md`.
+Six files: `README.md` (audit log), `brief.md` (incl. `## Validation` + `Decision:` for greenfield),
+`plan.md` (frozen; incl. architecture + contracts), `claims.md` (append-only, untrusted),
+`verification.md` (verdicts + `## QA`), `state.json`.
 
 ## Expert roster
 
@@ -112,5 +114,5 @@ separation by read-scope). Model tier is matched to task complexity (Haiku/Sonne
 - [ ] Every `claims.md` entry has a GREEN verdict in `verification.md` from the adversarial pass
 - [ ] architect + security + code-review all approved
 - [ ] `delivery-gate.sh` exited 0 — paste the output as evidence
-- [ ] `decisions.log` captures the key choices and any escalations
+- [ ] the run's `README.md` captures the key choices and any escalations
 - [ ] Reported what was verified, with command output — no unverified "done"

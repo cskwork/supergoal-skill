@@ -4,7 +4,7 @@
 # NEVER edit this script to make a failing run pass — fix the work instead.
 #
 # Usage: delivery-gate.sh <vault-dir> [test-command]
-#   <vault-dir>     e.g. ./.just-do-it/my-objective
+#   <vault-dir>     the run's changelog folder, e.g. docs/changelog/2026-05-30-my-objective
 #   [test-command]  optional; if omitted, auto-detected from the project
 #
 # Exit 0 only if: required vault artifacts exist, verification is GREEN with no RED,
@@ -34,15 +34,15 @@ if grep -qi '^verdict:[[:space:]]*RED' "$VAULT/verification.md"; then
 fi
 pass "verification GREEN, no RED"
 
-# 3) GREENFIELD only: the decision line must be GO (NO-GO must never reach delivery).
-#    Match the explicit "Decision:" line, not prose — so a validation.md that merely discusses
-#    NO-GO criteria still passes when its decision is GO.
-if [ -f "$VAULT/validation.md" ]; then
-  grep -qiE '^(#+[[:space:]]*)?Decision:[[:space:]]*GO\b' "$VAULT/validation.md" \
-    || fail "no 'Decision: GO' line in validation.md"
-  if grep -qiE '^(#+[[:space:]]*)?Decision:[[:space:]]*NO-?GO\b' "$VAULT/validation.md"; then
-    fail "validation.md decision is NO-GO — building on spec is forbidden"
+# 3) If a Decision line exists (greenfield validation lives in brief.md), it must be GO.
+#    Match the explicit "Decision:" line, not prose — so a brief that merely discusses NO-GO
+#    criteria still passes when its decision is GO. DEBUG/LEGACY briefs have no Decision line.
+if grep -qiE '^(#+[[:space:]]*)?Decision:' "$VAULT/brief.md"; then
+  if grep -qiE '^(#+[[:space:]]*)?Decision:[[:space:]]*NO-?GO\b' "$VAULT/brief.md"; then
+    fail "brief.md decision is NO-GO — building on spec is forbidden"
   fi
+  grep -qiE '^(#+[[:space:]]*)?Decision:[[:space:]]*GO\b' "$VAULT/brief.md" \
+    || fail "brief.md has a Decision line but it is not GO"
   pass "validation GO"
 fi
 

@@ -74,7 +74,7 @@ examples/url-shortener/   a real service the harness built/debugged/extended, wi
 
 All three modes were run end-to-end on a real, production-grade service (a zero-dependency URL
 shortener — see [`examples/url-shortener/`](examples/url-shortener/), 68 tests). The audit trail for
-each run is in [`examples/url-shortener/harness-audit/`](examples/url-shortener/harness-audit/).
+each run is in [`examples/url-shortener/docs/changelog/`](examples/url-shortener/docs/changelog/) (these early run records predate the file-set consolidation).
 
 - **GREENFIELD** — the adversarial Verify caught **2 real SSRF bypasses** (`[::ffff:127.0.0.1]`,
   `localhost.`) and an unauth-500 that all passed the builder's own green tests, before shipping.

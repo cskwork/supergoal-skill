@@ -194,11 +194,11 @@
              └─────────┴─────────┴────┬────┴─────────┴─────────┘
                                       ▼
               ┌───────────────────────────────────────────────┐
-              │   VAULT   ./.just-do-it/&lt;slug&gt;/                 │  one shared blackboard.
-              │   brief · validation · plan (frozen)           │  every phase is a fresh
-              │   claims (untrusted) · verification            │  context, so the vault is
-              │   qa-report · decisions.log · state.json       │  how phases hand off.
-              └───────────────────────────────────────────────┘
+              │  VAULT   docs/changelog/&lt;date-slug&gt;/            │  one shared blackboard,
+              │  README (audit log) · brief (+Validation)      │  committed as the run's
+              │  plan (frozen, +arch) · claims (untrusted)     │  changelog. Each phase is a
+              │  verification (+QA) · state.json               │  fresh context — the vault
+              └───────────────────────────────────────────────┘  is how they hand off.
   </pre></div>
   <p class="note">Why this shape (the converged 2026 multi-agent pattern): an orchestrator that ingests
     only summaries keeps its context clean and cost predictable — token spend explains ~80% of
@@ -278,18 +278,18 @@
 
 <section id="vaultsec"><div class="wrap">
   <h2>The vault — the only shared state</h2>
-  <p class="lead">Two rules make it trustworthy: <b>claims.md is untrusted</b> (only the Verifier sets a
-    verdict, by re-running the proof) and <b>frozen files stay frozen</b> (the plan can't drift
-    mid-build). On a re-run, <code>state.json</code> resumes at the current phase.</p>
+  <p class="lead">Each phase is a fresh context, so the vault <code>docs/changelog/&lt;date-slug&gt;/</code>
+    (committed as the run's changelog) is the only hand-off — just six files. Two rules make it
+    trustworthy: <b>claims.md is untrusted</b> (only the Verifier sets a verdict, by re-running the
+    proof) and <b>frozen files stay frozen</b> (the plan can't drift mid-build). On a re-run,
+    <code>state.json</code> resumes at the current phase.</p>
   <table class="tbl">
     <tr><th>File</th><th>Written by</th><th>Holds</th></tr>
-    <tr><td><code>brief.md</code></td><td>Analyst</td><td>goal, audience, machine-checkable acceptance criteria</td></tr>
-    <tr><td><code>validation.md</code></td><td>Analyst</td><td>demand evidence + a <code>Decision: GO/NO-GO</code> line (greenfield)</td></tr>
-    <tr><td><code>plan.md</code></td><td>Architect</td><td>frozen slice plan — or the approved fix plan in DEBUG</td></tr>
+    <tr><td><code>README.md</code></td><td>any</td><td>run narrative + decisions, hypotheses, escalations — the audit log &amp; folder index</td></tr>
+    <tr><td><code>brief.md</code></td><td>Analyst</td><td>goal, audience, acceptance criteria + a <code>## Validation</code> section ending in <code>Decision: GO/NO-GO</code> (greenfield)</td></tr>
+    <tr><td><code>plan.md</code></td><td>Architect</td><td>frozen slice plan (+ architecture &amp; contracts) — or the approved fix plan in DEBUG</td></tr>
     <tr><td><code>claims.md</code></td><td>Builder</td><td>append-only, <b>untrusted</b> — each slice + a <code>run-to-prove</code> command</td></tr>
-    <tr><td><code>verification.md</code></td><td>Verifier</td><td>per-claim verdicts + a final aggregate <code>verdict: GREEN</code></td></tr>
-    <tr><td><code>qa-report.md</code></td><td>QA</td><td>black-box results, screenshot/log refs</td></tr>
-    <tr><td><code>decisions.log</code></td><td>any</td><td>choices, hypotheses, escalations — the audit trail</td></tr>
+    <tr><td><code>verification.md</code></td><td>Verifier + QA</td><td>per-claim verdicts + a final aggregate <code>verdict: GREEN</code>, plus a <code>## QA</code> section</td></tr>
     <tr><td><code>state.json</code></td><td>orchestrator</td><td>mode, phase, cycle counters, approval gate, resume point</td></tr>
   </table>
 </div></section>
@@ -341,7 +341,7 @@
 <section id="how"><div class="wrap">
   <h2>How it stays honest</h2>
   <div class="feat">
-    <div class="card"><h3><span class="k">vault</span> One shared blackboard</h3><p>Every phase runs as a fresh subagent context and communicates only through <code>./.just-do-it/&lt;slug&gt;/</code> — brief, frozen plan, append-only untrusted claims, verdicts, decisions log.</p></div>
+    <div class="card"><h3><span class="k">vault</span> One shared blackboard</h3><p>Every phase runs as a fresh subagent context and communicates only through <code>docs/changelog/&lt;date-slug&gt;/</code> (committed as the run's changelog) — README audit log, brief (+validation), frozen plan, untrusted claims, verdicts (+QA), state.json.</p></div>
     <div class="card"><h3><span class="k">summaries</span> No raw transcripts</h3><p>The orchestrator ingests compressed subagent summaries, never their full transcripts — the converged 2026 multi-agent pattern. Context stays clean, cost stays predictable.</p></div>
     <div class="card"><h3><span class="k">verify</span> Re-run, don't trust</h3><p>Each claim carries a <code>run-to-prove</code> command. A fresh adversary re-executes it from clean state and validates the test suite itself (fail-before-fix), so a green run on a flawed suite can't pass as done.</p></div>
     <div class="card"><h3><span class="k">roles</span> Read-scoped experts</h3><p>analyst · architect · executor · verifier · security-reviewer · code-reviewer · qa-tester · debugger — each pinned to a model tier and the minimum vault read-set, so a critic never inherits the coder's rationalizations.</p></div>

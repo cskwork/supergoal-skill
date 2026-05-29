@@ -13,14 +13,14 @@ predictable cost (token spend explains ~80% of multi-agent performance variance 
 
 | Role | agent type | Model tier | Reads (vault) | Produces |
 |---|---|---|---|---|
-| Analyst (Intake/Validate) | `analyst` | Opus | objective | `brief.md`, `validation.md` |
-| Architect (Plan/Explore) | `architect` | Opus | brief, validation, map | `plan.md`, `architecture.md` |
-| Builder | `executor` | Sonnet (Opus if novel/algorithmic) | plan, contracts | code + `claims.md` entry |
+| Analyst (Intake/Validate) | `analyst` | Opus | objective | `brief.md` (incl. `## Validation`) |
+| Architect (Plan/Explore) | `architect` | Opus | brief, README map | `plan.md` (incl. architecture + contracts) |
+| Builder | `executor` | Sonnet (Opus if novel/algorithmic) | plan | code + `claims.md` entry |
 | Verifier (adversary) | `verifier` / `critic` | Opus | `claims.md` + code only | `verification.md` verdicts |
 | Security reviewer | `security-reviewer` | Sonnet | diff | findings |
 | Code reviewer | `code-reviewer` | Sonnet | diff + `plan.md` | findings |
-| QA | `qa-tester` | Sonnet | running app | `qa-report.md` |
-| Debugger (DEBUG mode) | `debugger` / `tracer` | Opus | repo, repro | root cause to `decisions.log` |
+| QA | `qa-tester` | Sonnet | running app | `verification.md` (`## QA`) |
+| Debugger (DEBUG mode) | `debugger` / `tracer` | Opus | repo, repro | root cause to `README.md` |
 
 Architect/editor split inside Build (Aider architect-mode evidence, directional): the architect
 produces the diff intent / plan, the executor emits the actual edits. A reasoning pass plans, a

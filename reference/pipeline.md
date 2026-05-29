@@ -4,6 +4,9 @@ Forward-only lanes (borrowed from oh-my-symphony `lanes.md`). A phase opens only
 phase's **exit gate** passed. Gates are machine-checkable, not vibes. Backward edges exist only as
 explicit rewinds (Verify/QA can re-open Build).
 
+The vault for a run is `docs/changelog/<date>-<slug>/` in the target repo (a tracked, browsable
+changelog — not hidden scratch); every phase reads/writes there. Six files only — see `vault.md`.
+
 ## Topology rule (apply before dispatching any phase)
 
 Research consensus (Cognition + Anthropic, mid-2025; LangChain "how/when to build multi-agent
@@ -24,7 +27,7 @@ Before running a phase, check the vault for an upstream artifact that already sa
 - A `brainstorming`/`deep-interview` spec present → skip Intake elaboration.
 - A `ralplan`/`writing-plans` plan present → treat as `plan.md`, skip Plan (still freeze it).
 - An existing PRD / issue with acceptance criteria → seed `brief.md` directly.
-Log every skip to `decisions.log`.
+Log every skip to `README.md`.
 
 ---
 
@@ -33,11 +36,11 @@ Log every skip to `decisions.log`.
 | Phase | Goal | Reads | Writes | Exit gate (must pass to advance) |
 |---|---|---|---|---|
 | **Intake** | Turn objective into a brief (goal, audience, done-criteria, non-goals) | objective | `brief.md`, `state.json` | `brief.md` has explicit, machine-checkable acceptance criteria |
-| **Validate** | Prove real demand + scope an MVP (see `market-research.md`) | `brief.md` | `validation.md` | `validation.md` ends with exactly one `Decision: GO` / `Decision: NO-GO` line. **NO-GO → stop, report.** Do not build on spec |
-| **Plan** | Decompose into independently-testable slices; choose stack; define contracts | `brief.md`,`validation.md` | `plan.md` (frozen), `architecture.md`, `contracts.md` | `plan.md` task table exists, every slice ≤5 files / ≤~500 lines, each has an acceptance check |
-| **Build** | Implement each slice (architect→editor split); write a claim per slice | `plan.md`,`architecture.md`,`contracts.md` | code, `claims.md` (append-only) | local tests for the slice pass + a `claims.md` entry with a `run-to-prove` command |
+| **Validate** | Prove real demand + scope an MVP (see `market-research.md`) | `brief.md` | `brief.md` (`## Validation`) | the `## Validation` section ends with exactly one `Decision: GO` / `Decision: NO-GO` line. **NO-GO → stop, report.** Do not build on spec |
+| **Plan** | Decompose into independently-testable slices; choose stack; define contracts | `brief.md` | `plan.md` (frozen; incl. Architecture + Contracts sections) | `plan.md` task table exists, every slice ≤5 files / ≤~500 lines, each has an acceptance check |
+| **Build** | Implement each slice (architect→editor split); write a claim per slice | `plan.md` | code, `claims.md` (append-only) | local tests for the slice pass + a `claims.md` entry with a `run-to-prove` command |
 | **Verify** | Adversary re-runs every claim from clean state (see `quality-gates.md`) | `claims.md`, code | `verification.md` | every claim GREEN, ending in one aggregate `verdict: GREEN` line (no line-start `verdict: RED`); any RED rewinds to Build |
-| **QA** | Black-box exercise the running app (conditional on app type) | running app | `qa-report.md` | golden + edge + a11y pass for browser apps; CLI/lib: integration smoke passes |
+| **QA** | Black-box exercise the running app (conditional on app type) | running app | `verification.md` (`## QA`) | golden + edge + a11y pass for browser apps; CLI/lib: integration smoke passes |
 | **Deliver** | Run the literal gate; package | all | commit / PR | `templates/delivery-gate.sh` exits 0 — paste output |
 
 ---
@@ -50,7 +53,7 @@ Single-driver topology. Open in Plan Mode (read-only) through Diagnose; get appr
 |---|---|---|---|---|
 | **Intake** | Capture symptom, environment, expected vs actual | objective | `brief.md` | symptom + expected behavior stated |
 | **Reproduce** | Get a deterministic, **failing** reproduction | repo, logs | a failing test / repro script, `claims.md` | repro **fails** on current code in a clean sandbox (red proven) |
-| **Diagnose** | Hypothesis-driven root cause (see `debugging.md`) | repo, repro | `decisions.log` (hypotheses + evidence), `plan.md` (approved fix plan, frozen) | one hypothesis confirmed by evidence; **human approves the fix plan** |
+| **Diagnose** | Hypothesis-driven root cause (see `debugging.md`) | repo, repro | `README.md` (hypotheses + evidence), `plan.md` (approved fix plan, frozen) | one hypothesis confirmed by evidence; **human approves the fix plan** |
 | **Fix** | Smallest change at the root cause | confirmed cause | code patch | the previously-failing repro now **passes** |
 | **Verify** | Re-run repro + full suite in clean sandbox; regression review | patch, suite | `verification.md` | repro GREEN + full suite GREEN + no new failures; ends in one aggregate `verdict: GREEN` line |
 | **Deliver** | Gate + package | all | commit / PR | `delivery-gate.sh` exits 0 |
@@ -72,7 +75,7 @@ through Explore; approval before Build.
 | Phase | Goal | Reads | Writes | Exit gate |
 |---|---|---|---|---|
 | **Intake** | Feature spec + acceptance criteria | objective | `brief.md` | acceptance criteria stated |
-| **Explore** | Map the affected code with file:line evidence (use `explore` skill/agent) | repo | `architecture.md` (map), `decisions.log` | entry points, call paths, blast radius documented with citations |
+| **Explore** | Map the affected code with file:line evidence (use `explore` skill/agent) | repo | `README.md` (codebase map + citations) | entry points, call paths, blast radius documented with citations |
 | **Plan** | Surgical change plan: smallest blast radius, reuse existing utilities | map | `plan.md` (frozen) | plan touches only what the feature requires; reuse noted; **human approves** |
 | **Build** | Implement matching existing style; no unrelated refactors | plan | code, `claims.md` | slice tests pass; no formatting/rename churn in unrelated files |
 | **Verify** | Adversary re-runs claims; full existing suite must stay green | claims, suite | `verification.md` | all claims GREEN + pre-existing suite still GREEN (no regressions) |
@@ -84,8 +87,8 @@ through Explore; approval before Build.
 ## Rewinds & circuit breaker
 
 - Verify RED or QA fail → rewind to Build/Fix with the specific failure.
-- **Max 5 fix cycles per phase.** Same error signature 3× → STOP, write root cause to
-  `decisions.log`, escalate to user (from autopilot/ultraqa circuit breaker). Never loop forever.
+- **Max 5 fix cycles per phase.** Same error signature 3× → STOP, write root cause to the run's
+  `README.md`, escalate to user (from autopilot/ultraqa circuit breaker). Never loop forever.
 - Each phase runs as a **fresh subagent context** that reads only its allowed vault files
   (role separation by read-scope) and returns a **compressed summary**, never its raw transcript
   (the converged 2026 orchestrator pattern — flowhunt.io; LangChain; Anthropic multi-agent system).

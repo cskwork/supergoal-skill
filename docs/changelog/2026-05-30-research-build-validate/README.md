@@ -56,3 +56,18 @@ The gate's `Decision:` logic was re-tested across four scenarios after the fix (
 - DEBUG/LEGACY default to **single-driver + read-only Plan Mode + approval before the first write**;
   only GREENFIELD validation/scaffolding fans out (task topology picks the architecture).
 - Repo visibility: **public** (a private free-plan repo can't publish GitHub Pages).
+
+## Update — vault relocation + file consolidation
+
+Per request, the harness now writes a run's working docs into **`docs/changelog/<date>-<slug>/`** (a
+tracked, browsable changelog committed with the code) instead of a hidden `./.just-do-it/` scratch
+dir — so every project the harness touches keeps a permanent decision record (this folder is exactly
+that, for building the skill).
+
+Reduced the vault from **10 files to 6** without losing information, merging only where it doesn't
+break read-scope (a subagent reads just its slice): `validation.md` → `brief.md`'s `## Validation`;
+`architecture.md` + `contracts.md` → `plan.md` sections; `qa-report.md` → `verification.md`'s `## QA`;
+`decisions.log` → the folder's `README.md`. Kept separate (load-bearing for builder ≠ verifier):
+`plan.md`, `claims.md`, `verification.md`. The delivery gate now reads the `Decision:` line from
+`brief.md`. The earlier example run-records under `examples/url-shortener/docs/changelog/` predate
+this consolidation and keep their original, more granular file set.

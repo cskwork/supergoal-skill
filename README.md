@@ -9,6 +9,10 @@ single shared vault, untrusted `claims.md` re-verified by an adversary, a litera
 that is never edited to pass — but strips the heavy Symphony CLI / TUI / worktree infrastructure.
 Everything runs in-session with the `Task`/`Agent` tool. **Nothing to install but the skill itself.**
 
+> **New here? Start with the landing page** → **[cskwork.github.io/just-do-it-skill](https://cskwork.github.io/just-do-it-skill/)**
+> — a bilingual (English / 한국어) walkthrough with a 3-step quickstart, the three modes, how the
+> builder-vs-verifier split catches real bugs, and the evidence it produces. Best onboarding path before you clone.
+
 ## Three modes
 
 `/just-do-it` detects the mode from your objective:

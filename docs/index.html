@@ -162,7 +162,7 @@
       <h3>Root-cause a hard bug</h3>
       <p>Single-driver, read-only Plan Mode, reproduce-first. Competing hypotheses with evidence,
         a discriminating probe, and approval before any write.</p>
-      <div class="pipe">Intake → Reproduce → Diagnose → <b>approve</b> → Fix → Verify → Deliver</div>
+      <div class="pipe">Intake → Reproduce → <b>Diagnose</b> (approve) → Fix → Verify → Deliver</div>
     </div>
     <div class="card blue">
       <div class="mode">legacy</div>
@@ -229,8 +229,7 @@
   <div class="flow">
     <div class="step">Intake<small>symptom</small></div><div class="arr">→</div>
     <div class="step">Reproduce<small>failing test (red)</small></div><div class="arr">→</div>
-    <div class="step">Diagnose<small>competing hypotheses</small></div><div class="arr">→</div>
-    <div class="step gate">approve<small>human · before write</small></div><div class="arr">→</div>
+    <div class="step gate">Diagnose<small>hypotheses + human approve</small></div><div class="arr">→</div>
     <div class="step">Fix<small>root cause</small></div><div class="arr">→</div>
     <div class="step">Verify<small>repro green + suite</small></div><div class="arr">→</div>
     <div class="step gate">Deliver</div>
@@ -330,7 +329,8 @@
   <h2>Proof it works</h2>
   <p class="lead">All three modes were run end-to-end on one real, zero-dependency service (68 tests).
     Adversarial verification caught a real defect in 2 of 3 runs — bugs that passed the builder's own
-    green tests. Full audit trail ships in <code>examples/url-shortener/harness-audit/</code>.</p>
+    green tests. Full audit trail ships in <code>examples/url-shortener/docs/changelog/</code>
+    (early run records predate the 6-file vault consolidation — those have since been reconciled).</p>
   <div class="evi">
     <div class="row"><span class="badge b-green">GREENFIELD</span><span class="what"><b>2 real SSRF bypasses + an unauth 500</b> caught by adversarial verify — all passed the builder's 43 green tests. Fixed before shipping.</span></div>
     <div class="row"><span class="badge b-red">DEBUG</span><span class="what">Given only a symptom, reproduced a <b>lost-update race</b> (200 concurrent → 1/200), root-caused it, fixed it, re-verified 0 lost across 10 trials.</span></div>

@@ -38,10 +38,10 @@ is `true`/`false` to isolate gate logic from a real suite.
 | A2 | brief only | FAIL "plan.md missing" |
 | A3 | brief+plan, no verification | FAIL "verification.md missing" |
 | A4 | verification with no `verdict: GREEN` line | FAIL "no 'verdict: GREEN'" |
-| A5 | verification has a line-start `verdict: RED` | FAIL "verdict: RED remains" |
+| A5 | verification.md contains a `verdict: GREEN` line AND a subsequent line-start `verdict: RED` | FAIL "verdict: RED remains" — note: the paste-run harness below has no explicit A5 case; test manually |
 | A6 | brief has `Decision: GO` + prose mentioning NO-GO | PASS |
 | A7 | brief has `Decision: NO-GO` | FAIL "decision is NO-GO" |
-| A8 | brief has no `Decision:` line (DEBUG/LEGACY) | PASS (validation skipped) |
+| A8 | brief has no `Decision:` line | PASS — gate rule: *if* a `Decision:` line is present it must be `GO`; greenfield writes one, DEBUG/LEGACY do not (validation skipped for them) |
 | A9 | all artifacts valid + test-cmd `false` | FAIL "test suite did not pass" |
 | A10 | all artifacts valid + test-cmd `true` | PASS, exit 0 |
 | A11 | valid artifacts, no test-cmd, no detectable runner | FAIL "no test command…" |
@@ -76,14 +76,19 @@ For each, run `/just-do-it <objective>` in a fresh `git init` dir and inspect th
 - Pass: gate exit 0 + suite green + 6-file vault present + a working `todo add/list/done`.
 
 ### B2 — DEBUG (root-cause a hard bug)
-- Fixture: copy `examples/url-shortener`, apply the **lost-update fixture** (Appendix 1). The suite
-  still passes (the bug is concurrency-only) — this is the realistic trap.
+- Fixture: copy `examples/url-shortener`, apply the **lost-update fixture** (Appendix 1) to
+  `src/store.js`. The committed suite already includes `test/hit-concurrency.test.js`, which is
+  currently GREEN on the correct store. Applying the fixture breaks that test immediately (suite
+  goes 67/68 RED) — this is the honest starting state, not a deceptive green.
 - Objective: `stats undercount hits on popular links under concurrent traffic — fix it`.
 - Expect: mode DEBUG, single-driver; **read-only until approval** (no source edit before the
-  approval line in `state.json`); Reproduce writes a *failing* concurrency test; Diagnose records
-  competing hypotheses in `README.md` and the fix plan in `plan.md`; after approval, Fix; Verify
-  re-runs repro GREEN + full suite + stability (no flake); gate exit 0.
-- Pass: failing-before → passing-after repro; zero source edits before approval; verification GREEN.
+  approval line in `state.json`); the existing `hit-concurrency.test.js` serves as the pre-existing
+  repro — Reproduce confirms it is RED on the broken store; Diagnose records competing hypotheses in
+  `README.md` and the fix plan in `plan.md`; after approval, Fix patches `src/store.js` to restore
+  the mutex-protected read; Verify re-runs the concurrency test GREEN + full suite (68/68) + stability
+  (no flake); gate exit 0.
+- Pass: concurrency test RED on broken store → GREEN after fix; zero source edits before approval;
+  verification GREEN (68/68).
 
 ### B3 — LEGACY (add a feature to existing code)
 - Fixture: clean `examples/url-shortener`.
@@ -104,8 +109,18 @@ For each, run `/just-do-it <objective>` in a fresh `git init` dir and inspect th
 ## Tier C — guardrail / failure-mode tests
 
 ### C1 — builder ≠ verifier catches a real bug
-- Inject an SSRF gap (Appendix 2) so the builder's own tests pass but an adversarial probe fails.
-- Expect: Verify returns RED with the specific bypass → rewind to Build → fix → Verify GREEN.
+- Inject the SSRF gap (Appendix 2) into `src/validate.js`. The committed
+  `test/validate.test.js` already asserts that `http://[::ffff:127.0.0.1]/` and
+  `http://localhost./` are rejected (lines 38 and 40). Applying the fixture with those assertions
+  in place fails 2 of 30 validate tests directly (28/30 RED) — the unit suite catches it before
+  any adversarial Verify step, making the C1 scenario moot.
+- **To exercise the adversarial-Verify path** you must first remove those two test entries from
+  `validate.test.js` (lines 38 and 40) so the builder's suite is green (28/28) while the gap exists
+  in `validate.js`; then Verify's adversarial probe of those hosts returns RED → rewind to Build →
+  fix → Verify GREEN.
+- Expect: without that setup step, the committed regression tests already guard the gap (no bypass
+  survives to Verify). With the setup step: Verify RED with the specific bypass → rewind →
+  fix → Verify GREEN.
 - Pass: the bug never reaches Deliver; the rewind is recorded in `README.md`.
 
 ### C2 — circuit breaker
@@ -137,7 +152,8 @@ For each, run `/just-do-it <objective>` in a fresh `git init` dir and inspect th
 - D1: vault is at `docs/changelog/<date>-<slug>/` (not `./.just-do-it/`).
 - D2: exactly six files: `README.md`, `brief.md`, `plan.md`, `claims.md`, `verification.md`,
   `state.json` (no separate `validation.md`/`architecture.md`/`contracts.md`/`qa-report.md`/
-  `decisions.log`).
+  `decisions.log`). The shipped `examples/url-shortener` has been migrated to this 6-file layout,
+  so D2 examples now pass against the committed tree.
 - D3: `brief.md` contains a `## Validation` section (greenfield) ending in a `Decision:` line.
 - D4: `verification.md` contains a `## QA` section (when QA ran) and a final aggregate `verdict:`.
 - D5: the vault is **committed** with the code (not gitignored) — `git ls-files` lists it.
@@ -192,7 +208,10 @@ Overall PASS = every box checked. Any FAIL → file an issue with the exact gate
 ## Appendix 1 — DEBUG fixture: lost-update race (reusable)
 
 In `examples/url-shortener/src/store.js`, move the read OUTSIDE the mutex so concurrent hits lose
-updates (suite still green; only a concurrency test exposes it):
+updates. The committed suite already includes `test/hit-concurrency.test.js`, which asserts that
+200 concurrent `incrementHit()` calls yield `hits === 200`. Applying this fixture makes that test
+fail immediately (suite goes **67/68 RED**); the debug session must root-cause `src/store.js` and
+restore the mutex-protected read to return to 68/68 GREEN.
 
 ```js
 async function incrementHit(code) {
@@ -212,8 +231,18 @@ Symptom to feed DEBUG mode: "stats undercount hits on popular links under concur
 ## Appendix 2 — guardrail fixture: SSRF gap
 
 In `src/validate.js`, drop the IPv6 / FQDN-dot handling so `http://[::ffff:127.0.0.1]/` and
-`http://localhost./` are accepted. The builder's unit tests pass; an adversarial Verify probe of
-those hosts must fail → RED → rewind. (This is the real defect the GREENFIELD live run caught.)
+`http://localhost./` are accepted.
+
+**Important:** the committed `test/validate.test.js` already asserts both bypass hosts are rejected
+(line 38: `"http://[::ffff:127.0.0.1]/"` and line 40: `"http://localhost./"` in the `SSRF_HOSTS`
+array). Applying the `validate.js` fixture with those assertions present fails 2 of 30 validate
+tests (28/30 RED) — the unit suite catches the bug before any adversarial Verify step.
+
+To use this fixture for a C1 adversarial-Verify drill, first remove those two entries from
+`SSRF_HOSTS` in `validate.test.js` (lines 38 and 40) so the builder's suite is green (28/28)
+while the gap exists in `validate.js`. Then Verify's adversarial probe of those hosts returns
+RED → rewind → fix → Verify GREEN. (This is the real defect the GREENFIELD live run caught;
+the regression tests now guard it in the committed tree.)
 
 ## Non-goals / limitations of this plan
 

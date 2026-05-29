@@ -67,6 +67,14 @@
   .pipe{font-family:var(--mono);font-size:11.5px;color:var(--faint);line-height:1.8;word-spacing:-2px}
   .pipe b{color:var(--ink);font-weight:600}
 
+  /* numbered quickstart steps */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px}
+  @media(max-width:820px){.steps{grid-template-columns:1fr}}
+  .steps .step{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:18px 20px}
+  .steps .num{font-family:var(--mono);color:var(--acc);font-size:13px}
+  .steps h3{margin:6px 0 4px;font-size:17px}
+  .steps p{color:var(--dim);font-size:14px;margin:0}
+
   .gates{display:grid;grid-template-columns:1fr 1fr;gap:12px 26px}
   @media(max-width:820px){.gates{grid-template-columns:1fr}}
   .gate{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px dashed var(--line)}
@@ -82,11 +90,6 @@
   .evi .b-red{background:#2a1414;color:#fca5a5;border:1px solid #5b2626}
   .evi .b-blue{background:#0e2433;color:#bae6fd;border:1px solid #1d4d66}
   .evi .what{color:var(--dim)} .evi .what b{color:var(--ink)}
-
-  .feat{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  @media(max-width:820px){.feat{grid-template-columns:1fr}}
-  .feat .card h3{font-size:16px;display:flex;gap:8px;align-items:center}
-  .feat .card h3 .k{color:var(--acc2);font-family:var(--mono);font-size:13px}
 
   footer{padding:40px 0 70px;color:var(--faint);font-size:14px;border-top:1px solid var(--line)}
   footer a{color:var(--dim)}
@@ -122,12 +125,12 @@
   <div class="eyebrow">Claude Code skill</div>
   <h1><span class="slash">/</span>just-do-it</h1>
   <p class="tag">One objective in, a verified result out.</p>
-  <p class="sub">Hand it a whole objective. It decomposes the work, dispatches expert subagents through a
-    forward-only pipeline, and <b>refuses to declare success until a machine-checkable gate passes</b> —
-    not until the agent feels done. The conductor never writes the production code; it makes the
-    musicians prove every note.</p>
+  <p class="sub">Hand it a whole objective — "build X", "fix this bug", "add this feature". It splits the
+    work into phases, sends each to a focused expert subagent, and <b>won't say "done" until a script —
+    not the agent's own opinion — confirms the work passes</b>. The skill directs the work; it never
+    writes the production code itself, and the agent that writes code never gets to approve it.</p>
   <div class="cta">
-    <a class="btn primary" href="#install">▸ Install</a>
+    <a class="btn primary" href="#quickstart">▸ Get started</a>
     <a class="btn" href="#lifecycle">How it works</a>
     <a class="btn" href="#proof">See what it caught</a>
     <a class="btn" href="https://github.com/cskwork/just-do-it-skill">Source</a>
@@ -137,84 +140,74 @@
     <div class="bar"><i></i><i></i><i></i></div>
 <pre><span class="p">›</span> <span class="c">/just-do-it</span> build a production URL shortener and ship it
 <span class="g">  mode: GREENFIELD · Validate → Plan → Build → Verify → QA → Deliver</span>
-<span class="g">  build → 43 tests pass (builder self-report, untrusted)</span>
-<span class="w">  verify → RED: 2 real SSRF bypasses the tests missed → rewind</span>
-<span class="ok">  verify → GREEN · committee APPROVE · gate exit 0 → shipped</span></pre>
+<span class="g">  build → 43 tests pass (builder's own report — not yet trusted)</span>
+<span class="w">  verify → RED: 2 real SSRF holes the tests missed → back to Build</span>
+<span class="ok">  verify → GREEN · review APPROVE · gate exit 0 → shipped</span></pre>
   </div>
 </header>
 </div>
 
+<section id="quickstart"><div class="wrap">
+  <h2>Get started</h2>
+  <p class="lead">You need <b>Claude Code</b> and <b>Node 18+</b>. Two commands to install, one to run —
+    no service, no config.</p>
+  <div class="steps">
+    <div class="step"><div class="num">01</div><h3>Clone</h3><p>This repo <em>is</em> the skill — grab it anywhere on disk.</p></div>
+    <div class="step"><div class="num">02</div><h3>Link</h3><p>Symlink it into Claude Code's skills folder (a symlink keeps it auto-updated).</p></div>
+    <div class="step"><div class="num">03</div><h3>Run</h3><p>In any project, type <code>/just-do-it</code> and your objective.</p></div>
+  </div>
+  <div class="term">
+    <div class="bar"><i></i><i></i><i></i></div>
+<pre><span class="p">›</span> git clone https://github.com/cskwork/just-do-it-skill.git
+<span class="p">›</span> ln -s "$(pwd)/just-do-it-skill" ~/.claude/skills/just-do-it
+<span class="g"># then, in Claude Code, hand it one objective:</span>
+<span class="p">›</span> <span class="c">/just-do-it</span> build a CLI todo app and ship it</pre>
+  </div>
+  <p style="margin-top:18px">
+    <span class="pill">zero dependencies</span><span class="pill">no external orchestrator</span>
+    <span class="pill">no TUI / service</span><span class="pill">runs in-session</span>
+  </p>
+</div></section>
+
 <section id="modes"><div class="wrap">
   <h2>Three modes, one command</h2>
-  <p class="lead">The skill reads your objective and picks the pipeline. Task <em>topology</em> — not
-    preference — picks the architecture: fan out for wide-and-shallow work, single-driver for
-    deep-and-narrow work.</p>
+  <p class="lead">The skill reads your objective and picks the right pipeline — and how much to
+    parallelize. Broad work (research, scaffolding several files) fans out to many agents at once;
+    focused work (one bug, one feature) stays with a single driver and asks for your approval before
+    touching code.</p>
   <div class="grid3">
     <div class="card green">
       <div class="mode">greenfield</div>
       <h3>Ship a new app</h3>
-      <p>Validate real demand before building, then plan → build → prove → ship. With a market/demand
-        front-lane that oh-my-symphony never had.</p>
+      <p>Check there's real demand before building anything, then plan → build → prove → ship.</p>
       <div class="pipe">Intake → <b>Validate</b> → Plan → Build → Verify → QA → Deliver</div>
     </div>
     <div class="card amber">
       <div class="mode">debug</div>
       <h3>Root-cause a hard bug</h3>
-      <p>Single-driver, read-only Plan Mode, reproduce-first. Competing hypotheses with evidence,
-        a discriminating probe, and approval before any write.</p>
+      <p>Reproduce it first, weigh competing explanations with evidence, then fix — only after you
+        approve. Read-only until then.</p>
       <div class="pipe">Intake → Reproduce → <b>Diagnose</b> (approve) → Fix → Verify → Deliver</div>
     </div>
     <div class="card blue">
       <div class="mode">legacy</div>
       <h3>Add to existing code</h3>
-      <p>Map the blast radius first, plan a surgical change, keep backward-compat, and prove the
-        existing suite still passes — no regressions.</p>
+      <p>Map what the change touches, plan a small surgical edit, and prove the existing tests still
+        pass — no regressions.</p>
       <div class="pipe">Intake → Explore → Plan → Build → Verify → QA → Deliver</div>
     </div>
   </div>
 </div></section>
 
-<section id="architecture"><div class="wrap">
-  <h2>Architecture</h2>
-  <p class="lead">A conductor and its musicians. The skill is the <b>orchestrator</b> — it never writes
-    production code. It detects the mode, dispatches role-scoped <b>expert subagents</b>, and reads back
-    only their compressed summaries (never raw transcripts). The subagents never talk to each other;
-    they coordinate through one shared file store, the <b>vault</b>.</p>
-  <div class="diagram"><pre>
-                          ┌────────────────────────────────────────────────┐
-   objective  ──────────▶ │   ORCHESTRATOR   (the skill / conductor)         │
-                          │   detect mode · dispatch phases · run gates      │
-                          └──────┬──────────────────────────────────▲───────┘
-            dispatch (locked     │   summaries only                  │
-            role + model tier)   ▼   (never raw transcripts)         │ read / write
-        ┌─────────┬─────────┬─────────┬─────────┬─────────┬─────────┤ (role-scoped)
-        │ analyst │architect│executor │verifier │security │   qa    │
-        │ (Opus)  │ (Opus)  │(Sonnet) │ (Opus)  │ -review │ -tester │
-        └────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┘
-             └─────────┴─────────┴────┬────┴─────────┴─────────┘
-                                      ▼
-              ┌───────────────────────────────────────────────┐
-              │  VAULT   docs/changelog/&lt;date-slug&gt;/            │  one shared blackboard,
-              │  README (audit log) · brief (+Validation)      │  committed as the run's
-              │  plan (frozen, +arch) · claims (untrusted)     │  changelog. Each phase is a
-              │  verification (+QA) · state.json               │  fresh context — the vault
-              └───────────────────────────────────────────────┘  is how they hand off.
-  </pre></div>
-  <p class="note">Why this shape (the converged 2026 multi-agent pattern): an orchestrator that ingests
-    only summaries keeps its context clean and cost predictable — token spend explains ~80% of
-    multi-agent performance variance. Role-scoped reads stop a critic inheriting the coder's
-    rationalizations.</p>
-</div></section>
-
 <section id="lifecycle"><div class="wrap">
-  <h2>How the harness works</h2>
-  <p class="lead">One objective runs <b>forward-only</b> through phases. A phase opens only when the
-    prior phase's <b>machine-checkable exit gate</b> passes; backward edges exist only as explicit
-    rewinds. Step 0 is always mode detection — and <em>task topology picks the architecture</em>:
-    wide-and-shallow work (validation, scaffolding) fans out; deep-and-narrow work (one bug, one
-    feature) stays single-driver and opens read-only, with human approval before the first write.</p>
+  <h2>How it works</h2>
+  <p class="lead">The skill is the <b>director</b> — it never writes production code. It picks the mode,
+    hands each phase to a fresh expert subagent, and reads back only short summaries (never full
+    transcripts). The subagents never talk to each other; they pass work through one shared folder, the
+    <b>vault</b>. Phases run <b>forward only</b>: the next phase opens only after the current one passes
+    its check, and going backward happens only as an explicit, logged rewind.</p>
 
-  <h3 class="sub2">GREENFIELD — ship a new app (fans out)</h3>
+  <h3 class="sub2">GREENFIELD — ship a new app</h3>
   <div class="flow">
     <div class="step">Intake<small>brief.md</small></div><div class="arr">→</div>
     <div class="step">Validate<small>demand · Decision: GO</small></div><div class="arr">→</div>
@@ -225,148 +218,120 @@
     <div class="step gate">Deliver<small>gate exits 0</small></div>
   </div>
 
-  <h3 class="sub2">DEBUG — root-cause a hard bug (single-driver)</h3>
+  <h3 class="sub2">DEBUG — root-cause a hard bug</h3>
   <div class="flow">
     <div class="step">Intake<small>symptom</small></div><div class="arr">→</div>
     <div class="step">Reproduce<small>failing test (red)</small></div><div class="arr">→</div>
-    <div class="step gate">Diagnose<small>hypotheses + human approve</small></div><div class="arr">→</div>
+    <div class="step gate">Diagnose<small>cause + your approval</small></div><div class="arr">→</div>
     <div class="step">Fix<small>root cause</small></div><div class="arr">→</div>
     <div class="step">Verify<small>repro green + suite</small></div><div class="arr">→</div>
     <div class="step gate">Deliver</div>
   </div>
 
-  <h3 class="sub2">LEGACY — add to existing code (single-driver)</h3>
+  <h3 class="sub2">LEGACY — add to existing code</h3>
   <div class="flow">
     <div class="step">Intake<small>spec</small></div><div class="arr">→</div>
-    <div class="step">Explore<small>map blast radius</small></div><div class="arr">→</div>
+    <div class="step">Explore<small>map what it touches</small></div><div class="arr">→</div>
     <div class="step gate">approve<small>surgical plan</small></div><div class="arr">→</div>
     <div class="step">Build<small>backward-compat</small></div><div class="arr">→</div>
     <div class="step">Verify<small>no regressions</small></div><div class="arr">→</div>
-    <div class="step">QA<small>+ adjacent flows</small></div><div class="arr">→</div>
+    <div class="step">QA<small>+ nearby flows</small></div><div class="arr">→</div>
     <div class="step gate">Deliver</div>
   </div>
 
-  <h3 class="sub2">The Build → Verify loop (why it catches real bugs)</h3>
+  <h3 class="sub2">Why it catches real bugs: the builder never grades itself</h3>
   <div class="diagram"><pre>
-   Builder  (executor)                    Verifier  (fresh adversary)
-   ───────────────────                    ──────────────────────────
-   writes code + a CLAIM:                 reads ONLY claims.md + the code,
-     run-to-prove: npm test    ───────▶   re-runs every run-to-prove from a
-     (self-report — UNTRUSTED)            CLEAN state, tries to REFUTE it,
-                                          and validates the test suite itself
+   Builder  (writes the code)             Verifier  (a fresh, separate agent)
+   ──────────────────────────             ──────────────────────────────────
+   writes code + a CLAIM:                 reads ONLY the claim + the code,
+     "run-to-prove: npm test"   ───────▶  re-runs every "run-to-prove" from a
+     (its own report — NOT trusted)       clean slate, tries to disprove it,
+                                          and checks the test suite is real
                                                        │
                           verdict: RED  ◀──────────────┴──────────────▶  verdict: GREEN
                                │                                              │
-                        rewind to Build                                committee review
-                        (max 5 cycles; same                            architect + security
-                         error 3× → STOP,                              + code-review, all
-                         root-cause, escalate)                         approve → Deliver gate
+                        back to Build                                  review by security
+                        (max 5 tries; same                             + code-review, both
+                         error 3× → STOP &                             must approve, then
+                         escalate to you)                              the delivery gate
   </pre></div>
-  <p class="note">The builder never grades its own work — that separation is the whole point. In live
-    validation it caught 2 SSRF bypasses and a concurrency race that all passed the builder's own
-    green tests.</p>
+  <p class="note">In live testing this caught 2 SSRF holes and a concurrency race that all passed the
+    builder's own green tests. Separating who writes from who approves is the whole point.</p>
 
-  <h3 class="sub2">The literal delivery gate — what it actually checks</h3>
-  <p style="color:var(--dim)"><code>delivery-gate.sh</code> is a shell script the agent cannot edit to
-    pass. It exits 0 only when, in order: (1) required artifacts exist (<code>brief.md</code>,
-    <code>plan.md</code>, <code>verification.md</code>); (2) <code>verification.md</code> has an
-    aggregate <code>verdict: GREEN</code> and no line-start <code>verdict: RED</code>; (3) for
-    greenfield, the <code>Decision:</code> line is <code>GO</code>; (4) the project's own test suite
-    passes in the workspace. No "done" is announced until that output is pasted as evidence.</p>
+  <h3 class="sub2">The delivery gate — a script the agent can't fake</h3>
+  <p style="color:var(--dim)"><code>delivery-gate.sh</code> is a plain shell script the agent is forbidden
+    to edit. It exits 0 only when, in order: (1) the required files exist (<code>brief.md</code>,
+    <code>plan.md</code>, <code>verification.md</code>); (2) <code>verification.md</code> says
+    <code>verdict: GREEN</code> with no leftover <code>verdict: RED</code>; (3) for a new app, the
+    <code>Decision:</code> is <code>GO</code>; (4) the project's own tests pass right here in the
+    workspace. Nothing is called "done" until that exit-0 output is shown as proof.</p>
 </div></section>
 
 <section id="vaultsec"><div class="wrap">
-  <h2>The vault — the only shared state</h2>
-  <p class="lead">Each phase is a fresh context, so the vault <code>docs/changelog/&lt;date-slug&gt;/</code>
-    (committed as the run's changelog) is the only hand-off — just six files. Two rules make it
-    trustworthy: <b>claims.md is untrusted</b> (only the Verifier sets a verdict, by re-running the
-    proof) and <b>frozen files stay frozen</b> (the plan can't drift mid-build). On a re-run,
-    <code>state.json</code> resumes at the current phase.</p>
+  <h2>The vault — the one shared file store</h2>
+  <p class="lead">Each phase is a fresh context, so a single folder
+    <code>docs/changelog/&lt;date-slug&gt;/</code> (committed as the run's changelog) is the only hand-off —
+    just six files. Two rules keep it honest: <b>claims are untrusted</b> (only the Verifier marks a
+    verdict, by re-running the proof) and <b>frozen files stay frozen</b> (the plan can't drift
+    mid-build — it's hashed and re-checked). On a re-run, <code>state.json</code> resumes where it left off.</p>
   <table class="tbl">
     <tr><th>File</th><th>Written by</th><th>Holds</th></tr>
     <tr><td><code>README.md</code></td><td>any</td><td>run narrative + decisions, hypotheses, escalations — the audit log &amp; folder index</td></tr>
     <tr><td><code>brief.md</code></td><td>Analyst</td><td>goal, audience, acceptance criteria + a <code>## Validation</code> section ending in <code>Decision: GO/NO-GO</code> (greenfield)</td></tr>
-    <tr><td><code>plan.md</code></td><td>Architect</td><td>frozen slice plan (+ architecture &amp; contracts) — or the approved fix plan in DEBUG</td></tr>
+    <tr><td><code>plan.md</code></td><td>Architect</td><td>frozen plan (+ architecture &amp; contracts) — or the approved fix plan in DEBUG</td></tr>
     <tr><td><code>claims.md</code></td><td>Builder</td><td>append-only, <b>untrusted</b> — each slice + a <code>run-to-prove</code> command</td></tr>
-    <tr><td><code>verification.md</code></td><td>Verifier + QA</td><td>per-claim verdicts + a final aggregate <code>verdict: GREEN</code>, plus a <code>## QA</code> section</td></tr>
-    <tr><td><code>state.json</code></td><td>orchestrator</td><td>mode, phase, cycle counters, approval gate, resume point</td></tr>
+    <tr><td><code>verification.md</code></td><td>Verifier + QA</td><td>per-claim verdicts + a final <code>verdict: GREEN</code>, plus a <code>## QA</code> section</td></tr>
+    <tr><td><code>state.json</code></td><td>director</td><td>mode, phase, cycle counters, plan hash, approval, resume point</td></tr>
   </table>
 </div></section>
 
 <section id="experts"><div class="wrap">
   <h2>Expert roster</h2>
-  <p class="lead">Roles map to existing Claude Code agent types, each pinned to a model tier matched to
-    task complexity, each reading only its slice of the vault.</p>
+  <p class="lead">Each role maps to an existing Claude Code agent type, runs on a model tier matched to
+    the difficulty of the task, and reads only the part of the vault it needs — so a reviewer never
+    inherits the coder's assumptions.</p>
   <table class="tbl">
     <tr><th>Role</th><th>Agent type</th><th>Tier</th><th>Job</th></tr>
     <tr><td>Analyst</td><td><code>analyst</code></td><td>Opus</td><td>intake + demand validation</td></tr>
     <tr><td>Architect</td><td><code>architect</code></td><td>Opus</td><td>plan, codebase map, contracts</td></tr>
     <tr><td>Builder</td><td><code>executor</code></td><td>Sonnet*</td><td>implement a slice + write a claim</td></tr>
     <tr><td>Verifier</td><td><code>verifier</code> / <code>critic</code></td><td>Opus</td><td>adversarially re-run every claim</td></tr>
-    <tr><td>Committee</td><td><code>security-reviewer</code> · <code>code-reviewer</code></td><td>Sonnet</td><td>distinct-mandate review before Deliver</td></tr>
+    <tr><td>Committee</td><td><code>security-reviewer</code> · <code>code-reviewer</code></td><td>Sonnet</td><td>independent review before Deliver</td></tr>
     <tr><td>QA</td><td><code>qa-tester</code></td><td>Sonnet</td><td>black-box exercise the running app</td></tr>
-    <tr><td>Debugger</td><td><code>debugger</code> / <code>tracer</code></td><td>Opus</td><td>reproduce + hypothesis-driven root cause</td></tr>
+    <tr><td>Debugger</td><td><code>debugger</code> / <code>tracer</code></td><td>Opus</td><td>reproduce + find the root cause</td></tr>
   </table>
-  <p class="note">*Opus when the slice is novel or algorithmic. Architect→editor split inside Build: a
-    reasoning pass plans the diff, a precise pass writes it.</p>
+  <p class="note">*Opus when the slice is new or algorithm-heavy.</p>
 </div></section>
 
 <section id="gates"><div class="wrap">
   <h2>The non-negotiable gates</h2>
-  <p class="lead">The spine. Never weakened, never skipped — and the delivery gate is a literal shell
-    script the agent cannot edit to make pass.</p>
+  <p class="lead">The spine — never weakened, never skipped. Two are literal scripts the agent can't edit
+    to pass: <code>validate-gate.sh</code> (before Build) and <code>delivery-gate.sh</code> (before "done").</p>
   <div class="gates">
-    <div class="gate"><span class="n">1</span><span><b>Validate before build</b><span>No build opens until demand evidence + a scoped MVP exist (greenfield).</span></span></div>
-    <div class="gate"><span class="n">2</span><span><b>Plan freezes scope</b><span>Written once; Build implements it, never redesigns mid-flight.</span></span></div>
-    <div class="gate"><span class="n">3</span><span><b>Builder ≠ Verifier</b><span>A fresh adversary re-runs every claim from a clean state. <code>claims.md</code> is untrusted.</span></span></div>
-    <div class="gate"><span class="n">4</span><span><b>Committee review</b><span>architect + security + code-review in parallel; all must approve.</span></span></div>
-    <div class="gate"><span class="n">5</span><span><b>Literal delivery gate</b><span><code>delivery-gate.sh</code> exits 0 — the project's own tests green (the Verify agent re-runs from a clean state) — or it isn't done.</span></span></div>
-    <div class="gate"><span class="n">6</span><span><b>Bounded retry</b><span>Same error 3× → stop, root-cause, escalate. No infinite loops.</span></span></div>
+    <div class="gate"><span class="n">1</span><span><b>Validate before build</b><span>For a new app, <code>validate-gate.sh</code> must confirm a <code>Decision: GO</code> (real demand + a scoped MVP) before Build opens.</span></span></div>
+    <div class="gate"><span class="n">2</span><span><b>Plan freezes scope</b><span>Written once, then hashed and re-checked; Build implements it and can't quietly redesign mid-flight.</span></span></div>
+    <div class="gate"><span class="n">3</span><span><b>Builder ≠ Verifier</b><span>A fresh, separate agent re-runs every claim from a clean state. <code>claims.md</code> is untrusted.</span></span></div>
+    <div class="gate"><span class="n">4</span><span><b>Committee review</b><span>security + code-review run in parallel before Deliver; all must approve.</span></span></div>
+    <div class="gate"><span class="n">5</span><span><b>Literal delivery gate</b><span><code>delivery-gate.sh</code> exits 0 — the project's own tests pass, re-run from a clean state — or it isn't done.</span></span></div>
+    <div class="gate"><span class="n">6</span><span><b>Bounded retry</b><span>The same error 3× trips <code>circuit-breaker.mjs</code> → stop, root-cause, escalate to you. No infinite loops.</span></span></div>
   </div>
 </div></section>
 
 <section id="proof"><div class="wrap">
   <h2>Proof it works</h2>
   <p class="lead">All three modes were run end-to-end on one real, zero-dependency service (68 tests).
-    Adversarial verification caught a real defect in 2 of 3 runs — bugs that passed the builder's own
-    green tests. Full audit trail ships in <code>examples/url-shortener/docs/changelog/</code>
-    (early run records predate the 6-file vault consolidation — those have since been reconciled).</p>
+    The adversarial check caught a real defect in 2 of 3 runs — bugs that passed the builder's own
+    green tests. The full audit trail ships in <code>examples/url-shortener/docs/changelog/</code>.</p>
   <div class="evi">
-    <div class="row"><span class="badge b-green">GREENFIELD</span><span class="what"><b>2 real SSRF bypasses + an unauth 500</b> caught by adversarial verify — all passed the builder's 43 green tests. Fixed before shipping.</span></div>
-    <div class="row"><span class="badge b-red">DEBUG</span><span class="what">Given only a symptom, reproduced a <b>lost-update race</b> (200 concurrent → 1/200), root-caused it, fixed it, re-verified 0 lost across 10 trials.</span></div>
-    <div class="row"><span class="badge b-blue">LEGACY</span><span class="what">Added link-expiry (TTL) with <b>zero regressions</b> — backward-compatible with records that predate the field. Committee-approved, gate-green.</span></div>
+    <div class="row"><span class="badge b-green">GREENFIELD</span><span class="what"><b>2 real SSRF holes + an unauth 500</b> caught by the verifier — all passed the builder's 43 green tests. Fixed before shipping.</span></div>
+    <div class="row"><span class="badge b-red">DEBUG</span><span class="what">Given only a symptom, reproduced a <b>lost-update race</b> (200 hits → counted 1), found the cause, fixed it, re-verified 0 lost across repeated runs.</span></div>
+    <div class="row"><span class="badge b-blue">LEGACY</span><span class="what">Added link-expiry (TTL) with <b>zero regressions</b> — still works with records saved before the field existed. Review-approved, gate-green.</span></div>
   </div>
-</div></section>
-
-<section id="how"><div class="wrap">
-  <h2>How it stays honest</h2>
-  <div class="feat">
-    <div class="card"><h3><span class="k">vault</span> One shared blackboard</h3><p>Every phase runs as a fresh subagent context and communicates only through <code>docs/changelog/&lt;date-slug&gt;/</code> (committed as the run's changelog) — README audit log, brief (+validation), frozen plan, untrusted claims, verdicts (+QA), state.json.</p></div>
-    <div class="card"><h3><span class="k">summaries</span> No raw transcripts</h3><p>The orchestrator ingests compressed subagent summaries, never their full transcripts — the converged 2026 multi-agent pattern. Context stays clean, cost stays predictable.</p></div>
-    <div class="card"><h3><span class="k">verify</span> Re-run, don't trust</h3><p>Each claim carries a <code>run-to-prove</code> command. A fresh adversary re-executes it from clean state and validates the test suite itself (fail-before-fix), so a green run on a flawed suite can't pass as done.</p></div>
-    <div class="card"><h3><span class="k">roles</span> Read-scoped experts</h3><p>analyst · architect · executor · verifier · security-reviewer · code-reviewer · qa-tester · debugger — each pinned to a model tier and the minimum vault read-set, so a critic never inherits the coder's rationalizations.</p></div>
-  </div>
-</div></section>
-
-<section id="install"><div class="wrap">
-  <h2>Install</h2>
-  <p class="lead">This repo <em>is</em> the skill. Point Claude Code's global skills dir at it.</p>
-  <div class="term">
-    <div class="bar"><i></i><i></i><i></i></div>
-<pre><span class="p">›</span> git clone https://github.com/cskwork/just-do-it-skill.git
-<span class="p">›</span> ln -s "$(pwd)/just-do-it-skill" ~/.claude/skills/just-do-it
-<span class="g"># then, in Claude Code:</span>
-<span class="p">›</span> <span class="c">/just-do-it</span> &lt;your objective&gt;</pre>
-  </div>
-  <p style="margin-top:20px;color:var(--dim)">
-    <span class="pill">zero deps</span><span class="pill">no external orchestrator</span>
-    <span class="pill">no TUI / service</span><span class="pill">in-session subagents</span>
-  </p>
 </div></section>
 
 <footer><div class="wrap">
   Concept &amp; workflow adapted from <a href="https://github.com/cskwork/oh-my-symphony">oh-my-symphony</a>
-  — gated lanes, shared vault, adversarial verify, literal delivery gate — re-built self-contained for
+  — gated lanes, shared vault, adversarial verify, literal delivery gate — rebuilt self-contained for
   Claude Code. MIT licensed. Built by <a href="https://github.com/cskwork">cskwork</a>.
 </div></footer>
 

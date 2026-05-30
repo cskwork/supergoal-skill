@@ -1,7 +1,7 @@
-# just-do-it-skill - Human Feedback E2E + Consistency Test Report
+# supergoal-skill - Human Feedback E2E + Consistency Test Report
 
 Date: 2026-05-30
-Repo: `/Users/danny/Documents/PARA/Resource/just-do-it-skill`
+Repo: `/Users/danny/Documents/PARA/Resource/supergoal-skill`
 
 ## Verdict
 
@@ -36,6 +36,6 @@ URL shortener proof app still passes its full suite through the literal delivery
 ## Limitation
 
 This report does not claim a live Claude Code slash-command invocation with real subagent dispatch.
-That surface requires an interactive `/just-do-it` runtime and human approval bridge. The repo-local
+That surface requires an interactive `/supergoal` runtime and human approval bridge. The repo-local
 end-to-end proof exercised the deterministic gates, example vaults, and the production example app
 from approval through delivery.

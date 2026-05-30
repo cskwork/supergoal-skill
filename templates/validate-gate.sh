@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# /just-do-it GREENFIELD validate gate — the literal entry condition for Build.
+# /supergoal GREENFIELD validate gate — the literal entry condition for Build.
 # Build must NOT open until this exits 0. Parallel to delivery-gate.sh, it converts the
 # "validate before build" rule from prose into a machine-checkable backstop.
 # NEVER edit this script to make a NO-GO run pass — re-run Validate or stop instead.
@@ -16,7 +16,7 @@ VAULT="${1:?usage: validate-gate.sh <vault-dir>}"
 BRIEF="$VAULT/brief.md"
 fail() { echo "VALIDATE-GATE FAIL: $*" >&2; exit 1; }
 
-echo "== /just-do-it validate gate =="
+echo "== /supergoal validate gate =="
 echo "vault: $VAULT"
 
 [ -s "$BRIEF" ] || fail "brief.md missing/empty — no validation was recorded"

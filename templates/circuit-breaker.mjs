@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// /just-do-it circuit breaker — makes "same error 3x -> stop" machine-checkable.
+// /supergoal circuit breaker — makes "same error 3x -> stop" machine-checkable.
 //
 // Usage: node circuit-breaker.mjs <state.json> <normalized-signature>
 //   <state.json>            the run's state file

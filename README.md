@@ -1,4 +1,4 @@
-# /just-do-it
+# /supergoal
 
 **One objective in, a verified result out.** A Claude Code skill that takes a single objective
 through a full, gated development process using expert subagents — then refuses to declare success
@@ -9,13 +9,13 @@ single shared vault, untrusted `claims.md` re-verified by an adversary, a litera
 that is never edited to pass — but strips the heavy Symphony CLI / TUI / worktree infrastructure.
 Everything runs in-session with the `Task`/`Agent` tool. **Nothing to install but the skill itself.**
 
-> **New here? Start with the landing page** → **[cskwork.github.io/just-do-it-skill](https://cskwork.github.io/just-do-it-skill/)**
+> **New here? Start with the landing page** → **[cskwork.github.io/supergoal-skill](https://cskwork.github.io/supergoal-skill/)**
 > — a bilingual (English / 한국어) walkthrough with a 3-step quickstart, the three modes, how the
 > builder-vs-verifier split catches real bugs, and the evidence it produces. Best onboarding path before you clone.
 
 ## Three modes
 
-`/just-do-it` detects the mode from your objective:
+`/supergoal` detects the mode from your objective:
 
 | Objective looks like | Mode | Pipeline |
 |---|---|---|
@@ -24,15 +24,15 @@ Everything runs in-session with the `Task`/`Agent` tool. **Nothing to install bu
 | "add X to our existing/legacy code" | **LEGACY** | Intake → Explore → Plan → **Human Feedback** → Build → Verify → QA → Deliver |
 
 ```text
-/just-do-it build a habit-tracker app and ship it
-/just-do-it the checkout page hangs intermittently in prod — fix it
-/just-do-it add SSO to our legacy Django monolith
+/supergoal build a habit-tracker app and ship it
+/supergoal the checkout page hangs intermittently in prod — fix it
+/supergoal add SSO to our legacy Django monolith
 ```
 
 ## Why it exists
 
 A single agent given a big objective drifts: it skips validation, trusts its own "done", and leaves
-unverified claims. `/just-do-it` imposes the discipline a senior team would — and the research backs
+unverified claims. `/supergoal` imposes the discipline a senior team would — and the research backs
 each choice (see [`DESIGN.md`](DESIGN.md) and [`docs/research-brief.md`](docs/research-brief.md)):
 
 - **Topology, not preference, picks the architecture** — fan out for wide-and-shallow work
@@ -57,13 +57,13 @@ each choice (see [`DESIGN.md`](DESIGN.md) and [`docs/research-brief.md`](docs/re
 This repo **is** the skill. Put it where Claude Code finds skills:
 
 ```bash
-git clone https://github.com/cskwork/just-do-it-skill.git
+git clone https://github.com/cskwork/supergoal-skill.git
 # then either symlink or copy it into your global skills dir:
-ln -s "$(pwd)/just-do-it-skill" ~/.claude/skills/just-do-it
-# or: cp -R just-do-it-skill ~/.claude/skills/just-do-it
+ln -s "$(pwd)/supergoal-skill" ~/.claude/skills/supergoal
+# or: cp -R supergoal-skill ~/.claude/skills/supergoal
 ```
 
-Then in Claude Code: `/just-do-it <your objective>`.
+Then in Claude Code: `/supergoal <your objective>`.
 
 ## Layout
 
@@ -92,11 +92,11 @@ each run is in [`examples/url-shortener/docs/changelog/`](examples/url-shortener
 
 Adversarial verification caught a real defect in 2 of 3 runs.
 
-A separate evidence-only private-codebase benchmark compared plain Codex CLI, `/just-do-it`, and
+A separate evidence-only private-codebase benchmark compared plain Codex CLI, `/supergoal`, and
 Codex Goal mode on the same hard backend task with the same hidden scorer. See
 [`docs/experiments/2026-05-30-private-codebase-comparison/`](docs/experiments/2026-05-30-private-codebase-comparison/).
 
-- **`/just-do-it`** — passed all hidden checks, focused regressions, neighbor checks, `git diff --check`,
+- **`/supergoal`** — passed all hidden checks, focused regressions, neighbor checks, `git diff --check`,
   and the delivery gate.
 - **Codex Goal mode** — fixed the main code path and passed focused checks, but missed one hidden
   fallback/preservation coverage check.

@@ -1,4 +1,4 @@
-# /just-do-it — full E2E test plan
+# /supergoal — full E2E test plan
 
 Purpose: prove the skill drives an objective through its gated pipeline correctly in all three modes,
 that **every gate actually gates**, that Human Feedback blocks implementation until approval, that the vault is produced correctly at
@@ -8,7 +8,7 @@ command/observation and its pass criterion.
 
 ## 0. Preconditions
 
-- Skill installed at `~/.claude/skills/just-do-it` (or symlinked from this repo).
+- Skill installed at `~/.claude/skills/supergoal` (or symlinked from this repo).
 - `gh` not required. Node ≥18 available (fixtures use the zero-dep `examples/url-shortener`).
 - A throwaway dir per E2E run (`git init`), so nothing touches real repos. Use `mktemp -d`.
 - Budget note: a full pass spawns many subagents (each mode runs analyst/architect/executor/
@@ -67,7 +67,7 @@ is `true`/`false` to isolate gate logic from a real suite.
 Harness (paste-run):
 
 ```bash
-GATE=~/.claude/skills/just-do-it/templates/delivery-gate.sh
+GATE=~/.claude/skills/supergoal/templates/delivery-gate.sh
 T=$(mktemp -d); cd "$T"; mkdir v
 ok(){ printf 'p\n'>v/plan.md; printf 'verdict: GREEN\n'>v/verification.md; printf 'g\n'>v/brief.md; }
 run(){ bash "$GATE" ./v "${1:-true}" >/tmp/g.out 2>&1; echo "exit=$? $(grep -m1 -E 'GATE (FAIL|PASS)' /tmp/g.out)"; }
@@ -83,7 +83,7 @@ Pass criterion: all 11 rows match. (A6/A7/A9/A10 verified during development; th
 
 ## Tier B — per-mode happy-path E2E
 
-For each, run `/just-do-it <objective>` in a fresh `git init` dir and inspect the vault + gate output.
+For each, run `/supergoal <objective>` in a fresh `git init` dir and inspect the vault + gate output.
 
 ### B1 — GREENFIELD (ship a new app)
 - Objective: `build a small CLI todo app with JSON persistence and ship it`.
@@ -173,7 +173,7 @@ For each, run `/just-do-it <objective>` in a fresh `git init` dir and inspect th
 
 ## Tier D — vault & artifact-layout tests (run after any Tier B)
 
-- D1: vault is at `docs/changelog/<date>-<slug>/` (not `./.just-do-it/`).
+- D1: vault is at `docs/changelog/<date>-<slug>/` (not `./.supergoal/`).
 - D2: exactly six files: `README.md`, `brief.md`, `plan.md`, `claims.md`, `verification.md`,
   `state.json` (no separate `validation.md`/`architecture.md`/`contracts.md`/`qa-report.md`/
   `decisions.log`). The shipped `examples/url-shortener` has been migrated to this 6-file layout,

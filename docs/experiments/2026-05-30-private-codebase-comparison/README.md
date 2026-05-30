@@ -1,11 +1,11 @@
 # Private Codebase Comparison Benchmark
 
-This report is evidence for `/just-do-it`. It is not part of the skill runtime
+This report is evidence for `/supergoal`. It is not part of the skill runtime
 contract.
 
 ## Question
 
-Does `/just-do-it` improve difficult coding-task outcomes against plain Codex CLI
+Does `/supergoal` improve difficult coding-task outcomes against plain Codex CLI
 and Codex Goal mode?
 
 ## Setup
@@ -24,7 +24,7 @@ and Codex Goal mode?
 | Arm | Hidden checks | Verification | Token signal | Outcome |
 |---|---:|---|---:|---|
 | Plain Codex CLI | Failed | No solution diff; no final output | Not reported | No usable result |
-| `/just-do-it` | Passed all | Focused regressions green; neighbor checks green; `git diff --check` green; delivery gate green | 378,468 | Best result |
+| `/supergoal` | Passed all | Focused regressions green; neighbor checks green; `git diff --check` green; delivery gate green | 378,468 | Best result |
 | Codex Goal mode | Failed 1 check | Focused regressions green; `git diff --check` green | 165,336 CLI + 130,543 internal | Partial result |
 
 ## Hidden Checks
@@ -39,7 +39,7 @@ and Codex Goal mode?
 ## Raw Result Summary
 
 - Plain Codex CLI: failed because it produced no usable diff or final answer.
-- `/just-do-it`: passed every hidden check.
+- `/supergoal`: passed every hidden check.
 - Codex Goal mode: fixed the main code path but missed one required
   fallback/preservation test-coverage check.
 
@@ -49,12 +49,12 @@ Both solved arms also probed a broad Gradle suite. The broad suite failed on
 pre-existing fixture/config/context failures outside the changed surface, so the
 score used focused checks plus the shared hidden scorer.
 
-- `/just-do-it`: `352 tests completed, 47 failed, 3 skipped`.
+- `/supergoal`: `352 tests completed, 47 failed, 3 skipped`.
 - Codex Goal mode: `342 tests completed, 47 failed, 3 skipped`.
 
 ## What This Proves
 
-On this harder private-codebase task, `/just-do-it` produced the only complete
+On this harder private-codebase task, `/supergoal` produced the only complete
 answer. The difference was not just code generation; the delivery gate, review
 loop, and hidden-check discipline caught coverage and completion gaps that the
 other arms missed.

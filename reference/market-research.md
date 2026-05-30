@@ -1,14 +1,14 @@
 # Market research — the GREENFIELD Validate phase
 
 oh-my-symphony has **no demand-validation step** — it starts at Brief and never asks *whether to
-build*. This is the single biggest gap `/just-do-it` closes. Validate runs **before any Build
+build*. This is the single biggest gap `/supergoal` closes. Validate runs **before any Build
 ticket opens**: cheap evidence first, code second. Kills the most expensive failure mode — shipping
 something nobody wanted.
 
 Scope honestly: the research found **no reliable market-sizing/pricing data sources** in the
 verified set, so this phase produces **directional demand evidence and a scoped MVP**, not a market
 forecast. State that limitation in the Validation section. The product stance the research supports is to
-**position on verifiability, not hype** — `/just-do-it` is a supervised, gated delivery loop for
+**position on verifiability, not hype** — `/supergoal` is a supervised, gated delivery loop for
 bounded objectives, not a hands-off autonomous engineer (openaitoolshub.org Devin eval; cognition.ai).
 
 ## What Validate must produce (the `## Validation` section of `brief.md`)

@@ -1,4 +1,4 @@
-# /just-do-it — design rationale
+# /supergoal — design rationale
 
 Why each part is built the way it is. Sources: the cloned `oh-my-symphony` repo (concept/workflow),
 the local symphony/autopilot/ultrawork/ultraqa/ultragoal skills (reusable mechanisms), and a
@@ -15,11 +15,11 @@ state; **`claims.md` untrusted + adversarial Verify** that re-runs every claim; 
 read-scope**; the **literal-bash delivery gate** that is never edited to pass.
 
 **Deliberately dropped (the infra):** the Symphony CLI/service/TUI, per-ticket git worktrees, and
-external WORKFLOW files. `/just-do-it` runs **self-contained with in-session `Task` subagents** — no
+external WORKFLOW files. `/supergoal` runs **self-contained with in-session `Task` subagents** — no
 install, no ports, no poller. (Reuse-map decision: borrow gate ideas, skip the heavyweight machine.)
 
 **Gap closed:** oh-my-symphony has **no demand-validation step** (grep across its repo: zero matches
-for market/product validation). `/just-do-it` adds a **Validate** front-lane for GREENFIELD.
+for market/product validation). `/supergoal` adds a **Validate** front-lane for GREENFIELD.
 
 ## Reused from local skills
 

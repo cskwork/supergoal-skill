@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// /just-do-it Human Feedback gate.
+// /supergoal Human Feedback gate.
 // Build/Fix must NOT open until this exits 0.
 //
 // Usage: node human-feedback-gate.mjs <vault-dir> <Build|Fix>
@@ -42,7 +42,7 @@ try {
   fail(`cannot read/parse ${statePath}: ${err.message}`);
 }
 
-console.log("== /just-do-it Human Feedback gate ==");
+console.log("== /supergoal Human Feedback gate ==");
 console.log(`vault: ${vaultDir}`);
 console.log(`target: ${targetPhase}`);
 

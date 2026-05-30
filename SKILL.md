@@ -1,11 +1,11 @@
 ---
-name: just-do-it
-description: Run one objective through a gated build/debug/legacy workflow with expert subagents, Human Feedback approval before implementation, adversarial verification, and a delivery gate. Use for "/just-do-it", "just do it", "build X end to end", "fix this bug", or "add this feature".
+name: supergoal
+description: Run one objective through a gated build/debug/legacy workflow with expert subagents, Human Feedback approval before implementation, adversarial verification, and a delivery gate. Use for "/supergoal", "supergoal", "build X end to end", "fix this bug", or "add this feature".
 argument-hint: "<objective: an app idea, a bug to fix, or a feature to add>"
 level: 4
 ---
 
-# /just-do-it
+# /supergoal
 
 One objective in, a verified result out. The skill is the **conductor**: it never writes
 production code itself — it decomposes the objective, dispatches **expert subagents** through a
@@ -19,20 +19,20 @@ with the `Task`/`Agent` tool, so there is nothing to install.
 ## Why this exists
 
 A single agent given a big objective drifts: it skips validation, trusts its own "done", and leaves
-unverified claims. `/just-do-it` imposes the discipline a senior team would: validate before
+unverified claims. `/supergoal` imposes the discipline a senior team would: validate before
 building, separate the builder from the verifier, prove every claim by re-running it, and gate
 delivery on evidence — not on the agent's own say-so.
 
 ## Use when
 
-- "/just-do-it build a habit-tracker app and ship it"
-- "/just-do-it the checkout page hangs intermittently in production — fix it"
-- "/just-do-it add SSO to our legacy Django monolith"
+- "/supergoal build a habit-tracker app and ship it"
+- "/supergoal the checkout page hangs intermittently in production — fix it"
+- "/supergoal add SSO to our legacy Django monolith"
 - The user hands off a whole objective and wants the full process run autonomously.
 
 ## Do NOT use when
 
-- A single, well-scoped edit ("rename this variable") — just do it directly.
+- A single, well-scoped edit ("rename this variable") — do it directly.
 - Pure brainstorming with no intent to build — use `brainstorming`.
 - The user wants to drive each step themselves — use `ultrawork` / `using-symphony`.
 

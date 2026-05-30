@@ -1,6 +1,6 @@
-# /just-do-it Harness — Design-Oriented Research Brief
+# /supergoal Harness — Design-Oriented Research Brief
 
-**Scope:** One command (`/just-do-it`) that takes a single objective through a full, gated development process using expert subagents — three modes: GREENFIELD (new production app), DEBUG (root-cause hard bugs), LEGACY (add a feature inside a large codebase).
+**Scope:** One command (`/supergoal`) that takes a single objective through a full, gated development process using expert subagents — three modes: GREENFIELD (new production app), DEBUG (root-cause hard bugs), LEGACY (add a feature inside a large codebase).
 
 **Method note:** Findings synthesized from a verified claim set. Semantic duplicates merged. One claim was **REFUTED in verification and is excluded** from the evidence base: the "empirically 4–6x single-agent token overhead / ~40–50 lines per child" claim — its load-bearing numbers came from a single design RFC (openclaw #35203), were mislabeled "empirical," and were misattributed to Anthropic. Only its supported sub-fact survives (see Quality §).
 
@@ -26,7 +26,7 @@ Confidence ratings: **high** = multiple independent credible sources agree; **me
 
 7. **Deterministic / hooks-based control beats relying on the model to self-police.** Use the framework/workflow for orchestration *shape*; use deterministic hooks, tests, and review gates for *truth*. Anthropic shipped Claude Managed Agents (public beta, Apr 2026: harness loop + tool execution + sandbox container + state persistence as a REST API); Praetorian describes a deterministic AI orchestration platform for autonomous development. **[med]** — antstack.com; praetorian.com; developersdigest.tech.
 
-### Design implications for /just-do-it
+### Design implications for /supergoal
 - **Classify the task at entry** (parallelizable vs single-thread coherent). Fan out subagents only for the former; keep one driving agent for a cohesive feature build. Map: GREENFIELD scaffolding/research → fan-out; LEGACY feature + DEBUG → mostly single-thread with targeted helper subagents.
 - **Default shape = one orchestrator that ingests only subagent summaries**, never full transcripts.
 - **Define locked, role-scoped subagents** (plan, architect, code, review, QA), each pinned to a fixed model + fixed prompt, so a critic never inherits the coder's reasoning and cost stays predictable.
@@ -52,7 +52,7 @@ Confidence ratings: **high** = multiple independent credible sources agree; **me
 
 5. **Plan Mode (read-only analysis → human approval before edits) is the recommended risk gate** for autonomous harnesses, paired with incremental tool connection. **[high]** — antstack.com; skywork.ai; developersdigest.tech.
 
-### Design implications for /just-do-it
+### Design implications for /supergoal
 - **Never gate success on benchmark-style pass rates.** Gate on the *project's own test suite executed in a clean sandbox*. Treat any agent self-report of success as unverified until independently reproduced.
 - **Scope work to small, well-specified, verifiable tasks by default.** Require an explicit, machine-checkable acceptance criterion *before* launch; degrade to human-in-loop for open-ended/ambiguous objectives. This directly bounds all three modes.
 - **Consider an architect/editor split** inside each implementation subagent: a reasoning pass produces the plan/diff intent, a precise pass emits the actual edits.
@@ -73,9 +73,9 @@ Confidence ratings: **high** = multiple independent credible sources agree; **me
 
 > *Note: dedicated market-sizing/pricing claims were not present in the verified source set; the above are market-signal inferences drawn from the orchestration and harness evidence. Confidence reflects the underlying findings, not independent market research.*
 
-### Design implications for /just-do-it
+### Design implications for /supergoal
 - **Position on verifiability, not benchmark scores** — "every claim of done is backed by a green test run in a clean sandbox."
-- **Set honest expectations in the product surface**: `/just-do-it` is a supervised, gated delivery loop for bounded objectives, not a hands-off autonomous engineer.
+- **Set honest expectations in the product surface**: `/supergoal` is a supervised, gated delivery loop for bounded objectives, not a hands-off autonomous engineer.
 - **Three explicit modes (GREENFIELD/DEBUG/LEGACY) match observed demand** for bounded, well-specified tasks; each should advertise its acceptance-criterion requirement up front.
 
 ---
@@ -92,7 +92,7 @@ Confidence ratings: **high** = multiple independent credible sources agree; **me
 
 4. **Defective tests are a real failure mode for test-based gates** (59.4% of SWE-bench hard tasks had flawed tests). A correctness gate is only as trustworthy as the suite it runs. **[high]** — arxiv 2509.16941; morphllm.com.
 
-### Design implications for /just-do-it
+### Design implications for /supergoal
 - **Two-layered done-gate:** a **hard gate** (tests/build/lint must pass) and a **soft rubric gate** (reviewer subagent scores quality/security). *Never let the rubric override a failing test.*
 - **Spawn parallel reviewers with distinct mandates** (correctness, security, style/maintainability) rather than one generic reviewer; optionally generate-then-select among candidate patches.
 - **Budget for ~4x (single) to ~15x (multi) chat-token cost** and minimize per-subagent prompt boilerplate, since token spend is the dominant variance driver. Gate fan-out behind the task-topology check so deep-narrow tasks don't pay multi-agent cost.
@@ -114,7 +114,7 @@ Confidence ratings: **high** = multiple independent credible sources agree; **me
 
 5. **Diverse verifiers help confirm a fix doesn't regress other defect classes** (correctness + security + behavioral reviewers), mirroring the committee-of-reviewers result. **[med]** — arxiv 2511.16708.
 
-### Design implications for /just-do-it (DEBUG mode)
+### Design implications for /supergoal (DEBUG mode)
 - **Default DEBUG to single-driver topology**; allow isolated parallel probes only for independent investigations, each returning a summary to the blackboard.
 - **Open with read-only Plan Mode**: reproduce → localize → hypothesize → Human Feedback approval → fix.
 - **Require a failing repro before the fix and a passing repro after**, executed in a clean sandbox — the literal delivery gate for DEBUG.
@@ -123,7 +123,7 @@ Confidence ratings: **high** = multiple independent credible sources agree; **me
 
 ---
 
-## Top 10 Design Decisions for /just-do-it
+## Top 10 Design Decisions for /supergoal
 
 1. **Topology classifier at entry.** Branch GREENFIELD/LEGACY/DEBUG, then pick fan-out (wide-shallow: scaffolding, research) vs single-driver (deep-narrow: one feature, one bug). Don't pay multi-agent cost on coherent single-thread work. *(Orch-1, Debug-1)*
 

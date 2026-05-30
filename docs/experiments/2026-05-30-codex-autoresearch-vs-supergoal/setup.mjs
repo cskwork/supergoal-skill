@@ -4,17 +4,17 @@ import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 
 const repoRoot = new URL("../../..", import.meta.url).pathname;
-const expRoot = `/private/tmp/just-do-it-experiment-${Date.now()}`;
+const expRoot = `/private/tmp/supergoal-experiment-${Date.now()}`;
 const seed = join(expRoot, "seed");
 const autoresearch = join(expRoot, "autoresearch");
-const justDoIt = join(expRoot, "just-do-it");
+const superGoal = join(expRoot, "supergoal");
 
 await mkdir(expRoot, { recursive: true });
 await cp(join(repoRoot, "examples/url-shortener"), seed, { recursive: true });
 await cp(seed, autoresearch, { recursive: true });
-await cp(seed, justDoIt, { recursive: true });
+await cp(seed, superGoal, { recursive: true });
 
-for (const dir of [autoresearch, justDoIt]) {
+for (const dir of [autoresearch, superGoal]) {
   run("git", ["init", "-q"], dir);
   run("git", ["add", "."], dir);
   run(
@@ -50,7 +50,7 @@ Verification before final response:
 
 await writeFile(join(expRoot, "task.md"), task);
 await writeFile(join(autoresearch, "TASK.md"), task);
-await writeFile(join(justDoIt, "TASK.md"), task);
+await writeFile(join(superGoal, "TASK.md"), task);
 
 await writeFile(
   join(expRoot, "autoresearch-prompt.md"),
@@ -62,20 +62,20 @@ Metric: Existing and new tests pass.
 Verify: npm test --silent
 Stop condition: implementation complete and verification command exits 0.
 
-Read TASK.md, implement it, add focused tests, run verification, and leave the repo in the completed state. Do not use /just-do-it.
+Read TASK.md, implement it, add focused tests, run verification, and leave the repo in the completed state. Do not use /supergoal.
 
 ${task}`,
 );
 
-await mkdir(join(justDoIt, ".experiment-skill/reference"), { recursive: true });
-await mkdir(join(justDoIt, ".experiment-skill/templates"), { recursive: true });
-await cp(join(repoRoot, "SKILL.md"), join(justDoIt, ".experiment-skill/SKILL.md"));
-await cp(join(repoRoot, "reference"), join(justDoIt, ".experiment-skill/reference"), { recursive: true });
-await cp(join(repoRoot, "templates"), join(justDoIt, ".experiment-skill/templates"), { recursive: true });
+await mkdir(join(superGoal, ".experiment-skill/reference"), { recursive: true });
+await mkdir(join(superGoal, ".experiment-skill/templates"), { recursive: true });
+await cp(join(repoRoot, "SKILL.md"), join(superGoal, ".experiment-skill/SKILL.md"));
+await cp(join(repoRoot, "reference"), join(superGoal, ".experiment-skill/reference"), { recursive: true });
+await cp(join(repoRoot, "templates"), join(superGoal, ".experiment-skill/templates"), { recursive: true });
 
 await writeFile(
-  join(expRoot, "just-do-it-prompt.md"),
-  `Use the /just-do-it workflow from the local skill file copied at .experiment-skill/SKILL.md. Load and follow it for this task.
+  join(expRoot, "supergoal-prompt.md"),
+  `Use the /supergoal workflow from the local skill file copied at .experiment-skill/SKILL.md. Load and follow it for this task.
 
 Non-interactive experiment constraint: after you write the required Human Feedback packet in docs/changelog/<run>/plan.md, the experiment harness grants explicit approval for the Build phase. Record that approval in state.json as APPROVED for Build, then continue. Do not pause for user input.
 
@@ -256,4 +256,4 @@ await mkdir(join(expRoot, "hidden"), { recursive: true });
 await writeFile(join(expRoot, "hidden/update-link.hidden.test.js"), hiddenTest);
 await writeFile(join(expRoot, "hidden-eval.mjs"), hiddenEval);
 
-console.log(JSON.stringify({ expRoot, autoresearch, justDoIt }, null, 2));
+console.log(JSON.stringify({ expRoot, autoresearch, superGoal }, null, 2));

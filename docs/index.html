@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>/just-do-it — one objective in, a verified result out</title>
+<title>/supergoal — one objective in, a verified result out</title>
 <meta name="description" content="A Claude Code skill that takes one objective through a full, gated dev process with expert subagents — and refuses to declare success until a machine-checkable gate passes. Bilingual EN / 한국어." />
 <style>
   :root{
@@ -143,13 +143,13 @@
     <button type="button" data-lang="en">EN</button>
     <button type="button" data-lang="ko">한국어</button>
   </div>
-  <a href="https://github.com/cskwork/just-do-it-skill">GitHub →</a>
+  <a href="https://github.com/cskwork/supergoal-skill">GitHub →</a>
 </div></div>
 
 <div class="wrap">
 <header class="hero">
   <div class="eyebrow"><span class="en">Claude Code skill</span><span class="ko">Claude Code 스킬</span></div>
-  <h1><span class="slash">/</span>just-do-it</h1>
+  <h1><span class="slash">/</span>supergoal</h1>
   <p class="tag"><span class="en">One objective in, a verified result out.</span><span class="ko">목표 하나를 넣으면, 검증된 결과가 나옵니다.</span></p>
   <p class="sub en">Hand it a whole objective — "build X", "fix this bug", "add this feature". It splits the
     work into phases, sends each to a focused expert subagent, and <b>won't say "done" until a script —
@@ -163,18 +163,18 @@
     <a class="btn primary" href="#quickstart"><span class="en">▸ Get started</span><span class="ko">▸ 시작하기</span></a>
     <a class="btn" href="#lifecycle"><span class="en">How it works</span><span class="ko">동작 방식</span></a>
     <a class="btn" href="#proof"><span class="en">See what it caught</span><span class="ko">무엇을 잡아냈나</span></a>
-    <a class="btn" href="https://github.com/cskwork/just-do-it-skill"><span class="en">Source</span><span class="ko">소스</span></a>
+    <a class="btn" href="https://github.com/cskwork/supergoal-skill"><span class="en">Source</span><span class="ko">소스</span></a>
   </div>
 
   <div class="term">
     <div class="bar"><i></i><i></i><i></i></div>
-<pre class="en"><span class="p">›</span> <span class="c">/just-do-it</span> build a production URL shortener and ship it
+<pre class="en"><span class="p">›</span> <span class="c">/supergoal</span> build a production URL shortener and ship it
 <span class="g">  mode: GREENFIELD · Validate → Plan → Human Feedback → Build → Verify → QA → Deliver</span>
 <span class="g">  human feedback → plain brief + technical brief approved</span>
 <span class="g">  build → 43 tests pass (builder's own report — not yet trusted)</span>
 <span class="w">  verify → RED: 2 real SSRF holes the tests missed → back to Build</span>
 <span class="ok">  verify → GREEN · review APPROVE · gate exit 0 → shipped</span></pre>
-<pre class="ko"><span class="p">›</span> <span class="c">/just-do-it</span> 프로덕션급 URL 단축기를 만들고 출시해줘
+<pre class="ko"><span class="p">›</span> <span class="c">/supergoal</span> 프로덕션급 URL 단축기를 만들고 출시해줘
 <span class="g">  mode: GREENFIELD · Validate → Plan → Human Feedback → Build → Verify → QA → Deliver</span>
 <span class="g">  human feedback → 쉬운 설명 + 기술 브리프 승인</span>
 <span class="g">  build → 테스트 43개 통과 (구현자 자가 보고 — 아직 신뢰 안 함)</span>
@@ -201,19 +201,19 @@
       <p class="ko">Claude Code 스킬 폴더에 심볼릭 링크로 걸어두세요(심볼릭 링크면 항상 최신 상태 유지).</p></div>
     <div class="step"><div class="num">03</div>
       <h3><span class="en">Run</span><span class="ko">실행</span></h3>
-      <p class="en">In any project, type <code>/just-do-it</code> and your objective.</p>
-      <p class="ko">아무 프로젝트에서나 <code>/just-do-it</code> 뒤에 목표를 입력하세요.</p></div>
+      <p class="en">In any project, type <code>/supergoal</code> and your objective.</p>
+      <p class="ko">아무 프로젝트에서나 <code>/supergoal</code> 뒤에 목표를 입력하세요.</p></div>
   </div>
   <div class="term">
     <div class="bar"><i></i><i></i><i></i></div>
-<pre class="en"><span class="p">›</span> git clone https://github.com/cskwork/just-do-it-skill.git
-<span class="p">›</span> ln -s "$(pwd)/just-do-it-skill" ~/.claude/skills/just-do-it
+<pre class="en"><span class="p">›</span> git clone https://github.com/cskwork/supergoal-skill.git
+<span class="p">›</span> ln -s "$(pwd)/supergoal-skill" ~/.claude/skills/supergoal
 <span class="g"># then, in Claude Code, hand it one objective:</span>
-<span class="p">›</span> <span class="c">/just-do-it</span> build a CLI todo app and ship it</pre>
-<pre class="ko"><span class="p">›</span> git clone https://github.com/cskwork/just-do-it-skill.git
-<span class="p">›</span> ln -s "$(pwd)/just-do-it-skill" ~/.claude/skills/just-do-it
+<span class="p">›</span> <span class="c">/supergoal</span> build a CLI todo app and ship it</pre>
+<pre class="ko"><span class="p">›</span> git clone https://github.com/cskwork/supergoal-skill.git
+<span class="p">›</span> ln -s "$(pwd)/supergoal-skill" ~/.claude/skills/supergoal
 <span class="g"># 그다음 Claude Code에서 목표 하나를 건네세요:</span>
-<span class="p">›</span> <span class="c">/just-do-it</span> CLI 할 일 앱을 만들고 출시해줘</pre>
+<span class="p">›</span> <span class="c">/supergoal</span> CLI 할 일 앱을 만들고 출시해줘</pre>
   </div>
   <p style="margin-top:18px">
     <span class="pill"><span class="en">zero dependencies</span><span class="ko">의존성 없음</span></span><span class="pill"><span class="en">no external orchestrator</span><span class="ko">외부 오케스트레이터 없음</span></span>
@@ -467,8 +467,8 @@
       <span class="what en">Added link-expiry (TTL) with <b>zero regressions</b> — still works with records saved before the field existed. Review-approved, gate-green.</span>
       <span class="what ko">링크 만료(TTL)를 <b>회귀 0건</b>으로 추가 — 필드가 생기기 전에 저장된 레코드와도 여전히 동작. 리뷰 승인, 게이트 green.</span></div>
     <div class="row"><span class="badge b-green">BENCHMARK</span>
-      <span class="what en">Private-codebase comparison: <b><code>/just-do-it</code> was the only arm to pass every hidden check</b> against plain Codex CLI and Codex Goal mode. <a href="experiments/2026-05-30-private-codebase-comparison/">Read the evidence report.</a></span>
-      <span class="what ko">비공개 코드베이스 비교: plain Codex CLI와 Codex Goal mode 대비 <b><code>/just-do-it</code>만 모든 hidden check를 통과</b>했습니다. <a href="experiments/2026-05-30-private-codebase-comparison/">증거 리포트 보기.</a></span></div>
+      <span class="what en">Private-codebase comparison: <b><code>/supergoal</code> was the only arm to pass every hidden check</b> against plain Codex CLI and Codex Goal mode. <a href="experiments/2026-05-30-private-codebase-comparison/">Read the evidence report.</a></span>
+      <span class="what ko">비공개 코드베이스 비교: plain Codex CLI와 Codex Goal mode 대비 <b><code>/supergoal</code>만 모든 hidden check를 통과</b>했습니다. <a href="experiments/2026-05-30-private-codebase-comparison/">증거 리포트 보기.</a></span></div>
   </div>
 </div></section>
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# /just-do-it literal delivery gate.
+# /supergoal literal delivery gate.
 # The orchestrator may NOT announce "done" unless this exits 0.
 # NEVER edit this script to make a failing run pass — fix the work instead.
 #
@@ -17,7 +17,7 @@ TEST_CMD="${2:-}"
 fail() { echo "GATE FAIL: $*" >&2; exit 1; }
 pass() { echo "  ok: $*"; }
 
-echo "== /just-do-it delivery gate =="
+echo "== /supergoal delivery gate =="
 echo "vault: $VAULT"
 
 # 1) Required artifacts exist and are non-empty.

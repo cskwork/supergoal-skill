@@ -1,6 +1,6 @@
 # 2026-05-30 — research → build → validate → publish → self-review
 
-Context-sharing log for how `/just-do-it` was created. Reasoning lives here; the *what* lives in the
+Context-sharing log for how `/supergoal` was created. Reasoning lives here; the *what* lives in the
 code and [`../../../DESIGN.md`](../../../DESIGN.md). New decision/context docs go under
 `docs/changelog/<date>-<title>/`.
 
@@ -40,7 +40,7 @@ Fixes applied:
 | CRITICAL | DEBUG mode produced no `plan.md`, but the delivery gate requires it → docs-faithful DEBUG runs fail | DEBUG's Diagnose now writes `plan.md` (root-cause + fix plan); Human Feedback records approval before Fix opens |
 | CRITICAL | Gate's NO-GO check matched the word anywhere → a valid GREENFIELD `validation.md` discussing NO-GO criteria falsely failed | Gate now matches an explicit `Decision: GO` / `Decision: NO-GO` line; market-research.md emits exactly that line |
 | MAJOR | `verification.md` per-claim `verdict:` vs gate failing on any `^verdict: RED` were incompatible | Contract: per-claim lines use `claim <id>:`, one final aggregate `verdict: GREEN` line; rewrite on re-verify |
-| MAJOR | `.gitignore` `*.log` silently excluded the `decisions.log` audit trail | Removed `*.log`; ignore only `.just-do-it/` vault scratch; audit `decisions.log` now tracked |
+| MAJOR | `.gitignore` `*.log` silently excluded the `decisions.log` audit trail | Removed `*.log`; ignore only `.supergoal/` vault scratch; audit `decisions.log` now tracked |
 | MAJOR | `contracts.md` was a Build input no phase wrote | GREENFIELD Plan now writes `contracts.md` |
 | MAJOR | `state.json` template had no slot for the human-approval gate | Added an `approval` field; documented mode-specific `cycles` keys |
 | MAJOR | Docs claimed the gate runs "in a clean sandbox" — it runs in the CWD | Reworded: gate runs in the workspace; clean-state reproduction is the Verify agent's job |
@@ -52,7 +52,7 @@ The gate's `Decision:` logic was re-tested across four scenarios after the fix (
 
 ## Decisions
 
-- Skill is **global** (`~/.claude/skills/just-do-it`) so `/just-do-it` works across projects.
+- Skill is **global** (`~/.claude/skills/supergoal`) so `/supergoal` works across projects.
 - DEBUG/LEGACY default to **single-driver + read-only Plan Mode + approval before the first write**;
   only GREENFIELD validation/scaffolding fans out (task topology picks the architecture).
 - Repo visibility: **public** (a private free-plan repo can't publish GitHub Pages).
@@ -60,7 +60,7 @@ The gate's `Decision:` logic was re-tested across four scenarios after the fix (
 ## Update — vault relocation + file consolidation
 
 Per request, the harness now writes a run's working docs into **`docs/changelog/<date>-<slug>/`** (a
-tracked, browsable changelog committed with the code) instead of a hidden `./.just-do-it/` scratch
+tracked, browsable changelog committed with the code) instead of a hidden `./.supergoal/` scratch
 dir — so every project the harness touches keeps a permanent decision record (this folder is exactly
 that, for building the skill).
 

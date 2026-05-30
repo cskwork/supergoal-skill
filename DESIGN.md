@@ -30,6 +30,12 @@ for market/product validation). `/supergoal` adds a **Validate** front-lane for 
 - **using-symphony** → `doctor`-style preflight discipline.
 - **Frontmatter/house style** → `name` + trigger-rich `description` + `argument-hint` + `level`;
   thin `SKILL.md` spine + `reference/*.md` loaded on demand (progressive disclosure).
+- **taste-skill v2** (leonxlnx/taste-skill, `design-taste-frontend`) → the design authority for UI/UX
+  jobs. Vendored **verbatim** as `reference/taste-skill-v2.md` (only file v2 needs; companions like
+  v1/output/imagegen are not required), under a provenance banner so refresh is a body-swap, not a
+  merge. A thin `reference/ui-ux.md` overlay loads it on demand at Plan/Build/QA — keeping the
+  always-on spine lean while UI work gets full anti-slop guidance. Why vendor vs. submodule: pulls one
+  file not the whole repo, and a pinned commit makes drift auditable.
 
 ## Grounded by research (each decision → evidence)
 

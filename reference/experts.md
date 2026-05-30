@@ -16,6 +16,7 @@ predictable cost (token spend explains ~80% of multi-agent performance variance 
 | Analyst (Intake/Validate) | `analyst` | Opus | objective | `brief.md` (incl. `## Validation`) |
 | Architect (Plan/Explore) | `architect` | Opus | brief, README map | `plan.md` (incl. architecture + contracts) |
 | Builder | `executor` | Sonnet (Opus if novel/algorithmic) | plan | code + `claims.md` entry |
+| Designer (UI/UX jobs only) | `designer` | Sonnet | `plan.md` + `reference/taste-skill-v2.md` | UI code to taste-skill v2 rules + dial values; `claims.md` entry |
 | Verifier (adversary) | `verifier` / `critic` | Opus | `claims.md` + source only (harness-enforced — see below) | `verification.md` verdicts |
 | Security reviewer | `security-reviewer` | Sonnet | diff | findings |
 | Code reviewer | `code-reviewer` | Sonnet | diff + `plan.md` | findings |
@@ -29,7 +30,9 @@ insufficient — a subagent can read any file it can reach unless the harness bl
 
 Architect/editor split inside Build (Aider architect-mode evidence, directional): the architect
 produces the diff intent / plan, the executor emits the actual edits. A reasoning pass plans, a
-precise pass writes.
+precise pass writes. On **UI/UX jobs** (`reference/ui-ux.md`) the Designer replaces/augments the
+editor for visual surfaces, and the QA gate adds the taste-skill v2 Pre-Flight Check (§14); the
+committee and adversarial Verify are unchanged — the Designer never self-approves.
 
 ## Parallel-wave dispatch (from ultrawork)
 

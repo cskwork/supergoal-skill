@@ -37,7 +37,7 @@ Fixes applied:
 
 | Severity | Finding | Fix |
 |---|---|---|
-| CRITICAL | DEBUG mode produced no `plan.md`, but the delivery gate requires it → docs-faithful DEBUG runs fail | DEBUG's Diagnose now writes `plan.md` (the approved fix plan); `plan.md` documented as universal (pipeline.md, vault.md) |
+| CRITICAL | DEBUG mode produced no `plan.md`, but the delivery gate requires it → docs-faithful DEBUG runs fail | DEBUG's Diagnose now writes `plan.md` (root-cause + fix plan); Human Feedback records approval before Fix opens |
 | CRITICAL | Gate's NO-GO check matched the word anywhere → a valid GREENFIELD `validation.md` discussing NO-GO criteria falsely failed | Gate now matches an explicit `Decision: GO` / `Decision: NO-GO` line; market-research.md emits exactly that line |
 | MAJOR | `verification.md` per-claim `verdict:` vs gate failing on any `^verdict: RED` were incompatible | Contract: per-claim lines use `claim <id>:`, one final aggregate `verdict: GREEN` line; rewrite on re-verify |
 | MAJOR | `.gitignore` `*.log` silently excluded the `decisions.log` audit trail | Removed `*.log`; ignore only `.just-do-it/` vault scratch; audit `decisions.log` now tracked |

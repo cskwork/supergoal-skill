@@ -10,5 +10,5 @@ Expected: hits == number of successful redirects served for that code.
 Actual: hits < number of redirects, under concurrency only; intermittent.
 
 ## Mode
-DEBUG (deep-and-narrow). Single-driver. Open read-only; reproduce-first; human approval before any
-source change.
+DEBUG (deep-and-narrow). Single-driver. Open read-only through Human Feedback; reproduce-first;
+human approval before any source change.

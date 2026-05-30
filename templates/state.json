@@ -7,8 +7,13 @@
   "phases_completed": [],
   "go_decision": null,
   "approval": null,
+  "approval_target_phase": "Build | Fix | null",
   "plan_hash": null,
-  "cycles": { "Build": 0, "Verify": 0, "QA": 0, "Fix": 0 },
+  "cycles": {
+    "intake": 0, "validate": 0, "plan": 0, "human_feedback": 0, "build": 0,
+    "verify": 0, "qa": 0, "deliver": 0,
+    "reproduce": 0, "diagnose": 0, "fix": 0, "explore": 0
+  },
   "max_cycles_per_phase": 5,
   "error_signatures": {},
   "circuit_breaker_threshold": 3,

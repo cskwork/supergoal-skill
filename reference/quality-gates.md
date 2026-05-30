@@ -21,6 +21,8 @@ an isolated sandbox; reproducing from a genuinely clean state is the Verify agen
 
 **GREENFIELD Validate gate** (mirrors the delivery gate, but at pipeline entry): `templates/validate-gate.sh <vault>` exits 0 only when `brief.md` contains a `Decision: GO` line. NO-GO or absence exits non-zero — Build does not open. Never edit it to pass.
 
+**Human Feedback gate** (before the first implementation write): `templates/human-feedback-gate.mjs <vault> <Build|Fix>` exits 0 only when `plan.md` contains the required two-part Human Feedback packet and `state.json.approval.status` is `APPROVED` for the target phase. The orchestrator must ask the human and wait; it must not self-approve.
+
 **Plan-freeze check** (enforced at Deliver entry): plan-hash must match `state.json.plan_hash` (see `reference/vault.md`). A mismatch fails the gate unless `README.md` contains a logged re-plan step.
 
 ### 2. Soft gate — quality (LLM rubric / committee)

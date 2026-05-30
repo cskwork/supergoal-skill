@@ -33,7 +33,8 @@ Confidence ratings: **high** = multiple independent credible sources agree; **me
 - **Prefer explicit graph-style handoffs with checkpointing** (LangGraph-like) over open-ended group chat; avoid AutoGen-style N-round debate loops that multiply token cost without bounded gates.
 - **Add a shared artifact/blackboard** (a plan + findings file) that persists across subagent runs so discoveries survive task boundaries, while each subagent's working context stays isolated.
 - **Encode phase gates as deterministic, non-LLM hook scripts** (tests/lint/build) so progress can't be hallucinated by an agent claiming success.
-- **Insert a read-only Plan-Mode/approval checkpoint** before any write-phase fan-out begins.
+- **Insert a Human Feedback approval checkpoint** before any implementation begins; DEBUG and LEGACY
+  use read-only Plan Mode leading into that checkpoint.
 
 ---
 
@@ -53,10 +54,10 @@ Confidence ratings: **high** = multiple independent credible sources agree; **me
 
 ### Design implications for /just-do-it
 - **Never gate success on benchmark-style pass rates.** Gate on the *project's own test suite executed in a clean sandbox*. Treat any agent self-report of success as unverified until independently reproduced.
-- **Scope work to small, well-specified, verifiable tasks by default.** Require an explicit, machine-checkable acceptance criterion *before* launch; degrade to human-in-loop for open-ended/ambiguous objectives. This directly bounds the DEBUG and LEGACY modes.
+- **Scope work to small, well-specified, verifiable tasks by default.** Require an explicit, machine-checkable acceptance criterion *before* launch; degrade to human-in-loop for open-ended/ambiguous objectives. This directly bounds all three modes.
 - **Consider an architect/editor split** inside each implementation subagent: a reasoning pass produces the plan/diff intent, a precise pass emits the actual edits.
 - **Build on managed-harness primitives where available** (sandbox + state persistence) rather than reinventing the loop.
-- **Make Plan Mode the default opening phase** for DEBUG and LEGACY (read-only root-cause / codebase mapping) before any write.
+- **Make Plan Mode the default opening phase** for DEBUG and LEGACY (read-only root-cause / codebase mapping), then require Human Feedback before any write. GREENFIELD also stops at Human Feedback after Validate/Plan and before Build.
 
 ---
 
@@ -115,7 +116,7 @@ Confidence ratings: **high** = multiple independent credible sources agree; **me
 
 ### Design implications for /just-do-it (DEBUG mode)
 - **Default DEBUG to single-driver topology**; allow isolated parallel probes only for independent investigations, each returning a summary to the blackboard.
-- **Open with read-only Plan Mode**: reproduce → localize → hypothesize, approve, then fix.
+- **Open with read-only Plan Mode**: reproduce → localize → hypothesize → Human Feedback approval → fix.
 - **Require a failing repro before the fix and a passing repro after**, executed in a clean sandbox — the literal delivery gate for DEBUG.
 - **Run a post-fix regression review** with distinct mandates (does the fix break correctness/security/behavior elsewhere?).
 - **Persist all findings to the shared vault** so re-runs and follow-ups don't re-investigate solved ground.
@@ -136,7 +137,7 @@ Confidence ratings: **high** = multiple independent credible sources agree; **me
 
 6. **Deterministic hook gates, not model self-policing.** Phase advancement requires non-LLM hook scripts (tests/lint/build) to pass — progress cannot be hallucinated. *(Orch-7)*
 
-7. **Read-only Plan Mode + human approval before any write fan-out.** Mandatory opening phase for DEBUG and LEGACY; the risk gate for autonomous edits. *(Harness-5, Debug-2)*
+7. **Human Feedback approval before any write fan-out.** DEBUG and LEGACY open in read-only Plan Mode; all modes must pass Human Feedback before implementation. *(Harness-5, Debug-2)*
 
 8. **Two-layer done-gate: hard tests + soft rubric, tests win.** Build/lint/tests must pass (hard); a reviewer subagent scores quality/security (soft). Rubric never overrides a failing test. *(Quality-1)*
 

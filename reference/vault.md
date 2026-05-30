@@ -19,7 +19,7 @@ three that stay separate are load-bearing for builder ≠ verifier; the rest are
 |---|---|---|---|
 | `README.md` | any (orchestrator owns) | append-only | the run narrative + decisions, hypotheses, skips, escalations — the **audit log** and the folder's rendered index |
 | `brief.md` | Analyst | frozen per section | goal, audience, acceptance criteria, non-goals + a **`## Validation`** section (demand evidence ending in one `Decision: GO`/`Decision: NO-GO` line — greenfield) |
-| `plan.md` | Architect (DEBUG: from Diagnose) | **frozen once written** | the slice plan with per-slice acceptance checks, plus **Architecture** and **Contracts** sections (stack, codebase map, interfaces). DEBUG: the approved root-cause + fix plan. **Required by the gate in every mode.** |
+| `plan.md` | Architect (DEBUG: from Diagnose) | **frozen once written** | the slice plan with per-slice acceptance checks, plus **Architecture** and **Contracts** sections (stack, codebase map, interfaces). DEBUG: the root-cause + fix plan. Also holds the `## Human Feedback` approval packet. **Required by the gate in every mode.** |
 | `claims.md` | Builder | **append-only, UNTRUSTED** | one entry per slice: what was done + a `run-to-prove` command |
 | `verification.md` | Verifier (+ QA) | append-only | per-claim lines `claim <id>: GREEN\|RED` + evidence, then ONE aggregate `verdict: GREEN` (or `verdict: RED`); plus a **`## QA`** section with black-box results. The gate reads the aggregate; on re-verify, rewrite so no line-start `verdict: RED` lingers |
 | `state.json` | orchestrator | live (machine) | mode, current phase, per-phase cycle counters, error signatures, `go_decision`, `plan_hash`, `approval`, `circuit_breaker_threshold`. See `templates/state.json` and field docs below. |
@@ -36,7 +36,7 @@ A fixed-key object covering all phases (one source of truth across modes — key
 
 ```json
 "cycles": {
-  "intake": 0, "validate": 0, "plan": 0, "build": 0,
+  "intake": 0, "validate": 0, "plan": 0, "human_feedback": 0, "build": 0,
   "verify": 0, "qa": 0, "deliver": 0,
   "reproduce": 0, "diagnose": 0, "fix": 0, "explore": 0
 }
@@ -71,7 +71,7 @@ gate** unless `README.md` contains a logged re-plan step (keyword: `RE-PLAN:`).
 
 ### `approval`
 `null` until a human explicitly approves the fix/build plan (required before the first source-tree
-write in DEBUG and LEGACY modes). Once set, the canonical shape is:
+write in every mode). Once set, the canonical shape is:
 
 ```json
 "approval": { "phase": "<phase-name>", "status": "APPROVED" }
@@ -79,6 +79,31 @@ write in DEBUG and LEGACY modes). Once set, the canonical shape is:
 
 No source-tree write occurs while `approval` is `null`. The field name is fixed — do not use
 ad-hoc variants (`approval_to_build`, `approval_to_fix`, etc.).
+
+### `plan.md` Human Feedback section
+
+Human Feedback is the only pre-implementation human approval stage. Do not add an `approval.md`
+file; keep the six-file vault intact by appending this packet to `plan.md`:
+
+```md
+## Human Feedback
+
+### Plain-language brief
+<top section: short, non-developer explanation of what will be built or why the bug happens>
+
+### Technical brief
+<bottom section: novice-dev-friendly plan, including file/module touch points, tests, and risks>
+
+### Terms
+- <term>: <plain definition>
+
+### Approval request
+Approve <Build|Fix>, request changes, or stop.
+```
+
+The plain-language brief must come before the technical brief. The technical brief must define
+terms that a novice developer could find difficult. `templates/human-feedback-gate.mjs <vault>
+<Build|Fix>` checks this structure and `state.json.approval` before implementation opens.
 
 ---
 

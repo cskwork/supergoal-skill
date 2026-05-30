@@ -48,5 +48,28 @@ Error envelope (all errors): `{ "error": { "code": "<machine_code>", "message": 
 5. auth — unit: accepts configured key, rejects wrong/missing, constant-time path.
 6. server/integration — spin up on ephemeral port: health; create+redirect+hit count; 404; 401 (bad+missing key); 400 (bad url + SSRF url); 429 after exceeding capacity; stats.
 
+## Human Feedback
+
+### Plain-language brief
+Build a small private URL shortener that can run without outside services. A user with an API key can
+submit a long link and receive a short code. Anyone who opens the short code is redirected to the
+saved link, and the service counts visits. The plan keeps the first version intentionally simple:
+local JSON storage, clear API errors, rate limits, and URL safety checks before anything is shipped.
+
+### Technical brief
+Implement a zero-dependency Node HTTP service with separate modules for config, URL validation,
+storage, rate limiting, auth, logging, and routing. The risky areas are SSRF prevention, concurrent
+file-backed writes, and auth behavior. The implementation should add unit tests for each module and
+integration tests for the HTTP paths, then write `claims.md` with `run-to-prove: npm test`. Build can
+start only after approval is recorded for the `Build` phase.
+
+### Terms
+- SSRF: a server-side request forgery issue where a submitted URL tricks the service into reaching a private internal address.
+- Atomic write: a save operation that writes a temporary file and renames it so partial data is not left behind.
+- Rate limit: a rule that slows or blocks repeated requests after a configured allowance is used.
+
+### Approval request
+Approve Build, request changes to the plan, or stop.
+
 Exit gate for Build: each slice's tests written and `npm test` green locally + a `claims.md` entry
 with `run-to-prove: npm test`.

@@ -8,6 +8,8 @@
 
 2026-05-29T22:20 Plan: zero-dep Node (node:http/crypto/fs/test) so the delivery gate runs offline. File-backed atomic store for MVP; DB swap = future work. plan.md FROZEN.
 
+2026-05-29T22:25 Human Feedback: plain-language and technical briefs added to plan.md; human approved Build in state.json.
+
 2026-05-29T22:20 Topology: single-driver Build (one cohesive service = deep-narrow); committee reviewers fan out at the soft gate.
 
 2026-05-29T22:35 Build cycle 1: builder reported 43/43 tests passing.

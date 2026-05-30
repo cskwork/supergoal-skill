@@ -1,6 +1,6 @@
 ---
 name: just-do-it
-description: One command that takes a single objective through a full, gated development process using expert subagents. Use when the user types "/just-do-it", says "just do it", "build me X end to end", "take this from idea to shipped", or hands off a whole objective for autonomous delivery. Three modes — GREENFIELD (ship a new production-grade app, with market/demand validation up front), DEBUG (root-cause a complex bug in web or other software), LEGACY (add a feature inside a large/legacy codebase). Borrows oh-my-symphony's gated-lane + shared-vault + adversarial-verify + literal-delivery-gate model, runs it self-contained with in-session subagents — no external orchestrator, TUI, or CLI install.
+description: Run one objective through a gated build/debug/legacy workflow with expert subagents, Human Feedback approval before implementation, adversarial verification, and a delivery gate. Use for "/just-do-it", "just do it", "build X end to end", "fix this bug", or "add this feature".
 argument-hint: "<objective: an app idea, a bug to fix, or a feature to add>"
 level: 4
 ---
@@ -42,9 +42,9 @@ Read the objective and classify it. State the detected mode to the user in one l
 
 | Signal in the objective | Mode | Pipeline (see `reference/pipeline.md`) |
 |---|---|---|
-| "build / make / ship / launch a new app/product/site/tool" | **GREENFIELD** | Intake → **Validate** → Plan → Build → Verify → QA → Deliver |
-| "fix / broken / failing / crash / hang / regression / why does" | **DEBUG** | Intake → Reproduce → Diagnose → Fix → Verify → Deliver |
-| "add / integrate X into existing/legacy/our codebase" | **LEGACY** | Intake → Explore → Plan → Build → Verify → QA → Deliver |
+| "build / make / ship / launch a new app/product/site/tool" | **GREENFIELD** | Intake → **Validate** → Plan → **Human Feedback** → Build → Verify → QA → Deliver |
+| "fix / broken / failing / crash / hang / regression / why does" | **DEBUG** | Intake → Reproduce → Diagnose → **Human Feedback** → Fix → Verify → Deliver |
+| "add / integrate X into existing/legacy/our codebase" | **LEGACY** | Intake → Explore → Plan → **Human Feedback** → Build → Verify → QA → Deliver |
 
 If ambiguous, ask ONE clarifying question, then proceed. Mode picks the pipeline; the gates and the
 vault are identical across modes.
@@ -52,8 +52,8 @@ vault are identical across modes.
 **Topology rule** (the research thesis — task shape, not preference, picks the architecture):
 fan out parallel subagents only for *wide-and-shallow* work (Validate research, scaffolding several
 modules). Keep a *single driving agent* for *deep-and-narrow* work — so **DEBUG and LEGACY default to
-single-driver** with isolated helpers only for independent probes, and both open in **read-only Plan
-Mode with human approval before the first write**. Details in `reference/pipeline.md`.
+single-driver** with isolated helpers only for independent probes. **All modes require Human
+Feedback approval before the first implementation write**. Details in `reference/pipeline.md`.
 
 ## The non-negotiable gates
 
@@ -61,12 +61,13 @@ These are the spine. Never weaken or skip them; never edit a gate to make it pas
 (`reference/quality-gates.md`).
 
 1. **Validate-before-build** (GREENFIELD): Build won't open until `templates/validate-gate.sh <vault>` exits 0 (requires `Decision: GO` in `brief.md`). Details: `reference/quality-gates.md`.
-2. **Plan freezes scope**: `plan.md` is written once and frozen; Build implements it, does not redesign.
-3. **Builder ≠ Verifier**: the agent that writes code does not get to approve it. A fresh **adversarial
+2. **Plan freezes scope**: `plan.md` is written once and frozen; Build/Fix implements it, does not redesign.
+3. **Human Feedback before implementation**: after the brief, reproduction/diagnosis, and plan are ready, pause for explicit human approval. `plan.md` must contain a top plain-language brief and a lower technical novice-dev brief; `templates/human-feedback-gate.mjs <vault> <Build|Fix>` must pass before Build/Fix opens.
+4. **Builder ≠ Verifier**: the agent that writes code does not get to approve it. A fresh **adversarial
    Verify** agent re-runs every `run-to-prove` command in `claims.md` from a clean state.
-4. **Multi-expert review before deliver**: architect + security-reviewer + code-reviewer run in parallel; ALL must approve (`reference/experts.md`).
-5. **Literal delivery gate**: `templates/delivery-gate.sh` must exit 0 — required artifacts present, aggregate `verdict: GREEN`, `Decision: GO` for greenfield, project tests pass. Skill cannot announce "done" otherwise.
-6. **Bounded retry + circuit breaker**: max 5 fix cycles per phase; the same normalized error signature 3x trips `templates/circuit-breaker.mjs` → stop, root-cause to user. Mechanism: `reference/vault.md`.
+5. **Multi-expert review before deliver**: architect + security-reviewer + code-reviewer run in parallel; ALL must approve (`reference/experts.md`).
+6. **Literal delivery gate**: `templates/delivery-gate.sh` must exit 0 — required artifacts present, aggregate `verdict: GREEN`, `Decision: GO` for greenfield, project tests pass. Skill cannot announce "done" otherwise.
+7. **Bounded retry + circuit breaker**: max 5 fix cycles per phase; the same normalized error signature 3x trips `templates/circuit-breaker.mjs` → stop, root-cause to user. Mechanism: `reference/vault.md`.
 
 ## The vault (only cross-phase state)
 
@@ -96,18 +97,21 @@ Roles are dispatched as subagents, each a fresh context with the minimum vault r
 |---|---|
 | `templates/delivery-gate.sh` | Deliver — hard exit-0 check for artifacts + tests |
 | `templates/validate-gate.sh <vault>` | GREENFIELD Validate — machine-checks `Decision: GO` in `brief.md` before Build opens |
+| `templates/human-feedback-gate.mjs <vault> <Build\|Fix>` | Human Feedback — checks the two approval briefs and recorded human approval before Build/Fix opens |
 | `templates/circuit-breaker.mjs <state.json> <sig>` | Each failed fix cycle — trips at 3 identical normalized error signatures |
 
 ## Escalation & stop conditions
 
 - Circuit breaker tripped (`circuit-breaker.mjs` exits 1) → stop, root-cause to user.
 - Validate phase finds no demand evidence (GREENFIELD) → stop, report; do not build on spec.
+- Human rejects or changes the plan → do not Build/Fix; re-open Plan/Diagnose, update the vault, and ask again.
 - Delivery gate cannot pass after fixes → report exactly which check fails; never fake the gate.
 - Destructive or irreversible step needed (drop data, force-push, external publish) → ask first.
 
 ## Final checklist (before claiming done)
 
 - [ ] Mode stated and correct pipeline run
+- [ ] Human Feedback stage produced the plain-language and technical briefs, and approval was recorded before Build/Fix
 - [ ] Every `claims.md` entry has a GREEN verdict in `verification.md` from the adversarial pass
 - [ ] architect + security + code-review all approved
 - [ ] `delivery-gate.sh` exited 0 — paste the output as evidence

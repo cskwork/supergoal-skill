@@ -1,7 +1,7 @@
 # /just-do-it — full E2E test plan
 
 Purpose: prove the skill drives an objective through its gated pipeline correctly in all three modes,
-that **every gate actually gates**, that the vault is produced correctly at
+that **every gate actually gates**, that Human Feedback blocks implementation until approval, that the vault is produced correctly at
 `docs/changelog/<date-slug>/` (6 files), and that failure modes (NO-GO stop, RED rewind, circuit
 breaker, approval gate) behave as specified. Evidence over assertion — each test states the exact
 command/observation and its pass criterion.
@@ -18,7 +18,7 @@ command/observation and its pass criterion.
 
 | Tier | What | Cost | Automatable |
 |---|---|---|---|
-| A | `delivery-gate.sh` unit scenarios | trivial | fully (bash) |
+| A | literal gate unit scenarios (`validate-gate.sh`, `human-feedback-gate.mjs`, `delivery-gate.sh`) | trivial | fully (bash/node) |
 | B | Per-mode happy-path E2E (GREENFIELD / DEBUG / LEGACY) | high | semi (drive + inspect) |
 | C | Guardrail / failure-mode tests | high | semi |
 | D | Vault & artifact-layout tests | low | fully (after a B run) |
@@ -27,7 +27,25 @@ command/observation and its pass criterion.
 
 ---
 
-## Tier A — delivery-gate.sh unit tests (deterministic)
+## Tier A — literal gate unit tests (deterministic)
+
+### A0 — human-feedback-gate.mjs
+
+Run `templates/human-feedback-gate.mjs <vault> <Build|Fix>` against hand-built vault fixtures.
+
+| # | Vault fixture | Expect |
+|---|---|---|
+| HF1 | no `plan.md` | FAIL "cannot read" |
+| HF2 | `plan.md` lacks `## Human Feedback` | FAIL missing section |
+| HF3 | plain-language section appears below technical section | FAIL ordering |
+| HF4 | no `state.json.approval` | FAIL approval not APPROVED |
+| HF5 | approval phase is `Build`, target is `Fix` | FAIL phase mismatch |
+| HF6 | valid two briefs + `Terms` definition + `approval: {phase:"Build",status:"APPROVED"}` | PASS |
+| HF7 | empty `## Human Feedback`, valid-looking briefs elsewhere in `plan.md` | FAIL missing packet sections |
+
+Pass criterion: HF1-HF7 match exactly; Build/Fix never opens unless HF6-style evidence exists.
+
+### A1-A11 — delivery-gate.sh
 
 Run `templates/delivery-gate.sh <vault> <test-cmd>` against hand-built vault fixtures. `<test-cmd>`
 is `true`/`false` to isolate gate logic from a real suite.
@@ -71,9 +89,12 @@ For each, run `/just-do-it <objective>` in a fresh `git init` dir and inspect th
 - Objective: `build a small CLI todo app with JSON persistence and ship it`.
 - Expect: mode stated GREENFIELD; topology fans out at Validate; `docs/changelog/<date>-cli-todo*/`
   created with the 6 files; `brief.md` has a `## Validation` ending `Decision: GO`; `plan.md` frozen;
+  `plan.md` has `## Human Feedback` with top plain-language and lower technical briefs; no source
+  edit occurs until `state.json.approval.phase == "Build"` and `human-feedback-gate.mjs` passes;
   `claims.md` has ≥1 entry with `run-to-prove`; `verification.md` ends `verdict: GREEN`; committee
   approves; **`delivery-gate.sh` exits 0** (paste output); a commit exists.
-- Pass: gate exit 0 + suite green + 6-file vault present + a working `todo add/list/done`.
+- Pass: HF gate exit 0 before Build + delivery gate exit 0 + suite green + 6-file vault present +
+  a working `todo add/list/done`.
 
 ### B2 — DEBUG (root-cause a hard bug)
 - Fixture: copy `examples/url-shortener`, apply the **lost-update fixture** (Appendix 1) to
@@ -81,21 +102,22 @@ For each, run `/just-do-it <objective>` in a fresh `git init` dir and inspect th
   currently GREEN on the correct store. Applying the fixture breaks that test immediately (suite
   goes 67/68 RED) — this is the honest starting state, not a deceptive green.
 - Objective: `stats undercount hits on popular links under concurrent traffic — fix it`.
-- Expect: mode DEBUG, single-driver; **read-only until approval** (no source edit before the
-  approval line in `state.json`); the existing `hit-concurrency.test.js` serves as the pre-existing
-  repro — Reproduce confirms it is RED on the broken store; Diagnose records competing hypotheses in
-  `README.md` and the fix plan in `plan.md`; after approval, Fix patches `src/store.js` to restore
-  the mutex-protected read; Verify re-runs the concurrency test GREEN + full suite (68/68) + stability
-  (no flake); gate exit 0.
-- Pass: concurrency test RED on broken store → GREEN after fix; zero source edits before approval;
-  verification GREEN (68/68).
+- Expect: mode DEBUG, single-driver; **read-only until Human Feedback approval** (no source edit
+  before `state.json.approval.phase == "Fix"`); the existing `hit-concurrency.test.js` serves as the
+  pre-existing repro — Reproduce confirms it is RED on the broken store; Diagnose records competing
+  hypotheses in `README.md` and the fix plan in `plan.md`; Human Feedback adds the two briefs and
+  waits; after approval, Fix patches `src/store.js` to restore the mutex-protected read; Verify
+  re-runs the concurrency test GREEN + full suite (68/68) + stability (no flake); gate exit 0.
+- Pass: concurrency test RED on broken store → GREEN after fix; zero source edits before HF approval;
+  HF gate exit 0; verification GREEN (68/68).
 
 ### B3 — LEGACY (add a feature to existing code)
 - Fixture: clean `examples/url-shortener`.
 - Objective: `add an optional per-link click cap (max redirects) to the existing shortener`.
 - Expect: mode LEGACY; Explore writes a file:line code map to `README.md`; surgical frozen `plan.md`
-  with backward-compat note; approval before Build; Build matches existing style (no unrelated
-  churn); Verify confirms the **pre-existing suite still passes** + new tests; gate exit 0.
+  with backward-compat note; Human Feedback adds the two briefs; approval before Build; Build matches
+  existing style (no unrelated churn); Verify confirms the **pre-existing suite still passes** + new
+  tests; gate exit 0.
 - Pass: no regressions (old tests green) + new behavior tested + minimal diff.
 
 ### B4 — GREENFIELD NO-GO (the validate gate stops a bad idea)
@@ -135,10 +157,12 @@ For each, run `/just-do-it <objective>` in a fresh `git init` dir and inspect th
   is an explicit step, logged).
 - Pass: `plan.md` unchanged during Build.
 
-### C4 — approval gate (DEBUG/LEGACY)
-- Expect: `state.json.approval` is `null` until the user approves; no file under the project's
-  source tree is modified while it is `null`.
-- Pass: `git status` shows no source changes before approval is recorded.
+### C4 — Human Feedback approval gate (all modes)
+- Expect: `state.json.approval` is `null` until the user approves; `plan.md` contains the required
+  top plain-language brief, lower technical brief, `Terms`, and `Approval request`; no file under the
+  project's source tree is modified while approval is `null`.
+- Pass: `human-feedback-gate.mjs` fails before approval, passes after approval, and `git status`
+  shows no source changes before approval is recorded.
 
 ### C5 — read-scope isolation
 - Inspect the dispatched Verifier subagent prompt.
@@ -186,15 +210,15 @@ Check: `ls docs/changelog/*/` and `git ls-files docs/changelog/`.
 ## Execution checklist
 
 ```
-[ ] A  delivery-gate.sh 11/11 scenarios
-[ ] B1 GREENFIELD reaches gate exit 0
+[ ] A  human-feedback-gate.mjs HF1-HF7 and delivery-gate.sh A1-A11 scenarios
+[ ] B1 GREENFIELD reaches HF gate then delivery gate exit 0
 [ ] B2 DEBUG: failing→passing repro, no pre-approval edits
-[ ] B3 LEGACY: zero regressions, minimal diff
+[ ] B3 LEGACY: HF gate, zero regressions, minimal diff
 [ ] B4 NO-GO halts before Build
 [ ] C1 adversarial Verify catches the planted bug (RED→rewind)
 [ ] C2 circuit breaker terminates (no hang)
 [ ] C3 frozen plan holds
-[ ] C4 no source edits before approval
+[ ] C4 no source edits before Human Feedback approval
 [ ] C5 Verifier read-scope = claims + code only
 [ ] D  6-file vault at docs/changelog/<slug>/, committed
 [ ] E  red-before/green-after demonstrated

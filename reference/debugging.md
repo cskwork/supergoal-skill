@@ -11,9 +11,9 @@ reuse them; this file is the DEBUG-mode contract.
 
 ## Open in read-only Plan Mode
 
-Analyze and propose **without mutating** through Reproduce + Diagnose. Speculative edits corrupt the
-repro state and destroy the evidence. Get the user's approval on the fix plan before the first write
-(antstack.com; developersdigest.tech Plan Mode guidance).
+Analyze and propose **without mutating** through Reproduce + Diagnose + Human Feedback. Speculative
+edits corrupt the repro state and destroy the evidence. Get the user's approval on the Human
+Feedback packet before the first write (antstack.com; developersdigest.tech Plan Mode guidance).
 
 ## The loop
 
@@ -27,7 +27,8 @@ repro state and destroy the evidence. Get the user's approval on the fix plan be
    evidence **for and against**. Track uncertainty explicitly. Pick the next probe that best
    discriminates between them — don't tunnel on the first idea (the `tracer` agent's method).
 4. **Confirm.** One hypothesis must be backed by direct evidence (a log line, a failing assertion at
-   the exact boundary), not plausibility. Then get fix-plan approval.
+   the exact boundary), not plausibility. Then write the fix plan and ask for Human Feedback
+   approval.
 5. **Fix at the root.** Smallest change that addresses the cause — not the symptom. No silencing
    errors, no fake success paths, no broad refactor riding along (project rule 7).
 6. **Verify + regression review.** The previously-failing repro now **passes** in a clean sandbox AND

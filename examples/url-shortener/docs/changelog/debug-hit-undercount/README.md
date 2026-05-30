@@ -92,6 +92,6 @@ buggy version; passes on committed/fixed version — closes the CI gap.
 
 No source files under `src/` or `bin/` were modified during the DEBUG phase.
 Working tree unchanged except: pre-existing `M src/store.js` (planted bug, left as-is) +
-new untracked `test/hit-concurrency.test.js`. Awaited approval to fix.
+new untracked `test/hit-concurrency.test.js`. Awaited Human Feedback approval to fix.
 
-Approval was granted (Fix phase). Fix applied. Verified GREEN (see verification.md).
+Human Feedback approval was granted (Fix phase). Fix applied. Verified GREEN (see verification.md).

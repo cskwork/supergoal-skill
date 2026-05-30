@@ -31,6 +31,29 @@ Surgical, backward-compatible. No DB/migration. Reuses existing modules and styl
   302; stats includes expiresAt/expired; **old record (no expiresAt) never expires**; bad ttl -> 400.
 - No unrelated refactor / formatting churn.
 
+## Human Feedback
+
+### Plain-language brief
+Add an optional expiration time for shortened links without breaking old links. If a link has expired,
+the service should stop redirecting people and should return a clear "gone" response instead. Links
+that were created before this feature, or links created without an expiration, must keep working as
+they do today.
+
+### Technical brief
+Add TTL support by extending validation, config, store records, redirect handling, stats output, and
+tests. The change should reuse the existing JSON record shape and treat missing `expiresAt` as
+never-expiring for backward compatibility. Redirect must check expiry before incrementing hits. The
+existing suite must stay green, and new integration tests should cover expired, unexpired, invalid,
+default, and old-record cases. Build can start only after approval is recorded for the `Build` phase.
+
+### Terms
+- TTL: time to live, the number of seconds a link should remain usable.
+- Backward compatibility: keeping old saved records working after the new field is introduced.
+- Lazy expiry: checking whether a link is expired when it is used, instead of running a background cleanup job.
+
+### Approval request
+Approve Build, request changes to the plan, or stop.
+
 ## Architecture
 
 | Concern | Location | Note |

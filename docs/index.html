@@ -82,7 +82,7 @@
   .card .mode{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
   .card.green .mode{color:var(--acc)} .card.amber .mode{color:var(--warn)} .card.blue .mode{color:var(--acc2)}
   .card p{color:var(--dim);font-size:calc(15.5px * var(--fs));line-height:1.62;margin:8px 0 12px}
-  .pipe{font-family:var(--mono);font-size:calc(12px * var(--fs));color:var(--faint);line-height:1.8;word-spacing:-2px}
+  .pipe{font-family:var(--mono);font-size:calc(12px * var(--fs));color:var(--faint);line-height:1.8;word-spacing:-1px;overflow-wrap:anywhere}
   .pipe b{color:var(--ink);font-weight:600}
 
   /* numbered quickstart steps */
@@ -169,12 +169,14 @@
   <div class="term">
     <div class="bar"><i></i><i></i><i></i></div>
 <pre class="en"><span class="p">›</span> <span class="c">/just-do-it</span> build a production URL shortener and ship it
-<span class="g">  mode: GREENFIELD · Validate → Plan → Build → Verify → QA → Deliver</span>
+<span class="g">  mode: GREENFIELD · Validate → Plan → Human Feedback → Build → Verify → QA → Deliver</span>
+<span class="g">  human feedback → plain brief + technical brief approved</span>
 <span class="g">  build → 43 tests pass (builder's own report — not yet trusted)</span>
 <span class="w">  verify → RED: 2 real SSRF holes the tests missed → back to Build</span>
 <span class="ok">  verify → GREEN · review APPROVE · gate exit 0 → shipped</span></pre>
 <pre class="ko"><span class="p">›</span> <span class="c">/just-do-it</span> 프로덕션급 URL 단축기를 만들고 출시해줘
-<span class="g">  mode: GREENFIELD · Validate → Plan → Build → Verify → QA → Deliver</span>
+<span class="g">  mode: GREENFIELD · Validate → Plan → Human Feedback → Build → Verify → QA → Deliver</span>
+<span class="g">  human feedback → 쉬운 설명 + 기술 브리프 승인</span>
 <span class="g">  build → 테스트 43개 통과 (구현자 자가 보고 — 아직 신뢰 안 함)</span>
 <span class="w">  verify → RED: 테스트가 놓친 진짜 SSRF 취약점 2건 → Build로 복귀</span>
 <span class="ok">  verify → GREEN · review APPROVE · gate exit 0 → 출시 완료</span></pre>
@@ -223,26 +225,26 @@
   <h2><span class="en">Three modes, one command</span><span class="ko">세 가지 모드, 하나의 명령</span></h2>
   <p class="lead en">The skill reads your objective and picks the right pipeline — and how much to
     parallelize. Broad work (research, scaffolding several files) fans out to many agents at once;
-    focused work (one bug, one feature) stays with a single driver and asks for your approval before
-    touching code.</p>
+    focused work (one bug, one feature) stays with a single driver. Every mode pauses at Human
+    Feedback before touching code.</p>
   <p class="lead ko">스킬이 목표를 읽고 알맞은 파이프라인과 병렬화 수준을 고릅니다. 폭넓은 작업(리서치, 여러 파일
-    스캐폴딩)은 여러 에이전트로 한꺼번에 펼치고, 집중된 작업(버그 하나, 기능 하나)은 단일 드라이버가 맡아
-    코드를 건드리기 전에 당신의 승인을 요청합니다.</p>
+    스캐폴딩)은 여러 에이전트로 한꺼번에 펼치고, 집중된 작업(버그 하나, 기능 하나)은 단일 드라이버가 맡습니다.
+    모든 모드는 코드를 건드리기 전에 Human Feedback에서 당신의 승인을 요청합니다.</p>
   <div class="grid3">
     <div class="card green">
       <div class="mode">greenfield</div>
       <h3><span class="en">Ship a new app</span><span class="ko">새 앱 출시</span></h3>
-      <p class="en">Check there's real demand before building anything, then plan → build → prove → ship.</p>
-      <p class="ko">무엇이든 만들기 전에 실제 수요부터 확인하고, 계획 → 구현 → 증명 → 출시 순으로 진행합니다.</p>
-      <div class="pipe">Intake → <b>Validate</b> → Plan → Build → Verify → QA → Deliver</div>
+      <p class="en">Check there's real demand, plan, get approval, then build → prove → ship.</p>
+      <p class="ko">실제 수요를 확인하고, 계획하고, 승인받은 뒤 구현 → 증명 → 출시 순으로 진행합니다.</p>
+      <div class="pipe">Intake → <b>Validate</b> → Plan → Human Feedback → Build → Verify → QA → Deliver</div>
     </div>
     <div class="card amber">
       <div class="mode">debug</div>
       <h3><span class="en">Root-cause a hard bug</span><span class="ko">까다로운 버그 근본 원인 추적</span></h3>
-      <p class="en">Reproduce it first, weigh competing explanations with evidence, then fix — only after you
-        approve. Read-only until then.</p>
-      <p class="ko">먼저 재현하고, 경쟁하는 가설을 증거로 따져본 뒤 — 당신이 승인해야 — 고칩니다. 그전까진 읽기 전용입니다.</p>
-      <div class="pipe">Intake → Reproduce → <b>Diagnose</b> (approve) → Fix → Verify → Deliver</div>
+      <p class="en">Reproduce it first, weigh competing explanations with evidence, then pause for approval.
+        Read-only until then.</p>
+      <p class="ko">먼저 재현하고, 경쟁하는 가설을 증거로 따져본 뒤 승인을 위해 멈춥니다. 그전까진 읽기 전용입니다.</p>
+      <div class="pipe">Intake → Reproduce → <b>Diagnose</b> → Human Feedback → Fix → Verify → Deliver</div>
     </div>
     <div class="card blue">
       <div class="mode">legacy</div>
@@ -251,7 +253,7 @@
         pass — no regressions.</p>
       <p class="ko">변경이 닿는 범위를 파악하고, 최소한의 외과적 수정안을 계획한 뒤, 기존 테스트가 그대로
         통과함을 증명합니다 — 회귀 없음.</p>
-      <div class="pipe">Intake → Explore → Plan → Build → Verify → QA → Deliver</div>
+      <div class="pipe">Intake → Explore → Plan → Human Feedback → Build → Verify → QA → Deliver</div>
     </div>
   </div>
 </div></section>
@@ -274,6 +276,7 @@
     <div class="step">Intake<small class="en">brief.md</small><small class="ko">brief.md</small></div><div class="arr">→</div>
     <div class="step">Validate<small class="en">demand · Decision: GO</small><small class="ko">수요 · Decision: GO</small></div><div class="arr">→</div>
     <div class="step">Plan<small class="en">frozen plan.md</small><small class="ko">고정된 plan.md</small></div><div class="arr">→</div>
+    <div class="step gate">Human Feedback<small class="en">two briefs + approval</small><small class="ko">브리프 2개 + 승인</small></div><div class="arr">→</div>
     <div class="step">Build<small class="en">code + claims</small><small class="ko">코드 + 주장</small></div><div class="arr">→</div>
     <div class="step">Verify<small class="en">adversary re-runs</small><small class="ko">검증자가 재실행</small></div><div class="arr">→</div>
     <div class="step">QA<small class="en">black-box</small><small class="ko">블랙박스</small></div><div class="arr">→</div>
@@ -284,7 +287,8 @@
   <div class="flow">
     <div class="step">Intake<small class="en">symptom</small><small class="ko">증상</small></div><div class="arr">→</div>
     <div class="step">Reproduce<small class="en">failing test (red)</small><small class="ko">실패 테스트(red)</small></div><div class="arr">→</div>
-    <div class="step gate">Diagnose<small class="en">cause + your approval</small><small class="ko">원인 + 당신의 승인</small></div><div class="arr">→</div>
+    <div class="step">Diagnose<small class="en">cause + fix plan</small><small class="ko">원인 + 수정안</small></div><div class="arr">→</div>
+    <div class="step gate">Human Feedback<small class="en">approve Fix</small><small class="ko">Fix 승인</small></div><div class="arr">→</div>
     <div class="step">Fix<small class="en">root cause</small><small class="ko">근본 원인</small></div><div class="arr">→</div>
     <div class="step">Verify<small class="en">repro green + suite</small><small class="ko">재현 green + 스위트</small></div><div class="arr">→</div>
     <div class="step gate">Deliver</div>
@@ -294,7 +298,8 @@
   <div class="flow">
     <div class="step">Intake<small class="en">spec</small><small class="ko">명세</small></div><div class="arr">→</div>
     <div class="step">Explore<small class="en">map what it touches</small><small class="ko">영향 범위 파악</small></div><div class="arr">→</div>
-    <div class="step gate">approve<small class="en">surgical plan</small><small class="ko">외과적 수정안</small></div><div class="arr">→</div>
+    <div class="step">Plan<small class="en">surgical plan</small><small class="ko">외과적 수정안</small></div><div class="arr">→</div>
+    <div class="step gate">Human Feedback<small class="en">approve Build</small><small class="ko">Build 승인</small></div><div class="arr">→</div>
     <div class="step">Build<small class="en">backward-compat</small><small class="ko">하위 호환</small></div><div class="arr">→</div>
     <div class="step">Verify<small class="en">no regressions</small><small class="ko">회귀 없음</small></div><div class="arr">→</div>
     <div class="step">QA<small class="en">+ nearby flows</small><small class="ko">+ 주변 플로우</small></div><div class="arr">→</div>
@@ -323,7 +328,14 @@
     레이스 1건을 잡아냈습니다. 누가 작성하느냐와 누가 승인하느냐를 분리하는 것이 핵심입니다.
     (다이어그램은 정렬 유지를 위해 영어로 표기.)</p>
 
-  <h3 class="sub2"><span class="en">The delivery gate — a script the agent can't fake</span><span class="ko">딜리버리 게이트 — 에이전트가 위조할 수 없는 스크립트</span></h3>
+  <h3 class="sub2"><span class="en">The approval and delivery gates — scripts the agent can't fake</span><span class="ko">승인 및 딜리버리 게이트 — 에이전트가 위조할 수 없는 스크립트</span></h3>
+  <p class="en" style="color:var(--dim)"><code>human-feedback-gate.mjs</code> runs before Build or Fix.
+    It requires <code>plan.md</code> to include <code>### Plain-language brief</code> at the top,
+    <code>### Technical brief</code> below it, term definitions, and <code>state.json.approval</code>
+    for the target phase.</p>
+  <p class="ko" style="color:var(--dim)"><code>human-feedback-gate.mjs</code>는 Build 또는 Fix 전에 실행됩니다.
+    <code>plan.md</code> 안에 위쪽 평문 브리프, 아래쪽 기술 브리프, 용어 정의가 있어야 하고
+    <code>state.json.approval</code>이 대상 단계를 승인해야 합니다.</p>
   <p class="en" style="color:var(--dim)"><code>delivery-gate.sh</code> is a plain shell script the agent is forbidden
     to edit. It exits 0 only when, in order: (1) the required files exist (<code>brief.md</code>,
     <code>plan.md</code>, <code>verification.md</code>); (2) <code>verification.md</code> says
@@ -359,8 +371,8 @@
     <tr class="ko"><td><code>README.md</code></td><td>모두</td><td>실행 서사 + 결정·가설·에스컬레이션 — 감사 로그이자 폴더 인덱스</td></tr>
     <tr class="en"><td><code>brief.md</code></td><td>Analyst</td><td>goal, audience, acceptance criteria + a <code>## Validation</code> section ending in <code>Decision: GO/NO-GO</code> (greenfield)</td></tr>
     <tr class="ko"><td><code>brief.md</code></td><td>분석가</td><td>목표·대상·인수 기준 + <code>Decision: GO/NO-GO</code>로 끝나는 <code>## Validation</code> 섹션(그린필드)</td></tr>
-    <tr class="en"><td><code>plan.md</code></td><td>Architect</td><td>frozen plan (+ architecture &amp; contracts) — or the approved fix plan in DEBUG</td></tr>
-    <tr class="ko"><td><code>plan.md</code></td><td>아키텍트</td><td>고정된 계획(+ 아키텍처·계약) — DEBUG에서는 승인된 수정 계획</td></tr>
+    <tr class="en"><td><code>plan.md</code></td><td>Architect</td><td>frozen plan (+ architecture &amp; contracts) — or the DEBUG fix plan — plus the Human Feedback packet</td></tr>
+    <tr class="ko"><td><code>plan.md</code></td><td>아키텍트</td><td>고정된 계획(+ 아키텍처·계약) — DEBUG에서는 수정 계획 — 그리고 Human Feedback 패킷</td></tr>
     <tr class="en"><td><code>claims.md</code></td><td>Builder</td><td>append-only, <b>untrusted</b> — each slice + a <code>run-to-prove</code> command</td></tr>
     <tr class="ko"><td><code>claims.md</code></td><td>구현자</td><td>추가 전용, <b>신뢰하지 않음</b> — 각 슬라이스 + <code>run-to-prove</code> 명령</td></tr>
     <tr class="en"><td><code>verification.md</code></td><td>Verifier + QA</td><td>per-claim verdicts + a final <code>verdict: GREEN</code>, plus a <code>## QA</code> section</td></tr>
@@ -405,11 +417,12 @@
 
 <section id="gates"><div class="wrap">
   <h2><span class="en">The non-negotiable gates</span><span class="ko">타협 불가 게이트</span></h2>
-  <p class="lead en">The spine — never weakened, never skipped. Two are literal scripts the agent can't edit
-    to pass: <code>validate-gate.sh</code> (before Build) and <code>delivery-gate.sh</code> (before "done").</p>
-  <p class="lead ko">이 스킬의 척추 — 절대 약화되지도, 건너뛰어지지도 않습니다. 그중 둘은 에이전트가 통과시키려고
-    편집할 수 없는 리터럴 스크립트입니다: <code>validate-gate.sh</code>(Build 전)와
-    <code>delivery-gate.sh</code>("완료" 전).</p>
+  <p class="lead en">The spine — never weakened, never skipped. Three are literal scripts the agent can't edit
+    to pass: <code>validate-gate.sh</code>, <code>human-feedback-gate.mjs</code>, and
+    <code>delivery-gate.sh</code>.</p>
+  <p class="lead ko">이 스킬의 척추 — 절대 약화되지도, 건너뛰어지지도 않습니다. 그중 셋은 에이전트가 통과시키려고
+    편집할 수 없는 리터럴 스크립트입니다: <code>validate-gate.sh</code>,
+    <code>human-feedback-gate.mjs</code>, <code>delivery-gate.sh</code>.</p>
   <div class="gates">
     <div class="gate"><span class="n">1</span>
       <span class="en"><b>Validate before build</b><span>For a new app, <code>validate-gate.sh</code> must confirm a <code>Decision: GO</code> (real demand + a scoped MVP) before Build opens.</span></span>
@@ -418,15 +431,18 @@
       <span class="en"><b>Plan freezes scope</b><span>Written once, then hashed and re-checked; Build implements it and can't quietly redesign mid-flight.</span></span>
       <span class="ko"><b>계획이 범위를 고정</b><span>한 번 작성한 뒤 해시로 재확인합니다. Build는 그대로 구현할 뿐, 도중에 몰래 재설계할 수 없습니다.</span></span></div>
     <div class="gate"><span class="n">3</span>
+      <span class="en"><b>Human Feedback approval</b><span>Before Build/Fix, the human sees a plain brief first and a novice-dev technical brief below it, then explicitly approves or sends it back.</span></span>
+      <span class="ko"><b>Human Feedback 승인</b><span>Build/Fix 전에 먼저 쉬운 설명을 보고, 아래에서 초보 개발자용 기술 브리프를 본 뒤 명시적으로 승인하거나 돌려보냅니다.</span></span></div>
+    <div class="gate"><span class="n">4</span>
       <span class="en"><b>Builder ≠ Verifier</b><span>A fresh, separate agent re-runs every claim from a clean state. <code>claims.md</code> is untrusted.</span></span>
       <span class="ko"><b>구현자 ≠ 검증자</b><span>별도의 새 에이전트가 모든 주장을 깨끗한 상태에서 재실행합니다. <code>claims.md</code>는 신뢰하지 않습니다.</span></span></div>
-    <div class="gate"><span class="n">4</span>
+    <div class="gate"><span class="n">5</span>
       <span class="en"><b>Committee review</b><span>security + code-review run in parallel before Deliver; all must approve.</span></span>
       <span class="ko"><b>위원회 리뷰</b><span>Deliver 전에 보안 + 코드리뷰가 병렬로 돌고, 전원이 승인해야 합니다.</span></span></div>
-    <div class="gate"><span class="n">5</span>
+    <div class="gate"><span class="n">6</span>
       <span class="en"><b>Literal delivery gate</b><span><code>delivery-gate.sh</code> exits 0 — the project's own tests pass, re-run from a clean state — or it isn't done.</span></span>
       <span class="ko"><b>리터럴 딜리버리 게이트</b><span><code>delivery-gate.sh</code>가 exit 0 — 프로젝트 자체 테스트가 깨끗한 상태에서 재실행되어 통과 — 아니면 완료가 아닙니다.</span></span></div>
-    <div class="gate"><span class="n">6</span>
+    <div class="gate"><span class="n">7</span>
       <span class="en"><b>Bounded retry</b><span>The same error 3× trips <code>circuit-breaker.mjs</code> → stop, root-cause, escalate to you. No infinite loops.</span></span>
       <span class="ko"><b>제한된 재시도</b><span>같은 오류가 3번이면 <code>circuit-breaker.mjs</code>가 작동 → 멈추고 근본 원인을 찾아 당신에게 보고합니다. 무한 루프 없음.</span></span></div>
   </div>
@@ -450,6 +466,9 @@
     <div class="row"><span class="badge b-blue">LEGACY</span>
       <span class="what en">Added link-expiry (TTL) with <b>zero regressions</b> — still works with records saved before the field existed. Review-approved, gate-green.</span>
       <span class="what ko">링크 만료(TTL)를 <b>회귀 0건</b>으로 추가 — 필드가 생기기 전에 저장된 레코드와도 여전히 동작. 리뷰 승인, 게이트 green.</span></div>
+    <div class="row"><span class="badge b-green">BENCHMARK</span>
+      <span class="what en">Private-codebase comparison: <b><code>/just-do-it</code> was the only arm to pass every hidden check</b> against plain Codex CLI and Codex Goal mode. <a href="experiments/2026-05-30-private-codebase-comparison/">Read the evidence report.</a></span>
+      <span class="what ko">비공개 코드베이스 비교: plain Codex CLI와 Codex Goal mode 대비 <b><code>/just-do-it</code>만 모든 hidden check를 통과</b>했습니다. <a href="experiments/2026-05-30-private-codebase-comparison/">증거 리포트 보기.</a></span></div>
   </div>
 </div></section>
 

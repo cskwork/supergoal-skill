@@ -19,9 +19,9 @@ Everything runs in-session with the `Task`/`Agent` tool. **Nothing to install bu
 
 | Objective looks like | Mode | Pipeline |
 |---|---|---|
-| "build / ship a new app/tool" | **GREENFIELD** | Intake → **Validate (market/demand)** → Plan → Build → Verify → QA → Deliver |
-| "fix / broken / failing / why does" | **DEBUG** | Intake → Reproduce → Diagnose → Fix → Verify → Deliver |
-| "add X to our existing/legacy code" | **LEGACY** | Intake → Explore → Plan → Build → Verify → QA → Deliver |
+| "build / ship a new app/tool" | **GREENFIELD** | Intake → **Validate (market/demand)** → Plan → **Human Feedback** → Build → Verify → QA → Deliver |
+| "fix / broken / failing / why does" | **DEBUG** | Intake → Reproduce → Diagnose → **Human Feedback** → Fix → Verify → Deliver |
+| "add X to our existing/legacy code" | **LEGACY** | Intake → Explore → Plan → **Human Feedback** → Build → Verify → QA → Deliver |
 
 ```text
 /just-do-it build a habit-tracker app and ship it
@@ -39,6 +39,8 @@ each choice (see [`DESIGN.md`](DESIGN.md) and [`docs/research-brief.md`](docs/re
   (validation, scaffolding); single-driver for deep-and-narrow work (one bug, one feature).
 - **Builder ≠ Verifier** — the agent that writes code never approves it. A fresh adversarial Verify
   agent re-runs every `run-to-prove` from a clean state. (`claims.md` is untrusted.)
+- **Human Feedback before implementation** — after intake/repro/diagnosis/planning, the skill pauses
+  with two briefs: plain language first, then a novice-dev-friendly technical brief with term definitions.
 - **Two-layer done-gate** — a hard gate (tests/lint/build, deterministic) plus a soft committee
   (architect + security + code-review). The rubric can never override a failing test.
 - **Gate on the project's own suite** (run in the workspace; the Verify agent independently re-runs from a clean state) — never benchmarks, never self-report.
@@ -46,9 +48,9 @@ each choice (see [`DESIGN.md`](DESIGN.md) and [`docs/research-brief.md`](docs/re
 
 ## The non-negotiable gates
 
-1. Validate-before-build (GREENFIELD).  2. Plan freezes scope.  3. Builder ≠ Verifier.
-4. Multi-expert review before deliver.  5. Literal delivery gate (`templates/delivery-gate.sh` exits 0).
-6. Bounded retry + circuit breaker.
+1. Validate-before-build (GREENFIELD).  2. Plan freezes scope.  3. Human Feedback approval.
+4. Builder ≠ Verifier.  5. Multi-expert review before deliver.
+6. Literal delivery gate (`templates/delivery-gate.sh` exits 0).  7. Bounded retry + circuit breaker.
 
 ## Install
 
@@ -68,7 +70,7 @@ Then in Claude Code: `/just-do-it <your objective>`.
 ```
 SKILL.md            thin spine: mode detection, gates, reference map
 reference/          pipeline · experts · vault · market-research · quality-gates · debugging
-templates/          delivery-gate.sh (the literal gate) · state.json
+templates/          delivery-gate.sh · validate-gate.sh · human-feedback-gate.mjs · state.json
 DESIGN.md           research → decision mapping (cited)
 docs/               research-brief.md · e2e-test-plan.md · changelog/ · index.html (landing)
 examples/url-shortener/   a real service the harness built/debugged/extended, with harness-audit/
@@ -83,12 +85,22 @@ each run is in [`examples/url-shortener/docs/changelog/`](examples/url-shortener
 - **GREENFIELD** — the adversarial Verify caught **2 real SSRF bypasses** (`[::ffff:127.0.0.1]`,
   `localhost.`) and an unauth-500 that all passed the builder's own green tests, before shipping.
 - **DEBUG** — given only a symptom ("hits undercount under load"), it reproduced (200 concurrent →
-  1/200), root-caused a **lost-update race**, stopped at the approval gate, fixed, and re-verified
+  1/200), root-caused a **lost-update race**, stopped at Human Feedback for approval, fixed, and re-verified
   with anti-flake concurrency runs (0 lost across 10 trials).
 - **LEGACY** — added link-expiry (TTL) with **zero regressions** (backward-compatible with records
   that predate the field), committee-approved, gate-green.
 
 Adversarial verification caught a real defect in 2 of 3 runs.
+
+A separate evidence-only private-codebase benchmark compared plain Codex CLI, `/just-do-it`, and
+Codex Goal mode on the same hard backend task with the same hidden scorer. See
+[`docs/experiments/2026-05-30-private-codebase-comparison/`](docs/experiments/2026-05-30-private-codebase-comparison/).
+
+- **`/just-do-it`** — passed all hidden checks, focused regressions, neighbor checks, `git diff --check`,
+  and the delivery gate.
+- **Codex Goal mode** — fixed the main code path and passed focused checks, but missed one hidden
+  fallback/preservation coverage check.
+- **Plain Codex CLI** — produced no usable result: idle run, no solution diff, no final output.
 
 ## Credit
 

@@ -22,6 +22,12 @@ Therefore: **GREENFIELD** Validate/Plan/scaffold phases fan out; **DEBUG** and *
 All modes pause at **Human Feedback** and require explicit human approval before the first
 implementation write (antstack.com; developersdigest.tech Plan Mode guidance).
 
+## UI/UX overlay (when the deliverable is visual UI)
+
+On objectives that ship user-facing look-and-feel, layer the taste-skill v2 overlay onto whichever
+mode is running: a Design Read + three dials at **Plan**, a Designer at **Build**, and the taste
+Pre-Flight Check as an added **QA** gate. It does not change phases or gates — see `reference/ui-ux.md`.
+
 ## Artifact-skip gates (from autopilot)
 
 Before running a phase, check the vault for an upstream artifact that already satisfies it and skip:
@@ -42,7 +48,7 @@ Log every skip to `README.md`.
 | **Human Feedback** | Ask the human to approve, revise, or stop before implementation | `brief.md`, `plan.md` | `plan.md` (`## Human Feedback`), `state.json.approval` | `plan.md` has the required two briefs; human explicitly approves `Build`; `node templates/human-feedback-gate.mjs <vault> Build` exits 0. No source-tree write before this. |
 | **Build** | Implement each slice (architect→editor split); write a claim per slice | `plan.md` | code, `claims.md` (append-only) | local tests for the slice pass + a `claims.md` entry with a `run-to-prove` command |
 | **Verify** | Adversary re-runs every claim from clean state (see `quality-gates.md`) | `claims.md`, code | `verification.md` | every claim GREEN, ending in one aggregate `verdict: GREEN` line (no line-start `verdict: RED`); any RED rewinds to Build |
-| **QA** | Black-box exercise the running app (conditional on app type) | running app | `verification.md` (`## QA`) | golden + edge + a11y pass for browser apps; CLI/lib: integration smoke passes |
+| **QA** | Black-box exercise the running app (`reference/qa.md`; conditional on app type) | running app | `verification.md` (`## QA`) + `qa/` evidence | golden + edge + a11y pass for browser apps; CLI/lib: integration smoke passes |
 | **Deliver** | Run the literal gate; package | all | commit / PR | plan-hash matches (see `reference/vault.md`). Then `templates/delivery-gate.sh` exits 0 — paste output. |
 
 ---
@@ -55,7 +61,7 @@ Single-driver topology. Open in Plan Mode (read-only) through Human Feedback; ge
 |---|---|---|---|---|
 | **Intake** | Capture symptom, environment, expected vs actual | objective | `brief.md` | symptom + expected behavior stated |
 | **Reproduce** | Get a deterministic, **failing** reproduction | repo, logs | a failing test / repro script, `claims.md` | repro **fails** on current code in a clean sandbox (red proven) |
-| **Diagnose** | Hypothesis-driven root cause (see `debugging.md`) | repo, repro | `README.md` (hypotheses + evidence), `plan.md` (root-cause + minimal-fix plan, frozen) | one hypothesis confirmed by evidence; minimal fix plan written |
+| **Diagnose** | Hypothesis-driven root cause (run the `diagnose` skill; see `debugging.md`) | repo, repro | `README.md` (hypotheses + evidence), `plan.md` (root-cause + minimal-fix plan, frozen) | one hypothesis confirmed by evidence; minimal fix plan written |
 | **Human Feedback** | Explain the bug cause and fix plan, then wait for human approval | `README.md`, `plan.md` | `plan.md` (`## Human Feedback`), `state.json.approval` | `plan.md` has the required two briefs; human explicitly approves `Fix`; `node templates/human-feedback-gate.mjs <vault> Fix` exits 0. No source-tree write before this. |
 | **Fix** | Smallest change at the root cause | confirmed cause | code patch | the previously-failing repro now **passes** |
 | **Verify** | Re-run repro + full suite in clean sandbox; regression review | patch, suite | `verification.md` | repro GREEN + full suite GREEN + no new failures; ends in one aggregate `verdict: GREEN` line |
@@ -84,7 +90,7 @@ through Human Feedback; approval before Build.
 | **Human Feedback** | Explain the implementation plan, then wait for human approval | `README.md`, `plan.md` | `plan.md` (`## Human Feedback`), `state.json.approval` | `plan.md` has the required two briefs; human explicitly approves `Build`; `node templates/human-feedback-gate.mjs <vault> Build` exits 0. No source-tree write before this. |
 | **Build** | Implement matching existing style; no unrelated refactors | plan | code, `claims.md` | slice tests pass; no formatting/rename churn in unrelated files |
 | **Verify** | Adversary re-runs claims; full existing suite must stay green | claims, suite | `verification.md` | all claims GREEN + pre-existing suite still GREEN (no regressions) |
-| **QA** | Exercise the new feature + smoke the surrounding flows | running app | `verification.md` (`## QA`) | feature works + adjacent flows unbroken |
+| **QA** | Exercise the new feature + smoke the surrounding flows (`reference/qa.md`) | running app | `verification.md` (`## QA`) + `qa/` evidence | feature works + adjacent flows unbroken |
 | **Deliver** | Gate + package | all | commit / PR | plan-hash matches (see `reference/vault.md`). Then `delivery-gate.sh` exits 0. |
 
 ---

@@ -91,4 +91,16 @@ A record persisted WITHOUT an `expiresAt` field must be treated as never-expire.
 | Backward-compat: legacy record (no expiresAt) never expires | PASS |
 | Surgical diff: only 7 planned files changed | PASS |
 
+## Coverage
+
+Required-coverage list = feature acceptance criteria + SSRF/regression domain checklist:
+- TTL expiry flow (201/302/410), no-TTL link, invalid `ttlSeconds` -> 400: feature tests GREEN
+- Backward-compat (legacy record without `expiresAt` never expires): GREEN
+- Regression: hit counting, concurrency guard, unknown-code 404, auth/SSRF/ratelimit unchanged: GREEN
+- SSRF checklist (loopback/private/link-local, IPv6-mapped, trailing-dot FQDN): pre-existing suite GREEN
+Not covered: clustering/HA and DB-backed store — explicit non-goals; multi-process expiry races —
+single-process MVP, out of scope.
+Regression tests: TTL expiry suite added (201/302/410 sequence, no-TTL, invalid ttl); the existing
+68-test suite was re-run green.
+
 verdict: GREEN

@@ -8,7 +8,13 @@
 #   [test-command]  optional; if omitted, auto-detected from the project
 #
 # Exit 0 only if: required vault artifacts exist, verification is GREEN with no RED,
+# the verification enumerates its coverage and names its gaps (completeness contract),
 # and the project's own test/build suite passes in this workspace.
+#
+# Verdict semantics: `verdict: GREEN` means "every ENUMERATED claim + coverage item re-verified",
+# NOT "the code is safe". A gate is only as complete as the claim set behind it — so the
+# completeness contract below forces that set to be enumerated and its gaps named, rather than
+# letting an incomplete verification pass silently (the false-GREEN failure mode).
 
 set -euo pipefail
 
@@ -33,6 +39,19 @@ if grep -qi '^verdict:[[:space:]]*RED' "$VAULT/verification.md"; then
   fail "a 'verdict: RED' remains in verification.md — Verify rewound to Build and never cleared"
 fi
 pass "verification GREEN, no RED"
+
+# 2.5) Completeness contract — bound and audit the claim set so an incomplete verification
+#      cannot pass as a clean GREEN. Three line-checkable requirements in verification.md:
+#        - a '## Coverage' section that maps acceptance criteria + the domain checklist to evidence
+#        - a 'Not covered:' line that names the vectors/flows/properties NOT verified (or 'none')
+#        - a 'Regression tests:' line — a fixed RED must land a permanent test ('none' for verify-only)
+grep -qiE '^##[[:space:]]+Coverage\b' "$VAULT/verification.md" \
+  || fail "verification.md has no '## Coverage' section — the claim set is unbounded; map each acceptance criterion + domain-checklist item to its evidence"
+grep -qiE '^[[:space:]]*[-*]?[[:space:]]*Not[[:space:]]+covered:' "$VAULT/verification.md" \
+  || fail "verification.md has no 'Not covered:' line — name what was NOT verified (or state 'none', justified). Silent omission is the false-GREEN bug"
+grep -qiE '^[[:space:]]*[-*]?[[:space:]]*Regression[[:space:]]+tests?:' "$VAULT/verification.md" \
+  || fail "verification.md has no 'Regression tests:' line — a fixed RED must add a permanent test; a verify-only run states 'none'"
+pass "completeness contract (coverage map + named gaps + regression ratchet)"
 
 # 3) If a Decision line exists (greenfield validation lives in brief.md), it must be GO.
 #    Match the explicit "Decision:" line, not prose — so a brief that merely discusses NO-GO

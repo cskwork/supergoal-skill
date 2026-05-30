@@ -103,4 +103,14 @@ and is backed by fresh green output, not assumption.
 
 ---
 
+## Coverage
+
+Required-coverage list = the bug's repro + full-suite regression + concurrency domain checklist:
+- Repro (200 concurrent `incrementHit` -> hits==200): failing-before on the broken store, GREEN after fix
+- Full suite (68 tests) re-run from clean state: GREEN
+- Concurrency checklist (lost-update under contention, mutex-protected read): GREEN
+- SSRF/validate, auth, ratelimit, codec, store atomicity re-checked: GREEN (no collateral regression)
+Not covered: multi-process / cross-host contention — single-process MVP, out of scope.
+Regression tests: test/hit-concurrency.test.js (the failing-before/passing-after repro) guards the fix.
+
 verdict: GREEN

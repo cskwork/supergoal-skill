@@ -125,6 +125,22 @@ stop it outside the sandbox: `kill $(lsof -ti tcp:8097)`.
   open-redirect (Location only from store) all hold
 - LOW residuals: NAT64 `64:ff9b::/96` + mapped `::ffff:0.0.0.0` (deferrable, allowed)
 
+## Coverage
+
+Required-coverage list = brief acceptance criteria (AC1-5) + SSRF/URL-validation domain checklist:
+- AC1 `npm test` (every endpoint + error path): 51/51 GREEN (§1)
+- AC2 endpoint contract (status/headers/error envelope): live probes P1-P3 + QA TC1-TC11 GREEN
+- AC3 SSRF host rejection — loopback/private/link-local IPv4, IPv6-mapped/compat (`::ffff:127.0.0.1`),
+  trailing-dot FQDN (`localhost.`), link-local/ULA IPv6: re-probed GREEN (§3)
+- AC3 open-redirect (Location from store only): grep + integration GREEN (§3)
+- AC4 concurrency (atomic, serialized creates): GREEN
+- AC5 operability (health, structured JSON logs, graceful shutdown): QA TC1/TC11 GREEN
+Not covered: NAT64 `64:ff9b::/96` and mapped wildcard `::ffff:0.0.0.0` — LOW, redirect-only blast
+radius, out of scope for the v3 routing fix (logged §4); octal/hex IP encodings are rejected
+structurally by `parseIpv4` (non-decimal forms return null), so not separately probed.
+Regression tests: SSRF regression hosts (incl. `::ffff:127.0.0.1`, `localhost.`) are asserted in
+test/validate.test.js; malformed-path 400 cases are tests 18-19.
+
 verdict: GREEN
 
 ---

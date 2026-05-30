@@ -64,6 +64,20 @@ EOF
 
 write_state() { printf '{ "approval": %s }\n' "$2" > "$1/state.json"; }
 
+# A contract-complete verification.md: GREEN + coverage map + named gaps + regression line.
+write_complete_verif() {
+  cat > "$1/verification.md" <<'EOF'
+claim s1: GREEN — re-ran from clean state
+verdict: GREEN
+
+## Coverage
+- AC1 (endpoints + error paths): claim s1 GREEN
+- SSRF checklist (trailing-dot FQDN, IPv6-mapped, octal/hex IP, NAT64): probed GREEN
+Not covered: none — all acceptance criteria + domain checklist items mapped
+Regression tests: none (verify-only fixture)
+EOF
+}
+
 echo "=================================================================="
 echo " /supergoal gate scenarios   skill: $SKILL_DIR"
 echo " node $(node --version)   bash ${BASH_VERSION%%(*}"
@@ -94,7 +108,7 @@ printf 'Decision: GO\nlater changed\nDecision: NO-GO\n' > "$v2/brief.md"
 run_case "1.10 GO then NO-GO -> fail-safe blocked"  1 "decision is NO-GO"  bash "$VALIDATE" "$v2"
 
 # ----------------------------------------------------------------------
-echo; echo "SCENARIO 2 — delivery-gate.sh : artifacts + verdict + test suite"
+echo; echo "SCENARIO 2 — delivery-gate.sh : artifacts + verdict + completeness + test suite"
 # ----------------------------------------------------------------------
 v=$(mkvault s2)
 run_case "2.1 empty vault -> brief missing"         1 "brief.md missing"     bash "$DELIVERY" "$v" true
@@ -104,12 +118,20 @@ printf 'p\n' > "$v/plan.md"
 run_case "2.3 no verification -> missing"           1 "verification.md missing" bash "$DELIVERY" "$v" true
 printf 'no verdict here\n' > "$v/verification.md"
 run_case "2.4 no 'verdict: GREEN'"                  1 "no 'verdict: GREEN'"  bash "$DELIVERY" "$v" true
-# KEY CASE: GREEN summary then a later line-start RED — the A5 case marked "test manually" in the plan.
-printf 'verdict: GREEN\n... later section ...\nverdict: RED\n' > "$v/verification.md"
+# A5 case (was 'test manually'): GREEN then a later line-start RED fails before completeness.
+printf 'verdict: GREEN\n... later ...\nverdict: RED\n' > "$v/verification.md"
 run_case "2.5 GREEN then later RED -> RED remains"  1 "verdict: RED"         bash "$DELIVERY" "$v" true
+# Completeness contract: GREEN but missing each required section in turn (the false-GREEN guard).
 printf 'verdict: GREEN\n' > "$v/verification.md"
+run_case "2.5b GREEN, no ## Coverage -> blocked"    1 "no '## Coverage'"     bash "$DELIVERY" "$v" true
+printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\n' > "$v/verification.md"
+run_case "2.5c Coverage, no Not-covered -> blocked" 1 "no 'Not covered:'"    bash "$DELIVERY" "$v" true
+printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\n' > "$v/verification.md"
+run_case "2.5d no Regression line -> blocked"       1 "no 'Regression tests:'" bash "$DELIVERY" "$v" true
+# Contract-complete verification for the PASS / downstream-check paths.
+write_complete_verif "$v"
 printf 'b\nThe NO-GO bar is high.\nDecision: GO\n' > "$v/brief.md"
-run_case "2.6 Decision GO + prose NO-GO -> PASS"    0 "GATE PASS"            bash "$DELIVERY" "$v" true
+run_case "2.6 complete + Decision GO + prose NO-GO" 0 "GATE PASS"            bash "$DELIVERY" "$v" true
 printf 'b\nDecision: NO-GO\n' > "$v/brief.md"
 run_case "2.7 Decision NO-GO -> blocked"            1 "decision is NO-GO"    bash "$DELIVERY" "$v" true
 printf 'b\nno decision line (debug/legacy)\n' > "$v/brief.md"

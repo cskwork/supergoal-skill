@@ -1,25 +1,21 @@
 # /supergoal — design rationale
 
-Why each part is built the way it is. Sources: the cloned `oh-my-symphony` repo (concept/workflow),
-the local symphony/autopilot/ultrawork/ultraqa/ultragoal skills (reusable mechanisms), and a
-fact-checked web research brief (`docs/research-brief.md`, 18 agents, adversarially verified).
+Why each part is built the way it is. Sources: the local autopilot/ultrawork/ultraqa/ultragoal
+skills (reusable mechanisms) and a fact-checked web research brief (`docs/research-brief.md`,
+18 agents, adversarially verified).
 
-## Borrowed from oh-my-symphony (concept + workflow)
+## Core design (gated lanes over a shared vault)
 
-oh-my-symphony is a polling orchestrator that dispatches coding-CLI agents at a Kanban board, each
-ticket in its own git worktree, observed via a TUI. Its OneShot path turns one prompt into ordered
-tickets through Brief → Plan → Build → Verify → QA → Polish → Deliver.
+The spine is **forward-only gated lanes**: a single shared **vault** as the only cross-phase state,
+an **untrusted `claims.md` re-verified by an adversarial Verify** that re-runs every claim, **role
+separation by read-scope**, and a **literal-bash delivery gate** that is never edited to pass.
 
-**Borrowed (the ideas):** forward-only gated lanes; a single shared **vault** as the only cross-phase
-state; **`claims.md` untrusted + adversarial Verify** that re-runs every claim; **role separation by
-read-scope**; the **literal-bash delivery gate** that is never edited to pass.
+**Self-contained by design:** no CLI, service, TUI, or external WORKFLOW files.
+`/supergoal` runs **in-session with `Task` subagents** — no install, no ports, no poller. (Reuse-map
+decision: keep the gate ideas, skip the heavyweight orchestration machine.)
 
-**Deliberately dropped (the infra):** the Symphony CLI/service/TUI, per-ticket git worktrees, and
-external WORKFLOW files. `/supergoal` runs **self-contained with in-session `Task` subagents** — no
-install, no ports, no poller. (Reuse-map decision: borrow gate ideas, skip the heavyweight machine.)
-
-**Gap closed:** oh-my-symphony has **no demand-validation step** (grep across its repo: zero matches
-for market/product validation). `/supergoal` adds a **Validate** front-lane for GREENFIELD.
+**Validate front-lane:** a dedicated demand-validation step gates GREENFIELD before any Build ticket
+opens — cheap evidence first, code second — so the skill never builds something nobody wanted.
 
 ## Reused from local skills
 
@@ -27,7 +23,6 @@ for market/product validation). `/supergoal` adds a **Validate** front-lane for 
   parallel validation before delivery.
 - **ultraqa** → diagnose→fix split (Opus diagnoses, Sonnet fixes) + same-error-3× circuit breaker.
 - **ultrawork** → parallel-wave dispatch + tiered model routing (Haiku/Sonnet/Opus) + background >30s.
-- **using-symphony** → `doctor`-style preflight discipline.
 - **Frontmatter/house style** → `name` + trigger-rich `description` + `argument-hint` + `level`;
   thin `SKILL.md` spine + `reference/*.md` loaded on demand (progressive disclosure).
 - **taste-skill v2** (leonxlnx/taste-skill, `design-taste-frontend`) → the design authority for UI/UX

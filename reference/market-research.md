@@ -1,9 +1,8 @@
 # Market research — the GREENFIELD Validate phase
 
-oh-my-symphony has **no demand-validation step** — it starts at Brief and never asks *whether to
-build*. This is the single biggest gap `/supergoal` closes. Validate runs **before any Build
-ticket opens**: cheap evidence first, code second. Kills the most expensive failure mode — shipping
-something nobody wanted.
+Most agentic build loops have **no demand-validation step** — they start at Brief and never ask
+*whether to build*. Validate closes that gap: it runs **before any Build ticket opens** — cheap
+evidence first, code second. Kills the most expensive failure mode — shipping something nobody wanted.
 
 Scope honestly: the research found **no reliable market-sizing/pricing data sources** in the
 verified set, so this phase produces **directional demand evidence and a scoped MVP**, not a market

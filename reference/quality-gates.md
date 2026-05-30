@@ -15,7 +15,7 @@ arxiv 2506.17208):
 ### 1. Hard gate — correctness (deterministic, non-LLM)
 Build + lint + the project's test suite must pass. This is `templates/delivery-gate.sh` — a literal
 shell script that exits non-zero on any failure. The agent **cannot mark done unless it exits 0**,
-and **must never edit the gate to make it pass** (oh-my-symphony Deliver-gate invariant). Paste the
+and **must never edit the gate to make it pass**. Paste the
 real output as evidence. The script runs the suite in the **current workspace** — it does not create
 an isolated sandbox; reproducing from a genuinely clean state is the Verify agent's job (below).
 
@@ -37,7 +37,7 @@ on red tests is still a failure.
 
 `claims.md` is untrusted. A fresh `verifier`/`critic` agent — adversary to the claims, read-only on
 the code's intent — re-runs every `run-to-prove` command **from a clean state** and writes
-`verdict: GREEN|RED` to `verification.md`. Any RED rewinds to Build. (oh-my-symphony Verify lane.)
+`verdict: GREEN|RED` to `verification.md`. Any RED rewinds to Build.
 
 ## Validate the suite itself (a green run on a flawed suite is a false done)
 

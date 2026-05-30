@@ -1,6 +1,6 @@
 # Pipeline — phases & exit gates per mode
 
-Forward-only lanes (borrowed from oh-my-symphony `lanes.md`). A phase opens only when the prior
+Forward-only lanes. A phase opens only when the prior
 phase's **exit gate** passed. Gates are machine-checkable, not vibes. Backward edges exist only as
 explicit rewinds (Verify/QA can re-open Build).
 

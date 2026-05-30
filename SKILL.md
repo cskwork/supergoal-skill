@@ -55,6 +55,11 @@ modules). Keep a *single driving agent* for *deep-and-narrow* work — so **DEBU
 single-driver** with isolated helpers only for independent probes. **All modes require Human
 Feedback approval before the first implementation write**. Details in `reference/pipeline.md`.
 
+**UI/UX overlay**: if the objective ships user-facing visual UI (landing page, redesign, "make it
+look good", frontend look-and-feel), load `reference/ui-ux.md` — it makes the vendored taste-skill v2
+(`reference/taste-skill-v2.md`) the design authority and adds a Designer role + a pre-flight QA gate.
+Loaded on demand only; modes and gates are unchanged.
+
 ## The non-negotiable gates
 
 These are the spine. Never weaken or skip them; never edit a gate to make it pass
@@ -78,7 +83,7 @@ Six files: `README.md`, `brief.md`, `plan.md`, `claims.md`, `verification.md`, `
 
 ## Expert roster
 
-Roles are dispatched as subagents, each a fresh context with the minimum vault read-set. Verifier is `allowedTools`-scoped to `claims.md` + source only (`reference/experts.md`). See `reference/experts.md` for the full dispatch table, parallel-wave rules, and agent types.
+Roles are dispatched as subagents, each a fresh context with the minimum vault read-set. Verifier is `allowedTools`-scoped to `claims.md` + source only (`reference/experts.md`). See `reference/experts.md` for the full dispatch table, parallel-wave rules, and agent types. UI/UX jobs add a **Designer** role bound to `reference/taste-skill-v2.md` (see `reference/ui-ux.md`).
 
 ## Reference map (progressive disclosure — load only what the current phase needs)
 
@@ -90,6 +95,8 @@ Roles are dispatched as subagents, each a fresh context with the minimum vault r
 | `reference/market-research.md` | GREENFIELD Validate phase — demand-validation methods |
 | `reference/quality-gates.md` | Verify, Review, and Deliver phases — what "production-ready" means |
 | `reference/debugging.md` | DEBUG mode Diagnose phase — hypothesis-driven root-cause method |
+| `reference/ui-ux.md` | When the objective ships visual UI — the taste-skill v2 overlay (Plan/Build/QA) |
+| `reference/taste-skill-v2.md` | Designer Build + QA pre-flight on UI/UX jobs — vendored design authority (large; load only then) |
 
 ### Template scripts (referenced by the gates above)
 

@@ -11,10 +11,9 @@ One objective in, a verified result out. The skill is the **conductor**: it neve
 production code itself — it decomposes the objective, dispatches **expert subagents** through a
 **forward-only pipeline**, and refuses to declare success until a **machine-checkable gate** passes.
 
-The design is borrowed from `oh-my-symphony` (gated lanes, a single shared vault, untrusted
-`claims.md` re-verified by an adversary, a literal-bash delivery gate that is never edited to pass)
-but stripped of the heavy Symphony CLI / TUI / worktree infrastructure — everything runs in-session
-with the `Task`/`Agent` tool, so there is nothing to install.
+The design is a set of gated lanes over a single shared vault, with an untrusted `claims.md`
+re-verified by an adversary and a literal-bash delivery gate that is never edited to pass —
+everything runs in-session with the `Task`/`Agent` tool, so there is nothing to install.
 
 ## Why this exists
 
@@ -34,7 +33,7 @@ delivery on evidence — not on the agent's own say-so.
 
 - A single, well-scoped edit ("rename this variable") — do it directly.
 - Pure brainstorming with no intent to build — use `brainstorming`.
-- The user wants to drive each step themselves — use `ultrawork` / `using-symphony`.
+- The user wants to drive each step themselves — use `ultrawork`.
 
 ## Step 0 — Mode detection (ALWAYS do this first)
 

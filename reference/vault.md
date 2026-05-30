@@ -2,8 +2,8 @@
 
 Every run creates a folder under the target repo's changelog: **`docs/changelog/<date>-<slug>/`**
 (e.g. `docs/changelog/2026-05-30-add-sso/`). Because each phase runs as a fresh subagent context, this
-folder is the **single blackboard** they communicate through (oh-my-symphony `vault.md`; shared-
-blackboard finding arxiv 2510.01285 — 13-57% gains, stops discoveries being lost at task boundaries).
+folder is the **single blackboard** they communicate through (shared-blackboard finding
+arxiv 2510.01285 — 13-57% gains, stops discoveries being lost at task boundaries).
 
 Unlike a hidden scratch dir, the vault **is the run's permanent, browsable changelog** — it is
 committed with the code, so every project the harness touches gets a tracked decision record (matches

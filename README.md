@@ -4,10 +4,10 @@
 through a full, gated development process using expert subagents — then refuses to declare success
 until a machine-checkable gate passes.
 
-Borrows the workflow of [oh-my-symphony](https://github.com/cskwork/oh-my-symphony) — gated lanes, a
-single shared vault, untrusted `claims.md` re-verified by an adversary, a literal-bash delivery gate
-that is never edited to pass — but strips the heavy Symphony CLI / TUI / worktree infrastructure.
-Everything runs in-session with the `Task`/`Agent` tool. **Nothing to install but the skill itself.**
+Gated lanes, a single shared vault, an untrusted `claims.md` re-verified by an adversary, and a
+literal-bash delivery gate that is never edited to pass. Everything runs in-session with the
+`Task`/`Agent` tool. **Nothing to install but the skill itself.** (Workflow inspired by
+[oh-my-symphony](https://github.com/cskwork/oh-my-symphony).)
 
 > **New here? Start with the landing page** → **[cskwork.github.io/supergoal-skill](https://cskwork.github.io/supergoal-skill/)**
 > — a bilingual (English / 한국어) walkthrough with a 3-step quickstart, the three modes, how the

@@ -1,3 +1,33 @@
+# 2026-05-31 - LEARN difficulty tuning + single user-preference file
+
+## Decision
+
+Add a 1-10 difficulty dial to LEARN mode and merge the interest profile into one preference file.
+
+- `reference/learn.md`: renamed flow step 0 `Interest` -> `Preference`; it now loads both the
+  difficulty level (1-10, default 5) and the 1-3 interests from one file. Added two sections:
+  **Difficulty ladder** (per-level register: level 1-2 = 막 말 뗀 아이, 5 = 일반 성인 비전공자 default,
+  10 = 박사/전문가 — the existing terms-on-top format is the level-5 spec; higher levels raise the term
+  ceiling + precision, lower levels cut terms + shorten sentences) and **Difficulty tuning** (every
+  teaching turn ends with `난이도 (지금 N/10): 1 더 쉽게 · 2 적당함(기본) · 3 더 어렵게`; a bare `1`/`2`/`3`
+  reply is a tuning signal — `1` = level-1, `2` = hold/default, `3` = level+1, clamped to [1,10] — that
+  rewrites the saved level and immediately re-pitches the same content). Renamed "User interest profile"
+  -> "User preference profile (`USER_PREFERENCE.md`)" with a `## Difficulty` field; added tutor-contract
+  principle 12; updated the Bridge step + principle 11 to the new filename.
+- Renamed `USER_INTEREST.template.md` -> `USER_PREFERENCE.template.md` (git mv) and added `## Difficulty`;
+  replaced the live `USER_INTEREST.md` with `USER_PREFERENCE.md` (interests preserved, difficulty 5,
+  notes updated). `.gitignore`: `USER_INTEREST.md` -> `USER_PREFERENCE.md`.
+
+## Reasoning
+
+- User asked for self-tuning difficulty so one tutor serves a 막 말 뗀 아이 through a 박사: the model must
+  adjust register, not just topic. A bare-number tuning menu at every turn is the lowest-friction control
+  (no command to learn); persisting the level in the same profile keeps it 고정 across sessions like interests.
+- One preference file (not two) is the requested single source of truth for user prefs — difficulty and
+  interests are both "how to teach this user", so they belong together; the separate interest file was removed.
+
+---
+
 # 2026-05-31 - Ban empty decoration + ship the UI/UX landing example on Pages
 
 ## Decision

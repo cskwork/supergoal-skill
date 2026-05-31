@@ -14,11 +14,20 @@ agent-browser from the orchestrator — that floods the conductor's context.
 1. **Serve.** If the app has a server, start it on localhost in the background (`run_in_background`),
    poll the port/health URL until ready, record the URL. Serve from the Verify `git worktree` (the
    committed build state), not a dirty tree, so QA exercises exactly what ships. Tear it down at end.
+   **No server (a static file or single HTML)?** There is nothing to serve — agent-browser opens the
+   file directly via its `file://` path from the Verify worktree. Do not improvise another renderer;
+   the rest of this section is unchanged.
 2. **Tool — agent-browser** (https://github.com/vercel-labs/agent-browser): fast browser-automation
    CLI for agents. If `agent-browser` is not on PATH → `npm i -g agent-browser` (auto-install); if the
    install is blocked, STOP and prompt the user to install it. The subagent first runs
    `agent-browser skills get core --full` (version-matched command reference), then drives the app:
    `open`, `snapshot` (a11y tree with refs), `click`/`type`/`fill`, `screenshot`.
+   **Fallback (only if install is truly impossible):** a headless Chrome/Edge driver may stand in for
+   agent-browser, but two rules hold. (a) It still runs **inside this `qa-tester` subagent, never the
+   orchestrator** — raw screenshots and dumps must not reach the conductor's context. (b) It is doing
+   the **QA** job here (golden + edge + a11y + the as-is/to-be capture); it is **never** folded into
+   **Verify**, which stays a pure `run-to-prove` re-run with no browser. A render screenshot is not a
+   substitute for Verify's claim re-execution.
 3. **Exit gate.** Golden path + edge cases + a11y (`snapshot`) all pass. UI/UX jobs also run the
    taste Pre-Flight Check (`reference/ui-ux.md`).
 4. **As-is → to-be (the user-observable proof).** Capture the change at the same route/viewport:

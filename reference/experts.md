@@ -14,7 +14,8 @@ predictable cost (token spend explains ~80% of multi-agent performance variance 
 | Role | agent type | Model tier | Reads (vault) | Produces |
 |---|---|---|---|---|
 | Analyst (Intake/Validate) | `analyst` | Opus | objective | `brief.md` (incl. `## Validation`) |
-| Architect (Plan/Explore) | `architect` | Opus | brief, README map | `plan.md` (incl. architecture + contracts) |
+| Explorer (LEGACY Explore) | `explore` (fan out `Explore` helpers for parallel mapping) | Sonnet | brief | `README.md` (codebase map + file:line citations) |
+| Architect (Plan) | `architect` | Opus | brief, README map | `plan.md` (incl. architecture + contracts) |
 | Builder | `executor` | Sonnet (Opus if novel/algorithmic) | plan | code + `claims.md` entry |
 | Designer (UI/UX jobs only) | `designer` | Sonnet | `plan.md` + `reference/taste-skill-v2.md` | UI code to taste-skill v2 rules + dial values; `claims.md` entry |
 | Verifier (adversary) | `verifier` / `critic` | Opus | `claims.md` + source only (harness-enforced — see below) | `verification.md` verdicts |

@@ -46,3 +46,65 @@ mechanisms across the references, so a GREEN verdict can no longer pass on an in
   names the exact missed vector, so a compliant Coverage section cannot omit it by silence.
 - Proven against the committed examples and the gate harness (Tier A/F): 51/51 cases green, all
   reference-map files present, no removed-vault-file referenced as current.
+
+---
+
+# 2026-05-31 - QA fallback + static-file rendering made explicit (qa.md)
+
+## Decision
+
+Clarify two QA-phase ambiguities in `reference/qa.md` that let a run improvise a non-sanctioned
+renderer:
+
+- **Static file / single HTML (no server):** state that there is nothing to serve — agent-browser
+  opens the file directly via its `file://` path from the Verify worktree; do not improvise another
+  renderer.
+- **agent-browser unavailable:** define the fallback explicitly. A headless Chrome/Edge driver may
+  stand in only if install is truly impossible, and then under two rules — (a) it runs inside the
+  `qa-tester` subagent, never the orchestrator; (b) it does the QA job (golden + edge + a11y +
+  as-is/to-be) and is never folded into Verify, which stays a pure `run-to-prove` re-run with no
+  browser.
+
+Scope was limited to A+B (qa.md). The experts.md `qa-tester`-vs-browser-native-agent mapping (C) was
+deferred — it depends on the project's agent roster and needs verification before editing.
+
+## Reasoning
+
+- An observed run conflated Verify and QA into one agent and used headless-Chrome screenshots instead
+  of agent-browser. Cross-checking the skill confirmed the deviation: `pipeline.md` keeps Verify
+  (claim re-run, no browser) and QA (agent-browser, black-box) as separate gates, and `qa.md` already
+  forbids running the browser from the orchestrator and prescribes STOP+prompt — not a Chrome fallback.
+- Root cause was runtime non-compliance, not a skill defect, but two gaps invited it: the "Web app"
+  steps were written server-first (so "no server" read as "section N/A"), and the only escape hatch
+  on a blocked install was STOP, with no stated constraints if an agent improvises a fallback anyway.
+  The edits close both without changing any gate or the agent-browser-first preference.
+
+---
+
+# 2026-05-31 - Disambiguate the LEGACY Explore dispatch
+
+## Decision
+
+Make the LEGACY Explore phase a distinct **Explorer** role driven by the `explore` agent, separate
+from the `architect` (Plan only).
+
+- `reference/experts.md`: split the roster row `Architect (Plan/Explore)` into two —
+  `Explorer (LEGACY Explore)` → `explore` (Sonnet), reads `brief.md`, produces the `README.md`
+  codebase map with file:line citations; `Architect (Plan)` → `architect` (Opus), reads brief +
+  README map, produces `plan.md`. Explorer fans out `Explore` (broad-search) helpers for parallel
+  mapping.
+- `reference/pipeline.md`: LEGACY Explore row reworded from "use `explore` skill/agent" to
+  "driven by the `explore` agent; fan out `Explore` helpers for parallel mapping".
+
+## Reasoning
+
+- The two references disagreed: `pipeline.md` told Explore to "use the `explore` agent" while the
+  `experts.md` roster mapped Plan/Explore to a single `architect`. Ambiguous dispatch — unclear which
+  agent type and read-scope the phase runs under.
+- Reading A (own Explorer role) wins on the skill's own thesis: fresh context + role separation per
+  phase, one job per agent. Explore produces a citation map (`README.md`); Plan produces design
+  (`plan.md`). Different jobs with different read-sets, so different roles.
+- The dedicated `explore` agent type (read-only search specialist) fits codebase mapping; `architect`
+  (Read/Grep/Glob) is reserved for the Plan-phase grounding it already owns. Sonnet tier for the
+  search/mapping pass; the Opus architect consumes the map downstream.
+- `reference/learn.md:12` already lists `explore` first for codebase mapping, so no change there.

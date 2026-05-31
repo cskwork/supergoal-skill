@@ -99,7 +99,7 @@ through Human Feedback; approval before Build.
 | Phase | Goal | Reads | Writes | Exit gate |
 |---|---|---|---|---|
 | **Intake** | Feature spec + acceptance criteria | objective | `brief.md` | acceptance criteria stated |
-| **Explore** | Map the affected code with file:line evidence (use `explore` skill/agent) | repo | `README.md` (codebase map + citations) | entry points, call paths, blast radius documented with citations |
+| **Explore** | Map the affected code with file:line evidence (driven by the `explore` agent; fan out `Explore` helpers for parallel mapping) | repo | `README.md` (codebase map + citations) | entry points, call paths, blast radius documented with citations |
 | **Plan** | Ground the plan (see Plan grounding), then a surgical change plan: smallest blast radius, reuse existing utilities | map | `plan.md` (frozen) | plan touches only what the feature requires; reuse noted. On exit, orchestrator records `shasum -a 256 plan.md` into `state.json.plan_hash`. |
 | **Human Feedback** | Explain the implementation plan, then wait for human approval | `README.md`, `plan.md` | `plan.md` (`## Human Feedback`), `state.json.approval` | `plan.md` has the required two briefs; human explicitly approves `Build`; `node templates/human-feedback-gate.mjs <vault> Build` exits 0. No source-tree write before this. |
 | **Build** | Implement matching existing style; no unrelated refactors | plan | code, `claims.md` | slice tests pass; no formatting/rename churn in unrelated files |

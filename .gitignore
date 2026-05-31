@@ -4,3 +4,5 @@ data/
 .verify-probe/
 .supergoal/
 USER_PREFERENCE.md
+learn/*.md
+!learn/README.md

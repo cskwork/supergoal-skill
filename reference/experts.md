@@ -6,12 +6,39 @@ subagents and ingests only their **compressed summaries** (never raw transcripts
 a **fresh context** with a **locked role prompt** and reads only its allowed vault files, so a critic
 never inherits the coder's rationalizations (arxiv 2507.19902 AgentMesh; arxiv 2506.17208).
 
-## Role → agent type → model tier
+## Role → persona → model tier
 
-Use the existing project agent types via the `Task`/`Agent` tool. Pin the model per role for
-predictable cost (token spend explains ~80% of multi-agent performance variance — Anthropic).
+Each role is a **bundled persona file** at `agents/<name>.md` (a system-prompt body + advisory
+`tools`/`model` frontmatter). The **persona file — not any harness's agent registry — is the source of
+truth**, so the skill is self-contained and **harness-agnostic**: it runs the same way under Claude
+Code, Codex, agy, and other coding CLIs. The roster's name column is the persona basename (e.g.
+`verifier` → `agents/verifier.md`). A `name-a / name-b` cell means the role's persona is
+`agents/<name-a>.md`; `name-b` is only an alternate registered agent-type a Claude Code host may bind it
+to (e.g. `verifier`/`critic`, `debugger`/`tracer`), **not** a second file. The built-in `Explore` helper
+is a Claude Code agent, not a persona file.
 
-| Role | agent type | Model tier | Reads (vault) | Produces |
+**Dispatch procedure (every harness).** To run a role:
+
+1. **Select** the persona — read `agents/<name>.md`. The orchestrator only *selects* the file; it never
+   improvises a role prompt.
+2. **Spawn** a fresh sub-context whose system prompt is that file's body, granting only the read-scope
+   the persona declares, pinned to its model tier where the harness lets you choose a model.
+   - *Claude Code:* `Task`/`Agent`. If a same-named agent is registered — or the repo is wrapped in the
+     optional `.claude-plugin/plugin.json` so `agents/*.md` auto-register — call it by `subagent_type`
+     and the harness auto-injects persona + tools + model. Otherwise pass the file body as the inline
+     `prompt`.
+   - *Codex / agy / other CLIs:* use the harness's sub-task/sub-agent mechanism with the file body as
+     the role prompt. If the harness has **no** sub-agent mechanism, run the role as a **fresh, isolated
+     reasoning pass** — never blended with prior role context.
+3. **Collect** only the role's compressed summary (never its raw transcript).
+
+Pin the model per role for predictable cost (token spend explains ~80% of multi-agent performance
+variance — Anthropic). Frontmatter `tools`/`model` and the declared read-scope are **enforced** where
+the harness supports it (Claude Code `tools`/`allowedTools`) and **advisory** elsewhere — instruction-only
+isolation is weaker than harness-enforced (see the Verifier note below). The optional Claude Code plugin
+wrapper is an ergonomics layer only; it must never become a dependency.
+
+| Role | persona (`agents/<name>.md`) | Model tier | Reads (vault) | Produces |
 |---|---|---|---|---|
 | Analyst (Intake/Validate) | `analyst` | Opus | objective | `brief.md` (incl. `## Validation`) |
 | Explorer (LEGACY Explore) | `explore` (fan out `Explore` helpers for parallel mapping) | Sonnet | brief | `README.md` (codebase map + file:line citations) |
@@ -19,7 +46,7 @@ predictable cost (token spend explains ~80% of multi-agent performance variance 
 | Builder | `executor` | Sonnet (Opus if novel/algorithmic) | plan | code + `claims.md` entry |
 | Designer (UI/UX jobs only) | `designer` | Sonnet | `plan.md` + `reference/taste-skill-v2.md` | UI code to taste-skill v2 rules + dial values; `claims.md` entry |
 | Verifier (adversary) | `verifier` / `critic` | Opus | `claims.md` + source only (harness-enforced — see below) | `verification.md` verdicts |
-| Completeness critic | `critic` | Opus | required-coverage list + code (NOT `claims.md` rationale) | gaps → new REDs / justified `Not covered:` entries |
+| Completeness critic | `completeness-critic` (CC alt agent-type: `critic`) | Opus | required-coverage list + code (NOT `claims.md` rationale) | gaps → new REDs / justified `Not covered:` entries |
 | Security reviewer | `security-reviewer` | Sonnet | diff | findings |
 | Code reviewer | `code-reviewer` | Sonnet | diff + `plan.md` | findings |
 | QA | `qa-tester` | Sonnet | running app | `verification.md` (`## QA`) + `qa/` evidence (drives the app with agent-browser — `reference/qa.md`) |

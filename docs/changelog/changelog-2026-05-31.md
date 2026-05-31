@@ -1,3 +1,58 @@
+# 2026-05-31 - Ban empty decoration + ship the UI/UX landing example on Pages
+
+## Decision
+
+- `agents/designer.md` (Hard Visual Bans): added **No empty or meaningless decoration** — every visual
+  element carries meaning; no empty/unlabeled boxes, placeholder panels, or content-less decorative
+  div/SVG shapes. A row of blank tinted rectangles reads as unfinished work (taste §4.8 div-mockup + §14).
+- New `docs/examples/workflow-landing/` (`index.html` + `verification.md` + `README.md`): the Workflow
+  landing page built through the UI/UX overlay, kept as a live usage example. Served by the existing
+  GitHub Pages site (main `/docs`) at `/examples/workflow-landing/`.
+- `docs/index.html` (Proof section): added a bilingual **UI/UX** evidence row linking the live page +
+  verification report, so the promo page showcases the gate catching a real contrast + dark/light defect.
+
+## Reasoning
+
+- The empty-box rule closes the exact slop a real run shipped (four unlabeled tinted boxes in a feature
+  card) — the taste authority bans div-mockups in spirit, but it was not a named self-audit item, so the
+  Designer rationalized decorative empties past it.
+- Pages was already enabled from main `/docs` (https://cskwork.github.io/supergoal-skill/), so the example
+  needed no new infra — a subfolder is live on push. The example doubles as proof: its `verification.md`
+  is the adversarial QA returning RED with computed WCAG numbers, then GREEN after the dual-mode fix.
+
+---
+
+# 2026-05-31 - Enforce dual-mode theme + computed contrast on UI jobs
+
+## Decision
+
+Close a recurrence class: a UI run shipped a dark-only page with no `color-scheme` declaration, no
+light-mode tokens, and an AA-marginal/failing dim text token (4.37:1) — even though taste §6.C/§8/§4.11
+and §14 already require dark-mode handling and contrast. The rules existed but were soft enough that
+"dark theme acceptable" in the brief got read as "dark-only, skip light + skip `color-scheme`", and
+contrast was eyeballed. Made both explicit and rewind-on-fail in supergoal-owned files.
+
+- `agents/designer.md` (Hard Visual Bans): added **Theme is never single-mode by accident** (declare
+  `color-scheme`; ship tested light AND dark defaulting to `prefers-color-scheme`, OR a justified
+  single-mode lock — "dark acceptable" != skip light/`color-scheme`) and **Contrast is computed, not
+  eyeballed** (body AAA >=7:1, all text AA >=4.5:1 against its real bg; accent-as-text gets a per-mode
+  value so it passes on both light and dark).
+- `reference/ui-ux.md` (QA row): the §14 Pre-Flight now computes contrast ratios (verifier prints them)
+  and verifies dark+light handling; both rewind-on-fail beside the existing color/LILA gates.
+
+## Reasoning
+
+- Found by actually running the missing stage: an independent adversarial Verifier (builder != verifier)
+  computed WCAG ratios rather than eyeballing and returned RED with numbers (term-title 4.37:1 fail;
+  footer pairs 4.57-4.85 AA-marginal; no `color-scheme`/light tokens = §6.C/§8 violation). The fix that
+  followed (raise `--text-dim`; add `color-scheme: light dark` + a warm light palette; add `--accent-text`
+  with a darker coral in light mode since clay coral fails as text on light bg) reached GREEN: 0 AA
+  failures and body AAA in both modes. The skill edits encode exactly what the verifier had to check by
+  hand so the next Designer self-audits it up front instead of relying on the gate to catch it.
+- Vendored `reference/taste-skill-v2.md` left verbatim; all enforcement lives in supergoal-owned files.
+
+---
+
 # 2026-05-31 - Conductor orchestrates only, no matter how small
 
 ## Decision

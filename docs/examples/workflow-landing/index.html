@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Claude Code Workflow - Orchestrate agents that hold more than one context</title>
+<meta name="description" content="Workflow runs many Claude Code subagents in deterministic pipelines so you can ship large, multi-step engineering work one context window could never hold." />
+<style>
+  /* ===========================================================
+     Aesthetic: dark-tech / Linear-clean (honest approximation,
+     native CSS + system font stack, no framework, no CDN).
+     Single locked accent: clay coral #d97757 (Claude brand).
+     Shadows are neutral (black alpha) only. No colored glow.
+     Dials applied: VARIANCE 6, MOTION 4, DENSITY 4.
+     =========================================================== */
+
+  :root {
+    color-scheme: light dark;     /* tell UA we support both modes */
+    --base:        #16140f;  /* warm near-black page base */
+    --elevated:    #1d1a14;  /* banded elevated sections   */
+    --surface:     #221e17;  /* card surface               */
+    --hairline:    rgba(255,255,255,0.08);
+    --hairline-2:  rgba(255,255,255,0.13);
+    --text:        #f4efe7;  /* off-white, not pure        */
+    --text-muted:  #b3aa9b;
+    --text-dim:    #9a9081;  /* raised: AAA-leaning on every surface */
+    --accent:      #d97757;  /* clay coral - the ONE accent (fills/borders/rings) */
+    --accent-text: #d97757;  /* accent rendered AS TEXT (light coral on dark) */
+    --accent-ink:  #1a1206;  /* readable text on accent fill */
+    --accent-soft: rgba(217,119,87,0.14);
+    --accent-line: rgba(217,119,87,0.3);
+    --term-bg:     #100e0a;  /* terminal transcript background */
+    --nav-bg:      rgba(22,20,15,0.82);  /* sticky nav translucent base */
+    --radius:      14px;     /* one corner-radius scale     */
+    --radius-pill: 999px;
+    --shadow:      0 10px 30px rgba(0,0,0,0.35);   /* neutral */
+    --shadow-sm:   0 4px 14px rgba(0,0,0,0.25);
+    --max:         1180px;
+    --ease:        cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* ===========================================================
+     LIGHT MODE: warm, paper-like palette. Same single clay-coral
+     accent identity. Accent-as-text darkened (#a8472a) to clear
+     AA on the light paper; --accent kept for fills/borders/rings.
+     =========================================================== */
+  @media (prefers-color-scheme: light) {
+    :root {
+      --base:        #f7f2ea;  /* warm paper page base */
+      --elevated:    #efe7da;  /* banded elevated sections */
+      --surface:     #fbf7f0;  /* card surface (lighter than base) */
+      --hairline:    rgba(40,30,20,0.10);
+      --hairline-2:  rgba(40,30,20,0.18);
+      --text:        #221b12;  /* near-black warm ink (AAA body) */
+      --text-muted:  #4d4438;  /* muted warm ink (AAA on every surface) */
+      --text-dim:    #6e6555;  /* dim labels (AA+) */
+      --accent:      #d97757;  /* same clay coral for fills/borders/rings */
+      --accent-text: #a8472a;  /* darker coral for accent text on light */
+      --accent-ink:  #1a1206;  /* dark ink on coral fill (readable both modes) */
+      --accent-soft: rgba(217,119,87,0.16);
+      --accent-line: rgba(168,71,42,0.35);
+      --term-bg:     #221b12;  /* keep terminal dark for code contrast */
+      --nav-bg:      rgba(247,242,234,0.82);  /* paper sticky nav */
+      --shadow:      0 10px 30px rgba(40,30,20,0.14);
+      --shadow-sm:   0 4px 14px rgba(40,30,20,0.10);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  body {
+    margin: 0;
+    background: var(--base);
+    color: var(--text);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  a { color: inherit; }
+  ::selection { background: var(--accent); color: var(--accent-ink); }
+
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+
+  /* ---- focus visibility (a11y) ---- */
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  /* ---- typography helpers ---- */
+  .eyebrow {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--accent-text);
+    font-weight: 600;
+    margin: 0 0 18px;
+  }
+  h1, h2, h3 { font-weight: 650; letter-spacing: -0.02em; line-height: 1.08; margin: 0; }
+  h2 { font-size: clamp(28px, 4vw, 40px); }
+  h3 { font-size: 20px; letter-spacing: -0.01em; line-height: 1.25; }
+  p  { margin: 0; }
+  .lead { color: var(--text-muted); font-size: 18px; max-width: 60ch; }
+
+  /* ---- buttons: solid accent fill, neutral shadow, no glow ---- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font: inherit;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 13px 22px;
+    border-radius: var(--radius-pill);
+    border: 1px solid transparent;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 0.18s var(--ease), background-color 0.18s var(--ease), border-color 0.18s var(--ease);
+  }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: var(--shadow-sm); }
+  .btn-primary:hover { background: #e08a6c; }
+  .btn-primary:active { transform: translateY(1px); }
+  .btn-ghost { background: transparent; color: var(--text); border-color: var(--hairline-2); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent-text); }
+  .btn-ghost:active { transform: translateY(1px); }
+  .arrow { transition: transform 0.18s var(--ease); }
+  .btn:hover .arrow { transform: translateX(3px); }
+
+  /* ===================== NAV (single line, <= 64px) ===================== */
+  header.nav {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--nav-bg);
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 11px; font-weight: 650; letter-spacing: -0.01em; }
+  .brand .glyph {
+    width: 26px; height: 26px; border-radius: 7px; flex: none;
+    background: var(--accent); display: grid; place-items: center;
+    color: var(--accent-ink); font-size: 15px; font-weight: 800;
+  }
+  .nav-links { display: flex; align-items: center; gap: 28px; }
+  .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 15px; transition: color 0.15s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta { display: inline-flex; }
+  @media (max-width: 860px) {
+    .nav-links a:not(.nav-cta) { display: none; }
+  }
+
+  /* ===================== HERO (asymmetric split) ===================== */
+  .hero { border-bottom: 1px solid var(--hairline); }
+  .hero-grid {
+    display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px;
+    align-items: center; padding: 84px 0 92px;
+  }
+  .hero h1 { font-size: clamp(38px, 5.4vw, 60px); }
+  .hero .lead { margin-top: 22px; }
+  .hero-cta { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 32px; }
+
+  /* hero visual: a real terminal transcript, not a fake-UI div mock */
+  /* Terminal is always a dark panel (both modes) so code keeps high contrast.
+     Its inner tokens are pinned to the dark palette regardless of system mode. */
+  .term {
+    --term-text:  #f4efe7;
+    --term-muted: #b3aa9b;
+    --term-dim:   #9a9081;
+    --term-coral: #d97757;
+    border: 1px solid rgba(255,255,255,0.13);
+    border-radius: var(--radius);
+    background: var(--term-bg);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .term-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.08);
+    background: #221e17;
+  }
+  .dot { width: 11px; height: 11px; border-radius: 50%; background: rgba(255,255,255,0.13); }
+  .term-title { margin-left: 10px; font-size: 13px; color: var(--term-dim); font-family: ui-monospace, monospace; }
+  .term pre {
+    margin: 0; padding: 20px 18px; overflow-x: auto;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13.5px; line-height: 1.75; color: var(--term-muted);
+  }
+  .c-accent { color: var(--term-coral); }
+  .c-text   { color: var(--term-text); }
+  .c-dim    { color: var(--term-dim); }
+
+  @media (max-width: 880px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 40px; padding: 56px 0 64px; }
+  }
+
+  /* ===================== SECTION SHELL & rhythm ===================== */
+  section { padding: 68px 0; }
+  .band-elevated { background: var(--elevated); border-top: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline); }
+  .section-head { max-width: 62ch; }
+  .section-head .lead { margin-top: 16px; }
+  @media (max-width: 760px) { section { padding: 52px 0; } }
+
+  /* ---- "What it is" : two-column band (heading left, prose right) ---- */
+  .whatis .section-head {
+    max-width: none;
+    display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 48px; align-items: start;
+  }
+  .whatis h2 { font-size: clamp(26px, 3.6vw, 36px); }
+  .whatis .lead { margin: 0; max-width: none; }
+  @media (max-width: 760px) {
+    .whatis .section-head { grid-template-columns: 1fr; gap: 18px; }
+  }
+
+  /* ===================== CAPABILITIES (asymmetric bento, 4 cells) ===================== */
+  .bento {
+    margin-top: 40px;
+    display: grid; gap: 16px;
+    grid-template-columns: 1.35fr 1fr 1fr;
+    grid-template-rows: auto auto;
+  }
+  .cell {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius);
+    padding: 28px;
+    display: flex; flex-direction: column; gap: 10px;
+    transition: border-color 0.2s var(--ease), transform 0.2s var(--ease);
+  }
+  .cell:hover { border-color: var(--hairline-2); transform: translateY(-2px); }
+  .cell .num { font-family: ui-monospace, monospace; font-size: 13px; color: var(--accent-text); font-weight: 600; }
+  .cell h3 { margin-top: 2px; }
+  .cell p  { color: var(--text-muted); font-size: 15.5px; }
+  /* cell 1 spans both rows on the left; agent boxes sit right under the copy */
+  .cell-feature { grid-column: 1; grid-row: 1 / span 2; }
+  .cell-2 { grid-column: 2; }
+  .cell-3 { grid-column: 3; }
+  .cell-4 { grid-column: 2 / span 2; grid-row: 2; }
+  .fan {
+    margin-top: 18px; flex: 1;
+    display: grid; gap: 10px;
+    grid-template-columns: repeat(2, 1fr); grid-auto-rows: 1fr;
+  }
+  .fan span {
+    min-height: 56px; border-radius: 8px;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-line);
+    display: grid; place-items: center;
+    font-family: ui-monospace, monospace; font-size: 12px; font-weight: 600;
+    color: var(--accent-text); white-space: nowrap;
+  }
+  @media (max-width: 820px) {
+    .bento { grid-template-columns: 1fr; }
+    .cell-feature, .cell-2, .cell-3, .cell-4 { grid-column: auto; grid-row: auto; }
+  }
+
+  /* ===================== HOW IT WORKS (vertical numbered stack) ===================== */
+  .steps { margin-top: 36px; display: grid; gap: 0; }
+  .step {
+    display: grid; grid-template-columns: 64px 1fr; gap: 24px;
+    padding: 26px 0; border-top: 1px solid var(--hairline);
+  }
+  .step:last-child { border-bottom: 1px solid var(--hairline); }
+  .step .idx {
+    font-family: ui-monospace, monospace; font-size: 28px; font-weight: 650;
+    color: var(--accent-text); line-height: 1;
+  }
+  .step h3 { margin-bottom: 8px; }
+  .step p { color: var(--text-muted); max-width: 64ch; }
+  @media (max-width: 600px) {
+    .step { grid-template-columns: 1fr; gap: 8px; }
+  }
+
+  /* ===================== USE CASES (2-col card grid) ===================== */
+  .cases { margin-top: 36px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .case {
+    background: var(--surface); border: 1px solid var(--hairline);
+    border-radius: var(--radius); padding: 28px;
+    transition: border-color 0.2s var(--ease);
+  }
+  .case:hover { border-color: var(--hairline-2); }
+  .case .tag { font-family: ui-monospace, monospace; font-size: 12.5px; color: var(--accent-text); letter-spacing: 0.04em; }
+  .case h3 { margin: 12px 0 8px; }
+  .case p { color: var(--text-muted); font-size: 15.5px; }
+  @media (max-width: 760px) { .cases { grid-template-columns: 1fr; } }
+
+  /* ===================== CODE SHOWCASE (full-width) ===================== */
+  .showcase .term { margin-top: 40px; }
+  .showcase .lead { margin-top: 16px; }
+
+  /* ===================== FOOTER ===================== */
+  footer.foot { border-top: 1px solid var(--hairline); padding: 56px 0 64px; background: var(--elevated); }
+  .foot-grid { display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: flex-start; }
+  .foot p { color: var(--text-dim); font-size: 14.5px; max-width: 44ch; margin-top: 12px; }
+  .foot-links { display: flex; gap: 40px; flex-wrap: wrap; }
+  .foot-col h4 { margin: 0 0 12px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-dim); font-weight: 600; }
+  .foot-col a { display: block; text-decoration: none; color: var(--text-muted); font-size: 15px; padding: 4px 0; transition: color 0.15s; }
+  .foot-col a:hover { color: var(--accent-text); }
+  .foot-base { margin-top: 44px; padding-top: 22px; border-top: 1px solid var(--hairline); color: var(--text-dim); font-size: 13.5px; }
+
+  /* ===================== SCROLL REVEAL (MOTION 4, reduced-motion safe) ===================== */
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s var(--ease), transform 0.6s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ===================== NAV ===================== -->
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#top" aria-label="Claude Code Workflow home">
+        <span class="glyph" aria-hidden="true">C</span>
+        <span>Claude&nbsp;Code <span style="color:var(--text-dim);font-weight:500">Workflow</span></span>
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#what">Overview</a>
+        <a href="#capabilities">Capabilities</a>
+        <a href="#how">How it works</a>
+        <a href="#code">Examples</a>
+        <a class="btn btn-primary nav-cta" href="#what">Start building</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- ===================== HERO ===================== -->
+    <section class="hero" aria-labelledby="hero-h">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="eyebrow">Claude Code Workflow</p>
+          <h1 id="hero-h">Orchestrate a team of agents on work too big for one context.</h1>
+          <p class="lead">Fan out subagents, run them through ordered pipelines, and verify every result before you trust it.</p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#what">Start building <span class="arrow" aria-hidden="true">&rarr;</span></a>
+            <a class="btn btn-ghost" href="#how">See how it works</a>
+          </div>
+        </div>
+
+        <!-- real terminal transcript, not a div-mock product UI -->
+        <div class="term reveal" role="img" aria-label="Terminal running a workflow that fans out four review agents and verifies the findings.">
+          <div class="term-bar">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="term-title">workflow: security-review.ts</span>
+          </div>
+<pre aria-hidden="true"><span class="c-dim">$</span> <span class="c-text">claude workflow run review.ts</span>
+
+<span class="c-accent">fan-out</span>   spawning 4 agents over /src ........ <span class="c-text">ok</span>
+  auth      <span class="c-dim">3 findings</span>
+  payments  <span class="c-dim">5 findings</span>
+  api       <span class="c-dim">2 findings</span>
+  jobs      <span class="c-dim">1 finding</span>
+
+<span class="c-accent">verify</span>    skeptic agent refuting each ...... <span class="c-text">8 kept</span>
+<span class="c-accent">loop</span>      re-running until dry ............. <span class="c-text">0 new</span>
+
+<span class="c-text">Done.</span> 8 verified findings, 3 rejected.</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== WHAT IT IS (centered prose band) ===================== -->
+    <section id="what" class="band-elevated whatis reveal" aria-labelledby="what-h">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="what-h">One context window has a ceiling. A workflow does not.</h2>
+          <p class="lead">Workflow lets you script many Claude Code subagents with real control flow. You decide what runs in parallel, what runs in sequence, and what has to be proven true before it counts. The model handles the reasoning; your script keeps the run deterministic.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CAPABILITIES (asymmetric bento, 4 cells) ===================== -->
+    <section id="capabilities" aria-labelledby="cap-h">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">Core building blocks</p>
+          <h2 id="cap-h">Four primitives you compose into anything.</h2>
+        </div>
+
+        <div class="bento">
+          <article class="cell cell-feature reveal">
+            <span class="num">01</span>
+            <h3>Parallel fan-out</h3>
+            <p>Launch many independent agents at once across files, services, or sources, then collect every result into one place. Wide coverage in a single pass instead of one slow sequential crawl, so a thousand-item job finishes in the time of one.</p>
+            <div class="fan" role="img" aria-label="One call fans out into four parallel agents"><span>agent 1</span><span>agent 2</span><span>agent 3</span><span>agent 4</span></div>
+          </article>
+
+          <article class="cell cell-2 reveal">
+            <span class="num">02</span>
+            <h3>Pipelines</h3>
+            <p>Push each work item through ordered stages with no barrier between them, so a finished item moves on while the rest are still in flight.</p>
+          </article>
+
+          <article class="cell cell-3 reveal">
+            <span class="num">03</span>
+            <h3>Adversarial verification</h3>
+            <p>An independent skeptic agent tries to refute each finding before it is accepted. Only claims that survive the challenge reach you.</p>
+          </article>
+
+          <article class="cell cell-4 reveal">
+            <span class="num">04</span>
+            <h3>Loop until dry or until budget</h3>
+            <p>Keep spawning finder agents until no new results come back, or until a token budget is hit. You set the stopping rule; the workflow respects it and reports where it stopped.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== HOW IT WORKS (vertical numbered stack) ===================== -->
+    <section id="how" class="band-elevated" aria-labelledby="how-h">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <h2 id="how-h">How a workflow runs.</h2>
+        </div>
+
+        <div class="steps">
+          <div class="step reveal">
+            <div class="idx">1</div>
+            <div>
+              <h3>Author the control flow</h3>
+              <p>Write loops, conditionals, and stage order in a script. Determinism lives in your code, not in a prompt the model might drift away from.</p>
+            </div>
+          </div>
+          <div class="step reveal">
+            <div class="idx">2</div>
+            <div>
+              <h3>Fan out the work</h3>
+              <p>The runner spawns one subagent per work item with its own fresh context, so a thousand-file task is never bound by a single window.</p>
+            </div>
+          </div>
+          <div class="step reveal">
+            <div class="idx">3</div>
+            <div>
+              <h3>Verify before accepting</h3>
+              <p>Each result passes to a skeptic agent that argues against it. Findings that cannot be defended are dropped before they reach your report.</p>
+            </div>
+          </div>
+          <div class="step reveal">
+            <div class="idx">4</div>
+            <div>
+              <h3>Collect and stop on your terms</h3>
+              <p>Results stream back into one structured output. The loop continues until it runs dry or hits the budget you set, then hands you the summary.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== USE CASES (2-col card grid) ===================== -->
+    <section id="uses" aria-labelledby="uses-h">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <h2 id="uses-h">What teams point it at.</h2>
+          <p class="lead">Anything where the work outgrows a single conversation and the answer has to be right.</p>
+        </div>
+
+        <div class="cases">
+          <article class="case reveal">
+            <span class="tag">code review</span>
+            <h3>Comprehensive review</h3>
+            <p>Fan an agent over every module, gather findings, and let a skeptic cut the false positives before a human ever opens the report.</p>
+          </article>
+          <article class="case reveal">
+            <span class="tag">migrations</span>
+            <h3>Large codebase migrations</h3>
+            <p>Run the same transform across hundreds of files in parallel, with a verification stage confirming each change still compiles and behaves.</p>
+          </article>
+          <article class="case reveal">
+            <span class="tag">research</span>
+            <h3>Multi-source research</h3>
+            <p>Loop finder agents across many sources until no new material surfaces, then reconcile the results into one cited synthesis.</p>
+          </article>
+          <article class="case reveal">
+            <span class="tag">audits</span>
+            <h3>Security and dependency audits</h3>
+            <p>Sweep the tree for risks, challenge every flag adversarially, and report only the issues that hold up under scrutiny.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CODE SHOWCASE (full-width) ===================== -->
+    <section id="code" class="band-elevated showcase" aria-labelledby="code-h">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">Authored, not improvised</p>
+          <h2 id="code-h">The control flow is yours to read.</h2>
+          <p class="lead">A workflow is a script. Loops and conditionals are explicit, so a run is reproducible and reviewable.</p>
+        </div>
+
+        <div class="term reveal">
+          <div class="term-bar">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="term-title">review.ts</span>
+          </div>
+<pre><code><span class="c-dim">// Fan out one agent per module, then verify what comes back.</span>
+<span class="c-accent">const</span> <span class="c-text">modules</span> = <span class="c-accent">await</span> listModules(<span class="c-text">"./src"</span>);
+
+<span class="c-accent">const</span> <span class="c-text">findings</span> = <span class="c-accent">await</span> fanOut(modules, (m) =&gt; {
+  <span class="c-accent">return</span> agent.review(m, { focus: <span class="c-text">"security"</span> });
+});
+
+<span class="c-dim">// Adversarial pass: a skeptic must fail to refute each finding.</span>
+<span class="c-accent">const</span> <span class="c-text">verified</span> = <span class="c-accent">await</span> verify(findings, {
+  refuteWith: skeptic,
+  keepIf: (f) =&gt; f.survivesChallenge,
+});
+
+<span class="c-dim">// Loop until no new findings, capped at a token budget.</span>
+<span class="c-accent">await</span> loopUntilDry({ budget: <span class="c-text">200_000</span> });
+
+report(verified);</code></pre>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="foot" aria-labelledby="foot-h">
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <a class="brand" href="#top" aria-label="Claude Code Workflow home">
+            <span class="glyph" aria-hidden="true">C</span>
+            <span>Claude&nbsp;Code <span style="color:var(--text-dim);font-weight:500">Workflow</span></span>
+          </a>
+          <p id="foot-h">Deterministic agent orchestration for engineering work that no single context window can hold.</p>
+        </div>
+        <div class="foot-links">
+          <div class="foot-col">
+            <h4>Product</h4>
+            <a href="#capabilities">Capabilities</a>
+            <a href="#how">How it works</a>
+            <a href="#code">Examples</a>
+          </div>
+          <div class="foot-col">
+            <h4>Resources</h4>
+            <a href="#what">Overview</a>
+            <a href="#uses">Use cases</a>
+            <a href="#code">Reference</a>
+          </div>
+        </div>
+      </div>
+      <div class="foot-base">Claude Code Workflow. Build the pipeline once, run it on anything.</div>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll-reveal via IntersectionObserver (no scroll listeners).
+    // Justification: storytelling - content enters as the reader reaches it.
+    (function () {
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var els = document.querySelectorAll('.reveal');
+      if (reduce || !('IntersectionObserver' in window)) {
+        els.forEach(function (el) { el.classList.add('in'); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+      els.forEach(function (el) { io.observe(el); });
+    })();
+  </script>
+</body>
+</html>

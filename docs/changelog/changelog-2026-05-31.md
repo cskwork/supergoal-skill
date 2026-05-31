@@ -108,3 +108,76 @@ from the `architect` (Plan only).
   (Read/Grep/Glob) is reserved for the Plan-phase grounding it already owns. Sonnet tier for the
   search/mapping pass; the Opus architect consumes the map downstream.
 - `reference/learn.md:12` already lists `explore` first for codebase mapping, so no change there.
+
+---
+
+# 2026-05-31 - Close the agent-availability assumption (general-purpose fallback)
+
+## Decision
+
+State explicitly that the roster lists **preferred** agent types and define a fallback, so a host
+without the named types degrades gracefully instead of failing the dispatch.
+
+- `reference/experts.md`: new "Agent availability & fallback" paragraph after the roster intro — the
+  types are the host's project roster (not installed by the skill); a role is defined by its
+  locked-prompt + read-scope + model tier, not the type name; if a preferred type is absent, dispatch
+  the same locked-prompt to `general-purpose` (read-only phases prefer built-in `Explore`/`Plan`) with
+  the model tier pinned. External CLIs (`codex`, `gemini`) are not `Task` subagents — reached via their
+  own skills (`codex-cli`, `ccg`, `ask`) and out of scope for role dispatch.
+
+## Reasoning
+
+- The references assumed `explore`/`architect`/`verifier`/etc. exist (`experts.md:11` "use the existing
+  project agent types"; `SKILL.md:16` "nothing to install"), with no fallback if a type is missing — on
+  a vanilla Claude Code roster `Task(subagent_type:'explore')` would simply fail.
+- The skill's own SSRF experiment already ran on `general-purpose`
+  (`docs/experiments/2026-05-31-skill-vs-noskill-ssrf/report.md:28`), so the doc now matches what
+  execution already did, and portability beyond the OMC roster is preserved.
+- A per-agent reference (e.g. `reference/explore.md`) would not fix this — the gap spans the whole
+  roster. The real contract is the locked-prompt + read-scope + model tier; the type name is only a
+  binding, so the fallback keys on re-using that contract under `general-purpose`.
+- `codex`/`gemini` are a different mechanism (external CLIs via skills, not `Task` subagent types); they
+  appear only as benchmark baselines in `README.md`/experiments, never as dispatch targets, so the note
+  marks them out of scope rather than adding them to the roster.
+
+---
+
+# 2026-05-31 - Bundle role personas as files; make dispatch harness-agnostic
+
+## Decision
+
+Make the skill **self-contained and harness-agnostic** (Claude Code, Codex, agy, other coding CLIs) by
+bundling each role as a persona file and defining one harness-neutral dispatch procedure. Supersedes the
+earlier "general-purpose fallback" half-measure and rejects a Claude-Code plugin as the *core* mechanism.
+
+- New `agents/` — one persona file per role (11): `analyst`, `explore`, `architect`, `executor`,
+  `designer`, `verifier`, `completeness-critic`, `security-reviewer`, `code-reviewer`, `qa-tester`,
+  `debugger`. Each is `name`/`description`/`tools`/`model` frontmatter (Claude-Code-compatible, ignored
+  elsewhere) + a locked-prompt body (ROLE / READ ONLY / DO / RULES / WRITE / RETURN / GATE).
+- `reference/experts.md`: rewrote the dispatch section to "Role -> persona -> model tier" — the persona
+  file (not any harness's agent registry) is the source of truth; added the 3-step harness-agnostic
+  dispatch procedure (select -> spawn/inline -> collect); frontmatter/read-scope is enforced where the
+  harness supports it and advisory elsewhere; `critic`/`tracer` are alternate Claude-Code agent-type
+  names, not extra files.
+- `SKILL.md`: expert-roster paragraph + reference map now point at `agents/<role>.md` and the
+  harness-agnostic procedure.
+- `README.md`: lead-in + Layout note the `agents/` source-of-truth and cross-harness dispatch; **resolved
+  a committed merge-conflict marker** in the Layout block (HEAD vs `feat/learn-flow`) — kept the union
+  reference list (`... qa . domain-rules . plan-grounding . learn`).
+
+## Reasoning
+
+- Requirement from the user: the skill must run across Claude Code, Codex, agy, and other harnesses —
+  "not just to claude code plugin harness". A Claude Code plugin (auto-registered `agents/`) is
+  Claude-Code-only, so it cannot be the core; per the claude-code-guide lookup, the Task tool offers no
+  "load persona from file path" param and skill-internal `agents/` is not scanned — so registration is
+  inherently harness-specific.
+- The portable equivalent of "orchestrator only selects, harness auto-injects": the persona is a file
+  the orchestrator *names*, and a single fixed procedure spawns it. The orchestrator never improvises a
+  role prompt (the real concern), and on harnesses with native agent loading (optional CC plugin wrapper)
+  it still gets true auto-injection — dual-use with zero fork.
+- One file per role (global rule: one file = one purpose); aliases handled by a doc line, not file
+  proliferation. Read-scope/model tier degrade to advisory on harnesses that cannot enforce them — stated
+  openly, consistent with the existing "instruction-only isolation is weaker" note.
+- Memory: recorded the harness-agnostic constraint as a durable project rule so future changes do not
+  recouple to a single harness.

@@ -5,8 +5,10 @@ through a full, gated development process using expert subagents — then refuse
 until a machine-checkable gate passes.
 
 Gated lanes, a single shared vault, an untrusted `claims.md` re-verified by an adversary, and a
-literal-bash delivery gate that is never edited to pass. Everything runs in-session with the
-`Task`/`Agent` tool. **Nothing to install but the skill itself.** (Workflow inspired by
+literal-bash delivery gate that is never edited to pass. Each role's persona is a bundled file in
+`agents/`, so dispatch is **harness-agnostic** — it runs the same under Claude Code, Codex, agy, and
+other coding CLIs (the orchestrator spawns the persona via the harness's sub-agent mechanism, or runs
+it inline where none exists). **Nothing to install but the skill itself.** (Workflow inspired by
 [oh-my-symphony](https://github.com/cskwork/oh-my-symphony).)
 
 > **New here? Start with the landing page** → **[cskwork.github.io/supergoal-skill](https://cskwork.github.io/supergoal-skill/)**
@@ -70,11 +72,8 @@ Then in Claude Code: `/supergoal <your objective>`.
 
 ```
 SKILL.md            thin spine: mode detection, gates, reference map
-<<<<<<< HEAD
-reference/          pipeline · experts · vault · market-research · quality-gates · debugging · qa · domain-rules
-=======
-reference/          pipeline · experts · vault · market-research · quality-gates · debugging · learn
->>>>>>> feat/learn-flow
+agents/             one persona file per role (system prompt) — harness-agnostic dispatch source of truth
+reference/          pipeline · experts · vault · market-research · quality-gates · debugging · qa · domain-rules · plan-grounding · learn
 reference/ui-ux.md  UI/UX overlay → taste-skill v2 (reference/taste-skill-v2.md, vendored) as design authority
 learn/              LEARN-mode session journals (one file per session) + README template
 templates/          delivery-gate.sh · validate-gate.sh · human-feedback-gate.mjs · state.json

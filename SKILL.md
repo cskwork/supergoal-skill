@@ -13,9 +13,10 @@ production code itself — it decomposes the objective, dispatches **expert suba
 
 The design is a set of gated lanes over a single shared vault, with an untrusted `claims.md`
 re-verified by an adversary and a literal-bash delivery gate that is never edited to pass —
-everything runs in-session with the `Task`/`Agent` tool, so there is nothing to install. (A plain
-`git worktree` is still used as the clean-state sandbox for Verify and parallel Build — git is
-already present.)
+everything runs in-session through your harness's sub-agent mechanism (Claude Code: the `Task`/`Agent`
+tool; other CLIs: their sub-task equivalent), with role personas bundled in `agents/`, so there is
+nothing to install. (A plain `git worktree` is still used as the clean-state sandbox for Verify and
+parallel Build — git is already present.)
 
 ## Why this exists
 
@@ -102,14 +103,15 @@ Six files: `README.md`, `brief.md`, `plan.md`, `claims.md`, `verification.md`, `
 
 ## Expert roster
 
-Roles are dispatched as subagents, each a fresh context with the minimum vault read-set. Verifier is `allowedTools`-scoped to `claims.md` + source only (`reference/experts.md`). See `reference/experts.md` for the full dispatch table, parallel-wave rules, and agent types. UI/UX jobs add a **Designer** role bound to `reference/taste-skill-v2.md` (see `reference/ui-ux.md`).
+Roles are dispatched as subagents, each a fresh context with the minimum vault read-set. Each role's persona is a **bundled file in `agents/<role>.md`** (the system prompt to spawn), so dispatch is **harness-agnostic** — Claude Code, Codex, agy, or any CLI: select the file, spawn a fresh sub-context with it (or run it as an isolated pass where no sub-agent mechanism exists), collect only its summary. The Claude Code plugin wrapper is optional ergonomics, never a dependency. Verifier is `allowedTools`-scoped to `claims.md` + source only where the harness enforces it (`reference/experts.md`). See `reference/experts.md` for the full dispatch table, the harness-agnostic dispatch procedure, and parallel-wave rules. UI/UX jobs add a **Designer** role bound to `reference/taste-skill-v2.md` (see `reference/ui-ux.md`).
 
 ## Reference map (progressive disclosure — load only what the current phase needs)
 
 | Read this | When |
 |---|---|
 | `reference/pipeline.md` | Always — the phase definitions and exit gates for the detected mode |
-| `reference/experts.md` | When dispatching any phase — role → agent-type → model-tier map |
+| `reference/experts.md` | When dispatching any phase — role → persona-file → model-tier map + the harness-agnostic dispatch procedure |
+| `agents/<role>.md` | When dispatching a role — the bundled persona (system prompt) to spawn; one file per role, harness-agnostic |
 | `reference/vault.md` | At Intake (create vault) and whenever a phase passes state |
 | `reference/domain-rules.md` | At Intake — route the objective to its `ten-rules` domain(s); distill the ≤10 priority rules carried through the run |
 | `reference/market-research.md` | GREENFIELD Validate phase — demand-validation methods |

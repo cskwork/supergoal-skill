@@ -25,7 +25,7 @@ concept back in chat.
    - General concept: research authoritative sources.
 2. **Bridge (mandatory).** Ask what the user already knows (one calibration question). Connect the unfamiliar domain to *their* language/world with one concrete analogy — **draw it from an interest in `USER_PREFERENCE.md`** (step 0) so the bridge lands in a world the user already inhabits. The bridge sits directly under the terms table (see Output format) and frames every definition. Rule: a term may lead, but only with a **plain-language definition** — never a jargon-first definition that needs other jargon to parse.
 3. **Teach loop** — Feynman + Socratic, run via the `grill-me` skill. The FIRST teaching turn opens with the **Output format** below (terms on top), then proceeds question-driven:
-   - **Pitch every turn at the saved difficulty level** (see "Difficulty ladder") — the level sets vocabulary, term count, and depth; the structure stays the same.
+   - **Pitch every turn at the saved difficulty level** (see "Difficulty ladder") — the level sets vocabulary, term count, depth, and bite size; the structure stays the same.
    - Lead with the clearly-defined key-terms table, then why-it-matters, then the simple flow, then one example.
    - Explain in plain words. Every term in the table has a beginner-friendly definition the user could repeat.
    - Don't lecture — after the opening frame, ask back. One question at a time; follow each branch of the decision tree until that node is resolved.
@@ -68,25 +68,25 @@ The first teaching turn MUST follow this structure, in the user's language. Key 
 ```
 
 Structural rules:
-- **~5 key terms at level 5** — a beginner can't hold more at once; the Difficulty ladder raises this at higher levels and cuts it at lower ones. Extra terms go under "지금은 건너뛰는 것".
+- **~5 key terms at level 5** — a beginner can't hold more at once; the Difficulty ladder raises this at higher levels and cuts it at lower ones. At levels 1-2, teach only one tiny step per turn, usually 1-2 terms. Extra terms go under "지금은 건너뛰는 것".
 - Each definition is pitched at the saved level — at level 5, "초보자가 이해할 수 있는 말", not a dictionary definition. If a definition needs another jargon word, that word is also a row or it gets rewritten.
 - Short, clear sentences. No term appears in prose before it appears in the table.
 - End every opening turn with ONE question back to the user (the Socratic loop), not more explanation — then the difficulty-tuning menu line (see "Difficulty tuning"), rendered in the user's language with the current level filled in.
 
 ## Difficulty ladder (1-10, default 5)
 
-The saved level sets the **register** of every teaching turn — vocabulary, sentence length, how many terms, how much depth, how mature the analogy. Same topic, different altitude.
+The saved level sets the **register and bite size** of every teaching turn — vocabulary, sentence length, how many terms, how much depth, how mature the analogy, and how small each learning step should be. Same topic, different altitude.
 
 | Level | Audience | Register |
 |---|---|---|
-| 1-2 | 막 말을 뗀 아이 | Tiny sentences. ~3 terms max, each a single everyday word. Pure concrete analogy, zero jargon. |
+| 1-2 | 막 말을 뗀 아이 | Tiny sentences. 1 tiny idea per turn. 1-2 terms at a time. Pure concrete analogy, zero jargon. Ask about only the tiny step just taught. |
 | 3-4 | 입문자 | Plain words, ~4 terms, one concrete analogy. No assumed background. |
 | **5 (default)** | 일반 성인 비전공자 | The terms-on-top format as written: ~5 plain-defined terms, why-it-matters, simple flow, one example. |
 | 6-7 | 해당 분야 초중급자 | Standard terminology allowed (still defined). More terms (~7), real mechanics, a second example. |
 | 8-9 | 실무자 / 숙련자 | Precise technical vocabulary, fewer hand-holds, edge cases and trade-offs included. |
 | 10 | 박사 / 전문가 | Full rigor and formal precision. Assume deep background; engage the hard cases, name the literature. |
 
-The Output format and term cap above describe **level 5**. As the level rises, raise the term ceiling and the precision; as it falls, cut terms and shorten sentences. The structure (terms first, then why, flow, example, one-line takeaway) holds at every level — only the altitude changes.
+The Output format and term cap above describe **level 5**. As the level rises, raise the term ceiling and the precision; as it falls, cut terms, shorten sentences, and split the lesson into smaller bite-size chunks. At levels 1-2, do not teach the whole shape in one pass: teach one micro-step, ask one small explain-back question, then continue only after the user responds. The structure (terms first, then why, flow, example, one-line takeaway) holds at every level — only the altitude and bite size change.
 
 ## Difficulty tuning (end every teaching turn with it)
 
@@ -102,6 +102,7 @@ Every teaching turn ends with a one-line tuning menu, **in the user's language**
   - `3` → level **+ 1** (harder)
 - Clamp to **[1, 10]**. At the floor or ceiling, say so ("이미 가장 쉬운/어려운 단계예요") and hold.
 - On any change: **rewrite the `## Difficulty` value in `USER_PREFERENCE.md`**, confirm in one short line ("난이도 4로 낮췄어요"), then **immediately re-pitch the same content at the new level** — don't wait for the next topic.
+- When difficulty goes down, re-pitch by making the lesson more bite-size, not merely by using easier words: reduce the number of terms, teach fewer SQL/code lines, and ask a smaller question.
 - A reply that is clearly an answer to the lesson (anything other than a bare 1/2/3) is treated as content, not tuning.
 
 ## User preference profile (`USER_PREFERENCE.md`)
@@ -150,6 +151,7 @@ Updated: YYYY-MM-DD
 10. Close with a single "이것만 기억하면 된다" line.
 11. Anchor the analogy — and, where the topic allows, the worked example — in an interest from `USER_PREFERENCE.md`. Teach the concept through the user's own world, not a generic one.
 12. Pitch every turn at the saved difficulty level (1-10, default 5), and close every turn with the tuning menu — a bare `1`/`2`/`3` lowers, holds, or raises the level and rewrites `USER_PREFERENCE.md`.
+13. Lower difficulty means smaller chunks, not just simpler words: at levels 1-2, teach one tiny idea, one tiny example, and one tiny check question per turn.
 
 - A term is "known" only when the user can define it back in plain language.
 - Serve both audiences: a non-technical user gets analogies from their own domain; a technical user gets analogies from systems they already know.

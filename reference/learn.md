@@ -4,6 +4,12 @@ For "explain X" / "understand Y" / "teach me Z" — a codebase area or a general
 
 LEARN skips Validate/Build/Verify/QA/Deliver and the implementation gates. It runs its own flow and journals to `learn/`.
 
+## Goal-tool boundary
+
+LEARN is tutoring, not a persistent runtime goal. Never call `create_goal`, `update_goal`, or similar
+goal tools for LEARN, even when invoked as "supergoal learn ...". "Check" means the user explains the
+concept back in chat.
+
 ## Flow
 
 `Intake -> Preference -> Source -> Bridge -> Teach loop -> Check -> Journal`

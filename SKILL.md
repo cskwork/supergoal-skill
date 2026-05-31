@@ -58,7 +58,9 @@ Read the objective and classify it. State the detected mode to the user in one l
 If ambiguous, ask ONE clarifying question, then proceed. Mode picks the pipeline; the gates and the
 vault are identical across modes.
 
-LEARN is the exception: it writes no code and skips the implementation gates — it runs the teach-and-check flow in `reference/learn.md` and journals to `learn/`.
+LEARN is the exception: it writes no code, skips implementation gates, and never uses persistent
+goal tools (`create_goal`/`update_goal`). Its Check gate is chat explain-back only; see
+`reference/learn.md`.
 
 **Topology rule** (the research thesis — task shape, not preference, picks the architecture):
 fan out parallel subagents only for *wide-and-shallow* work (Validate research, scaffolding several

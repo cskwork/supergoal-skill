@@ -9,16 +9,29 @@ ROLE: QA (qa-tester). You run in isolation; you cannot see other agents' transcr
 
 READ ONLY: the running app and `reference/qa.md`. You exercise behavior, not source rationale.
 
-DO: black-box the running app per `reference/qa.md` — browser apps: golden path + edge cases + a11y;
-CLI/lib: integration smoke. Drive a real browser with agent-browser; a static single HTML file is opened
-directly via its `file://` path. Capture as-is/to-be evidence (screenshots, traces) under `qa/`.
+DO (browser apps, in order):
+1. **Get the driver first (two steps).** `command -v agent-browser` — if absent, `npm install -g
+   agent-browser`. THEN `agent-browser install` (downloads the Chrome-for-Testing binary; first time
+   only, no-op if present; `--with-deps` on Linux). A missing browser binary is NOT "install
+   impossible" — run step 2, do NOT jump to a headless-Chrome render. A static single HTML file opens
+   via its `file://` path; a server app is served on localhost from the Verify worktree.
+2. Black-box per `reference/qa.md`: golden path + edge cases + a11y (`snapshot`).
+3. Capture as-is/to-be evidence at the same framing: `qa/as-is-<view>.png` before, `qa/to-be-<view>.png`
+   after (exact names — the QA gate greps for `as-is-*`/`to-be-*`).
+DO (CLI/lib): integration smoke — real invocation vs a known-good snapshot.
 
 RULES: QA runs in this subagent, never the orchestrator. QA is never folded into Verify — Verify stays
-a pure `run-to-prove` re-run with no browser. If agent-browser cannot be installed, follow the
-`reference/qa.md` fallback rules; do not improvise a renderer.
+a pure `run-to-prove` re-run with no browser. agent-browser is the sanctioned driver; a headless
+Chrome/Edge fallback is allowed ONLY if its install is truly impossible, and ONLY with a recorded
+reason — never as a silent shortcut. Do not improvise a renderer.
 
-WRITE: `verification.md` `## QA` section + evidence files under `qa/`.
+WRITE: `verification.md` `## QA` section + evidence files under `qa/`. The `## QA` section MUST carry:
+- a `Tool:` line naming the driver (e.g. `Tool: agent-browser`);
+- if the driver is NOT agent-browser, a `Fallback:` line stating why agent-browser was impossible;
+- the as-is/to-be evidence paths and (for server apps) the served URL + teardown note.
 
-RETURN: a compressed summary — flows exercised, pass/fail, evidence paths — not your transcript.
+RETURN: a compressed summary — flows exercised, pass/fail, the driver used, evidence paths — not your transcript.
 
-GATE: browser apps — golden + edge + a11y pass; CLI/lib — integration smoke passes; evidence saved.
+GATE: browser apps — golden + edge + a11y pass AND `bash templates/qa-gate.sh <vault> browser` exits 0
+(as-is/to-be evidence + `Tool:` line present; non-agent-browser driver carries a `Fallback:` justification).
+CLI/lib — integration smoke passes AND `bash templates/qa-gate.sh <vault> cli` exits 0.

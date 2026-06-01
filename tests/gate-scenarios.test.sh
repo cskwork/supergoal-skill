@@ -143,6 +143,14 @@ v_clean=$(mkvault s2clean)
 cp "$v/brief.md" "$v/plan.md" "$v/verification.md" "$v_clean/" 2>/dev/null
 run_case "2.11 no test-cmd, no runner -> blocked"   1 "no test command"     \
   bash -c "cd '$v_clean' && bash '$DELIVERY' . "
+# 2.12-2.13: QA backstop — a qa/ dir makes delivery enforce the browser QA gate too.
+v_qa=$(mkvault s2qa)
+printf 'b\n' > "$v_qa/brief.md"; printf 'p\n' > "$v_qa/plan.md"
+write_complete_verif "$v_qa"
+mkdir -p "$v_qa/qa"; : > "$v_qa/qa/as-is-1040.png"; : > "$v_qa/qa/to-be-1040.png"
+run_case "2.12 qa/ dir, QA non-compliant -> blocked" 1 "QA gate fails"      bash "$DELIVERY" "$v_qa" true
+printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nRegression tests: none\n## QA\nTool: agent-browser\n' > "$v_qa/verification.md"
+run_case "2.13 qa/ dir + compliant QA -> PASS"       0 "GATE PASS"          bash "$DELIVERY" "$v_qa" true
 
 # ----------------------------------------------------------------------
 echo; echo "SCENARIO 3 — human-feedback-gate.mjs : briefs, ordering, approval"
@@ -227,6 +235,57 @@ if [ -d "$EX" ]; then
 else
   echo "  SKIP  example project not found at $EX"
 fi
+
+# ----------------------------------------------------------------------
+echo; echo "SCENARIO 6 — qa-gate.sh : agent-browser usage + as-is/to-be evidence enforcement"
+# ----------------------------------------------------------------------
+QAGATE="$SKILL_DIR/templates/qa-gate.sh"
+v=$(mkvault s6)
+run_case "6.0 missing app-type -> usage (exit 2)"   2 "usage"                bash "$QAGATE" "$v"
+run_case "6.0b bad app-type -> usage (exit 2)"      2 "usage"                bash "$QAGATE" "$v" mobile
+run_case "6.1 no verification.md -> blocked"        1 "verification.md missing" bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\nno qa section here\n' > "$v/verification.md"
+run_case "6.2 no ## QA section -> blocked"          1 "no '## QA' section"   bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\n## QA\nintegration smoke: bin vs fixture snapshot matches\n' > "$v/verification.md"
+run_case "6.3 CLI: ## QA present -> PASS"           0 "QA GATE PASS"         bash "$QAGATE" "$v" cli
+run_case "6.4 browser, no as-is/to-be -> blocked"   1 "no 'qa/as-is"         bash "$QAGATE" "$v" browser
+mkdir -p "$v/qa"; : > "$v/qa/as-is-1040.png"
+run_case "6.5 as-is only, no to-be -> blocked"      1 "no 'qa/to-be"         bash "$QAGATE" "$v" browser
+: > "$v/qa/to-be-1040.png"
+run_case "6.6 evidence but no Tool line -> blocked" 1 "no 'Tool:' line"      bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\n## QA\nTool: agent-browser\n- as-is/to-be at 1040px captured\n' > "$v/verification.md"
+run_case "6.7 agent-browser + evidence -> PASS"     0 "QA GATE PASS"         bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\n## QA\nTool: headless Chrome\n- render-1040 captured\n' > "$v/verification.md"
+run_case "6.8 headless-Chrome, no Fallback -> blocked" 1 "no 'Fallback:'"    bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\n## QA\nTool: headless Chrome\nFallback: npm registry blocked; agent-browser install 403\n- as-is/to-be captured\n' > "$v/verification.md"
+run_case "6.9 fallback driver + justification -> PASS" 0 "QA GATE PASS"      bash "$QAGATE" "$v" browser
+
+# ----------------------------------------------------------------------
+echo; echo "SCENARIO 7 — contrast-gate.mjs : computed WCAG ratios (UI/UX)"
+# ----------------------------------------------------------------------
+CONTRAST="$SKILL_DIR/templates/contrast-gate.mjs"
+v=$(mkvault s7)
+run_case "7.0 missing pairs file -> usage (exit 2)" 2 "usage"  node "$CONTRAST"
+printf 'not json\n' > "$v/bad.json"
+run_case "7.1 unparseable JSON -> exit 2"           2 "cannot read/parse" node "$CONTRAST" "$v/bad.json"
+printf '[]\n' > "$v/empty.json"
+run_case "7.2 empty array -> exit 2"                2 "non-empty"  node "$CONTRAST" "$v/empty.json"
+printf '[{"el":"x","fg":"#zzz","bg":"#fff","size":"normal"}]\n' > "$v/badcolor.json"
+run_case "7.3 non-hex color -> exit 2"              2 "not an opaque hex" node "$CONTRAST" "$v/badcolor.json"
+printf '[{"el":"x","fg":"#000","bg":"#fff","size":"weird"}]\n' > "$v/badsize.json"
+run_case "7.4 unknown size -> exit 2"               2 "unknown size" node "$CONTRAST" "$v/badsize.json"
+# Real values from docs/examples/workflow-landing/verification.md: term-title 4.37 < 4.5 = FAIL.
+printf '[{"el":"body","fg":"#f4efe7","bg":"#16140f","size":"body"},{"el":"term-title","fg":"#8a8275","bg":"#221e17","size":"normal"}]\n' > "$v/fail.json"
+run_case "7.5 sub-AA pair (4.37) -> FAIL exit 1"    1 "below WCAG threshold" node "$CONTRAST" "$v/fail.json"
+# After the documented fix (#8a8275 -> #9a9081 = 5.28): PASS.
+printf '[{"el":"body","fg":"#f4efe7","bg":"#16140f","size":"body"},{"el":"term-title","fg":"#9a9081","bg":"#221e17","size":"normal"}]\n' > "$v/pass.json"
+run_case "7.6 fixed palette -> PASS exit 0"         0 "CONTRAST GATE PASS" node "$CONTRAST" "$v/pass.json"
+# Body copy that only clears AA (4.5) but not AAA (7) must FAIL when tagged size:body.
+printf '[{"el":"lead","fg":"#8a8275","bg":"#100e0a","size":"body"}]\n' > "$v/bodyaa.json"
+run_case "7.7 body tier needs AAA -> FAIL"          1 "below WCAG threshold" node "$CONTRAST" "$v/bodyaa.json"
+# Decorative pair below 3:1 is allowed (not text).
+printf '[{"el":"dot","fg":"#3f3b35","bg":"#221e17","size":"decorative"}]\n' > "$v/decor.json"
+run_case "7.8 decorative pair -> PASS"              0 "CONTRAST GATE PASS" node "$CONTRAST" "$v/decor.json"
 
 # ----------------------------------------------------------------------
 echo

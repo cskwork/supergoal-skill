@@ -62,7 +62,7 @@ Log every skip to `README.md`.
 | **Human Feedback** | Ask the human to approve, revise, or stop before implementation | `brief.md`, `plan.md` | `plan.md` (`## Human Feedback`), `state.json.approval` | `plan.md` has the required two briefs; human explicitly approves `Build`; `node templates/human-feedback-gate.mjs <vault> Build` exits 0. No source-tree write before this. |
 | **Build** | Implement each slice (architect→editor split); write a claim per slice | `plan.md` | code, `claims.md` (append-only) | local tests for the slice pass + a `claims.md` entry with a `run-to-prove` command |
 | **Verify** | Adversary re-runs every claim from clean state (see `quality-gates.md`) | `claims.md`, code | `verification.md` | every claim GREEN + a `## Coverage` map (acceptance criteria + domain checklist) with `Not covered:` and `Regression tests:` lines + a completeness-critic pass that found no un-named gap, ending in one aggregate `verdict: GREEN` line (no line-start `verdict: RED`); any RED rewinds to Build |
-| **QA** | Black-box exercise the running app (`reference/qa.md`; conditional on app type) | running app | `verification.md` (`## QA`) + `qa/` evidence | golden + edge + a11y pass for browser apps; CLI/lib: integration smoke passes |
+| **QA** | Black-box exercise the running app (`reference/qa.md`; conditional on app type) | running app | `verification.md` (`## QA`) + `qa/` evidence | golden + edge + a11y pass for browser apps; CLI/lib: integration smoke passes; **`bash templates/qa-gate.sh <vault> <browser\|cli>` exits 0** — browser apps must carry `qa/as-is-*` + `qa/to-be-*` evidence and a `## QA` `Tool:` line, and any non-agent-browser driver needs a `Fallback:` justification (a silent headless-Chrome fallback fails) |
 | **Deliver** | Run the literal gate; package | all | commit / PR | plan-hash matches (see `reference/vault.md`). Then `templates/delivery-gate.sh` exits 0 — paste output. |
 
 ---
@@ -104,7 +104,7 @@ through Human Feedback; approval before Build.
 | **Human Feedback** | Explain the implementation plan, then wait for human approval | `README.md`, `plan.md` | `plan.md` (`## Human Feedback`), `state.json.approval` | `plan.md` has the required two briefs; human explicitly approves `Build`; `node templates/human-feedback-gate.mjs <vault> Build` exits 0. No source-tree write before this. |
 | **Build** | Implement matching existing style; no unrelated refactors | plan | code, `claims.md` | slice tests pass; no formatting/rename churn in unrelated files |
 | **Verify** | Adversary re-runs claims; full existing suite must stay green | claims, suite | `verification.md` | all claims GREEN + pre-existing suite still GREEN (no regressions) + a `## Coverage` map with `Not covered:` and `Regression tests:` lines + completeness-critic pass; ends in one aggregate `verdict: GREEN` line |
-| **QA** | Exercise the new feature + smoke the surrounding flows (`reference/qa.md`) | running app | `verification.md` (`## QA`) + `qa/` evidence | feature works + adjacent flows unbroken |
+| **QA** | Exercise the new feature + smoke the surrounding flows (`reference/qa.md`) | running app | `verification.md` (`## QA`) + `qa/` evidence | feature works + adjacent flows unbroken; **`bash templates/qa-gate.sh <vault> <browser\|cli>` exits 0** (browser apps: `qa/as-is-*` + `qa/to-be-*` evidence + a `## QA` `Tool:` line; non-agent-browser driver needs a `Fallback:` justification) |
 | **Deliver** | Gate + package | all | commit / PR | plan-hash matches (see `reference/vault.md`). Then `delivery-gate.sh` exits 0. |
 
 ---

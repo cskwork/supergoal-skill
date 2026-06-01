@@ -18,7 +18,7 @@ command/observation and its pass criterion.
 
 | Tier | What | Cost | Automatable |
 |---|---|---|---|
-| A | literal gate unit scenarios (`validate-gate.sh`, `human-feedback-gate.mjs`, `delivery-gate.sh`) | trivial | fully (bash/node) |
+| A | literal gate unit scenarios (`validate-gate.sh`, `human-feedback-gate.mjs`, `delivery-gate.sh`, `qa-gate.sh`) | trivial | fully (bash/node) |
 | B | Per-mode happy-path E2E (GREENFIELD / DEBUG / LEGACY) | high | semi (drive + inspect) |
 | C | Guardrail / failure-mode tests | high | semi |
 | D | Vault & artifact-layout tests | low | fully (after a B run) |
@@ -84,6 +84,24 @@ ok; run true                                                                # A1
 ```
 
 Pass criterion: all 11 rows match. (A6/A7/A9/A10 verified during development; the rest are quick.)
+
+### A12-A16 — qa-gate.sh
+
+Run `templates/qa-gate.sh <vault> <browser|cli>` against hand-built vault fixtures. This is the
+QA-phase parallel to validate/delivery — it stops a run from silently rendering with headless Chrome
+and skipping the as-is/to-be proof. Automated as SCENARIO 6 (cases 6.0-6.9) in
+`tests/gate-scenarios.test.sh`.
+
+| # | Vault fixture + app-type | Expect |
+|---|---|---|
+| A12 | missing app-type arg, or app-type not `browser`/`cli` | FAIL "usage" (exit 2) |
+| A13 | `cli`, verification.md has a `## QA` section | PASS — CLI/lib needs no browser evidence |
+| A14 | `browser`, `## QA` present but no `qa/as-is-*` / `qa/to-be-*` files | FAIL "no 'qa/as-is" / "no 'qa/to-be" |
+| A15 | `browser`, evidence present, `## QA` has `Tool: agent-browser` | PASS |
+| A16 | `browser`, evidence present, `Tool: headless Chrome` with NO `Fallback:` line | FAIL "no 'Fallback:'" — silent fallback blocked; adding a `Fallback:` justification flips it to PASS |
+
+Pass criterion: A12-A16 match; a browser-app QA cannot pass without as-is/to-be evidence + a named
+driver, and any non-agent-browser driver must justify itself.
 
 ---
 

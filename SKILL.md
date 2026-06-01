@@ -137,6 +137,8 @@ Roles are dispatched as subagents, each a fresh context with the minimum vault r
 |---|---|
 | `templates/delivery-gate.sh` | Deliver — hard exit-0 check for artifacts + tests |
 | `templates/validate-gate.sh <vault>` | GREENFIELD Validate — machine-checks `Decision: GO` in `brief.md` before Build opens |
+| `templates/qa-gate.sh <vault> <browser\|cli>` | QA — machine-checks `## QA` evidence: browser apps need `as-is`/`to-be` captures + a `Tool:` line, non-agent-browser drivers need a `Fallback:` justification (blocks silent headless-Chrome fallback) |
+| `templates/contrast-gate.mjs <pairs.json>` | UI/UX QA — computes WCAG contrast ratios from the enumerated text/bg pairs and judges them (body AAA, other text AA); the ratio cannot be eyeballed or fudged (`reference/ui-ux.md`) |
 | `templates/human-feedback-gate.mjs <vault> <Build\|Fix>` | Human Feedback — checks the two approval briefs and recorded human approval before Build/Fix opens |
 | `templates/circuit-breaker.mjs <state.json> <sig>` | Each failed fix cycle — trips at 3 identical normalized error signatures |
 

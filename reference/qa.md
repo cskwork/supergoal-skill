@@ -18,9 +18,13 @@ agent-browser from the orchestrator — that floods the conductor's context.
    file directly via its `file://` path from the Verify worktree. Do not improvise another renderer;
    the rest of this section is unchanged.
 2. **Tool — agent-browser** (https://github.com/vercel-labs/agent-browser): fast browser-automation
-   CLI for agents. If `agent-browser` is not on PATH → `npm i -g agent-browser` (auto-install); if the
-   install is blocked, STOP and prompt the user to install it. The subagent first runs
-   `agent-browser skills get core --full` (version-matched command reference), then drives the app:
+   CLI for agents. **Install is two steps** — both are required before the browser can open:
+   (1) `npm install -g agent-browser` (skip if already on PATH); (2) `agent-browser install` —
+   downloads the Chrome-for-Testing binary the CLI drives (first time only; a no-op once present; add
+   `--with-deps` on Linux for system libs). Skipping step (2) is the common trap: the CLI is on PATH
+   but `open` fails with no browser binary, which is **not** "install impossible" — run step (2), do
+   not fall back. Only if BOTH steps are genuinely blocked, STOP and prompt the user. The subagent then
+   runs `agent-browser skills get core --full` (version-matched command reference), then drives the app:
    `open`, `snapshot` (a11y tree with refs), `click`/`type`/`fill`, `screenshot`.
    **Fallback (only if install is truly impossible):** a headless Chrome/Edge driver may stand in for
    agent-browser, but two rules hold. (a) It still runs **inside this `qa-tester` subagent, never the
@@ -41,10 +45,21 @@ Integration smoke only: real invocation against a fixture, diff stdout vs a know
 ## Record in the vault (QA docs)
 
 Put evidence under `<vault>/qa/` and summarize in `verification.md` `## QA`:
+- a `Tool:` line naming the driver (`Tool: agent-browser`); if it is NOT agent-browser, a `Fallback:`
+  line stating why agent-browser was impossible — a silent headless-Chrome fallback is banned,
 - commands run + pass/fail per check,
-- the `as-is`/`to-be` screenshot paths (browsable in the committed changelog),
+- the `as-is`/`to-be` screenshot paths (exact names `qa/as-is-<view>.png` / `qa/to-be-<view>.png`,
+  browsable in the committed changelog),
 - served URL + teardown note.
 The vault is committed, so this QA record is the proof the user can open and compare.
+
+## Exit gate (machine-checkable)
+
+The QA phase does not pass until `bash templates/qa-gate.sh <vault> <browser|cli>` exits 0. For a
+browser app it requires `qa/as-is-*` + `qa/to-be-*` evidence files, a `## QA` `Tool:` line, and — for
+any non-agent-browser driver — a `Fallback:` justification. This is the backstop that stops a run from
+silently rendering with headless Chrome and skipping the as-is/to-be proof; it is the QA-phase parallel
+to `validate-gate.sh` and `delivery-gate.sh`, and is never edited to pass.
 
 ## Repeated QA → make it a repeatable script
 

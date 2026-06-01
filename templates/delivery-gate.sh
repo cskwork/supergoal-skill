@@ -53,6 +53,16 @@ grep -qiE '^[[:space:]]*[-*]?[[:space:]]*Regression[[:space:]]+tests?:' "$VAULT/
   || fail "verification.md has no 'Regression tests:' line — a fixed RED must add a permanent test; a verify-only run states 'none'"
 pass "completeness contract (coverage map + named gaps + regression ratchet)"
 
+# 2.6) QA evidence backstop — if this run produced browser-QA evidence (a qa/ dir), it must still
+#      satisfy the QA gate at delivery (as-is/to-be + named driver + justified fallback). CLI/library
+#      and DEBUG-non-web runs have no qa/ dir, so this is skipped for them. Defense-in-depth behind the
+#      QA-phase exit gate — catches a non-compliant QA that slipped through (e.g. a silent fallback).
+QA_GATE="$(dirname "$0")/qa-gate.sh"
+if [ -d "$VAULT/qa" ] && [ -f "$QA_GATE" ]; then
+  bash "$QA_GATE" "$VAULT" browser || fail "qa/ evidence present but QA gate fails — re-run QA properly (bash $QA_GATE $VAULT browser)"
+  pass "QA gate (browser evidence verified)"
+fi
+
 # 3) If a Decision line exists (greenfield validation lives in brief.md), it must be GO.
 #    Match the explicit "Decision:" line, not prose — so a brief that merely discusses NO-GO
 #    criteria still passes when its decision is GO. DEBUG/LEGACY briefs have no Decision line.

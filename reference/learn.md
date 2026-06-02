@@ -1,42 +1,43 @@
-# LEARN mode — teach the user, don't change code
+# LEARN mode - teach, do not change code
 
-For "explain X" / "understand Y" / "teach me Z" — a codebase area or a general concept. No production code is written. **Done = the user can define every key term and explain the idea back, unaided.** Not "I explained it."
+Use for "explain/understand/teach me" on codebase areas or concepts. No production code writes.
+Done means the user can define key terms and explain the idea back unaided.
 
-LEARN skips Validate/Build/Verify/QA/Deliver and the implementation gates. It runs its own flow and journals to `learn/`.
-
-## Goal-tool boundary
-
-LEARN is tutoring, not a persistent runtime goal. Never call `create_goal`, `update_goal`, or similar
-goal tools for LEARN, even when invoked as "supergoal learn ...". "Check" means the user explains the
-concept back in chat.
-
-## Flow
+LEARN skips Validate/Build/Verify/QA/Deliver and all implementation gates. It uses:
 
 `Intake -> Preference -> Source -> Bridge -> Teach loop -> Check -> Journal`
 
-0. **Preference (first thing in any LEARN run).** Before sourcing, load the user's preference profile from `USER_PREFERENCE.md` in the skill dir (`<skill>/USER_PREFERENCE.md`; see "User preference profile" below). It holds two things: the **difficulty level** (1-10, default 5) and the **1-3 interests**.
-   - **Has a profile** → use the difficulty level and interests silently; do **not** re-ask.
-   - **Missing or empty** → create it from the template (difficulty defaults to **5**), then ask the user in ONE short message to name their **1-3 main interests** (hobbies, work field, a game/sport/domain they love). Save the answer to `USER_PREFERENCE.md`, then continue the flow.
-   - **Difficulty drives register; interests drive analogies.** Pitch every turn at the saved level (see "Difficulty ladder"); draw the analogy/example from an interest.
-   - **Difficulty updates automatically** when the user tunes it (see "Difficulty tuning"); **interests update on request only**. Otherwise the profile persists across sessions and topics ("고정").
-   - Carry the profile into **Bridge** (build the analogy from an interest) and the **Teach loop** (pitch at the difficulty level; where the topic allows, draw the worked example from an interest too).
-1. **Source.** Gather before teaching; no guessing.
-   - Codebase topic: dispatch `explore`/`architect` (read-only) to map files, symbols, and the call flow.
-   - General concept: research authoritative sources.
-2. **Bridge (mandatory).** Ask what the user already knows (one calibration question). Connect the unfamiliar domain to *their* language/world with one concrete analogy — **draw it from an interest in `USER_PREFERENCE.md`** (step 0) so the bridge lands in a world the user already inhabits. The bridge sits directly under the terms table (see Output format) and frames every definition. Rule: a term may lead, but only with a **plain-language definition** — never a jargon-first definition that needs other jargon to parse.
-3. **Teach loop** — Feynman + Socratic, run via the `grill-me` skill. The FIRST teaching turn opens with the **Output format** below (terms on top), then proceeds question-driven:
-   - **Pitch every turn at the saved difficulty level** (see "Difficulty ladder") — the level sets vocabulary, term count, depth, and bite size; the structure stays the same.
-   - Lead with the clearly-defined key-terms table, then why-it-matters, then the simple flow, then one example.
-   - Explain in plain words. Every term in the table has a beginner-friendly definition the user could repeat.
-   - Don't lecture — after the opening frame, ask back. One question at a time; follow each branch of the decision tree until that node is resolved.
-   - The user's answers expose gaps; fill them, then re-ask. Deliberately defer deep edge-cases — name them under "later" instead of teaching them now.
-   - **End every teaching turn with the difficulty-tuning menu** (see "Difficulty tuning"); a bare `1`/`2`/`3` reply re-tunes the level instead of answering the lesson.
-4. **Check (the gate).** The user restates each key term and the whole idea in their own words, unaided. Gaps -> return to step 3. Mastered only when they pass — this is LEARN's delivery gate.
-5. **Journal (live, during the session).** Append to `learn/<topic>-YYYY-MM-DD.md` as you go: the question, the bridge/analogy, key terms + plain definitions, the user's own explanation, open questions. Create `learn/` if missing. Format: `learn/README.md`.
+## Goal-tool boundary
 
-## Output format (the opening teaching turn — terms on top)
+LEARN is tutoring, not a persistent runtime goal. Never call `create_goal`, `update_goal`, or similar.
+Check happens in chat explain-back only.
 
-The first teaching turn MUST follow this structure, in the user's language. Key terms come **first**, defined in beginner-friendly words. Render it as:
+## Flow
+
+0. **Preference first.** Read `<skill>/USER_PREFERENCE.md`. It stores difficulty (1-10, default 5) and
+   1-3 interests.
+   - If present: use silently.
+   - If missing/empty: seed from `USER_PREFERENCE.template.md`, ask once for 1-3 interests, save, then
+     continue.
+   - Difficulty controls register and chunk size. Interests drive analogies/examples.
+   - Difficulty changes automatically on tuning; interests change only on request.
+1. **Source.** Gather before teaching. Codebase topics use read-only `explore`/`architect`; concepts use
+   authoritative sources. Do not guess.
+2. **Bridge.** Ask one calibration question. Connect the topic to the user's world using a saved
+   interest. Terms may lead only with plain-language definitions.
+3. **Teach loop.** Use Feynman + Socratic style via `grill-me`.
+   - First turn uses the Output format below.
+   - Every turn matches saved difficulty.
+   - Define terms first, then why it matters, flow, example, takeaway.
+   - Ask one question at a time. Fill gaps and re-ask. Park edge cases under "later."
+   - End every teaching turn with the difficulty menu.
+4. **Check gate.** User restates each key term and the whole idea unaided. Gaps return to Teach loop.
+5. **Journal live.** Append to `learn/<topic>-YYYY-MM-DD.md`: question, bridge, terms, user explanation,
+   open questions. Create `learn/` if missing; format described in `learn/README.md`.
+
+## Opening output format
+
+Use the user's language. Terms come first.
 
 ```markdown
 ## [주제]를 왜 쓰는지 감 잡기
@@ -51,74 +52,60 @@ The first teaching turn MUST follow this structure, in the user's language. Key 
 | 용어 4 | ... |
 | 용어 5 | ... |
 
-[비유 한 줄 — 위 용어들을 사용자의 세계로 잇는 다리]
+[비유 한 줄 - 위 용어들을 사용자의 세계로 잇는 다리]
 
-이 주제를 왜 쓰는지: [현실에서 어디에 쓰이는지, 어떤 문제를 푸는지]
+이 주제를 왜 쓰는지: [어디에 쓰이고 어떤 문제를 푸는지]
 
-핵심 흐름: `A → B → C`
+핵심 흐름: `A -> B -> C`
 
 예를 들어: [현실적인 예시 하나]
 
-이것만 기억하면 된다: [한 문장 핵심 정리]
+이것만 기억하면 된다: [한 문장 핵심]
 
-(지금은 건너뛰는 것: [나중에 배울, 지금 들어가면 헷갈리는 내용])
+(지금은 건너뛰는 것: [지금 배우면 헷갈리는 내용])
 
 ---
 난이도 (지금 5/10): 1 더 쉽게 · 2 적당함(기본) · 3 더 어렵게
 ```
 
-Structural rules:
-- **~5 key terms at level 5** — a beginner can't hold more at once; the Difficulty ladder raises this at higher levels and cuts it at lower ones. At levels 1-2, teach only one tiny step per turn, usually 1-2 terms. Extra terms go under "지금은 건너뛰는 것".
-- Each definition is pitched at the saved level — at level 5, "초보자가 이해할 수 있는 말", not a dictionary definition. If a definition needs another jargon word, that word is also a row or it gets rewritten.
-- Short, clear sentences. No term appears in prose before it appears in the table.
-- End every opening turn with ONE question back to the user (the Socratic loop), not more explanation — then the difficulty-tuning menu line (see "Difficulty tuning"), rendered in the user's language with the current level filled in.
+Rules:
 
-## Difficulty ladder (1-10, default 5)
+- Level 5 uses about 5 terms. Levels 1-2 use 1-2 terms and one micro-step.
+- Definitions must fit the saved level. If they need jargon, define or rewrite.
+- No term appears in prose before the table.
+- End the opening with one question, then the difficulty menu.
 
-The saved level sets the **register and bite size** of every teaching turn — vocabulary, sentence length, how many terms, how much depth, how mature the analogy, and how small each learning step should be. Same topic, different altitude.
+## Difficulty ladder
 
 | Level | Audience | Register |
 |---|---|---|
-| 1-2 | 막 말을 뗀 아이 | Tiny sentences. 1 tiny idea per turn. 1-2 terms at a time. Pure concrete analogy, zero jargon. Ask about only the tiny step just taught. |
-| 3-4 | 입문자 | Plain words, ~4 terms, one concrete analogy. No assumed background. |
-| **5 (default)** | 일반 성인 비전공자 | The terms-on-top format as written: ~5 plain-defined terms, why-it-matters, simple flow, one example. |
-| 6-7 | 해당 분야 초중급자 | Standard terminology allowed (still defined). More terms (~7), real mechanics, a second example. |
-| 8-9 | 실무자 / 숙련자 | Precise technical vocabulary, fewer hand-holds, edge cases and trade-offs included. |
-| 10 | 박사 / 전문가 | Full rigor and formal precision. Assume deep background; engage the hard cases, name the literature. |
+| 1-2 | 막 말을 뗀 아이 | one tiny idea, 1-2 terms, concrete analogy, zero jargon |
+| 3-4 | 입문자 | plain words, about 4 terms, no assumed background |
+| 5 | 일반 성인 비전공자 | default format: about 5 terms, why, flow, example |
+| 6-7 | 초중급자 | standard terms defined, more mechanics, second example |
+| 8-9 | 실무자/숙련자 | precise vocabulary, fewer hand-holds, edge cases |
+| 10 | 박사/전문가 | formal rigor, hard cases, literature |
 
-The Output format and term cap above describe **level 5**. As the level rises, raise the term ceiling and the precision; as it falls, cut terms, shorten sentences, and split the lesson into smaller bite-size chunks. At levels 1-2, do not teach the whole shape in one pass: teach one micro-step, ask one small explain-back question, then continue only after the user responds. The structure (terms first, then why, flow, example, one-line takeaway) holds at every level — only the altitude and bite size change.
+Same structure at every level; only altitude and bite size change.
 
-## Difficulty tuning (end every teaching turn with it)
+## Difficulty tuning
 
-Every teaching turn ends with a one-line tuning menu, **in the user's language**, with the current level filled in:
+Every teaching turn ends with:
 
-```
+```text
 난이도 (지금 5/10): 1 더 쉽게 · 2 적당함(기본) · 3 더 어렵게
 ```
 
-- **A bare single-number reply (`1` / `2` / `3`) is a tuning signal, not an answer to the lesson.**
-  - `1` → level **− 1** (easier)
-  - `2` → **no change** (just right; also the default if the user simply continues without a number)
-  - `3` → level **+ 1** (harder)
-- Clamp to **[1, 10]**. At the floor or ceiling, say so ("이미 가장 쉬운/어려운 단계예요") and hold.
-- On any change: **rewrite the `## Difficulty` value in `USER_PREFERENCE.md`**, confirm in one short line ("난이도 4로 낮췄어요"), then **immediately re-pitch the same content at the new level** — don't wait for the next topic.
-- When difficulty goes down, re-pitch by making the lesson more bite-size, not merely by using easier words: reduce the number of terms, teach fewer SQL/code lines, and ask a smaller question.
-- A reply that is clearly an answer to the lesson (anything other than a bare 1/2/3) is treated as content, not tuning.
+- Bare `1` = level -1; bare `2` = hold; bare `3` = level +1.
+- Clamp to 1-10 and say when already at edge.
+- On change, rewrite `USER_PREFERENCE.md`, confirm briefly, and re-pitch the same content at the new
+  level.
+- Treat anything beyond bare 1/2/3 as lesson content.
 
-## User preference profile (`USER_PREFERENCE.md`)
+## User preference profile
 
-A persistent, cross-session file at `<skill>/USER_PREFERENCE.md` — the single place LEARN keeps what it knows about the user. It holds two things:
-- **Difficulty** (1-10, default 5) — the altitude every teaching turn is pitched at (see "Difficulty ladder").
-- **Interests** (1-3) — so analogies and examples land in a world the user already knows; the same concept taught through *their* hobby sticks far better than a generic one.
-
-The repo ships **`USER_PREFERENCE.template.md`** (the empty placeholder, committed). The real `USER_PREFERENCE.md` holds personal data, so it is **git-ignored** — never committed to the public repo. On first run, if `USER_PREFERENCE.md` is missing, seed it from the template (difficulty 5) and fill the interests from the user's answer.
-
-- **Read it at step 0 of every LEARN run.** Only ask the user if it is missing or empty.
-- **Persistent ("고정").** One profile serves all topics and projects. Do not re-ask each session.
-- **Difficulty updates automatically** on a tuning signal (see "Difficulty tuning"); **interests update only on user request** (e.g. "관심사 바꿔줘 / add X"). Either way, rewrite the file and confirm in one line.
-- **Use, don't announce.** Pull an interest to shape the analogy/example; don't lecture about the profile itself.
-
-Format:
+Persistent file: `<skill>/USER_PREFERENCE.md`. It is git-ignored; never commit personal data. On first
+run, seed from `USER_PREFERENCE.template.md`.
 
 ```markdown
 # User preference profile
@@ -126,33 +113,28 @@ Format:
 Updated: YYYY-MM-DD
 
 ## Difficulty
-5   <!-- 1-10; 1 = 막 말 뗀 아이, 5 = 일반 성인 비전공자(기본), 10 = 박사/전문가 -->
+5   <!-- 1-10; 5 = 일반 성인 비전공자 -->
 
 ## Interests (1-3, ordered by strength)
-1. <interest> — <one phrase: what about it, so analogies can hook in>
+1. <interest> - <what about it>
 2. ...
 3. ...
 
 ## Notes
-<optional: tone, what landed well, analogies to avoid>
+<optional tone, what worked, analogies to avoid>
 ```
 
-## Principles (the tutor contract)
+Read it at step 0. Do not re-ask each session. Use it without lecturing about it.
 
-1. Don't flood with jargon up front. Terms appear only in the table, each with a plain definition.
-2. Lead with why the topic exists and where it's used in the real world — before mechanics.
-3. Show the whole shape as a simple flow (A → B → C) before any detail.
-4. Use an analogy — apt, not childish. Bridge to the user's own world.
-5. Cap the must-know terms at ~5.
-6. Define each term in beginner words, never dictionary-style.
-7. Deliberately omit confusing depth; park it as "later."
-8. Short, clear sentences. (Render in the user's language.)
-9. Always include one realistic example.
-10. Close with a single "이것만 기억하면 된다" line.
-11. Anchor the analogy — and, where the topic allows, the worked example — in an interest from `USER_PREFERENCE.md`. Teach the concept through the user's own world, not a generic one.
-12. Pitch every turn at the saved difficulty level (1-10, default 5), and close every turn with the tuning menu — a bare `1`/`2`/`3` lowers, holds, or raises the level and rewrites `USER_PREFERENCE.md`.
-13. Lower difficulty means smaller chunks, not just simpler words: at levels 1-2, teach one tiny idea, one tiny example, and one tiny check question per turn.
+## Tutor contract
 
-- A term is "known" only when the user can define it back in plain language.
-- Serve both audiences: a non-technical user gets analogies from their own domain; a technical user gets analogies from systems they already know.
-- Never dump a lecture. After the opening frame, the loop is question-driven.
+1. Terms first, plain definitions only.
+2. Explain why the topic exists before mechanics.
+3. Show a simple flow before detail.
+4. Use an apt analogy from the user's interests.
+5. Keep must-know terms near 5 at level 5.
+6. Park confusing depth as "later."
+7. Short sentences in the user's language.
+8. Always include one realistic example and one takeaway.
+9. After the opening, drive with one question at a time.
+10. A term is known only when the user can define it back plainly.

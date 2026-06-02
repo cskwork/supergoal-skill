@@ -1,53 +1,38 @@
-# Debugging — DEBUG mode method
+# Debugging - DEBUG mode
 
-Root-causing one bug is **deep-and-narrow** work: it demands a single coherent mental model held
-across the whole reasoning chain. Multi-agent isolation breaks that shared model, so **DEBUG defaults
-to a single driving agent** (`debugger`/`tracer`, Opus), spawning isolated helper subagents only for
-genuinely independent probes — e.g. "grep this log corpus" while "reproduce in env B" — each
-returning a summary to the vault (Cognition single-agent guidance; LangChain task-topology framing).
+DEBUG is deep-and-narrow work. Use one driving `debugger`/`tracer` so the causal model stays coherent.
+Spawn helpers only for independent probes, and put their summaries in the vault.
 
-Run the **`diagnose`** skill as the engine of Reproduce + Diagnose — its **Phase 1 "build a feedback
-loop"** IS the Reproduce exit gate (no loop you believe in → no fix). This file is the DEBUG-mode
-contract around it. For a web/UI bug the loop is a headless-browser script (diagnose loop type 4):
-drive it with agent-browser via the `qa-tester` subagent (`reference/qa.md`) so page output stays out
-of the conductor's context.
+Use the `diagnose` skill for Reproduce + Diagnose. Its "build a feedback loop" phase is the Reproduce
+exit gate: no trusted loop, no fix. For web/UI bugs, drive the loop through `qa-tester` and
+`reference/qa.md` so browser dumps stay out of the conductor context.
 
-## Open in read-only Plan Mode
+## Read-only until approval
 
-Analyze and propose **without mutating** through Reproduce + Diagnose + Human Feedback. Speculative
-edits corrupt the repro state and destroy the evidence. Get the user's approval on the Human
-Feedback packet before the first write (antstack.com; developersdigest.tech Plan Mode guidance).
+Through Reproduce, Diagnose, and Human Feedback, analyze only. No speculative edits. They corrupt the
+repro state. First source-tree write waits for approved Human Feedback.
 
-## The loop
+## Loop
 
-1. **Reproduce (red first).** Build a deterministic, *failing* reproduction — ideally a test, else a
-   scripted repro — that fails on current code **in a clean sandbox** (a fresh `git worktree` at HEAD —
-   no install, no uncommitted noise). No repro → no fix; an intermittent bug needs its nondeterminism
-   pinned first. Record the `run-to-prove` in `claims.md`.
-2. **Localize.** Narrow to the smallest code region. `git bisect` to find the introducing commit when
-   it's a regression; binary-search the input/state space; add instrumentation/logging rather than
-   guessing.
-3. **Hypothesize (compete).** Write 2-3 candidate root causes to `README.md`, each with the
-   evidence **for and against**. Track uncertainty explicitly. Pick the next probe that best
-   discriminates between them — don't tunnel on the first idea (the `tracer` agent's method).
-4. **Confirm.** One hypothesis must be backed by direct evidence (a log line, a failing assertion at
-   the exact boundary), not plausibility. Then write the fix plan and ask for Human Feedback
-   approval.
-5. **Fix at the root.** Smallest change that addresses the cause — not the symptom. No silencing
-   errors, no fake success paths, no broad refactor riding along (project rule 7).
-6. **Verify + regression review.** The previously-failing repro now **passes** in a clean sandbox AND
-   the full suite stays green. Then a committee re-checks the fix didn't break correctness / security
-   / behavior elsewhere (arxiv 2511.16708). This failing-before → passing-after in a clean sandbox is
-   the **literal delivery gate for DEBUG** (arxiv 2509.16941; Anthropic verification practice).
+1. **Reproduce red.** Create a deterministic failing test or scripted repro in a clean sandbox
+   (fresh `git worktree` at HEAD). Intermittent bugs must be pinned first. Record `run-to-prove`.
+2. **Localize.** Narrow the smallest region. Use `git bisect`, input/state binary search, and focused
+   instrumentation instead of guessing.
+3. **Compete hypotheses.** Put 2-3 root causes in `README.md`, each with evidence for/against. Pick the
+   next probe that best separates them.
+4. **Confirm.** Back one hypothesis with direct evidence at the boundary, then write the fix plan and
+   ask for Human Feedback.
+5. **Fix root cause.** Smallest change that addresses cause, not symptom. No silencing, fake success,
+   broad refactor, or unrelated cleanup.
+6. **Verify regression.** The red repro now passes in a clean sandbox and the full suite stays green.
+   This failing-before/passing-after proof is DEBUG's literal delivery evidence.
 
 ## Circuit breaker
 
-Same error signature 3× → STOP. Write what was tried and the leading hypothesis to `README.md`
-and escalate to the user with the evidence. Thrashing on a wrong model wastes the most tokens of any
-failure mode; bound it.
+Same error signature 3 times: stop. Record attempts + leading hypothesis in `README.md`, then escalate
+with evidence.
 
-## Persist everything to the vault
+## Vault
 
-Every probe result goes to `README.md` so a re-run or follow-up never re-investigates solved
-ground (shared-blackboard finding, arxiv 2510.01285). Full isolation that discards findings forces
-redundant rework — the vault is what prevents it.
+Every probe result goes to `README.md`. The vault prevents fresh contexts from re-investigating solved
+ground.

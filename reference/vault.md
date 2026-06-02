@@ -1,39 +1,29 @@
-# Vault — the only cross-phase state
+# Vault - only cross-phase state
 
-Every run creates a folder under the target repo's changelog: **`docs/changelog/<date>-<slug>/`**
-(e.g. `docs/changelog/2026-05-30-add-sso/`). Because each phase runs as a fresh subagent context, this
-folder is the **single blackboard** they communicate through (shared-blackboard finding
-arxiv 2510.01285 — 13-57% gains, stops discoveries being lost at task boundaries).
+Every run creates `docs/changelog/<date>-<slug>/` in the target repo. This tracked folder is the
+single blackboard for fresh subagent contexts and the permanent, browsable changelog. `<slug>` is
+kebab-case objective; `<date>` is ISO date. Create `docs/` if absent.
 
-Unlike a hidden scratch dir, the vault **is the run's permanent, browsable changelog** — it is
-committed with the code, so every project the harness touches gets a tracked decision record (matches
-the "write reasoning to a dated changelog" house rule). `<slug>` = kebab-case of the objective;
-`<date>` = ISO date. If the target has no `docs/`, create it.
+## Files
 
-## Files (6 — kept deliberately small)
+Keep six files unless read-scope requires more separation:
 
-Files are merged wherever it does not break **read-scope** (a subagent reads only its slice). The
-three that stay separate are load-bearing for builder ≠ verifier; the rest are consolidated.
-
-| File | Written by | Mutability | Holds |
+| File | Writer | Mutability | Holds |
 |---|---|---|---|
-| `README.md` | any (orchestrator owns) | append-only | the run narrative + decisions, hypotheses, skips, escalations — the **audit log** and the folder's rendered index; plus a **`## Priority Rules`** block (≤10 abstract domain rules from `ten-rules`, advisory — `domain-rules.md`) |
-| `brief.md` | Analyst | frozen per section | goal, audience, acceptance criteria, non-goals + a **`## Validation`** section (demand evidence ending in one `Decision: GO`/`Decision: NO-GO` line — greenfield) |
-| `plan.md` | Architect (DEBUG: from Diagnose) | **frozen once written** | the slice plan with per-slice acceptance checks, plus **Architecture** and **Contracts** sections (stack, codebase map, interfaces). DEBUG: the root-cause + fix plan. Also holds the `## Human Feedback` approval packet. **Required by the gate in every mode.** |
-| `claims.md` | Builder | **append-only, UNTRUSTED** | one entry per slice: what was done + a `run-to-prove` command |
-| `verification.md` | Verifier (+ QA) | append-only | per-claim lines `claim <id>: GREEN\|RED` + evidence, then ONE aggregate `verdict: GREEN` (or `verdict: RED`); plus a **`## QA`** section with black-box results. The gate reads the aggregate; on re-verify, rewrite so no line-start `verdict: RED` lingers. Also carries a **`## Coverage`** map + a `Not covered:` line + a `Regression tests:` line (completeness contract — gated by `delivery-gate.sh`) |
-| `state.json` | orchestrator | live (machine) | mode, current phase, per-phase cycle counters, error signatures, `go_decision`, `plan_hash`, `approval`, `circuit_breaker_threshold`. See `templates/state.json` and field docs below. |
+| `README.md` | any; orchestrator owns | append-only | audit log: decisions, hypotheses, skips, escalations, `## Priority Rules` |
+| `brief.md` | Analyst | frozen per section | goal, audience, acceptance criteria, non-goals, GREENFIELD `## Validation` with `Decision: GO/NO-GO` |
+| `plan.md` | Architect; DEBUG Diagnose | frozen once written | slice/fix plan, Architecture, Contracts, `## Human Feedback` packet |
+| `claims.md` | Builder | append-only, untrusted | one claim per slice + `run-to-prove` |
+| `verification.md` | Verifier + QA | append-only | claim verdicts, one aggregate `verdict: GREEN/RED`, `## Coverage`, `## QA` |
+| `state.json` | orchestrator | live machine state | mode, phase, cycles, signatures, plan hash, approval, branches/worktree |
 
-Merged in (no information lost): `validation.md` → brief's `## Validation`; `architecture.md` +
-`contracts.md` → plan sections; `qa-report.md` → verification's `## QA`; `decisions.log` → `README.md`.
-When consolidating an existing pre-6-file vault, remove the merged legacy files with `git rm` (not
-`rm`) — it stages the deletion and still works in sandboxes/restricted shells where bare `rm` is blocked.
+Merged legacy files: `validation.md` -> `brief.md`; `architecture.md`/`contracts.md` -> `plan.md`;
+`qa-report.md` -> `verification.md`; `decisions.log` -> `README.md`. When consolidating existing vaults,
+use `git rm` for removed legacy files.
 
-## `state.json` field reference
+## Branch/worktree fields
 
-### Branch/worktree fields
-
-Coding/debug runs record four integration fields before Intake writes to the repo:
+Coding/debug runs record before Intake writes:
 
 ```json
 "base_branch": "main",
@@ -42,13 +32,13 @@ Coding/debug runs record four integration fields before Intake writes to the rep
 "worktree_path": "/abs/path/.supergoal-worktrees/2026-06-02-add-sso"
 ```
 
-`base_branch` is the branch used to create the run worktree. `target_branch` is where the accepted
-result is merged after Deliver passes; if the user gave only a base branch, `target_branch` equals
-`base_branch`. `run_branch` holds the isolated implementation commits. `worktree_path` is where
-Build/Fix writers work so the original checkout remains conflict-free.
+`base_branch` creates the run worktree. `target_branch` receives the accepted merge; default equals base
+if the user gave only one branch. `run_branch` stores implementation commits. `worktree_path` is where
+Build/Fix writers work.
 
-### `cycles`
-A fixed-key object covering all phases (one source of truth across modes — keys do NOT vary by mode):
+## `cycles`
+
+Fixed keys across all modes:
 
 ```json
 "cycles": {
@@ -58,14 +48,13 @@ A fixed-key object covering all phases (one source of truth across modes — key
 }
 ```
 
-Increment the relevant key on each rewind into that phase. Phases not used by the active mode stay at 0.
+Increment the relevant key on each rewind. Unused phases stay 0.
 
-### `error_signatures`
-A map from normalized error signature → integer count, managed by `templates/circuit-breaker.mjs`.
+## `error_signatures`
 
-**Normalization rule**: take the first failing assertion message + `file:line` from the stack trace,
-lowercase it, and strip everything after the first `at ` frame (stack-trim). This produces a stable,
-short key across runs regardless of transient output noise.
+Map normalized error signature to count, managed by `templates/circuit-breaker.mjs`.
+
+Normalization: first failing assertion + `file:line`, lowercase, trimmed before the first `at ` frame.
 
 ```json
 "error_signatures": {
@@ -73,42 +62,36 @@ short key across runs regardless of transient output noise.
 }
 ```
 
-`circuit_breaker_threshold` (default `3`): when a signature count reaches this value,
-`circuit-breaker.mjs` exits 1 (TRIP) and the orchestrator halts the fix loop.
+When count reaches `circuit_breaker_threshold` (default 3), the script exits 1 and the orchestrator
+halts the fix loop.
 
-### `plan_hash`
-Recorded by the orchestrator on Plan phase exit: `shasum -a 256 plan.md` stored as a hex string.
-Before Deliver opens, the orchestrator re-hashes `plan.md` and compares. A mismatch **fails the
-gate** unless `README.md` contains a logged re-plan step (keyword: `RE-PLAN:`).
+## `plan_hash`
 
-```json
-"plan_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4da..."
-```
+On Plan exit, store `shasum -a 256 plan.md`. Before Deliver, re-hash and compare. Mismatch fails unless
+`README.md` logs `RE-PLAN:`.
 
-### `approval`
-`null` until a human explicitly approves the fix/build plan (required before the first source-tree
-write in every mode). Once set, the canonical shape is:
+## `approval`
+
+`null` until the human approves Build/Fix:
 
 ```json
 "approval": { "phase": "<phase-name>", "status": "APPROVED" }
 ```
 
-No source-tree write occurs while `approval` is `null`. The field name is fixed — do not use
-ad-hoc variants (`approval_to_build`, `approval_to_fix`, etc.).
+No source-tree write while `approval` is `null`. Use this exact field; no variants.
 
-### `plan.md` Human Feedback section
+## `plan.md` Human Feedback packet
 
-Human Feedback is the only pre-implementation human approval stage. Do not add an `approval.md`
-file; keep the six-file vault intact by appending this packet to `plan.md`:
+Do not add `approval.md`. Append this to `plan.md`:
 
 ```md
 ## Human Feedback
 
 ### Plain-language brief
-<top section: short, non-developer explanation of what will be built or why the bug happens>
+<short non-developer explanation>
 
 ### Technical brief
-<bottom section: novice-dev-friendly plan, including file/module touch points, tests, and risks>
+<novice-dev-friendly plan: files/modules, tests, risks>
 
 ### Terms
 - <term>: <plain definition>
@@ -117,50 +100,39 @@ file; keep the six-file vault intact by appending this packet to `plan.md`:
 Approve <Build|Fix>, request changes, or stop.
 ```
 
-The plain-language brief must come before the technical brief. The technical brief must define
-terms that a novice developer could find difficult. `templates/human-feedback-gate.mjs <vault>
-<Build|Fix>` checks this structure and `state.json.approval` before implementation opens.
+Plain-language comes before technical. Technical defines hard terms. The gate checks this packet and
+`state.json.approval`.
 
----
+## Trust rules
 
-## Two rules that make the vault trustworthy
+1. **`claims.md` is untrusted.** Builder asserts; Verifier proves from a clean state while reading only
+   `claims.md` + source. Self-reported done is insufficient.
+2. **Frozen files stay frozen.** Build implements `plan.md`; it does not redesign mid-build.
 
-1. **`claims.md` is untrusted.** The Builder asserts; it does not prove. Only the Verifier — a fresh
-   adversarial context that reads **only `claims.md` + the code** and re-runs each `run-to-prove` from
-   a clean state — writes a verdict. A self-reported "done" is never sufficient. (This is why
-   `claims.md` and `verification.md` stay separate from `plan.md`/`brief.md`: the Verifier must not
-   see the plan's rationale.)
-2. **Frozen files are frozen.** `plan.md` is written once; Build implements it, does not redesign it.
-   Scope creep mid-build is the most common drift; freezing kills it.
+## `claims.md` format
 
-## `claims.md` entry format
-
-```
+```md
 ## CLAIM <slice-id>
-what: <one line — what this slice implements>
+what: <one line>
 files: <paths touched>
-run-to-prove: <exact shell command that exits 0 iff the claim holds, e.g. `npm test -- auth.spec`>
-expected: <what a passing run prints>
+run-to-prove: <exact shell command that exits 0 iff claim holds>
+expected: <passing output>
 ```
 
-## `verification.md` completeness contract
+## `verification.md` completeness
 
-Beyond per-claim verdicts and the aggregate `verdict:` line, `verification.md` must carry the following
-(line-checked by `delivery-gate.sh` — see `reference/quality-gates.md`):
-
-```
+```md
 ## Coverage
-<required-coverage list = brief acceptance criteria + domain checklist (reference/domain-rules.md)>
-- <criterion / vuln-class>: <claim id or probe that proved it> — GREEN
+<required coverage = brief acceptance criteria + domain checklist>
+- <criterion / vuln-class>: <claim id or probe> - GREEN
 ...
-Not covered: <items NOT verified, each justified — or 'none'>
-Regression tests: <permanent tests added for fixed REDs — or 'none' for a verify-only run>
+Not covered: <items not verified with justification, or 'none'>
+Regression tests: <permanent tests for fixed REDs, or 'none'>
 ```
 
-A GREEN verdict asserts only that every *enumerated* item re-verified; the `Not covered:` line is where
-the verifier is forced to surface the gaps it knows of, so they are reviewed rather than hidden.
+GREEN means every enumerated item re-verified. `Not covered:` forces known gaps into review.
 
 ## Resumption
 
-On re-invocation with the same objective, read `state.json` → resume at `current_phase` (don't redo
-completed phases). The vault folder + git history reconstruct everything; no in-memory state needed.
+On re-invocation, read `state.json.current_phase` and resume. The vault + git history reconstruct state;
+do not rely on memory.

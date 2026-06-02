@@ -1,25 +1,28 @@
-# UI/UX overlay — taste-skill v2 is the design authority
+# UI/UX overlay - design authority
 
-Load this only when the objective ships **user-facing visual UI**: landing page, portfolio,
-marketing site, "make it look good / premium / less generic / on-brand", redesign, or any
-GREENFIELD/LEGACY slice whose deliverable is frontend look-and-feel. Skip for dashboards, data
-tables, and internal tooling unless the brief explicitly asks for visual polish.
+Load only when the objective ships user-facing visual UI: landing page, portfolio, marketing site,
+redesign, "make it look good/premium/on-brand", or frontend look-and-feel. Skip dashboards, data
+tables, and internal tools unless visual polish is explicit.
 
-When it fires, `reference/taste-skill-v2.md` (the vendored design authority) governs every UI
-decision. It is an **overlay** — modes, gates, vault, and the topology rule are unchanged. UI/UX is
-wide-and-shallow only at scaffolding; the look-and-feel of one page is deep-and-narrow, so keep a
-single Designer driver per surface (topology rule still applies).
+When active, `reference/taste-skill-v2.md` governs UI decisions. It overlays the normal mode; phases,
+gates, vault, and topology stay unchanged. UI scaffolding may fan out, but one page's look-and-feel is
+deep-and-narrow: use one Designer driver per surface.
 
-| Phase | Overlay (in addition to the normal phase work) |
+| Phase | Overlay |
 |---|---|
-| Plan | Write a one-line **Design Read** + set the three dials `DESIGN_VARIANCE` / `MOTION_INTENSITY` / `VISUAL_DENSITY` into `plan.md` (taste §0–§1). Choose a real design system vs. an aesthetic (taste §2). **Brand alignment**: if the subject is a known product/company, adopt its existing brand color + type as the accent system (e.g. Claude → clay coral `#d97757`) rather than inventing a palette — record it in the Design Read. These freeze with the plan. |
-| Build | Dispatch the **Designer** role (`reference/experts.md`) reading `plan.md` + `reference/taste-skill-v2.md`; implement to its rules — anti-default, anti-slop, hard em-dash ban, real/generated images (never div-mockups), reduced-motion fallbacks, plus the **Hard Visual Bans** in `agents/designer.md` (one locked accent, no gradient text, no gradient-fill buttons off-brand, no colored glow shadows, section-background rhythm). |
-| QA | Run the taste-skill v2 **Pre-Flight Check (§14)** as an added QA gate beside the normal QA. a11y + `prefers-reduced-motion` required. The **Color Consistency Lock** (§14, one accent across all sections) and **THE LILA RULE** (§4.2, no glow / off-brand gradient slop) are **rewind-on-fail** here — same force as any hard gate. **Contrast is computed, not eyeballed**: the Designer/QA enumerates every text/background pair it found into `<vault>/qa/contrast-pairs.json` (`{el, fg, bg, size}` with `size` = `body`/`normal`/`large`/`decorative`, opaque hex), and `node templates/contrast-gate.mjs <vault>/qa/contrast-pairs.json` must exit 0 — the script computes the WCAG ratios and judges them (body AAA >=7:1, other text AA >=4.5:1, large AA >=3:1), so the ratio cannot be eyeballed or fudged; a completeness critic audits that the pair list is exhaustive. **Dark+light mode** handling is also verified (declared `color-scheme` + `prefers-color-scheme` response, or a justified single-mode lock per §4.11); both are rewind-on-fail. A failed pre-flight rewinds to Build and blocks Deliver. |
+| Plan | Add one-line **Design Read** and dials `DESIGN_VARIANCE`, `MOTION_INTENSITY`, `VISUAL_DENSITY` to `plan.md`. Pick official design system vs aesthetic. For known brands, use existing brand color/type as accent source and record it. |
+| Build | Dispatch **Designer** with `plan.md` + `reference/taste-skill-v2.md`. Enforce anti-default rules, real/generated images, reduced-motion fallback, hard visual bans, locked accent, no off-brand gradient/glow slop, and no self-approval. |
+| QA | Run taste Pre-Flight beside normal QA. Required: a11y, reduced motion, Color Consistency Lock, LILA rule, dark/light or justified single-mode lock. Compute contrast from `<vault>/qa/contrast-pairs.json` via `node templates/contrast-gate.mjs <vault>/qa/contrast-pairs.json`; completeness critic audits the pair list. Any fail rewinds to Build and blocks Deliver. |
 
-Load `reference/taste-skill-v2.md` **only in these phases** — it is large (progressive disclosure).
-The conductor (orchestrator) never loads `reference/taste-skill-v2.md` into its own context. The Plan Architect loads taste §0–§2 only (Design Read, the three dials, system-vs-aesthetic) in its own fresh context; the Build Designer loads the full file in its own fresh context.
-The Designer never self-approves: the adversarial Verify + committee still gate Deliver.
+Progressive disclosure:
 
-## Keeping the vendored authority current
-`reference/taste-skill-v2.md` is a verbatim upstream copy under a provenance banner, so refreshing is
-a body swap, not a merge. Update steps and the pinned commit live in that file's banner.
+- Conductor does not load `taste-skill-v2.md` into its own context.
+- Plan Architect loads only the sections needed for Design Read/dials/system choice.
+- Build Designer loads the full file in its own context.
+- Verify + committee still gate Deliver.
+
+## Source note
+
+`reference/taste-skill-v2.md` is a compressed derivative of the upstream taste-skill v2 source, with
+source and commit preserved in its banner. Refresh by re-pulling upstream, then re-compress if context
+cost still matters.

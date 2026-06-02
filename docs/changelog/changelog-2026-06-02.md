@@ -1,5 +1,22 @@
 # 2026-06-02 - QA phase made machine-enforceable (qa-gate.sh)
 
+## Branch-scoped worktree workflow for coding/debug runs
+
+### Decision
+
+Require every GREENFIELD, DEBUG, and LEGACY run to ask for branch integration details before any repo
+mutation: ask the user for the base git branch and target branch, default target to base when the user
+only provides one branch, create a dedicated run branch/worktree from base, perform Build/Fix work
+inside that worktree, then merge the accepted result into target and remove the worktree only after
+user acceptance.
+
+### Reasoning
+
+Multiple agents editing one checkout create avoidable conflicts and make it unclear which dirty state
+is authoritative. A branch-scoped worktree gives each run a clean edit surface, keeps the original
+checkout available for orchestration and integration, and makes the final merge into the requested
+target branch explicit instead of implicit.
+
 ## Decision
 
 Convert the QA phase's "drive the app with agent-browser + capture as-is/to-be evidence" rule from

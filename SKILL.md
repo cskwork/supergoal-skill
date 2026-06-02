@@ -19,8 +19,8 @@ The design is a set of gated lanes over a single shared vault, with an untrusted
 re-verified by an adversary and a literal-bash delivery gate that is never edited to pass —
 everything runs in-session through your harness's sub-agent mechanism (Claude Code: the `Task`/`Agent`
 tool; other CLIs: their sub-task equivalent), with role personas bundled in `agents/`, so there is
-nothing to install. (A plain `git worktree` is still used as the clean-state sandbox for Verify and
-parallel Build — git is already present.)
+nothing to install. (A plain `git worktree` is used as the run sandbox for coding/debug work and the
+clean-state sandbox for Verify — git is already present.)
 
 ## Why this exists
 
@@ -59,6 +59,26 @@ vault are identical across modes.
 LEARN is the exception: it writes no code, skips implementation gates, and never uses persistent
 goal tools (`create_goal`/`update_goal`). Its Check gate is chat explain-back only; see
 `reference/learn.md`.
+
+## Step 0A — Branch-scoped worktree setup (coding/debug modes only)
+
+For **GREENFIELD**, **DEBUG**, and **LEGACY**, isolate the whole run before any repo mutation so
+multiple agents can work without editing the same checkout.
+
+1. Immediately after mode detection, ask the user for the base git branch and ask the user for the
+   target branch. If the user just gives the base, the default target branch is the base branch.
+2. Record `base_branch`, `target_branch`, `run_branch`, and `worktree_path` in `state.json` and the
+   run's `README.md`. Use a unique `run_branch` such as `supergoal/<date>-<slug>`.
+3. Create the run worktree from the base branch before Intake writes to the repo:
+   `git worktree add -b <run_branch> <worktree_path> <base_branch>`.
+4. Run all implementation phases inside that branch-scoped worktree. The original checkout is only
+   for orchestration, branch inspection, and final integration.
+5. After the delivery gate passes, ask the user to accept the result. On acceptance, merge the
+   accepted worktree commit into the target branch. Then remove the run worktree only after the user
+   accepts. If the user asks for changes, keep the worktree and rewind through the relevant phase.
+
+Do not skip this because the objective is small. The point is conflict isolation: multiple agents can
+work without editing the same checkout, and the final merge is an explicit integration step.
 
 **Topology rule** (the research thesis — task shape, not preference, picks the architecture):
 fan out parallel subagents only for *wide-and-shallow* work (Validate research, scaffolding several

@@ -7,6 +7,14 @@ explicit rewinds (Verify/QA can re-open Build).
 The vault for a run is `docs/changelog/<date>-<slug>/` in the target repo (a tracked, browsable
 changelog — not hidden scratch); every phase reads/writes there. Six files only — see `vault.md`.
 
+## Branch/worktree isolation (coding/debug modes)
+
+For GREENFIELD, DEBUG, and LEGACY, ask for `base_branch` and `target_branch` immediately after mode
+detection. If the user gives only the base branch, target defaults to the base. Create one run branch
+and worktree from `base_branch`; implementation phases run inside the branch-scoped worktree. The
+original checkout stays out of the edit path so concurrent agents do not collide. After Deliver passes
+and the user accepts, merge the run branch into `target_branch`, then remove the worktree.
+
 ## Topology rule (apply before dispatching any phase)
 
 Research consensus (Cognition + Anthropic, mid-2025; LangChain "how/when to build multi-agent
@@ -60,7 +68,7 @@ Log every skip to `README.md`.
 | **Validate** | Prove real demand + scope an MVP (see `market-research.md`) | `brief.md` | `brief.md` (`## Validation`) | `templates/validate-gate.sh <vault>` exits 0 — the script checks that `brief.md` contains a line-start or `## `-prefixed `Decision: GO`; **NO-GO or no GO line exits non-zero, Build does not open**. Machine-checkable parallel to `delivery-gate.sh`. |
 | **Plan** | Ground the plan (see Plan grounding), then decompose into independently-testable slices; choose stack; define contracts | `brief.md` | `plan.md` (frozen; incl. Architecture + Contracts sections) | `plan.md` task table exists, every slice ≤5 files / ≤~500 lines, each has an acceptance check. On exit, orchestrator records `shasum -a 256 plan.md` into `state.json.plan_hash`. |
 | **Human Feedback** | Ask the human to approve, revise, or stop before implementation | `brief.md`, `plan.md` | `plan.md` (`## Human Feedback`), `state.json.approval` | `plan.md` has the required two briefs; human explicitly approves `Build`; `node templates/human-feedback-gate.mjs <vault> Build` exits 0. No source-tree write before this. |
-| **Build** | Implement each slice (architect→editor split); write a claim per slice | `plan.md` | code, `claims.md` (append-only) | local tests for the slice pass + a `claims.md` entry with a `run-to-prove` command |
+| **Build** | Implement each slice inside the branch-scoped worktree (architect→editor split); write a claim per slice | `plan.md` | code, `claims.md` (append-only) | local tests for the slice pass + a `claims.md` entry with a `run-to-prove` command |
 | **Verify** | Adversary re-runs every claim from clean state (see `quality-gates.md`) | `claims.md`, code | `verification.md` | every claim GREEN + a `## Coverage` map (acceptance criteria + domain checklist) with `Not covered:` and `Regression tests:` lines + a completeness-critic pass that found no un-named gap, ending in one aggregate `verdict: GREEN` line (no line-start `verdict: RED`); any RED rewinds to Build |
 | **QA** | Black-box exercise the running app (`reference/qa.md`; conditional on app type) | running app | `verification.md` (`## QA`) + `qa/` evidence | golden + edge + a11y pass for browser apps; CLI/lib: integration smoke passes; **`bash templates/qa-gate.sh <vault> <browser\|cli>` exits 0** — browser apps must carry `qa/as-is-*` + `qa/to-be-*` evidence and a `## QA` `Tool:` line, and any non-agent-browser driver needs a `Fallback:` justification (a silent headless-Chrome fallback fails) |
 | **Deliver** | Run the literal gate; package | all | commit / PR | plan-hash matches (see `reference/vault.md`). Then `templates/delivery-gate.sh` exits 0 — paste output. |
@@ -77,7 +85,7 @@ Single-driver topology. Open in Plan Mode (read-only) through Human Feedback; ge
 | **Reproduce** | Get a deterministic, **failing** reproduction | repo, logs | a failing test / repro script, `claims.md` | repro **fails** on current code in a clean sandbox (red proven) |
 | **Diagnose** | Hypothesis-driven root cause (run the `diagnose` skill; see `debugging.md`) | repo, repro | `README.md` (hypotheses + evidence), `plan.md` (root-cause + minimal-fix plan, frozen) | one hypothesis confirmed by evidence; minimal fix plan written |
 | **Human Feedback** | Explain the bug cause and fix plan, then wait for human approval | `README.md`, `plan.md` | `plan.md` (`## Human Feedback`), `state.json.approval` | `plan.md` has the required two briefs; human explicitly approves `Fix`; `node templates/human-feedback-gate.mjs <vault> Fix` exits 0. No source-tree write before this. |
-| **Fix** | Smallest change at the root cause | confirmed cause | code patch | the previously-failing repro now **passes** |
+| **Fix** | Smallest change at the root cause inside the branch-scoped worktree | confirmed cause | code patch | the previously-failing repro now **passes** |
 | **Verify** | Re-run repro + full suite in clean sandbox; regression review | patch, suite | `verification.md` | repro GREEN + full suite GREEN + no new failures + a `## Coverage` map with `Not covered:` and `Regression tests:` (the failing-before/passing-after repro is the regression test) + completeness-critic pass; ends in one aggregate `verdict: GREEN` line |
 | **Deliver** | Gate + package | all | commit / PR | `delivery-gate.sh` exits 0 |
 
@@ -102,7 +110,7 @@ through Human Feedback; approval before Build.
 | **Explore** | Map the affected code with file:line evidence (driven by the `explore` agent; fan out `Explore` helpers for parallel mapping) | repo | `README.md` (codebase map + citations) | entry points, call paths, blast radius documented with citations |
 | **Plan** | Ground the plan (see Plan grounding), then a surgical change plan: smallest blast radius, reuse existing utilities | map | `plan.md` (frozen) | plan touches only what the feature requires; reuse noted. On exit, orchestrator records `shasum -a 256 plan.md` into `state.json.plan_hash`. |
 | **Human Feedback** | Explain the implementation plan, then wait for human approval | `README.md`, `plan.md` | `plan.md` (`## Human Feedback`), `state.json.approval` | `plan.md` has the required two briefs; human explicitly approves `Build`; `node templates/human-feedback-gate.mjs <vault> Build` exits 0. No source-tree write before this. |
-| **Build** | Implement matching existing style; no unrelated refactors | plan | code, `claims.md` | slice tests pass; no formatting/rename churn in unrelated files |
+| **Build** | Implement matching existing style inside the branch-scoped worktree; no unrelated refactors | plan | code, `claims.md` | slice tests pass; no formatting/rename churn in unrelated files |
 | **Verify** | Adversary re-runs claims; full existing suite must stay green | claims, suite | `verification.md` | all claims GREEN + pre-existing suite still GREEN (no regressions) + a `## Coverage` map with `Not covered:` and `Regression tests:` lines + completeness-critic pass; ends in one aggregate `verdict: GREEN` line |
 | **QA** | Exercise the new feature + smoke the surrounding flows (`reference/qa.md`) | running app | `verification.md` (`## QA`) + `qa/` evidence | feature works + adjacent flows unbroken; **`bash templates/qa-gate.sh <vault> <browser\|cli>` exits 0** (browser apps: `qa/as-is-*` + `qa/to-be-*` evidence + a `## QA` `Tool:` line; non-agent-browser driver needs a `Fallback:` justification) |
 | **Deliver** | Gate + package | all | commit / PR | plan-hash matches (see `reference/vault.md`). Then `delivery-gate.sh` exits 0. |

@@ -23,6 +23,8 @@ is a Claude Code agent, not a persona file.
    improvises a role prompt.
 2. **Spawn** a fresh sub-context whose system prompt is that file's body, granting only the read-scope
    the persona declares, pinned to its model tier where the harness lets you choose a model.
+   For coding/debug modes, dispatch Build/Fix writers inside the run worktree recorded in
+   `state.json.worktree_path`; do not let writers edit the original checkout.
    - *Claude Code:* `Task`/`Agent`. If a same-named agent is registered — or the repo is wrapped in the
      optional `.claude-plugin/plugin.json` so `agents/*.md` auto-register — call it by `subagent_type`
      and the harness auto-injects persona + tools + model. Otherwise pass the file body as the inline
@@ -86,9 +88,11 @@ the human. The human's single approval stays the later Human Feedback gate. Meth
 3. Use `run_in_background: true` for any op > ~30s (installs, builds, full test runs).
 4. **Gate fan-out behind the topology rule** (`pipeline.md`): only wide-and-shallow work fans out.
    DEBUG / LEGACY feature work stays single-driver with isolated helpers for independent probes.
-5. **Isolate parallel writers in a `git worktree`** — each fanned-out Build slice (and the adversarial
-   Verify) runs in its own `git worktree` off the build commit so concurrent edits never collide and
-   the Verifier re-runs from a genuinely clean tree. No install; remove the worktree when the wave ends.
+5. **Isolate parallel writers in a `git worktree`** — the run starts in one branch-scoped worktree;
+   each fanned-out Build slice can add a child worktree from that run branch if simultaneous writes are
+   truly independent. The adversarial Verify still gets its own clean worktree at the build commit.
+   No install; remove child worktrees when the wave ends and remove the run worktree only after final
+   user acceptance.
 
 ## The committee gate (before Deliver)
 

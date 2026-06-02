@@ -31,6 +31,22 @@ When consolidating an existing pre-6-file vault, remove the merged legacy files 
 
 ## `state.json` field reference
 
+### Branch/worktree fields
+
+Coding/debug runs record four integration fields before Intake writes to the repo:
+
+```json
+"base_branch": "main",
+"target_branch": "main",
+"run_branch": "supergoal/2026-06-02-add-sso",
+"worktree_path": "/abs/path/.supergoal-worktrees/2026-06-02-add-sso"
+```
+
+`base_branch` is the branch used to create the run worktree. `target_branch` is where the accepted
+result is merged after Deliver passes; if the user gave only a base branch, `target_branch` equals
+`base_branch`. `run_branch` holds the isolated implementation commits. `worktree_path` is where
+Build/Fix writers work so the original checkout remains conflict-free.
+
 ### `cycles`
 A fixed-key object covering all phases (one source of truth across modes — keys do NOT vary by mode):
 

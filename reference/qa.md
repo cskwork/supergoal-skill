@@ -17,15 +17,21 @@ agent-browser from the orchestrator — that floods the conductor's context.
    **No server (a static file or single HTML)?** There is nothing to serve — agent-browser opens the
    file directly via its `file://` path from the Verify worktree. Do not improvise another renderer;
    the rest of this section is unchanged.
-2. **Tool — agent-browser** (https://github.com/vercel-labs/agent-browser): fast browser-automation
-   CLI for agents. **Install is two steps** — both are required before the browser can open:
+2. **Tool — `agent-browser` CLI only** (https://github.com/vercel-labs/agent-browser): in this skill,
+   "agent-browser" means the shell command `agent-browser`, not the Codex Browser plugin, `iab`,
+   Playwright MCP, Computer Use, or another browser surface. The `qa-tester` subagent first records:
+   `command -v agent-browser`, `agent-browser --version`, `agent-browser skills get core --full`, and
+   `agent-browser doctor`. In sandboxed harnesses, run this preflight with the same permission tier
+   needed for QA; socket/state permission failures require escalation, not fallback. If `doctor`
+   still fails, stop before page actions and return `BLOCKED` with the exact failing command/output
+   and needed permission or install step.
+   **Install is two steps** — both are required before the browser can open:
    (1) `npm install -g agent-browser` (skip if already on PATH); (2) `agent-browser install` —
    downloads the Chrome-for-Testing binary the CLI drives (first time only; a no-op once present; add
    `--with-deps` on Linux for system libs). Skipping step (2) is the common trap: the CLI is on PATH
    but `open` fails with no browser binary, which is **not** "install impossible" — run step (2), do
    not fall back. Only if BOTH steps are genuinely blocked, STOP and prompt the user. The subagent then
-   runs `agent-browser skills get core --full` (version-matched command reference), then drives the app:
-   `open`, `snapshot` (a11y tree with refs), `click`/`type`/`fill`, `screenshot`.
+   drives the app with `open`, `snapshot` (a11y tree with refs), `click`/`type`/`fill`, `screenshot`.
    **Fallback (only if install is truly impossible):** a headless Chrome/Edge driver may stand in for
    agent-browser, but two rules hold. (a) It still runs **inside this `qa-tester` subagent, never the
    orchestrator** — raw screenshots and dumps must not reach the conductor's context. (b) It is doing

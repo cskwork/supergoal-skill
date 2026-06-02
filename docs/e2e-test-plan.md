@@ -97,11 +97,13 @@ and skipping the as-is/to-be proof. Automated as SCENARIO 6 (cases 6.0-6.9) in
 | A12 | missing app-type arg, or app-type not `browser`/`cli` | FAIL "usage" (exit 2) |
 | A13 | `cli`, verification.md has a `## QA` section | PASS — CLI/lib needs no browser evidence |
 | A14 | `browser`, `## QA` present but no `qa/as-is-*` / `qa/to-be-*` files | FAIL "no 'qa/as-is" / "no 'qa/to-be" |
-| A15 | `browser`, evidence present, `## QA` has `Tool: agent-browser` | PASS |
-| A16 | `browser`, evidence present, `Tool: headless Chrome` with NO `Fallback:` line | FAIL "no 'Fallback:'" — silent fallback blocked; adding a `Fallback:` justification flips it to PASS |
+| A15 | `browser`, evidence present, `## QA` has `agent-browser doctor` + `Tool: agent-browser` | PASS |
+| A16 | `browser`, evidence present, no `agent-browser doctor` preflight | FAIL "no 'agent-browser doctor'" — `iab`/Playwright checks are not enough |
+| A17 | `browser`, evidence present, `agent-browser doctor`, `Tool: headless Chrome`, no `Fallback:` line | FAIL "no 'Fallback:'" — silent fallback blocked; adding a `Fallback:` justification flips it to PASS |
 
-Pass criterion: A12-A16 match; a browser-app QA cannot pass without as-is/to-be evidence + a named
-driver, and any non-agent-browser driver must justify itself.
+Pass criterion: A12-A17 match; a browser-app QA cannot pass without as-is/to-be evidence, an
+`agent-browser doctor` preflight, and a named driver; any non-agent-browser driver must justify
+itself.
 
 ---
 

@@ -149,7 +149,7 @@ printf 'b\n' > "$v_qa/brief.md"; printf 'p\n' > "$v_qa/plan.md"
 write_complete_verif "$v_qa"
 mkdir -p "$v_qa/qa"; : > "$v_qa/qa/as-is-1040.png"; : > "$v_qa/qa/to-be-1040.png"
 run_case "2.12 qa/ dir, QA non-compliant -> blocked" 1 "QA gate fails"      bash "$DELIVERY" "$v_qa" true
-printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nRegression tests: none\n## QA\nTool: agent-browser\n' > "$v_qa/verification.md"
+printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nRegression tests: none\n## QA\nagent-browser doctor: pass\nTool: agent-browser\n' > "$v_qa/verification.md"
 run_case "2.13 qa/ dir + compliant QA -> PASS"       0 "GATE PASS"          bash "$DELIVERY" "$v_qa" true
 
 # ----------------------------------------------------------------------
@@ -252,12 +252,14 @@ run_case "6.4 browser, no as-is/to-be -> blocked"   1 "no 'qa/as-is"         bas
 mkdir -p "$v/qa"; : > "$v/qa/as-is-1040.png"
 run_case "6.5 as-is only, no to-be -> blocked"      1 "no 'qa/to-be"         bash "$QAGATE" "$v" browser
 : > "$v/qa/to-be-1040.png"
-run_case "6.6 evidence but no Tool line -> blocked" 1 "no 'Tool:' line"      bash "$QAGATE" "$v" browser
-printf 'verdict: GREEN\n## QA\nTool: agent-browser\n- as-is/to-be at 1040px captured\n' > "$v/verification.md"
+run_case "6.6 evidence but no preflight -> blocked" 1 "no 'agent-browser doctor'" bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\n## QA\nagent.browsers.list(): []\nnpx -p playwright node ...\nTool: headless Chrome\nFallback: iab target list was empty\n' > "$v/verification.md"
+run_case "6.6b iab/Playwright fallback without agent-browser preflight -> blocked" 1 "no 'agent-browser doctor'" bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\n## QA\nagent-browser doctor: pass\nTool: agent-browser\n- as-is/to-be at 1040px captured\n' > "$v/verification.md"
 run_case "6.7 agent-browser + evidence -> PASS"     0 "QA GATE PASS"         bash "$QAGATE" "$v" browser
-printf 'verdict: GREEN\n## QA\nTool: headless Chrome\n- render-1040 captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nagent-browser doctor: fail socket permission\nTool: headless Chrome\n- render-1040 captured\n' > "$v/verification.md"
 run_case "6.8 headless-Chrome, no Fallback -> blocked" 1 "no 'Fallback:'"    bash "$QAGATE" "$v" browser
-printf 'verdict: GREEN\n## QA\nTool: headless Chrome\nFallback: npm registry blocked; agent-browser install 403\n- as-is/to-be captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nagent-browser doctor: fail npm registry blocked\nTool: headless Chrome\nFallback: npm registry blocked; agent-browser install 403\n- as-is/to-be captured\n' > "$v/verification.md"
 run_case "6.9 fallback driver + justification -> PASS" 0 "QA GATE PASS"      bash "$QAGATE" "$v" browser
 
 # ----------------------------------------------------------------------

@@ -12,10 +12,10 @@
 #
 # Exit 0 only if:
 #   browser: verification.md has a '## QA' section; qa/as-is-* and qa/to-be-* evidence files
-#            exist (the user-observable proof, same framing); the '## QA' section names the
-#            driver on a 'Tool:' line; and if that driver is NOT agent-browser, a 'Fallback:'
-#            line justifies why agent-browser was impossible (a silent headless-Chrome fallback
-#            fails here).
+#            exist (the user-observable proof, same framing); the '## QA' section records
+#            `agent-browser doctor`; the driver is named on a 'Tool:' line; and if that driver
+#            is NOT agent-browser, a 'Fallback:' line justifies why agent-browser was impossible
+#            (a silent headless-Chrome fallback fails here).
 #   cli:     verification.md has a '## QA' section recording an integration smoke (no browser
 #            evidence required — CLI/library has no browser).
 
@@ -52,11 +52,15 @@ ls "$QA"/to-be-* >/dev/null 2>&1 \
   || fail "no 'qa/to-be-*' evidence — capture the after state at the same framing as as-is"
 
 # 2) The driver that exercised the app must be named on a 'Tool:' line.
+grep -qiF 'agent-browser doctor' "$VERIF" \
+  || fail "## QA has no 'agent-browser doctor' preflight — checking iab/Browser targets or Playwright availability is not enough"
+
+# 3) The driver that exercised the app must be named on a 'Tool:' line.
 tool_line="$(grep -iE '^[[:space:]]*[-*]?[[:space:]]*Tool:' "$VERIF" | head -1 || true)"
 [ -n "$tool_line" ] \
   || fail "## QA has no 'Tool:' line — name the driver that exercised the app (agent-browser, or the fallback)"
 
-# 3) agent-browser is the sanctioned driver; any other driver must justify why agent-browser
+# 4) agent-browser is the sanctioned driver; any other driver must justify why agent-browser
 #    was impossible on a 'Fallback:' line. This is the silent-headless-Chrome backstop.
 if printf '%s' "$tool_line" | grep -qiF 'agent-browser'; then
   echo "  ok: driven by agent-browser"

@@ -22,9 +22,10 @@ agent-browser from the orchestrator — that floods the conductor's context.
    Playwright MCP, Computer Use, or another browser surface. The `qa-tester` subagent first records:
    `command -v agent-browser`, `agent-browser --version`, `agent-browser skills get core --full`, and
    `agent-browser doctor`. In sandboxed harnesses, run this preflight with the same permission tier
-   needed for QA; socket/state permission failures require escalation, not fallback. If `doctor`
-   still fails, stop before page actions and return `BLOCKED` with the exact failing command/output
-   and needed permission or install step.
+   needed for QA; socket/state permission failures require escalation, not fallback. Browser target
+   checks such as `agent.browsers.list()`, `iab`, `node_repl`, or `npx playwright` are not this
+   preflight. If `doctor` still fails, stop before page actions and return `BLOCKED` with the exact
+   failing command/output and needed permission or install step.
    **Install is two steps** — both are required before the browser can open:
    (1) `npm install -g agent-browser` (skip if already on PATH); (2) `agent-browser install` —
    downloads the Chrome-for-Testing binary the CLI drives (first time only; a no-op once present; add
@@ -53,6 +54,7 @@ Integration smoke only: real invocation against a fixture, diff stdout vs a know
 Put evidence under `<vault>/qa/` and summarize in `verification.md` `## QA`:
 - a `Tool:` line naming the driver (`Tool: agent-browser`); if it is NOT agent-browser, a `Fallback:`
   line stating why agent-browser was impossible — a silent headless-Chrome fallback is banned,
+- an `agent-browser doctor` preflight record for every browser QA run,
 - commands run + pass/fail per check,
 - the `as-is`/`to-be` screenshot paths (exact names `qa/as-is-<view>.png` / `qa/to-be-<view>.png`,
   browsable in the committed changelog),

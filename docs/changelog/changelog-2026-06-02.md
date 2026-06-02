@@ -7,10 +7,11 @@ prose (`reference/qa.md`) into a literal, machine-checkable gate, so it matches 
 the skill instead of being instruction-only.
 
 - `templates/qa-gate.sh` (NEW): `qa-gate.sh <vault> <browser|cli>`. For a browser app it requires a
-  `## QA` section in `verification.md`, `qa/as-is-*` + `qa/to-be-*` evidence files, a `Tool:` line
-  naming the driver, and — if that driver is NOT agent-browser — a `Fallback:` line justifying why
-  agent-browser was impossible. CLI/lib only needs a `## QA` section (no browser). Usage errors exit 2,
-  gate failures exit 1, parallel to `validate-gate.sh` / `delivery-gate.sh`. NEVER edited to pass.
+  `## QA` section in `verification.md`, `qa/as-is-*` + `qa/to-be-*` evidence files, an
+  `agent-browser doctor` preflight record, a `Tool:` line naming the driver, and — if that driver is
+  NOT agent-browser — a `Fallback:` line justifying why agent-browser was impossible. CLI/lib only
+  needs a `## QA` section (no browser). Usage errors exit 2, gate failures exit 1, parallel to
+  `validate-gate.sh` / `delivery-gate.sh`. NEVER edited to pass.
 - `reference/pipeline.md`: GREENFIELD + LEGACY QA exit-gate cells now require `qa-gate.sh` exits 0.
 - `agents/qa-tester.md`: rewrote DO/RULES/WRITE/GATE — first browser step is now "check `command -v
   agent-browser`, install if absent, only fall back with a recorded reason"; the `## QA` record MUST

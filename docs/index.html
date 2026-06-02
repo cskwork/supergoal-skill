@@ -3,584 +3,1337 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>/supergoal: one objective in, a verified result out</title>
-<meta name="description" content="A Claude Code skill that takes one objective through a full, gated dev process with expert subagents, and refuses to declare success until a machine-checkable gate passes. Bilingual EN / 한국어." />
+<title>/supergoal - ship agent work with proof</title>
+<meta name="description" content="/supergoal is a proof-first agent workflow skill: one objective in, gated subagents, human approval, adversarial verification, and a machine-checkable delivery gate out. English and Korean." />
+<meta property="og:title" content="/supergoal - ship agent work with proof" />
+<meta property="og:description" content="A gated agent workflow for full objectives. Builder is not Verifier. Claims stay untrusted until scripts and adversarial checks pass." />
+<meta property="og:type" content="website" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%2305070a'/%3E%3Cpath d='M15 34 27 46 49 18' fill='none' stroke='%235cff9a' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
 <style>
-  :root{
-    --bg:#0a0c10; --panel:#11151c; --panel2:#0d1117; --line:#1e2630;
-    --ink:#e6edf3; --dim:#9aa7b4; --faint:#8593a1;
-    --acc:#4ade80; --acc2:#38bdf8; --warn:#fbbf24; --red:#f87171;
-    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
-    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Pretendard","Noto Sans KR",Roboto,Helvetica,Arial,sans-serif;
-    --fs:1;            /* user-adjustable text-size multiplier (A- / A+) */
+  :root {
+    --bg: #05070a;
+    --ink: #f4f7fb;
+    --muted: #a8b4c2;
+    --soft: #728091;
+    --line: rgba(178, 221, 255, .16);
+    --line-strong: rgba(178, 221, 255, .28);
+    --panel: rgba(10, 16, 22, .82);
+    --panel-2: rgba(8, 12, 17, .94);
+    --panel-3: rgba(17, 25, 32, .72);
+    --green: #5cff9a;
+    --green-soft: rgba(92, 255, 154, .13);
+    --cyan: #64d8ff;
+    --cyan-soft: rgba(100, 216, 255, .12);
+    --amber: #ffbf47;
+    --amber-soft: rgba(255, 191, 71, .13);
+    --red: #ff6f6f;
+    --red-soft: rgba(255, 111, 111, .11);
+    --mono: "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+    --sans: "Avenir Next", "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --radius: 8px;
+    --fs: 1;
   }
-  *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:calc(17px * var(--fs));line-height:1.7;
-    -webkit-font-smoothing:antialiased;
-    background-image:radial-gradient(60rem 40rem at 80% -10%, rgba(56,189,248,.08), transparent),
-                     radial-gradient(50rem 35rem at -10% 10%, rgba(74,222,128,.07), transparent);}
-  a{color:var(--acc2);text-decoration:none}
-  a:hover{text-decoration:underline}
-  a:focus-visible,.btn:focus-visible{outline:2px solid var(--acc2);outline-offset:2px}
-  .wrap{max-width:1040px;margin:0 auto;padding:0 24px}
-  code,kbd{font-family:var(--mono);font-size:.92em}
-  .mono{font-family:var(--mono)}
 
-  /* bilingual toggle: show only the active language */
-  html[lang="en"] .ko{display:none !important}
-  html[lang="ko"] .en{display:none !important}
-  html[lang="ko"] .ko{word-break:keep-all}        /* avoid awkward mid-word Korean wraps */
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; background: var(--bg); }
+  body {
+    margin: 0;
+    min-width: 320px;
+    background:
+      linear-gradient(180deg, rgba(5, 7, 10, .64), var(--bg) 720px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,.032) 0 1px, transparent 1px 92px),
+      repeating-linear-gradient(0deg, rgba(255,255,255,.028) 0 1px, transparent 1px 92px),
+      var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: calc(16px * var(--fs));
+    line-height: 1.55;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
 
-  /* top gate bar */
-  .gatebar{border-bottom:1px solid var(--line);background:rgba(10,12,16,.7);backdrop-filter:blur(6px);
-    position:sticky;top:0;z-index:10;font-family:var(--mono);font-size:13px}
-  .gatebar .wrap{display:flex;gap:14px;align-items:center;height:44px;color:var(--dim)}
-  .dot{width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc);flex:0 0 auto}
-  .gatebar .pass{color:var(--acc)}
-  .gatebar .sp{margin-left:auto}
-  .gatebar a{color:var(--dim)}
-  .langtoggle,.fsctl{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex:0 0 auto}
-  .langtoggle button,.fsctl button{font-family:var(--mono);font-size:12px;padding:5px 10px;background:transparent;
-    color:var(--dim);border:0;cursor:pointer;line-height:1}
-  .fsctl button{min-width:32px;font-weight:600}
-  .langtoggle button+button,.fsctl button+button{border-left:1px solid var(--line)}
-  .langtoggle button[aria-pressed="true"]{background:var(--panel);color:var(--ink)}
-  .langtoggle button:hover,.fsctl button:hover:not(:disabled){color:var(--ink)}
-  .fsctl button:disabled{opacity:.35;cursor:default}
-  .langtoggle button:focus-visible,.fsctl button:focus-visible{outline:2px solid var(--acc2);outline-offset:-2px}
-  @media(max-width:720px){.gatebar .g{display:none}}
-  @media(max-width:600px){.gatebar .pass{display:none}}
-  @media(max-width:480px){.gatebar .mono{display:none}.gatebar .wrap{gap:9px}}
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: .22;
+    background-image:
+      linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 24px 24px;
+    mask-image: linear-gradient(to bottom, #000, transparent 78%);
+  }
 
-  header.hero{padding:84px 0 56px}
-  .eyebrow{font-family:var(--mono);color:var(--acc);font-size:13px;letter-spacing:.12em;text-transform:uppercase}
-  h1{font-size:clamp(40px,8vw,76px);line-height:1.02;margin:14px 0 0;letter-spacing:-.02em;font-weight:800}
-  h1 .slash{color:var(--faint)}
-  .tag{font-size:calc(clamp(20px,2.8vw,27px) * var(--fs));color:var(--ink);margin:18px 0 0;max-width:34ch;font-weight:600;line-height:1.3}
-  .sub{color:var(--dim);max-width:60ch;margin:16px 0 0;font-size:calc(19px * var(--fs));line-height:1.66}
-  .cta{margin-top:30px;display:flex;gap:12px;flex-wrap:wrap}
-  .btn{font-family:var(--mono);font-size:14px;padding:11px 16px;border-radius:10px;border:1px solid var(--line);
-    background:var(--panel);color:var(--ink);display:inline-flex;gap:8px;align-items:center}
-  .btn.primary{background:linear-gradient(180deg,#15351f,#102718);border-color:#1f5132;color:#bbf7d0}
-  .btn:hover{border-color:#2c3947}
+  a { color: inherit; text-decoration: none; }
+  a:hover { color: var(--cyan); }
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 3px;
+  }
 
-  .term{margin-top:34px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel2);
-    box-shadow:0 30px 80px -40px rgba(0,0,0,.8)}
-  .term .bar{display:flex;gap:7px;padding:12px 14px;border-bottom:1px solid var(--line);background:#0b0f15}
-  .term .bar i{width:11px;height:11px;border-radius:50%;display:block;background:#27313d}
-  .term pre{margin:0;padding:18px 18px;font-family:var(--mono);font-size:calc(14px * var(--fs));line-height:1.7;overflow:auto;color:#cdd6df}
-  .term .c{color:var(--acc)} .term .p{color:var(--acc2)} .term .g{color:var(--faint)} .term .w{color:var(--warn)} .term .ok{color:var(--acc)}
+  code, kbd, pre, .mono { font-family: var(--mono); }
+  b { color: var(--ink); }
+  .wrap {
+    position: relative;
+    z-index: 2;
+    width: min(1180px, calc(100% - 40px));
+    margin: 0 auto;
+  }
 
-  section{padding:54px 0;border-top:1px solid var(--line)}
-  h2{font-size:calc(clamp(25px,4vw,35px) * var(--fs));margin:0 0 6px;letter-spacing:-.01em}
-  .lead{color:var(--dim);max-width:64ch;margin:0 0 26px;font-size:calc(17.5px * var(--fs));line-height:1.72}
+  html[lang="en"] .ko { display: none !important; }
+  html[lang="ko"] .en { display: none !important; }
+  html[lang="ko"] .ko { word-break: keep-all; }
 
-  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-  @media(max-width:820px){.grid3{grid-template-columns:1fr}}
-  .card{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:20px}
-  .card h3{margin:0 0 4px;font-size:calc(19px * var(--fs))}
-  .card .mode{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
-  .card.green .mode{color:var(--acc)} .card.amber .mode{color:var(--warn)} .card.blue .mode{color:var(--acc2)}
-  .card.violet .mode{color:#c4b5fd}
-  .card.learncard{margin-top:16px;border-color:#372a57;background:linear-gradient(180deg,#15111f,#0e0c16)}
-  .card.learncard .pipe b{color:#ddd6fe}
-  .card p{color:var(--dim);font-size:calc(15.5px * var(--fs));line-height:1.62;margin:8px 0 12px}
-  .pipe{font-family:var(--mono);font-size:calc(12px * var(--fs));color:var(--faint);line-height:1.8;word-spacing:-1px;overflow-wrap:anywhere}
-  .pipe b{color:var(--ink);font-weight:600}
+  .gatebar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    border-bottom: 1px solid var(--line);
+    background: rgba(5, 7, 10, .72);
+    backdrop-filter: blur(16px) saturate(130%);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
 
-  /* numbered quickstart steps */
-  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px}
-  @media(max-width:820px){.steps{grid-template-columns:1fr}}
-  .steps .step{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:18px 20px}
-  .steps .num{font-family:var(--mono);color:var(--acc);font-size:13px}
-  .steps h3{margin:6px 0 4px;font-size:calc(18px * var(--fs))}
-  .steps p{color:var(--dim);font-size:calc(15.5px * var(--fs));line-height:1.6;margin:0}
+  .gatebar .wrap {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
 
-  .gates{display:grid;grid-template-columns:1fr 1fr;gap:12px 26px}
-  @media(max-width:820px){.gates{grid-template-columns:1fr}}
-  .gate{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px dashed var(--line)}
-  .gate .n{font-family:var(--mono);color:var(--acc);font-size:13px;min-width:22px}
-  .gate b{display:block}
-  .gate span span{color:var(--dim);font-size:calc(15.5px * var(--fs));line-height:1.55}
+  .status-led {
+    width: 9px;
+    height: 9px;
+    border-radius: 99px;
+    background: var(--green);
+    box-shadow: 0 0 18px rgba(92, 255, 154, .9);
+    flex: 0 0 auto;
+    animation: ledPulse 1.8s ease-in-out infinite;
+  }
 
-  .evi{border:1px solid var(--line);border-radius:14px;background:var(--panel2);padding:6px 0;font-family:var(--mono);font-size:calc(14.5px * var(--fs))}
-  .evi .row{padding:13px 18px;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
-  .evi .row:last-child{border-bottom:0}
-  .evi .badge{padding:2px 8px;border-radius:6px;font-size:11px;letter-spacing:.06em;flex:0 0 auto}
-  .evi .b-green{background:#0f2a1a;color:#86efac;border:1px solid #1f5132}
-  .evi .b-red{background:#2a1414;color:#fca5a5;border:1px solid #5b2626}
-  .evi .b-blue{background:#0e2433;color:#bae6fd;border:1px solid #1d4d66}
-  .evi .what{color:var(--dim)} .evi .what b{color:var(--ink)}
+  .gatebar .label { color: var(--muted); }
+  .gatebar .pass { color: var(--green); }
+  .gatebar .spacer { margin-left: auto; }
+  .gatebar-controls {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    overflow: hidden;
+    background: rgba(255,255,255,.03);
+    flex: 0 0 auto;
+  }
+  .gatebar button {
+    border: 0;
+    border-left: 1px solid var(--line);
+    padding: 7px 10px;
+    color: var(--muted);
+    background: transparent;
+    font: inherit;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .gatebar button:first-child { border-left: 0; }
+  .gatebar button[aria-pressed="true"] {
+    background: var(--green-soft);
+    color: var(--green);
+  }
+  .gatebar button:disabled {
+    opacity: .38;
+    cursor: default;
+  }
 
-  footer{padding:40px 0 70px;color:var(--faint);font-size:calc(15px * var(--fs));line-height:1.7;border-top:1px solid var(--line)}
-  footer a{color:var(--dim)}
-  .pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-family:var(--mono);font-size:12px;color:var(--dim);margin:0 6px 6px 0}
-  h3.sub2{font-size:calc(17px * var(--fs));margin:28px 0 10px;color:var(--ink)}
-  .diagram{border:1px solid var(--line);border-radius:14px;background:var(--panel2);padding:18px;overflow-x:auto}
-  .diagram pre{margin:0;font-family:var(--mono);font-size:calc(13px * var(--fs));line-height:1.5;color:#cdd6df}
-  .note{color:var(--faint);font-size:calc(14px * var(--fs));line-height:1.6;margin-top:12px}
-  .flow{display:flex;align-items:stretch;overflow-x:auto;padding:4px 0 12px;font-family:var(--mono);font-size:calc(13.5px * var(--fs))}
-  .flow .step{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:10px 12px;min-width:120px;text-align:center;color:var(--ink);flex:0 0 auto}
-  .flow .step small{display:block;color:var(--faint);font-size:calc(11.5px * var(--fs));margin-top:3px}
-  .flow .step.gate{border-color:#1f5132;background:#0f1f15}
-  .flow .arr{display:flex;align-items:center;color:var(--faint);padding:0 8px;flex:0 0 auto}
-  .tbl{width:100%;border-collapse:collapse;font-size:calc(15px * var(--fs))}
-  .tbl th,.tbl td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
-  .tbl th{color:var(--dim);font-weight:600;font-family:var(--mono);font-size:calc(12px * var(--fs));letter-spacing:.05em;text-transform:uppercase}
-  .tbl td code{color:var(--acc2)}
-  .tbl tr:last-child td{border-bottom:0}
+  .hero {
+    position: relative;
+    min-height: min(820px, calc(100svh - 48px));
+    padding: clamp(54px, 8vw, 92px) 0 58px;
+    display: grid;
+    align-items: center;
+    overflow: visible;
+  }
+
+  .hero-canvas {
+    position: absolute;
+    left: 50%;
+    top: -48px;
+    width: 100vw;
+    height: min(860px, 100svh);
+    transform: translateX(-50%);
+    z-index: 0;
+    opacity: .98;
+  }
+
+  .hero::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -1px;
+    width: 100vw;
+    height: 190px;
+    transform: translateX(-50%);
+    z-index: 1;
+    background: linear-gradient(180deg, transparent, var(--bg) 78%);
+    pointer-events: none;
+  }
+
+  .hero-grid {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: minmax(0, 1.02fr) minmax(330px, .78fr);
+    gap: clamp(28px, 5vw, 74px);
+    align-items: center;
+  }
+
+  .brandline {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    width: fit-content;
+    max-width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(5, 7, 10, .62);
+    color: var(--green);
+    font: 700 12px/1 var(--mono);
+    letter-spacing: .09em;
+    text-transform: uppercase;
+  }
+
+  .brandline::before {
+    content: "";
+    width: 34px;
+    height: 1px;
+    background: linear-gradient(90deg, var(--green), transparent);
+  }
+
+  h1 {
+    margin: 24px 0 0;
+    max-width: 11ch;
+    font-size: clamp(54px, 11vw, 138px);
+    line-height: .86;
+    letter-spacing: 0;
+    font-weight: 900;
+    text-wrap: balance;
+  }
+  h1 span { color: var(--soft); }
+
+  .hero-sub {
+    max-width: 700px;
+    margin: 26px 0 0;
+    color: var(--ink);
+    font-size: calc(clamp(21px, 3vw, 34px) * var(--fs));
+    line-height: 1.12;
+    font-weight: 780;
+    text-wrap: balance;
+  }
+
+  .hero-copy {
+    max-width: 66ch;
+    margin: 18px 0 0;
+    color: var(--muted);
+    font-size: calc(17px * var(--fs));
+  }
+
+  .cta-row {
+    margin-top: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .btn {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 11px 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: rgba(255,255,255,.045);
+    color: var(--ink);
+    font: 760 13px/1 var(--mono);
+    letter-spacing: .01em;
+    transition: transform .18s ease, border-color .18s ease, background .18s ease, color .18s ease;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    border-color: rgba(100, 216, 255, .64);
+    background: rgba(100, 216, 255, .08);
+    color: var(--cyan);
+  }
+  .btn.primary {
+    color: #031108;
+    border-color: rgba(92, 255, 154, .88);
+    background: linear-gradient(180deg, #8dffb9, var(--green));
+    box-shadow: 0 16px 54px rgba(92, 255, 154, .21);
+  }
+  .btn.primary:hover {
+    color: #031108;
+    background: linear-gradient(180deg, #b5ffd0, var(--green));
+  }
+
+  .proof-panel {
+    position: relative;
+    min-height: 430px;
+    perspective: 1200px;
+  }
+
+  .console-card,
+  .signal-card,
+  .stamp-card {
+    position: absolute;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: linear-gradient(180deg, rgba(14, 22, 29, .92), rgba(6, 10, 14, .94));
+    box-shadow: 0 26px 100px rgba(0, 0, 0, .56);
+    backdrop-filter: blur(12px);
+  }
+
+  .console-card {
+    inset: 34px 0 auto auto;
+    width: min(430px, 100%);
+    min-height: 286px;
+    transform: rotateY(-9deg) rotateZ(1deg);
+    overflow: hidden;
+    animation: floatA 6s ease-in-out infinite;
+  }
+  .console-top {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 13px;
+    border-bottom: 1px solid var(--line);
+    background: rgba(255,255,255,.035);
+  }
+  .console-top i {
+    width: 10px;
+    height: 10px;
+    border-radius: 99px;
+    background: var(--soft);
+  }
+  .console-top span {
+    margin-left: auto;
+    color: var(--soft);
+    font: 12px var(--mono);
+  }
+  .console-card pre {
+    margin: 0;
+    padding: 18px;
+    color: #d7e6f2;
+    font: calc(13px * var(--fs))/1.72 var(--mono);
+    white-space: pre-wrap;
+  }
+  .c-green { color: var(--green); }
+  .c-cyan { color: var(--cyan); }
+  .c-amber { color: var(--amber); }
+  .c-red { color: var(--red); }
+  .c-soft { color: var(--soft); }
+
+  .signal-card {
+    left: -8px;
+    bottom: 22px;
+    width: min(280px, 76vw);
+    padding: 17px;
+    transform: rotateZ(-3deg);
+    animation: floatB 7s ease-in-out infinite;
+  }
+  .signal-card h3,
+  .stamp-card h3 {
+    margin: 0 0 10px;
+    font: 760 12px/1 var(--mono);
+    color: var(--muted);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .signal-row {
+    display: grid;
+    grid-template-columns: 66px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    margin-top: 10px;
+    color: var(--muted);
+    font: 12px var(--mono);
+  }
+  .track {
+    height: 8px;
+    border: 1px solid var(--line);
+    border-radius: 99px;
+    overflow: hidden;
+    background: rgba(255,255,255,.04);
+  }
+  .track span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--green);
+    transform-origin: left;
+    animation: fillTrack 2.8s ease-in-out infinite;
+  }
+  .signal-row:nth-of-type(3) .track span { background: var(--cyan); animation-delay: .28s; }
+  .signal-row:nth-of-type(4) .track span { background: var(--amber); animation-delay: .48s; }
+
+  .stamp-card {
+    right: 18px;
+    top: 0;
+    width: min(226px, 70vw);
+    padding: 15px;
+    transform: rotateZ(4deg);
+    animation: stampPulse 3.5s ease-in-out infinite;
+  }
+  .stamp-card .stamp {
+    display: grid;
+    place-items: center;
+    min-height: 76px;
+    border: 1px dashed rgba(92, 255, 154, .58);
+    color: var(--green);
+    background: var(--green-soft);
+    font: 900 22px/1 var(--mono);
+    letter-spacing: .08em;
+  }
+
+  .ticker {
+    position: relative;
+    z-index: 2;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+    background: rgba(7, 11, 15, .82);
+  }
+  .ticker-track {
+    display: flex;
+    width: max-content;
+    animation: tickerMove 30s linear infinite;
+  }
+  .ticker span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 46px;
+    padding: 0 26px;
+    color: var(--muted);
+    font: 700 12px/1 var(--mono);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .ticker b { color: var(--green); }
+
+  section {
+    position: relative;
+    z-index: 2;
+    padding: clamp(62px, 9vw, 108px) 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .section-head {
+    display: grid;
+    grid-template-columns: minmax(0, .75fr) minmax(260px, .55fr);
+    gap: 34px;
+    align-items: end;
+    margin-bottom: 30px;
+  }
+  h2 {
+    margin: 0;
+    font-size: calc(clamp(31px, 6vw, 72px) * var(--fs));
+    line-height: .94;
+    letter-spacing: 0;
+    text-wrap: balance;
+  }
+  .lead {
+    margin: 0;
+    color: var(--muted);
+    font-size: calc(17px * var(--fs));
+  }
+
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .metric {
+    min-height: 134px;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+  }
+  .metric strong {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--green);
+    font: 900 calc(34px * var(--fs))/1 var(--mono);
+  }
+  .metric span {
+    color: var(--muted);
+    font-size: calc(14px * var(--fs));
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, .95fr) minmax(300px, .65fr);
+    gap: clamp(20px, 4vw, 42px);
+    align-items: stretch;
+  }
+  .copy-stack {
+    display: grid;
+    gap: 12px;
+  }
+  .claim {
+    padding: 22px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+  }
+  .claim h3,
+  .mode-card h3,
+  .gate-item h3,
+  .proof-item h3 {
+    margin: 0 0 8px;
+    font-size: calc(20px * var(--fs));
+    line-height: 1.2;
+  }
+  .claim p,
+  .mode-card p,
+  .gate-item p,
+  .proof-item p {
+    margin: 0;
+    color: var(--muted);
+    font-size: calc(15px * var(--fs));
+  }
+
+  .route-map {
+    position: relative;
+    min-height: 100%;
+    padding: 22px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background:
+      linear-gradient(180deg, rgba(100,216,255,.08), transparent),
+      var(--panel-2);
+    overflow: hidden;
+  }
+  .route-map::before {
+    content: "";
+    position: absolute;
+    inset: 22px;
+    border: 1px solid rgba(92,255,154,.22);
+    transform: skewY(-8deg);
+    opacity: .68;
+  }
+  .route-step {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 0 0 13px;
+    padding: 12px 13px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(5, 7, 10, .72);
+    color: var(--muted);
+    font: 700 12px/1.25 var(--mono);
+  }
+  .route-step b { color: var(--ink); }
+  .route-step.pass { border-color: rgba(92,255,154,.46); color: var(--green); }
+  .route-step.red { border-color: rgba(255,111,111,.42); color: var(--red); }
+
+  .mode-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .mode-card {
+    position: relative;
+    min-height: 250px;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+    overflow: hidden;
+    transition: transform .18s ease, border-color .18s ease;
+  }
+  .mode-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(100,216,255,.58);
+  }
+  .mode-card::after {
+    content: "";
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    height: 3px;
+    border-radius: 99px;
+    background: var(--green);
+    opacity: .72;
+  }
+  .mode-card.debug::after { background: var(--amber); }
+  .mode-card.legacy::after { background: var(--cyan); }
+  .mode-card.learn::after { background: var(--red); }
+  .mode-label {
+    display: block;
+    margin-bottom: 38px;
+    color: var(--soft);
+    font: 800 11px/1 var(--mono);
+    letter-spacing: .09em;
+    text-transform: uppercase;
+  }
+  .mode-pipe {
+    margin-top: 18px;
+    color: var(--soft);
+    font: calc(12px * var(--fs))/1.6 var(--mono);
+  }
+  .mode-pipe b { color: var(--ink); }
+
+  .gate-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(180px, 1fr));
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scroll-snap-type: x mandatory;
+  }
+  .gate-item {
+    scroll-snap-align: start;
+    min-height: 260px;
+    padding: 19px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+  }
+  .gate-no {
+    display: inline-grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(92,255,154,.44);
+    color: var(--green);
+    background: var(--green-soft);
+    border-radius: 4px;
+    font: 900 13px/1 var(--mono);
+  }
+
+  .vault {
+    display: grid;
+    grid-template-columns: minmax(0, .8fr) minmax(320px, .72fr);
+    gap: 24px;
+  }
+  .file-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .file-chip {
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+  }
+  .file-chip code {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--cyan);
+    font-size: calc(13px * var(--fs));
+  }
+  .file-chip span {
+    color: var(--muted);
+    font-size: calc(13px * var(--fs));
+  }
+  .vault-ascii {
+    margin: 0;
+    min-height: 100%;
+    padding: 22px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel-2);
+    color: #dbe7f2;
+    font: calc(13px * var(--fs))/1.6 var(--mono);
+    white-space: pre-wrap;
+  }
+
+  .proof-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .proof-item {
+    min-height: 248px;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+  }
+  .proof-item .tag {
+    display: inline-flex;
+    margin-bottom: 36px;
+    padding: 7px 9px;
+    border-radius: 4px;
+    background: var(--green-soft);
+    color: var(--green);
+    font: 800 11px/1 var(--mono);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .proof-item.debug .tag { background: var(--amber-soft); color: var(--amber); }
+  .proof-item.legacy .tag { background: var(--cyan-soft); color: var(--cyan); }
+
+  .install {
+    display: grid;
+    grid-template-columns: minmax(0, .86fr) minmax(280px, .5fr);
+    gap: 20px;
+    align-items: stretch;
+  }
+  .terminal {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel-2);
+    overflow: hidden;
+  }
+  .terminal-bar {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 13px;
+    border-bottom: 1px solid var(--line);
+    background: rgba(255,255,255,.035);
+  }
+  .terminal-bar i {
+    width: 10px;
+    height: 10px;
+    border-radius: 99px;
+    background: var(--soft);
+  }
+  .terminal pre {
+    margin: 0;
+    padding: 20px;
+    overflow: auto;
+    color: #d7e6f2;
+    font: calc(13px * var(--fs))/1.75 var(--mono);
+  }
+  .install-card {
+    padding: 22px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+  }
+  .install-card p {
+    margin: 0 0 18px;
+    color: var(--muted);
+  }
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .pill {
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 7px 10px;
+    color: var(--muted);
+    background: rgba(255,255,255,.035);
+    font: 700 12px/1 var(--mono);
+  }
+
+  footer {
+    position: relative;
+    z-index: 2;
+    padding: 38px 0 58px;
+    color: var(--soft);
+    border-top: 1px solid var(--line);
+    font-size: calc(14px * var(--fs));
+  }
+  footer .wrap {
+    display: flex;
+    gap: 18px;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity .65s ease, transform .65s ease;
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @keyframes ledPulse {
+    0%, 100% { transform: scale(1); opacity: .82; }
+    50% { transform: scale(1.32); opacity: 1; }
+  }
+  @keyframes floatA {
+    0%, 100% { transform: rotateY(-9deg) rotateZ(1deg) translate3d(0,0,0); }
+    50% { transform: rotateY(-6deg) rotateZ(.2deg) translate3d(0,-14px,0); }
+  }
+  @keyframes floatB {
+    0%, 100% { transform: rotateZ(-3deg) translate3d(0,0,0); }
+    50% { transform: rotateZ(-1.5deg) translate3d(8px,-12px,0); }
+  }
+  @keyframes stampPulse {
+    0%, 100% { transform: rotateZ(4deg) scale(1); box-shadow: 0 24px 80px rgba(0,0,0,.48); }
+    50% { transform: rotateZ(2deg) scale(1.03); box-shadow: 0 24px 90px rgba(92,255,154,.12); }
+  }
+  @keyframes fillTrack {
+    0%, 100% { transform: scaleX(.68); }
+    50% { transform: scaleX(1); }
+  }
+  @keyframes tickerMove {
+    from { transform: translate3d(0,0,0); }
+    to { transform: translate3d(-50%,0,0); }
+  }
+
+  @media (max-width: 980px) {
+    .hero-grid,
+    .section-head,
+    .split,
+    .vault,
+    .install {
+      grid-template-columns: 1fr;
+    }
+    .proof-panel {
+      min-height: 520px;
+      max-width: 560px;
+    }
+    .metric-grid,
+    .mode-grid,
+    .proof-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 680px) {
+    .wrap { width: min(100% - 28px, 1180px); }
+    .gatebar .label,
+    .gatebar .pass { display: none; }
+    .gatebar .wrap { gap: 8px; min-height: 50px; }
+    .hero { min-height: auto; padding-top: 46px; }
+    .hero-grid { gap: 18px; }
+    .proof-panel { display: none; }
+    .metric-grid,
+    .mode-grid,
+    .proof-grid,
+    .file-list {
+      grid-template-columns: 1fr;
+    }
+    .console-card {
+      right: 0;
+      width: 100%;
+      transform: none;
+    }
+    .signal-card { left: 0; bottom: 16px; }
+    .stamp-card { right: 10px; }
+    .ticker span { padding: 0 18px; }
+    section { padding: 62px 0; }
+    footer .wrap { align-items: flex-start; }
+  }
+
+  @media (max-width: 460px) {
+    .gatebar a { display: none; }
+    .cta-row .btn { width: 100%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *,
+    *::before,
+    *::after {
+      animation-duration: .001ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: .001ms !important;
+    }
+    .ticker-track { transform: none !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
 </style>
 </head>
 <body>
 
-<div class="gatebar"><div class="wrap">
-  <span class="dot"></span><span class="mono">delivery-gate.sh</span>
-  <span class="g">artifacts ok · verification GREEN · suite green</span>
-  <span class="pass">== GATE PASS ==</span>
-  <span class="sp"></span>
-  <div class="fsctl" role="group" aria-label="Text size / 글자 크기">
-    <button type="button" data-fs="dec" aria-label="Decrease text size / 글자 작게" title="글자 작게">A&#8722;</button>
-    <button type="button" data-fs="inc" aria-label="Increase text size / 글자 크게" title="글자 크게">A+</button>
+<nav class="gatebar" aria-label="Page controls">
+  <div class="wrap">
+    <span class="status-led" aria-hidden="true"></span>
+    <span class="mono">delivery-gate.sh</span>
+    <span class="label en">claims untrusted until Verify reruns proof</span>
+    <span class="label ko">Verify가 증명을 재실행하기 전까지 주장은 신뢰하지 않음</span>
+    <span class="pass">GATE PASS</span>
+    <span class="spacer"></span>
+    <span class="gatebar-controls" role="group" aria-label="Text size">
+      <button type="button" data-fs="dec" aria-label="Decrease text size">A-</button>
+      <button type="button" data-fs="inc" aria-label="Increase text size">A+</button>
+    </span>
+    <span class="gatebar-controls" role="group" aria-label="Language">
+      <button type="button" data-lang="en">EN</button>
+      <button type="button" data-lang="ko">KO</button>
+    </span>
+    <a class="mono" href="https://github.com/cskwork/supergoal-skill">GitHub</a>
   </div>
-  <div class="langtoggle" role="group" aria-label="Language / 언어">
-    <button type="button" data-lang="en">EN</button>
-    <button type="button" data-lang="ko">한국어</button>
-  </div>
-  <a href="https://github.com/cskwork/supergoal-skill">GitHub →</a>
-</div></div>
+</nav>
 
-<div class="wrap">
-<header class="hero">
-  <div class="eyebrow"><span class="en">Claude Code skill</span><span class="ko">Claude Code 스킬</span></div>
-  <h1><span class="slash">/</span>supergoal</h1>
-  <p class="tag"><span class="en">One objective in, a verified result out.</span><span class="ko">목표 하나를 넣으면, 검증된 결과가 나옵니다.</span></p>
-  <p class="sub en">Hand it a whole objective: "build X", "fix this bug", "add this feature". It splits the
-    work into phases, sends each to a focused expert subagent, and <b>won't say "done" until a script
-    (not the agent's own opinion) confirms the work passes</b>. The skill directs the work; it never
-    writes the production code itself, and the agent that writes code never gets to approve it.</p>
-  <p class="sub ko">"이걸 만들어줘", "이 버그 고쳐줘", "이 기능 추가해줘" 같은 목표를 통째로 맡기세요. 작업을
-    단계로 나눠 각 단계를 전담 전문가 서브에이전트에게 보내고, <b>에이전트의 의견이 아니라 스크립트가
-    통과를 확인하기 전까지는 "완료"라고 말하지 않습니다</b>. 스킬은 작업을 지휘만 할 뿐 프로덕션 코드를
-    직접 쓰지 않으며, 코드를 작성한 에이전트는 그 코드를 승인할 수 없습니다.</p>
-  <div class="cta">
-    <a class="btn primary" href="#quickstart"><span class="en">▸ Get started</span><span class="ko">▸ 시작하기</span></a>
-    <a class="btn" href="#lifecycle"><span class="en">How it works</span><span class="ko">동작 방식</span></a>
-    <a class="btn" href="#proof"><span class="en">See what it caught</span><span class="ko">무엇을 잡아냈나</span></a>
-    <a class="btn" href="https://github.com/cskwork/supergoal-skill"><span class="en">Source</span><span class="ko">소스</span></a>
-  </div>
+<header class="hero" id="top">
+  <canvas class="hero-canvas" id="proof-map" aria-hidden="true"></canvas>
+  <div class="wrap hero-grid">
+    <div>
+      <div class="brandline">
+        <span class="en">Proof-first agent workflow</span>
+        <span class="ko">증거 우선 에이전트 워크플로</span>
+      </div>
+      <h1><span>/</span>supergoal</h1>
+      <p class="hero-sub en">Ship agent work with proof, not vibes.</p>
+      <p class="hero-sub ko">감이 아니라 증거로 출시합니다.</p>
+      <p class="hero-copy en">Give one objective to a gated conductor. It validates demand, pauses for Human Feedback, separates Builder from Verifier, and delivers only after scripts pass.</p>
+      <p class="hero-copy ko">목표 하나를 게이트가 있는 지휘자에게 맡기세요. 수요를 검증하고, Human Feedback에서 멈추고, 구현자와 검증자를 분리한 뒤, 스크립트가 통과해야만 전달합니다.</p>
+      <div class="cta-row">
+        <a class="btn primary" href="#install"><span class="en">Install</span><span class="ko">설치</span></a>
+        <a class="btn" href="#proof"><span class="en">Proof ledger</span><span class="ko">증거 보기</span></a>
+        <a class="btn" href="#gates"><span class="en">Gate stack</span><span class="ko">게이트</span></a>
+        <a class="btn" href="https://github.com/cskwork/supergoal-skill"><span class="en">Source</span><span class="ko">소스</span></a>
+      </div>
+    </div>
 
-  <div class="term">
-    <div class="bar"><i></i><i></i><i></i></div>
-<pre class="en"><span class="p">›</span> <span class="c">/supergoal</span> build a production URL shortener and ship it
-<span class="g">  mode: GREENFIELD · Validate → Plan → Human Feedback → Build → Verify → QA → Deliver</span>
-<span class="g">  human feedback → plain brief + technical brief approved</span>
-<span class="g">  build → 43 tests pass (builder's own report, not yet trusted)</span>
-<span class="w">  verify → RED: 2 real SSRF holes the tests missed → back to Build</span>
-<span class="ok">  verify → GREEN · review APPROVE · gate exit 0 → shipped</span></pre>
-<pre class="ko"><span class="p">›</span> <span class="c">/supergoal</span> 프로덕션급 URL 단축기를 만들고 출시해줘
-<span class="g">  mode: GREENFIELD · Validate → Plan → Human Feedback → Build → Verify → QA → Deliver</span>
-<span class="g">  human feedback → 쉬운 설명 + 기술 브리프 승인</span>
-<span class="g">  build → 테스트 43개 통과 (구현자 자가 보고, 아직 신뢰 안 함)</span>
-<span class="w">  verify → RED: 테스트가 놓친 진짜 SSRF 취약점 2건 → Build로 복귀</span>
-<span class="ok">  verify → GREEN · review APPROVE · gate exit 0 → 출시 완료</span></pre>
+    <div class="proof-panel" aria-label="Animated proof workflow">
+      <div class="stamp-card">
+        <h3>Final state</h3>
+        <div class="stamp">GREEN</div>
+      </div>
+      <div class="console-card">
+        <div class="console-top"><i></i><i></i><i></i><span>verify.clean.worktree</span></div>
+<pre class="en"><span class="c-cyan">/supergoal</span> build and ship
+<span class="c-soft">mode</span> GREENFIELD
+<span class="c-green">validate</span> Decision: GO
+<span class="c-amber">human feedback</span> approved
+<span class="c-red">verify</span> RED: hidden SSRF
+<span class="c-green">build</span> patch accepted
+<span class="c-green">deliver</span> exit 0</pre>
+<pre class="ko"><span class="c-cyan">/supergoal</span> 만들고 출시
+<span class="c-soft">mode</span> GREENFIELD
+<span class="c-green">validate</span> Decision: GO
+<span class="c-amber">human feedback</span> 승인
+<span class="c-red">verify</span> RED: 숨은 SSRF
+<span class="c-green">build</span> 패치 승인
+<span class="c-green">deliver</span> exit 0</pre>
+      </div>
+      <div class="signal-card">
+        <h3>Run telemetry</h3>
+        <div class="signal-row"><span>claims</span><div class="track"><span></span></div><b>checked</b></div>
+        <div class="signal-row"><span>review</span><div class="track"><span></span></div><b>clean</b></div>
+        <div class="signal-row"><span>suite</span><div class="track"><span></span></div><b>green</b></div>
+      </div>
+    </div>
   </div>
 </header>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span><b>Builder != Verifier</b></span>
+    <span>Human Feedback before implementation</span>
+    <span>claims.md stays untrusted</span>
+    <span>delivery-gate.sh must exit 0</span>
+    <span>bounded retry, circuit breaker</span>
+    <span><b>Builder != Verifier</b></span>
+    <span>Human Feedback before implementation</span>
+    <span>claims.md stays untrusted</span>
+    <span>delivery-gate.sh must exit 0</span>
+    <span>bounded retry, circuit breaker</span>
+  </div>
 </div>
 
-<section id="quickstart"><div class="wrap">
-  <h2><span class="en">Get started</span><span class="ko">시작하기</span></h2>
-  <p class="lead en">You need <b>Claude Code</b> and <b>Node 18+</b>. Two commands to install, one to run.
-    No service, no config.</p>
-  <p class="lead ko">필요한 건 <b>Claude Code</b>와 <b>Node 18+</b>뿐입니다. 설치는 명령어 두 개, 실행은 하나.
-    별도 서비스도 설정도 없습니다.</p>
-  <div class="steps">
-    <div class="step"><div class="num">01</div>
-      <h3><span class="en">Clone</span><span class="ko">클론</span></h3>
-      <p class="en">This repo <em>is</em> the skill. Grab it anywhere on disk.</p>
-      <p class="ko">이 저장소가 곧 스킬입니다. 디스크 어디에 두어도 됩니다.</p></div>
-    <div class="step"><div class="num">02</div>
-      <h3><span class="en">Link</span><span class="ko">연결</span></h3>
-      <p class="en">Symlink it into Claude Code's skills folder (a symlink keeps it auto-updated).</p>
-      <p class="ko">Claude Code 스킬 폴더에 심볼릭 링크로 걸어두세요(심볼릭 링크면 항상 최신 상태 유지).</p></div>
-    <div class="step"><div class="num">03</div>
-      <h3><span class="en">Run</span><span class="ko">실행</span></h3>
-      <p class="en">In any project, type <code>/supergoal</code> and your objective.</p>
-      <p class="ko">아무 프로젝트에서나 <code>/supergoal</code> 뒤에 목표를 입력하세요.</p></div>
-  </div>
-  <div class="term">
-    <div class="bar"><i></i><i></i><i></i></div>
-<pre class="en"><span class="p">›</span> git clone https://github.com/cskwork/supergoal-skill.git
-<span class="p">›</span> ln -s "$(pwd)/supergoal-skill" ~/.claude/skills/supergoal
-<span class="g"># then, in Claude Code, hand it one objective:</span>
-<span class="p">›</span> <span class="c">/supergoal</span> build a CLI todo app and ship it</pre>
-<pre class="ko"><span class="p">›</span> git clone https://github.com/cskwork/supergoal-skill.git
-<span class="p">›</span> ln -s "$(pwd)/supergoal-skill" ~/.claude/skills/supergoal
-<span class="g"># 그다음 Claude Code에서 목표 하나를 건네세요:</span>
-<span class="p">›</span> <span class="c">/supergoal</span> CLI 할 일 앱을 만들고 출시해줘</pre>
-  </div>
-  <p style="margin-top:18px">
-    <span class="pill"><span class="en">zero dependencies</span><span class="ko">의존성 없음</span></span><span class="pill"><span class="en">no external orchestrator</span><span class="ko">외부 오케스트레이터 없음</span></span>
-    <span class="pill"><span class="en">no TUI / service</span><span class="ko">TUI·서비스 없음</span></span><span class="pill"><span class="en">runs in-session</span><span class="ko">세션 안에서 실행</span></span>
-  </p>
-</div></section>
-
-<section id="modes"><div class="wrap">
-  <h2><span class="en">Four modes, one command</span><span class="ko">네 가지 모드, 하나의 명령</span></h2>
-  <p class="lead en">The skill reads your objective and picks the right pipeline, including how much to
-    parallelize. Broad work (research, scaffolding several files) fans out to many agents at once;
-    focused work (one bug, one feature) stays with a single driver. The three code-writing modes
-    pause at Human Feedback before touching code. A fourth mode, LEARN, writes no code at all.</p>
-  <p class="lead ko">스킬이 목표를 읽고 알맞은 파이프라인과 병렬화 수준을 고릅니다. 폭넓은 작업(리서치, 여러 파일
-    스캐폴딩)은 여러 에이전트로 한꺼번에 펼치고, 집중된 작업(버그 하나, 기능 하나)은 단일 드라이버가 맡습니다.
-    코드를 쓰는 세 모드는 코드를 건드리기 전에 Human Feedback에서 승인을 요청합니다. 네 번째 모드 LEARN은
-    아예 코드를 쓰지 않습니다.</p>
-  <div class="grid3">
-    <div class="card green">
-      <div class="mode">greenfield</div>
-      <h3><span class="en">Ship a new app</span><span class="ko">새 앱 출시</span></h3>
-      <p class="en">Check there's real demand, plan, get approval, then build → prove → ship.</p>
-      <p class="ko">실제 수요를 확인하고, 계획하고, 승인받은 뒤 구현 → 증명 → 출시 순으로 진행합니다.</p>
-      <div class="pipe">Intake → <b>Validate</b> → Plan → Human Feedback → Build → Verify → QA → Deliver</div>
+<main>
+  <section id="why">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2><span class="en">A conductor for serious agent runs.</span><span class="ko">진지한 에이전트 실행을 위한 지휘자.</span></h2>
+        <p class="lead en">Big single-agent runs drift. `/supergoal` keeps the work phased, reviewable, and gated by evidence.</p>
+        <p class="lead ko">큰 단일 에이전트 실행은 쉽게 흔들립니다. `/supergoal`은 작업을 단계화하고, 검토 가능하게 만들고, 증거로 게이트를 겁니다.</p>
+      </div>
+      <div class="metric-grid">
+        <div class="metric reveal"><strong>4</strong><span class="en">modes: GREENFIELD, DEBUG, LEGACY, LEARN.</span><span class="ko">모드: GREENFIELD, DEBUG, LEGACY, LEARN.</span></div>
+        <div class="metric reveal"><strong>7</strong><span class="en">hard gates that cannot be weakened to pass.</span><span class="ko">약화해서 통과시킬 수 없는 하드 게이트.</span></div>
+        <div class="metric reveal"><strong>0</strong><span class="en">self-approval. The coder never grades the code.</span><span class="ko">자가 승인 없음. 작성자가 자기 코드를 채점하지 않습니다.</span></div>
+        <div class="metric reveal"><strong>68</strong><span class="en">service tests in the public proof run.</span><span class="ko">공개 증명 실행에 사용된 서비스 테스트.</span></div>
+      </div>
     </div>
-    <div class="card amber">
-      <div class="mode">debug</div>
-      <h3><span class="en">Root-cause a hard bug</span><span class="ko">까다로운 버그 근본 원인 추적</span></h3>
-      <p class="en">Reproduce it first, weigh competing explanations with evidence, then pause for approval.
-        Read-only until then.</p>
-      <p class="ko">먼저 재현하고, 경쟁하는 가설을 증거로 따져본 뒤 승인을 위해 멈춥니다. 그전까진 읽기 전용입니다.</p>
-      <div class="pipe">Intake → Reproduce → <b>Diagnose</b> → Human Feedback → Fix → Verify → Deliver</div>
+  </section>
+
+  <section id="workflow">
+    <div class="wrap split">
+      <div class="copy-stack">
+        <div class="claim reveal">
+          <h3><span class="en">It validates before it builds.</span><span class="ko">구현 전에 검증합니다.</span></h3>
+          <p class="en">New products need a `Decision: GO`. Bug work needs reproduction. Legacy work needs a map of what changes.</p>
+          <p class="ko">새 제품은 `Decision: GO`가 필요합니다. 버그 작업은 재현이 필요합니다. 레거시 작업은 영향 범위 지도가 필요합니다.</p>
+        </div>
+        <div class="claim reveal">
+          <h3><span class="en">It pauses before writes.</span><span class="ko">쓰기 전에 멈춥니다.</span></h3>
+          <p class="en">Human Feedback sees a plain-language brief and a technical brief before Build or Fix opens.</p>
+          <p class="ko">Build나 Fix가 열리기 전에 Human Feedback에서 쉬운 설명과 기술 브리프를 확인합니다.</p>
+        </div>
+        <div class="claim reveal">
+          <h3><span class="en">It proves claims from a clean state.</span><span class="ko">깨끗한 상태에서 주장을 증명합니다.</span></h3>
+          <p class="en">A fresh adversarial Verifier reruns every `run-to-prove`. Builder reports are useful, never trusted.</p>
+          <p class="ko">새 적대적 Verifier가 모든 `run-to-prove`를 재실행합니다. Builder 보고서는 유용하지만 신뢰하지 않습니다.</p>
+        </div>
+      </div>
+      <div class="route-map reveal" aria-label="Supergoal route map">
+        <div class="route-step pass"><b>01 Intake</b><span>scope captured</span></div>
+        <div class="route-step pass"><b>02 Plan</b><span>frozen</span></div>
+        <div class="route-step pass"><b>03 Human Feedback</b><span>approved</span></div>
+        <div class="route-step"><b>04 Build</b><span>claims written</span></div>
+        <div class="route-step red"><b>05 Verify</b><span>tries to disprove</span></div>
+        <div class="route-step"><b>06 QA</b><span>black-box pass</span></div>
+        <div class="route-step pass"><b>07 Deliver</b><span>script exits 0</span></div>
+      </div>
     </div>
-    <div class="card blue">
-      <div class="mode">legacy</div>
-      <h3><span class="en">Add to existing code</span><span class="ko">기존 코드에 기능 추가</span></h3>
-      <p class="en">Map what the change touches, plan a small surgical edit, and prove the existing tests still
-        pass. No regressions.</p>
-      <p class="ko">변경이 닿는 범위를 파악하고, 최소한의 외과적 수정안을 계획한 뒤, 기존 테스트가 그대로
-        통과함을 증명합니다. 회귀 없음.</p>
-      <div class="pipe">Intake → Explore → Plan → Human Feedback → Build → Verify → QA → Deliver</div>
+  </section>
+
+  <section id="modes">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2><span class="en">One command. Four lanes.</span><span class="ko">명령 하나. 네 가지 레인.</span></h2>
+        <p class="lead en">The objective picks the lane. Broad work can fan out. Deep bug or legacy work stays with a single driver.</p>
+        <p class="lead ko">목표가 레인을 고릅니다. 넓은 작업은 펼치고, 깊은 버그나 레거시 작업은 단일 드라이버가 맡습니다.</p>
+      </div>
+      <div class="mode-grid">
+        <article class="mode-card reveal">
+          <span class="mode-label">GREENFIELD</span>
+          <h3><span class="en">Build and ship a new thing.</span><span class="ko">새 제품을 만들고 출시.</span></h3>
+          <p class="en">Demand validation before the first build.</p>
+          <p class="ko">첫 구현 전에 수요를 검증합니다.</p>
+          <div class="mode-pipe">Intake -> <b>Validate</b> -> Plan -> Build -> Verify -> QA -> Deliver</div>
+        </article>
+        <article class="mode-card debug reveal">
+          <span class="mode-label">DEBUG</span>
+          <h3><span class="en">Fix a hard failure.</span><span class="ko">까다로운 실패 수정.</span></h3>
+          <p class="en">Reproduce first. Diagnose with evidence. Fix only after approval.</p>
+          <p class="ko">먼저 재현합니다. 증거로 진단합니다. 승인 뒤에만 수정합니다.</p>
+          <div class="mode-pipe">Intake -> <b>Reproduce</b> -> Diagnose -> Fix -> Verify -> Deliver</div>
+        </article>
+        <article class="mode-card legacy reveal">
+          <span class="mode-label">LEGACY</span>
+          <h3><span class="en">Add to existing code.</span><span class="ko">기존 코드에 추가.</span></h3>
+          <p class="en">Map the touched area, then make the smallest accurate edit.</p>
+          <p class="ko">영향 범위를 파악한 뒤 가장 작은 정확한 수정을 합니다.</p>
+          <div class="mode-pipe">Intake -> <b>Explore</b> -> Plan -> Build -> Verify -> QA -> Deliver</div>
+        </article>
+        <article class="mode-card learn reveal">
+          <span class="mode-label">LEARN</span>
+          <h3><span class="en">Understand, no code.</span><span class="ko">이해하기, 코드 없음.</span></h3>
+          <p class="en">Source facts, teach, then check that you can explain it back.</p>
+          <p class="ko">사실을 모으고 가르친 뒤, 사용자가 다시 설명할 수 있는지 확인합니다.</p>
+          <div class="mode-pipe">Intake -> Source -> Bridge -> Teach -> <b>Check</b> -> Journal</div>
+        </article>
+      </div>
     </div>
+  </section>
+
+  <section id="gates">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2><span class="en">The gate stack is the product.</span><span class="ko">게이트 스택 자체가 제품입니다.</span></h2>
+        <p class="lead en">The skill is not a pretty prompt. It is a contract: each phase opens only after the current proof passes.</p>
+        <p class="lead ko">이 스킬은 예쁜 프롬프트가 아닙니다. 계약입니다. 현재 증명이 통과해야 다음 단계가 열립니다.</p>
+      </div>
+      <div class="gate-grid">
+        <article class="gate-item reveal"><span class="gate-no">1</span><h3><span class="en">Validate before build</span><span class="ko">구현 전 검증</span></h3><p class="en">GREENFIELD must show demand and `Decision: GO`.</p><p class="ko">GREENFIELD는 수요와 `Decision: GO`를 보여야 합니다.</p></article>
+        <article class="gate-item reveal"><span class="gate-no">2</span><h3><span class="en">Frozen plan</span><span class="ko">고정된 계획</span></h3><p class="en">Build implements the plan. It does not quietly redesign.</p><p class="ko">Build는 계획을 구현합니다. 조용히 재설계하지 않습니다.</p></article>
+        <article class="gate-item reveal"><span class="gate-no">3</span><h3><span class="en">Human Feedback</span><span class="ko">Human Feedback</span></h3><p class="en">Plain brief first, technical brief below, explicit approval.</p><p class="ko">먼저 쉬운 설명, 아래에 기술 브리프, 명시적 승인.</p></article>
+        <article class="gate-item reveal"><span class="gate-no">4</span><h3><span class="en">Builder != Verifier</span><span class="ko">구현자 != 검증자</span></h3><p class="en">A fresh adversary reruns claims from a clean worktree.</p><p class="ko">새 적대자가 깨끗한 워크트리에서 주장을 재실행합니다.</p></article>
+        <article class="gate-item reveal"><span class="gate-no">5</span><h3><span class="en">Expert review</span><span class="ko">전문가 리뷰</span></h3><p class="en">Architecture, security, and code review must approve.</p><p class="ko">아키텍처, 보안, 코드 리뷰가 승인해야 합니다.</p></article>
+        <article class="gate-item reveal"><span class="gate-no">6</span><h3><span class="en">Literal delivery gate</span><span class="ko">리터럴 딜리버리 게이트</span></h3><p class="en">`delivery-gate.sh` exits 0, or it is not done.</p><p class="ko">`delivery-gate.sh`가 exit 0이어야 완료입니다.</p></article>
+        <article class="gate-item reveal"><span class="gate-no">7</span><h3><span class="en">Bounded retry</span><span class="ko">제한된 재시도</span></h3><p class="en">Same error 3 times trips the circuit breaker.</p><p class="ko">같은 오류 3번이면 circuit breaker가 멈춥니다.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="vault">
+    <div class="wrap vault">
+      <div class="reveal">
+        <h2><span class="en">One vault. Fresh contexts.</span><span class="ko">하나의 볼트. 새로운 컨텍스트.</span></h2>
+        <p class="lead en">Subagents do not rely on chat memory. They hand off through `docs/changelog/&lt;date-slug&gt;/`, the durable audit trail for the run.</p>
+        <p class="lead ko">서브에이전트는 채팅 메모리에 기대지 않습니다. `docs/changelog/&lt;date-slug&gt;/`로 인계하고, 그 폴더가 실행의 영구 감사 기록이 됩니다.</p>
+        <div class="file-list">
+          <div class="file-chip"><code>README.md</code><span class="en">narrative, choices, escalations</span><span class="ko">서사, 선택, 에스컬레이션</span></div>
+          <div class="file-chip"><code>brief.md</code><span class="en">goal, criteria, validation</span><span class="ko">목표, 기준, 검증</span></div>
+          <div class="file-chip"><code>plan.md</code><span class="en">frozen plan and briefs</span><span class="ko">고정 계획과 브리프</span></div>
+          <div class="file-chip"><code>claims.md</code><span class="en">builder claims, untrusted</span><span class="ko">구현자 주장, 신뢰 안 함</span></div>
+          <div class="file-chip"><code>verification.md</code><span class="en">verdicts, coverage, QA</span><span class="ko">판정, 커버리지, QA</span></div>
+          <div class="file-chip"><code>state.json</code><span class="en">mode, phase, approval</span><span class="ko">모드, 단계, 승인</span></div>
+        </div>
+      </div>
+<pre class="vault-ascii reveal">vault/
+  brief.md        demand or symptom
+  plan.md         frozen scope
+  claims.md       useful, not trusted
+  verification.md verifier owns GREEN
+  state.json      resume and gates
+
+Only evidence moves forward.</pre>
+    </div>
+  </section>
+
+  <section id="proof">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2><span class="en">It caught bugs real tests missed.</span><span class="ko">진짜 테스트가 놓친 버그를 잡았습니다.</span></h2>
+        <p class="lead en">Public proof runs used one zero-dependency URL shortener service with 68 tests. Adversarial verification found real defects in 2 of 3 code-writing modes.</p>
+        <p class="lead ko">공개 증명 실행은 테스트 68개짜리 무의존성 URL 단축기 서비스로 진행했습니다. 적대적 검증은 코드 작성 모드 3개 중 2개에서 진짜 결함을 찾았습니다.</p>
+      </div>
+      <div class="proof-grid">
+        <article class="proof-item reveal">
+          <span class="tag">GREENFIELD</span>
+          <h3><span class="en">SSRF escaped the builder.</span><span class="ko">SSRF가 구현자를 통과했습니다.</span></h3>
+          <p class="en">The verifier caught 2 real SSRF bypasses and an unauthenticated 500 after the builder reported 43 green tests.</p>
+          <p class="ko">구현자가 테스트 43개 green을 보고한 뒤, 검증자가 진짜 SSRF 우회 2건과 인증 없는 500 오류를 잡았습니다.</p>
+        </article>
+        <article class="proof-item debug reveal">
+          <span class="tag">DEBUG</span>
+          <h3><span class="en">Race reproduced from a symptom.</span><span class="ko">증상만으로 레이스 재현.</span></h3>
+          <p class="en">Given only undercounted hits, it reproduced a 200-request lost-update race, fixed it, and rechecked repeated zero-loss runs.</p>
+          <p class="ko">조회수 과소 집계 증상만으로 200요청 lost-update 레이스를 재현하고, 수정하고, 반복 무손실 실행을 재검증했습니다.</p>
+        </article>
+        <article class="proof-item legacy reveal">
+          <span class="tag">LEGACY</span>
+          <h3><span class="en">TTL added without regressions.</span><span class="ko">회귀 없이 TTL 추가.</span></h3>
+          <p class="en">Legacy link-expiry shipped backward-compatible with records that predate the new field.</p>
+          <p class="ko">새 필드보다 오래된 레코드와 하위 호환되게 링크 만료 기능을 출시했습니다.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="install">
+    <div class="wrap install">
+      <div class="terminal reveal">
+        <div class="terminal-bar"><i></i><i></i><i></i></div>
+<pre class="en"><span class="c-soft"># clone the skill</span>
+git clone https://github.com/cskwork/supergoal-skill.git
+
+<span class="c-soft"># symlink keeps updates simple</span>
+ln -s "$(pwd)/supergoal-skill" ~/.claude/skills/supergoal
+
+<span class="c-soft"># then, in Claude Code</span>
+<span class="c-cyan">/supergoal</span> build a CLI todo app and ship it</pre>
+<pre class="ko"><span class="c-soft"># 스킬 클론</span>
+git clone https://github.com/cskwork/supergoal-skill.git
+
+<span class="c-soft"># 심볼릭 링크면 업데이트가 쉽습니다</span>
+ln -s "$(pwd)/supergoal-skill" ~/.claude/skills/supergoal
+
+<span class="c-soft"># 그다음 Claude Code에서</span>
+<span class="c-cyan">/supergoal</span> CLI 할 일 앱을 만들고 출시해줘</pre>
+      </div>
+      <div class="install-card reveal">
+        <h2><span class="en">No service. No TUI. No extra orchestrator.</span><span class="ko">서비스 없음. TUI 없음. 추가 오케스트레이터 없음.</span></h2>
+        <p class="en">This repo is the skill. Clone it, link it, and hand one objective to `/supergoal`.</p>
+        <p class="ko">이 저장소가 곧 스킬입니다. 클론하고, 연결하고, `/supergoal`에 목표 하나를 맡기세요.</p>
+        <div class="pill-row">
+          <span class="pill">Claude Code</span>
+          <span class="pill">Node 18+</span>
+          <span class="pill">git worktree</span>
+          <span class="pill">literal gates</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span><span class="en">Workflow adapted from oh-my-symphony by cskwork.</span><span class="ko">워크플로는 cskwork의 oh-my-symphony에서 발전했습니다.</span></span>
+    <a href="#top">Back to top</a>
   </div>
-  <div class="card violet learncard">
-    <div class="mode">learn · no code</div>
-    <h3><span class="en">Understand something</span><span class="ko">무언가 이해하기</span></h3>
-    <p class="en">"Explain X", "how does this work". No code, no implementation gates. It gathers the
-      facts first, bridges to what you already know, then teaches in a question-driven loop. It is
-      only done when <b>you can explain the idea back, unaided</b>. The session is journaled to <code>learn/</code>.</p>
-    <p class="ko">"X를 설명해줘", "이건 어떻게 동작해?" 코드도, 구현 게이트도 없습니다. 먼저 사실을 모으고,
-      당신이 이미 아는 것에 연결한 뒤, 질문 중심 루프로 가르칩니다. <b>당신이 그 개념을 스스로 설명해낼 수
-      있을 때에만</b> 완료됩니다. 세션은 <code>learn/</code>에 기록됩니다.</p>
-    <div class="pipe">Intake → Source → Bridge → <b>Teach loop</b> → Check (explain-back) → Journal</div>
-  </div>
-</div></section>
-
-<section id="lifecycle"><div class="wrap">
-  <h2><span class="en">How it works</span><span class="ko">동작 방식</span></h2>
-  <p class="lead en">The skill is the <b>director</b>: it never writes production code. It picks the mode,
-    hands each phase to a fresh expert subagent, and reads back only short summaries (never full
-    transcripts). The subagents never talk to each other; they pass work through one shared folder, the
-    <b>vault</b>. Phases run <b>forward only</b>: the next phase opens only after the current one passes
-    its check, and going backward happens only as an explicit, logged rewind.</p>
-  <p class="lead ko">스킬은 <b>디렉터</b>입니다. 프로덕션 코드를 직접 쓰지 않습니다. 모드를 정하고, 각 단계를 새
-    전문가 서브에이전트에게 넘기며, 전체 기록이 아닌 짧은 요약만 돌려받습니다. 서브에이전트끼리는 서로
-    대화하지 않고, 하나의 공유 폴더인 <b>볼트(vault)</b>를 통해 작업을 주고받습니다. 단계는 <b>앞으로만</b>
-    진행됩니다. 현재 단계가 검사를 통과해야 다음 단계가 열리고, 되돌아가는 일은 명시적으로 기록된
-    되감기로만 일어납니다.</p>
-
-  <h3 class="sub2"><span class="en">GREENFIELD: ship a new app</span><span class="ko">GREENFIELD: 새 앱 출시</span></h3>
-  <div class="flow">
-    <div class="step">Intake<small class="en">brief.md</small><small class="ko">brief.md</small></div><div class="arr">→</div>
-    <div class="step">Validate<small class="en">demand · Decision: GO</small><small class="ko">수요 · Decision: GO</small></div><div class="arr">→</div>
-    <div class="step">Plan<small class="en">frozen plan.md</small><small class="ko">고정된 plan.md</small></div><div class="arr">→</div>
-    <div class="step gate">Human Feedback<small class="en">two briefs + approval</small><small class="ko">브리프 2개 + 승인</small></div><div class="arr">→</div>
-    <div class="step">Build<small class="en">code + claims</small><small class="ko">코드 + 주장</small></div><div class="arr">→</div>
-    <div class="step">Verify<small class="en">adversary re-runs</small><small class="ko">검증자가 재실행</small></div><div class="arr">→</div>
-    <div class="step">QA<small class="en">black-box</small><small class="ko">블랙박스</small></div><div class="arr">→</div>
-    <div class="step gate">Deliver<small class="en">gate exits 0</small><small class="ko">게이트 exit 0</small></div>
-  </div>
-
-  <h3 class="sub2"><span class="en">DEBUG: root-cause a hard bug</span><span class="ko">DEBUG: 까다로운 버그 근본 원인 추적</span></h3>
-  <div class="flow">
-    <div class="step">Intake<small class="en">symptom</small><small class="ko">증상</small></div><div class="arr">→</div>
-    <div class="step">Reproduce<small class="en">failing test (red)</small><small class="ko">실패 테스트(red)</small></div><div class="arr">→</div>
-    <div class="step">Diagnose<small class="en">cause + fix plan</small><small class="ko">원인 + 수정안</small></div><div class="arr">→</div>
-    <div class="step gate">Human Feedback<small class="en">approve Fix</small><small class="ko">Fix 승인</small></div><div class="arr">→</div>
-    <div class="step">Fix<small class="en">root cause</small><small class="ko">근본 원인</small></div><div class="arr">→</div>
-    <div class="step">Verify<small class="en">repro green + suite</small><small class="ko">재현 green + 스위트</small></div><div class="arr">→</div>
-    <div class="step gate">Deliver</div>
-  </div>
-
-  <h3 class="sub2"><span class="en">LEGACY: add to existing code</span><span class="ko">LEGACY: 기존 코드에 기능 추가</span></h3>
-  <div class="flow">
-    <div class="step">Intake<small class="en">spec</small><small class="ko">명세</small></div><div class="arr">→</div>
-    <div class="step">Explore<small class="en">map what it touches</small><small class="ko">영향 범위 파악</small></div><div class="arr">→</div>
-    <div class="step">Plan<small class="en">surgical plan</small><small class="ko">외과적 수정안</small></div><div class="arr">→</div>
-    <div class="step gate">Human Feedback<small class="en">approve Build</small><small class="ko">Build 승인</small></div><div class="arr">→</div>
-    <div class="step">Build<small class="en">backward-compat</small><small class="ko">하위 호환</small></div><div class="arr">→</div>
-    <div class="step">Verify<small class="en">no regressions</small><small class="ko">회귀 없음</small></div><div class="arr">→</div>
-    <div class="step">QA<small class="en">+ nearby flows</small><small class="ko">+ 주변 플로우</small></div><div class="arr">→</div>
-    <div class="step gate">Deliver</div>
-  </div>
-
-  <h3 class="sub2"><span class="en">LEARN: understand something (no code)</span><span class="ko">LEARN: 무언가 이해하기 (코드 없음)</span></h3>
-  <div class="flow">
-    <div class="step">Intake<small class="en">topic</small><small class="ko">주제</small></div><div class="arr">→</div>
-    <div class="step">Source<small class="en">gather, read-only</small><small class="ko">수집·읽기 전용</small></div><div class="arr">→</div>
-    <div class="step">Bridge<small class="en">analogy to what you know</small><small class="ko">아는 것에 비유</small></div><div class="arr">→</div>
-    <div class="step">Teach loop<small class="en">Feynman + Socratic</small><small class="ko">파인만 + 소크라테스</small></div><div class="arr">→</div>
-    <div class="step gate">Check<small class="en">explain-back, unaided</small><small class="ko">스스로 설명</small></div><div class="arr">→</div>
-    <div class="step">Journal<small class="en">learn/</small><small class="ko">learn/</small></div>
-  </div>
-  <p class="note en">LEARN skips the build/verify/deliver gates entirely. Its delivery gate is human:
-    you restate every key term and the whole idea in your own words. Until you can, it loops.</p>
-  <p class="note ko">LEARN은 build/verify/deliver 게이트를 모두 건너뜁니다. 이 모드의 딜리버리 게이트는
-    사람입니다. 핵심 용어와 전체 개념을 당신의 말로 다시 설명해야 합니다. 그럴 수 있을 때까지 루프를 돕니다.</p>
-
-  <h3 class="sub2"><span class="en">Before it builds: a grounded plan, shaped by your domain's rules</span><span class="ko">구현에 들어가기 전: 도메인 규칙으로 다듬은, 근거 있는 계획</span></h3>
-  <p class="en" style="color:var(--dim)">Two advisory layers sharpen the plan before the Human Feedback
-    gate (neither replaces a hard gate). <b>Plan grounding</b>: in the Plan phase the planner self-runs a
-    design-tree grill against the project's own docs and architecture (<code>CONTEXT.md</code>, ADRs, the
-    explored map) and <em>answers each challenge itself</em>. Feature work sharpens terms and contracts;
-    "improve / refactor" work hunts for deepening opportunities. <b>Domain priority rules</b>: right after
-    mode detection the objective is routed through the <code>ten-rules</code> skill and distilled into ≤10
-    abstract priority rules (e.g. web-design + ecommerce), recorded once and carried into Plan, Build, and
-    Review.</p>
-  <p class="ko" style="color:var(--dim)">두 가지 advisory 레이어가 Human Feedback 게이트 전에 계획을
-    다듬습니다(둘 다 하드 게이트를 대체하지 않습니다). <b>Plan grounding</b>: Plan 단계에서 플래너가
-    프로젝트 자체 문서·아키텍처(<code>CONTEXT.md</code>, ADR, 탐색 맵)에 대해 디자인 트리 그릴을 스스로
-    돌리고 <em>각 질문에 직접 답합니다</em>. 기능 작업은 용어·계약을 날카롭게 하고, "개선/리팩터" 작업은 심화
-    기회를 찾습니다. <b>Domain priority rules</b>: 모드 감지 직후 목표를 <code>ten-rules</code> 스킬로
-    라우팅해 ≤10개의 추상적 우선순위 규칙(예: web-design + ecommerce)으로 정제하고, 한 번 기록해 Plan·
-    Build·Review까지 가져갑니다.</p>
-
-  <h3 class="sub2"><span class="en">Why it catches real bugs: the builder never grades itself</span><span class="ko">진짜 버그를 잡는 이유: 구현자는 자기 일을 채점하지 않습니다</span></h3>
-  <div class="diagram"><pre>
-   Builder  (writes the code)             Verifier  (a fresh, separate agent)
-   ──────────────────────────             ──────────────────────────────────
-   writes code + a CLAIM:                 reads ONLY the claim + the code,
-     "run-to-prove: npm test"   ───────▶  re-runs every "run-to-prove" from a
-     (its own report, NOT trusted)        clean slate, tries to disprove it,
-                                          and checks the test suite is real
-                                                       │
-                          verdict: RED  ◀──────────────┴──────────────▶  verdict: GREEN
-                               │                                              │
-                        back to Build                                  review by security
-                        (max 5 tries; same                             + code-review, both
-                         error 3× → STOP &                             must approve, then
-                         escalate to you)                              the delivery gate
-  </pre></div>
-  <p class="note en">In live testing this caught 2 SSRF holes and a concurrency race that all passed the
-    builder's own green tests. Separating who writes from who approves is the whole point.</p>
-  <p class="note ko">실제 테스트에서 이 구조가 구현자의 green 테스트를 모두 통과한 SSRF 취약점 2건과 동시성
-    레이스 1건을 잡아냈습니다. 누가 작성하느냐와 누가 승인하느냐를 분리하는 것이 핵심입니다.
-    (다이어그램은 정렬 유지를 위해 영어로 표기.)</p>
-
-  <h3 class="sub2"><span class="en">The approval and delivery gates: scripts the agent can't fake</span><span class="ko">승인 및 딜리버리 게이트: 에이전트가 위조할 수 없는 스크립트</span></h3>
-  <p class="en" style="color:var(--dim)"><code>human-feedback-gate.mjs</code> runs before Build or Fix.
-    It requires <code>plan.md</code> to include <code>### Plain-language brief</code> at the top,
-    <code>### Technical brief</code> below it, term definitions, and <code>state.json.approval</code>
-    for the target phase.</p>
-  <p class="ko" style="color:var(--dim)"><code>human-feedback-gate.mjs</code>는 Build 또는 Fix 전에 실행됩니다.
-    <code>plan.md</code> 안에 위쪽 평문 브리프, 아래쪽 기술 브리프, 용어 정의가 있어야 하고
-    <code>state.json.approval</code>이 대상 단계를 승인해야 합니다.</p>
-  <p class="en" style="color:var(--dim)"><code>delivery-gate.sh</code> is a plain shell script the agent is forbidden
-    to edit. It exits 0 only when, in order: (1) the required files exist (<code>brief.md</code>,
-    <code>plan.md</code>, <code>verification.md</code>); (2) <code>verification.md</code> says
-    <code>verdict: GREEN</code> with no leftover <code>verdict: RED</code>; (3) for a new app, the
-    <code>Decision:</code> is <code>GO</code>; (4) the project's own tests pass right here in the
-    workspace. Nothing is called "done" until that exit-0 output is shown as proof.</p>
-  <p class="ko" style="color:var(--dim)"><code>delivery-gate.sh</code>는 에이전트가 편집할 수 없는 평범한 셸
-    스크립트입니다. 다음을 순서대로 만족할 때만 exit 0이 됩니다: (1) 필수 파일 존재(<code>brief.md</code>,
-    <code>plan.md</code>, <code>verification.md</code>); (2) <code>verification.md</code>가
-    <code>verdict: GREEN</code>이고 남은 <code>verdict: RED</code>가 없음; (3) 새 앱이라면
-    <code>Decision:</code>가 <code>GO</code>; (4) 프로젝트 자체 테스트가 바로 이 워크스페이스에서 통과.
-    이 exit 0 출력이 증거로 제시되기 전까지는 무엇도 "완료"라 부르지 않습니다.</p>
-</div></section>
-
-<section id="vaultsec"><div class="wrap">
-  <h2><span class="en">The vault: the one shared file store</span><span class="ko">볼트: 단 하나의 공유 파일 저장소</span></h2>
-  <p class="lead en">Each phase is a fresh context, so a single folder
-    <code>docs/changelog/&lt;date-slug&gt;/</code> (committed as the run's changelog) is the only hand-off,
-    just six files. Two rules keep it honest: <b>claims are untrusted</b> (only the Verifier marks a
-    verdict, by re-running the proof) and <b>frozen files stay frozen</b> (the plan can't drift
-    mid-build; it's hashed and re-checked). On a re-run, <code>state.json</code> resumes where it left off.</p>
-  <p class="lead ko">각 단계는 새 컨텍스트라서, 단 하나의 폴더 <code>docs/changelog/&lt;date-slug&gt;/</code>(실행의
-    체인지로그로 커밋됨)가 유일한 인계 수단입니다. 파일 여섯 개뿐. 두 규칙이 정직성을 지킵니다:
-    <b>주장은 신뢰하지 않음</b>(검증자만이 증명을 재실행해 판정을 매김), <b>고정된 파일은 고정된 채로</b>(계획은
-    빌드 도중 변하지 않음. 해시로 재확인). 재실행 시 <code>state.json</code>이 멈춘 지점부터 이어갑니다.</p>
-  <table class="tbl">
-    <tr>
-      <th><span class="en">File</span><span class="ko">파일</span></th>
-      <th><span class="en">Written by</span><span class="ko">작성자</span></th>
-      <th><span class="en">Holds</span><span class="ko">내용</span></th>
-    </tr>
-    <tr class="en"><td><code>README.md</code></td><td>any</td><td>run narrative + decisions, hypotheses, escalations: the audit log &amp; folder index</td></tr>
-    <tr class="ko"><td><code>README.md</code></td><td>모두</td><td>실행 서사 + 결정·가설·에스컬레이션: 감사 로그이자 폴더 인덱스</td></tr>
-    <tr class="en"><td><code>brief.md</code></td><td>Analyst</td><td>goal, audience, acceptance criteria + a <code>## Validation</code> section ending in <code>Decision: GO/NO-GO</code> (greenfield)</td></tr>
-    <tr class="ko"><td><code>brief.md</code></td><td>분석가</td><td>목표·대상·인수 기준 + <code>Decision: GO/NO-GO</code>로 끝나는 <code>## Validation</code> 섹션(그린필드)</td></tr>
-    <tr class="en"><td><code>plan.md</code></td><td>Architect</td><td>frozen plan (+ architecture &amp; contracts), or the DEBUG fix plan, plus the Human Feedback packet</td></tr>
-    <tr class="ko"><td><code>plan.md</code></td><td>아키텍트</td><td>고정된 계획(+ 아키텍처·계약), DEBUG에서는 수정 계획, 그리고 Human Feedback 패킷</td></tr>
-    <tr class="en"><td><code>claims.md</code></td><td>Builder</td><td>append-only, <b>untrusted</b>: each slice + a <code>run-to-prove</code> command</td></tr>
-    <tr class="ko"><td><code>claims.md</code></td><td>구현자</td><td>추가 전용, <b>신뢰하지 않음</b>: 각 슬라이스 + <code>run-to-prove</code> 명령</td></tr>
-    <tr class="en"><td><code>verification.md</code></td><td>Verifier + QA</td><td>per-claim verdicts + a final <code>verdict: GREEN</code>, plus a <code>## QA</code> section</td></tr>
-    <tr class="ko"><td><code>verification.md</code></td><td>검증자 + QA</td><td>주장별 판정 + 최종 <code>verdict: GREEN</code>, 그리고 <code>## QA</code> 섹션</td></tr>
-    <tr class="en"><td><code>state.json</code></td><td>director</td><td>mode, phase, cycle counters, plan hash, approval, resume point</td></tr>
-    <tr class="ko"><td><code>state.json</code></td><td>디렉터</td><td>모드·단계·사이클 카운터·계획 해시·승인·재개 지점</td></tr>
-  </table>
-</div></section>
-
-<section id="experts"><div class="wrap">
-  <h2><span class="en">Expert roster</span><span class="ko">전문가 구성</span></h2>
-  <p class="lead en">Each role maps to an existing Claude Code agent type, runs on a model tier matched to
-    the difficulty of the task, and reads only the part of the vault it needs. A reviewer never
-    inherits the coder's assumptions.</p>
-  <p class="lead ko">각 역할은 기존 Claude Code 에이전트 타입에 대응되고, 작업 난이도에 맞춘 모델 티어에서
-    돌며, 볼트에서 필요한 부분만 읽습니다. 리뷰어가 코더의 가정을 물려받는 일이 없습니다.</p>
-  <table class="tbl">
-    <tr>
-      <th><span class="en">Role</span><span class="ko">역할</span></th>
-      <th><span class="en">Agent type</span><span class="ko">에이전트 타입</span></th>
-      <th><span class="en">Tier</span><span class="ko">티어</span></th>
-      <th><span class="en">Job</span><span class="ko">하는 일</span></th>
-    </tr>
-    <tr class="en"><td>Analyst</td><td><code>analyst</code></td><td>Opus</td><td>intake + demand validation</td></tr>
-    <tr class="ko"><td>분석가</td><td><code>analyst</code></td><td>Opus</td><td>인테이크 + 수요 검증</td></tr>
-    <tr class="en"><td>Architect</td><td><code>architect</code></td><td>Opus</td><td>plan, codebase map, contracts</td></tr>
-    <tr class="ko"><td>아키텍트</td><td><code>architect</code></td><td>Opus</td><td>계획·코드베이스 맵·계약</td></tr>
-    <tr class="en"><td>Builder</td><td><code>executor</code></td><td>Sonnet*</td><td>implement a slice + write a claim</td></tr>
-    <tr class="ko"><td>구현자</td><td><code>executor</code></td><td>Sonnet*</td><td>슬라이스 구현 + 주장 작성</td></tr>
-    <tr class="en"><td>Designer†</td><td><code>designer</code></td><td>Sonnet</td><td>UI/UX jobs, built to taste-skill v2 rules</td></tr>
-    <tr class="ko"><td>디자이너†</td><td><code>designer</code></td><td>Sonnet</td><td>UI/UX 작업, taste-skill v2 규칙대로 구현</td></tr>
-    <tr class="en"><td>Verifier</td><td><code>verifier</code> / <code>critic</code></td><td>Opus</td><td>adversarially re-run every claim</td></tr>
-    <tr class="ko"><td>검증자</td><td><code>verifier</code> / <code>critic</code></td><td>Opus</td><td>모든 주장을 적대적으로 재실행</td></tr>
-    <tr class="en"><td>Committee</td><td><code>security-reviewer</code> · <code>code-reviewer</code></td><td>Sonnet</td><td>independent review before Deliver</td></tr>
-    <tr class="ko"><td>심사위원단</td><td><code>security-reviewer</code> · <code>code-reviewer</code></td><td>Sonnet</td><td>Deliver 전 독립 리뷰</td></tr>
-    <tr class="en"><td>QA</td><td><code>qa-tester</code></td><td>Sonnet</td><td>black-box exercise the running app</td></tr>
-    <tr class="ko"><td>QA</td><td><code>qa-tester</code></td><td>Sonnet</td><td>실행 중인 앱을 블랙박스로 점검</td></tr>
-    <tr class="en"><td>Debugger</td><td><code>debugger</code> / <code>tracer</code></td><td>Opus</td><td>reproduce + find the root cause</td></tr>
-    <tr class="ko"><td>디버거</td><td><code>debugger</code> / <code>tracer</code></td><td>Opus</td><td>재현 + 근본 원인 추적</td></tr>
-  </table>
-  <p class="note en">*Opus when the slice is new or algorithm-heavy. †Designer joins only on jobs that
-    ship visual UI. It builds against the vendored taste-skill v2 design authority, and QA adds a
-    pre-flight design check. It never self-approves: the adversarial Verify and committee still gate Deliver.</p>
-  <p class="note ko">*새롭거나 알고리즘이 무거운 슬라이스에는 Opus. †디자이너는 시각적 UI를 출시하는 작업에만
-    합류합니다. 내장된 taste-skill v2 디자인 권위를 기준으로 구현하고, QA에 사전 점검 게이트가 추가됩니다.
-    스스로 승인하지 않습니다: 적대적 Verify와 위원회가 여전히 Deliver를 통제합니다.</p>
-</div></section>
-
-<section id="gates"><div class="wrap">
-  <h2><span class="en">The non-negotiable gates</span><span class="ko">타협 불가 게이트</span></h2>
-  <p class="lead en">The spine: never weakened, never skipped. Three are literal scripts the agent can't edit
-    to pass: <code>validate-gate.sh</code>, <code>human-feedback-gate.mjs</code>, and
-    <code>delivery-gate.sh</code>.</p>
-  <p class="lead ko">이 스킬의 척추: 절대 약화되지도, 건너뛰어지지도 않습니다. 그중 셋은 에이전트가 통과시키려고
-    편집할 수 없는 리터럴 스크립트입니다: <code>validate-gate.sh</code>,
-    <code>human-feedback-gate.mjs</code>, <code>delivery-gate.sh</code>.</p>
-  <div class="gates">
-    <div class="gate"><span class="n">1</span>
-      <span class="en"><b>Validate before build</b><span>For a new app, <code>validate-gate.sh</code> must confirm a <code>Decision: GO</code> (real demand + a scoped MVP) before Build opens.</span></span>
-      <span class="ko"><b>구현 전 검증</b><span>새 앱이라면 Build가 열리기 전에 <code>validate-gate.sh</code>가 <code>Decision: GO</code>(실제 수요 + 범위가 정해진 MVP)를 확인해야 합니다.</span></span></div>
-    <div class="gate"><span class="n">2</span>
-      <span class="en"><b>Plan freezes scope</b><span>Written once, then hashed and re-checked; Build implements it and can't quietly redesign mid-flight.</span></span>
-      <span class="ko"><b>계획이 범위를 고정</b><span>한 번 작성한 뒤 해시로 재확인합니다. Build는 그대로 구현할 뿐, 도중에 몰래 재설계할 수 없습니다.</span></span></div>
-    <div class="gate"><span class="n">3</span>
-      <span class="en"><b>Human Feedback approval</b><span>Before Build/Fix, the human sees a plain brief first and a novice-dev technical brief below it, then explicitly approves or sends it back.</span></span>
-      <span class="ko"><b>Human Feedback 승인</b><span>Build/Fix 전에 먼저 쉬운 설명을 보고, 아래에서 초보 개발자용 기술 브리프를 본 뒤 명시적으로 승인하거나 돌려보냅니다.</span></span></div>
-    <div class="gate"><span class="n">4</span>
-      <span class="en"><b>Builder ≠ Verifier</b><span>A fresh, separate agent re-runs every claim from a clean state. <code>claims.md</code> is untrusted.</span></span>
-      <span class="ko"><b>구현자 ≠ 검증자</b><span>별도의 새 에이전트가 모든 주장을 깨끗한 상태에서 재실행합니다. <code>claims.md</code>는 신뢰하지 않습니다.</span></span></div>
-    <div class="gate"><span class="n">5</span>
-      <span class="en"><b>Committee review</b><span>security + code-review run in parallel before Deliver; all must approve.</span></span>
-      <span class="ko"><b>위원회 리뷰</b><span>Deliver 전에 보안 + 코드리뷰가 병렬로 돌고, 전원이 승인해야 합니다.</span></span></div>
-    <div class="gate"><span class="n">6</span>
-      <span class="en"><b>Literal delivery gate</b><span><code>delivery-gate.sh</code> exits 0 (the project's own tests pass, re-run from a clean state), or it isn't done.</span></span>
-      <span class="ko"><b>리터럴 딜리버리 게이트</b><span><code>delivery-gate.sh</code>가 exit 0 (프로젝트 자체 테스트가 깨끗한 상태에서 재실행되어 통과), 아니면 완료가 아닙니다.</span></span></div>
-    <div class="gate"><span class="n">7</span>
-      <span class="en"><b>Bounded retry</b><span>The same error 3× trips <code>circuit-breaker.mjs</code> → stop, root-cause, escalate to you. No infinite loops.</span></span>
-      <span class="ko"><b>제한된 재시도</b><span>같은 오류가 3번이면 <code>circuit-breaker.mjs</code>가 작동 → 멈추고 근본 원인을 찾아 당신에게 보고합니다. 무한 루프 없음.</span></span></div>
-  </div>
-</div></section>
-
-<section id="proof"><div class="wrap">
-  <h2><span class="en">Proof it works</span><span class="ko">동작 증명</span></h2>
-  <p class="lead en">All three code-writing modes were run end-to-end on one real, zero-dependency service (68 tests).
-    The adversarial check caught a real defect in 2 of 3 runs: bugs that passed the builder's own
-    green tests. The full audit trail ships in <code>examples/url-shortener/docs/changelog/</code>.</p>
-  <p class="lead ko">코드를 쓰는 세 모드 모두 실제 무의존성 서비스 하나(테스트 68개)에서 엔드투엔드로 돌렸습니다. 적대적
-    검증이 3번 중 2번에서 진짜 결함을 잡아냈습니다. 구현자 자신의 green 테스트를 통과한 버그들입니다.
-    전체 감사 기록은 <code>examples/url-shortener/docs/changelog/</code>에 함께 담겨 있습니다.</p>
-  <div class="evi">
-    <div class="row"><span class="badge b-green">GREENFIELD</span>
-      <span class="what en"><b>2 real SSRF holes + an unauth 500</b> caught by the verifier. All passed the builder's 43 green tests. Fixed before shipping.</span>
-      <span class="what ko"><b>진짜 SSRF 취약점 2건 + 인증 없는 500 오류</b>를 검증자가 포착. 모두 구현자의 green 테스트 43개를 통과한 것들. 출시 전 수정 완료.</span></div>
-    <div class="row"><span class="badge b-red">DEBUG</span>
-      <span class="what en">Given only a symptom, reproduced a <b>lost-update race</b> (200 hits → counted 1), found the cause, fixed it, re-verified 0 lost across repeated runs.</span>
-      <span class="what ko">증상만 주어진 상태에서 <b>lost-update 레이스</b>(조회 200회 → 1회로 집계)를 재현하고, 원인을 찾아 고친 뒤, 반복 실행에서 0건 손실로 재검증.</span></div>
-    <div class="row"><span class="badge b-blue">LEGACY</span>
-      <span class="what en">Added link-expiry (TTL) with <b>zero regressions</b>. Still works with records saved before the field existed. Review-approved, gate-green.</span>
-      <span class="what ko">링크 만료(TTL)를 <b>회귀 0건</b>으로 추가. 필드가 생기기 전에 저장된 레코드와도 여전히 동작. 리뷰 승인, 게이트 green.</span></div>
-    <div class="row"><span class="badge b-green">BENCHMARK</span>
-      <span class="what en">Private-codebase comparison: <b><code>/supergoal</code> was the only arm to pass every hidden check</b> against plain Codex CLI and Codex Goal mode. <a href="experiments/2026-05-30-private-codebase-comparison/">Read the evidence report.</a></span>
-      <span class="what ko">비공개 코드베이스 비교: plain Codex CLI와 Codex Goal mode 대비 <b><code>/supergoal</code>만 모든 hidden check를 통과</b>했습니다. <a href="experiments/2026-05-30-private-codebase-comparison/">증거 리포트 보기.</a></span></div>
-    <div class="row"><span class="badge b-blue">UI/UX</span>
-      <span class="what en">On a visual landing-page objective, the UI/UX overlay's adversarial QA caught <b>a WCAG contrast fail + missing dark/light handling</b> before delivery, then fixed both to GREEN. <a href="examples/workflow-landing/">See the live page</a> · <a href="https://github.com/cskwork/supergoal-skill/blob/main/docs/examples/workflow-landing/verification.md">verification report</a>.</span>
-      <span class="what ko">시각적 랜딩 페이지 목표에서 UI/UX 오버레이의 적대적 QA가 <b>WCAG 대비 미달 + 다크/라이트 모드 누락</b>을 출시 전에 포착하고, 둘 다 GREEN까지 수정했습니다. <a href="examples/workflow-landing/">라이브 페이지 보기</a> · <a href="https://github.com/cskwork/supergoal-skill/blob/main/docs/examples/workflow-landing/verification.md">검증 리포트</a>.</span></div>
-  </div>
-</div></section>
-
-<footer><div class="wrap">
-  <span class="en">Concept &amp; workflow adapted from <a href="https://github.com/cskwork/oh-my-symphony">oh-my-symphony</a>
-  (gated lanes, shared vault, adversarial verify, literal delivery gate), rebuilt self-contained for
-  Claude Code. MIT licensed. Built by <a href="https://github.com/cskwork">cskwork</a>.</span>
-  <span class="ko">개념과 워크플로는 <a href="https://github.com/cskwork/oh-my-symphony">oh-my-symphony</a>에서
-  가져왔습니다(게이트 레인, 공유 볼트, 적대적 검증, 리터럴 딜리버리 게이트). Claude Code용으로 독립
-  실행되게 재구성했습니다. MIT 라이선스. 제작: <a href="https://github.com/cskwork">cskwork</a>.</span>
-</div></footer>
+</footer>
 
 <script>
-(function(){
-  var root = document.documentElement;
-  var btns = document.querySelectorAll('.langtoggle button');
-  function set(lang){
-    root.setAttribute('lang', lang);
-    try{ localStorage.setItem('jdi-lang', lang); }catch(e){}
-    btns.forEach(function(b){ b.setAttribute('aria-pressed', String(b.getAttribute('data-lang') === lang)); });
-  }
-  var saved;
-  try{ saved = localStorage.getItem('jdi-lang'); }catch(e){}
-  var initial = saved || (((navigator.language || '').toLowerCase().indexOf('ko') === 0) ? 'ko' : 'en');
-  set(initial);
-  btns.forEach(function(b){
-    b.addEventListener('click', function(){ set(b.getAttribute('data-lang')); });
-  });
+  (function () {
+    var root = document.documentElement;
+    var langButtons = Array.prototype.slice.call(document.querySelectorAll("[data-lang]"));
+    var fsButtons = Array.prototype.slice.call(document.querySelectorAll("[data-fs]"));
+    var storedLang = localStorage.getItem("supergoal-lang");
+    var storedFs = Number(localStorage.getItem("supergoal-fs") || "1");
+    var lang = storedLang || ((navigator.language || "").toLowerCase().startsWith("ko") ? "ko" : "en");
+    var fs = Math.min(1.18, Math.max(.92, storedFs || 1));
 
-  // text-size adjuster (A- / A+): scales --fs, persists, clamps at the ends
-  var FS_MIN = 0.85, FS_MAX = 1.45, FS_STEP = 0.1;
-  var fsBtns = document.querySelectorAll('.fsctl button');
-  function readFs(){
-    var raw;
-    try{ raw = localStorage.getItem('jdi-fs'); }catch(e){}
-    var v = parseFloat(raw);
-    return (v >= FS_MIN && v <= FS_MAX) ? v : 1;
-  }
-  function applyFs(v){
-    v = Math.round(Math.min(FS_MAX, Math.max(FS_MIN, v)) * 100) / 100;
-    root.style.setProperty('--fs', v);
-    try{ localStorage.setItem('jdi-fs', v); }catch(e){}
-    fsBtns.forEach(function(b){
-      var dir = b.getAttribute('data-fs');
-      b.disabled = (dir === 'dec' && v <= FS_MIN) || (dir === 'inc' && v >= FS_MAX);
+    function syncLang(next) {
+      lang = next === "ko" ? "ko" : "en";
+      root.lang = lang;
+      localStorage.setItem("supergoal-lang", lang);
+      langButtons.forEach(function (button) {
+        button.setAttribute("aria-pressed", button.dataset.lang === lang ? "true" : "false");
+      });
+    }
+
+    function syncFs(next) {
+      fs = Math.min(1.18, Math.max(.92, next));
+      root.style.setProperty("--fs", fs.toFixed(2));
+      localStorage.setItem("supergoal-fs", String(fs));
+      fsButtons.forEach(function (button) {
+        if (button.dataset.fs === "dec") button.disabled = fs <= .93;
+        if (button.dataset.fs === "inc") button.disabled = fs >= 1.17;
+      });
+    }
+
+    langButtons.forEach(function (button) {
+      button.addEventListener("click", function () { syncLang(button.dataset.lang); });
     });
-  }
-  applyFs(readFs());
-  fsBtns.forEach(function(b){
-    b.addEventListener('click', function(){
-      applyFs(readFs() + (b.getAttribute('data-fs') === 'inc' ? FS_STEP : -FS_STEP));
+    fsButtons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        syncFs(fs + (button.dataset.fs === "inc" ? .08 : -.08));
+      });
     });
-  });
-})();
+    syncLang(lang);
+    syncFs(fs);
+  })();
+
+  (function () {
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var reveals = Array.prototype.slice.call(document.querySelectorAll(".reveal"));
+    if (!("IntersectionObserver" in window) || reduce) {
+      reveals.forEach(function (item) { item.classList.add("is-visible"); });
+      return;
+    }
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: .12 });
+    reveals.forEach(function (item, index) {
+      item.style.transitionDelay = Math.min(index % 4, 3) * 70 + "ms";
+      observer.observe(item);
+    });
+  })();
+
+  (function () {
+    var canvas = document.getElementById("proof-map");
+    if (!canvas) return;
+    var ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var nodes = [
+      { x: .12, y: .28, label: "Intake" },
+      { x: .30, y: .18, label: "Plan" },
+      { x: .48, y: .36, label: "Human" },
+      { x: .63, y: .22, label: "Build" },
+      { x: .78, y: .42, label: "Verify" },
+      { x: .90, y: .27, label: "Deliver" }
+    ];
+
+    function resize() {
+      var rect = canvas.getBoundingClientRect();
+      canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+      canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      draw(performance.now());
+    }
+
+    function point(node) {
+      var w = canvas.clientWidth;
+      var h = canvas.clientHeight;
+      return { x: node.x * w, y: node.y * h };
+    }
+
+    function line(a, b, color, width) {
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.stroke();
+    }
+
+    function draw(t) {
+      var w = canvas.clientWidth;
+      var h = canvas.clientHeight;
+      ctx.clearRect(0, 0, w, h);
+
+      var gradient = ctx.createLinearGradient(0, 0, w, h);
+      gradient.addColorStop(0, "rgba(92,255,154,.18)");
+      gradient.addColorStop(.42, "rgba(100,216,255,.13)");
+      gradient.addColorStop(1, "rgba(255,191,71,.08)");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.save();
+      ctx.globalAlpha = .22;
+      ctx.strokeStyle = "rgba(244,247,251,.16)";
+      ctx.lineWidth = 1;
+      for (var x = -80; x < w + 160; x += 92) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x - 140, h);
+        ctx.stroke();
+      }
+      for (var y = 30; y < h; y += 92) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y + 110);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      var pts = nodes.map(point);
+      for (var i = 0; i < pts.length - 1; i += 1) {
+        line(pts[i], pts[i + 1], "rgba(100,216,255,.28)", 1.2);
+      }
+      line(pts[1], pts[4], "rgba(92,255,154,.18)", 1);
+      line(pts[2], pts[5], "rgba(255,191,71,.17)", 1);
+
+      var phase = reduce ? .52 : ((t / 2400) % 1);
+      for (var j = 0; j < pts.length - 1; j += 1) {
+        var a = pts[j];
+        var b = pts[j + 1];
+        var offset = (phase + j * .16) % 1;
+        var px = a.x + (b.x - a.x) * offset;
+        var py = a.y + (b.y - a.y) * offset;
+        ctx.beginPath();
+        ctx.arc(px, py, 4.2, 0, Math.PI * 2);
+        ctx.fillStyle = j === 3 ? "rgba(255,111,111,.88)" : "rgba(92,255,154,.9)";
+        ctx.shadowColor = ctx.fillStyle;
+        ctx.shadowBlur = 18;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+
+      pts.forEach(function (p, index) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 18, 0, Math.PI * 2);
+        ctx.fillStyle = index === 4 ? "rgba(255,111,111,.18)" : "rgba(5,7,10,.72)";
+        ctx.strokeStyle = index === 4 ? "rgba(255,111,111,.7)" : "rgba(92,255,154,.72)";
+        ctx.lineWidth = 1.5;
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.font = "700 11px SFMono-Regular, Consolas, monospace";
+        ctx.fillStyle = "rgba(244,247,251,.72)";
+        ctx.fillText(nodes[index].label, p.x + 24, p.y + 4);
+      });
+    }
+
+    function loop(t) {
+      draw(t);
+      if (!reduce) requestAnimationFrame(loop);
+    }
+
+    window.addEventListener("resize", resize, { passive: true });
+    resize();
+    if (!reduce) requestAnimationFrame(loop);
+  })();
 </script>
-
 </body>
 </html>

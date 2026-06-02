@@ -113,3 +113,19 @@ commands, file shapes, pass/fail conditions, and role boundaries. Long rationale
 raise token cost without changing behavior. `reference/taste-skill-v2.md` was converted from a verbatim
 vendored copy into a compressed derivative with the upstream source and commit preserved in the banner,
 because keeping the full upstream body defeated the context-saving goal.
+
+## GitHub Pages marketing refresh
+
+### Decision
+
+Rebuild `docs/index.html` as a promotional landing page instead of a dense walkthrough: kinetic
+proof-console hero, animated canvas workflow map, shorter bilingual copy, stronger install CTA,
+condensed mode/gate/vault/proof sections, and reduced-motion fallback.
+
+### Reasoning
+
+The previous page explained the contract accurately but read like documentation. The Pages surface is
+the first public advertising path for the skill, so the highest-value message should be visible in the
+first viewport: `/supergoal` ships agent work with proof, separates Builder from Verifier, and refuses
+to call work done until scripts pass. The redesign keeps the same operational claims while making the
+page more memorable and easier to scan.

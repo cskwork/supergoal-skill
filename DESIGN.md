@@ -23,7 +23,7 @@ opens — cheap evidence first, code second — so the skill never builds someth
   parallel validation before delivery.
 - **ultraqa** → diagnose→fix split (Opus diagnoses, Sonnet fixes) + same-error-3× circuit breaker.
 - **ultrawork** → parallel-wave dispatch + tiered model routing (Haiku/Sonnet/Opus) + background >30s.
-- **Frontmatter/house style** → `name` + trigger-rich `description` + `argument-hint` + `level`;
+- **Frontmatter/house style** → portable `name` + trigger-rich `description`;
   thin `SKILL.md` spine + `reference/*.md` loaded on demand (progressive disclosure).
 - **taste-skill v2** (leonxlnx/taste-skill, `design-taste-frontend`) → the design authority for UI/UX
   jobs. Vendored **verbatim** as `reference/taste-skill-v2.md` (only file v2 needs; companions like

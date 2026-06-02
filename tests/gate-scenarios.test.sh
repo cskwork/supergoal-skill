@@ -223,7 +223,7 @@ echo; echo "SCENARIO 5 — end-to-end against the REAL committed example vaults"
 # ----------------------------------------------------------------------
 if [ -d "$EX" ]; then
   run_case "5.1 example suite runs green (node --test)" 0 "pass" \
-    bash -c "cd '$EX' && node --test 2>&1 | grep -E '# (pass|fail)'"
+    bash -c "cd '$EX' && node --test 2>&1"
   run_case "5.2 delivery gate on REAL url-shortener vault" 0 "GATE PASS" \
     bash -c "cd '$EX' && bash '$DELIVERY' docs/changelog/url-shortener-service 'node --test'"
   run_case "5.3 delivery gate on REAL legacy vault (no Decision)" 0 "GATE PASS" \

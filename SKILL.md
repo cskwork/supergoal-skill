@@ -1,8 +1,6 @@
 ---
 name: supergoal
 description: Run one objective through a gated build/debug/legacy workflow with expert subagents, Human Feedback approval before implementation, adversarial verification, and a delivery gate. Use for "/supergoal", "supergoal", "build X end to end", "fix this bug", or "add this feature".
-argument-hint: "<objective: an app idea, a bug to fix, or a feature to add>"
-level: 4
 ---
 
 # /supergoal

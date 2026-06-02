@@ -83,3 +83,33 @@ the skill instead of being instruction-only.
   mode-agnostic `delivery-gate.sh`) because QA is conditional on app type; the `Fallback:` line is the
   precise backstop — agent-browser stays preferred, a justified fallback is still allowed, only a SILENT
   fallback fails.
+
+## Supergoal skill wording compression
+
+### Decision
+
+Shorten `SKILL.md` so agent runs spend less context on repeated prose while retaining every operational
+contract: conductor-only execution, branch-scoped worktrees, topology selection, Human Feedback,
+adversarial Verify, QA/delivery gates, vault files, stop conditions, and final checklist.
+
+### Reasoning
+
+The skill body is itself loaded into agent context. Concise contract language lowers context cost and
+scan time, but changing gate names, commands, phase order, or stop conditions would change behavior.
+This update compresses wording only; the executable gates and referenced files are unchanged.
+
+## Reference wording compression
+
+### Decision
+
+Compress every `reference/*.md` file so fresh agents spend less context on repeated rationale while
+retaining the operational contract: mode pipelines, dispatch roles, vault fields, gate commands,
+coverage requirements, QA evidence, LEARN tutoring loop, UI/UX overlay, and design pre-flight rules.
+
+### Reasoning
+
+Reference files are loaded phase-by-phase into agent context. The useful content is the contract:
+commands, file shapes, pass/fail conditions, and role boundaries. Long rationale and repeated examples
+raise token cost without changing behavior. `reference/taste-skill-v2.md` was converted from a verbatim
+vendored copy into a compressed derivative with the upstream source and commit preserved in the banner,
+because keeping the full upstream body defeated the context-saving goal.

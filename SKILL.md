@@ -22,8 +22,10 @@ work; use normal direct collaboration.
 - Human Feedback approval is required before Build/Fix.
 - Builder != Verifier; Deliver needs hard gates plus architect/security/code-review approval.
 - Atomic explanations: visible atom map -> plain definition -> process trace -> composed
-  explanation. Use before Human Feedback, LEARN Bridge, or teaching. A glossary alone is not enough;
-  trace trigger -> read/derive -> decide -> write/call -> fallback/stop -> result.
+  explanation. Use before Human Feedback, LEARN Bridge, or teaching. Use natural user-facing labels
+  in the output language; Korean should say `핵심 용어`/`구성 요소`, not literal `원자`.
+  A glossary alone is not enough; trace trigger -> read/derive -> decide -> write/call ->
+  fallback/stop -> result.
 
 ## Step 0 - Mode
 

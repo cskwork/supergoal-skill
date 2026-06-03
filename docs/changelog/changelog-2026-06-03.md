@@ -1,5 +1,18 @@
 # Changelog 2026-06-03
 
+## LEARN Korean Label Naturalization
+
+### Decision
+
+Keep the internal atom-map decomposition contract, but make Korean LEARN output label it as
+`핵심 용어`, `구성 요소`, and `사용되는 용어` instead of literal `원자`.
+
+### Reasoning
+
+The contract needs precise decomposition for agents, but the teaching surface should use idiomatic
+Korean. Literal `원자` made the lesson feel translated and unnatural, while `핵심 용어` preserves the
+same structure in language a learner expects.
+
 ## LEARN Atom Map and Process Trace Enforcement
 
 ### Decision

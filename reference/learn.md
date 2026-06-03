@@ -69,21 +69,22 @@ failure path, include one fallback/stop row before the takeaway.
 
 ## Opening output format
 
-Use the user's language. The atom map comes first; each atom gets a plain definition and a process
-role before the full explanation.
+Use the user's language. The atom map comes first internally, but label it naturally for the user:
+Korean lessons use `핵심 용어` or `구성 요소`, not literal `원자`. Each entry gets a plain definition
+and a process role before the full explanation.
 
 ```markdown
 ## [주제]를 왜 쓰는지 감 잡기
 
-먼저 쪼개서 본다:
+먼저 핵심 용어부터 정리한다:
 
-| 원자 | 쉬운 뜻 | 흐름에서 하는 일 |
+| 핵심 용어 | 쉬운 뜻 | 흐름에서 하는 일 |
 |---|---|
-| 원자 1 | 전문용어 없이, 한 문장으로 풀어쓴 정의 | 이 단계에서 맡는 역할 |
-| 원자 2 | ... | ... |
-| 원자 3 | ... | ... |
-| 원자 4 | ... | ... |
-| 원자 5 | ... | ... |
+| 용어 1 | 전문용어 없이, 한 문장으로 풀어쓴 정의 | 이 단계에서 맡는 역할 |
+| 용어 2 | ... | ... |
+| 용어 3 | ... | ... |
+| 용어 4 | ... | ... |
+| 용어 5 | ... | ... |
 
 [비유 한 줄 - 위 용어들을 사용자의 세계로 잇는 다리]
 
@@ -91,7 +92,7 @@ role before the full explanation.
 
 과정 추적:
 
-| 단계 | 쓰는 원자 | 일어나는 일 | 규칙/조건 | 결과/부작용 |
+| 단계 | 사용되는 용어 | 일어나는 일 | 규칙/조건 | 결과/부작용 |
 |---|---|---|---|---|
 | 1 | ... | ... | ... | ... |
 | 2 | ... | ... | ... | ... |
@@ -113,6 +114,8 @@ Rules:
 
 - Level 5 uses about 5 atoms and 3-5 trace rows. Levels 1-2 use 1-3 atoms and one trace row.
 - Definitions and trace rows must fit the saved level. If they need jargon, define or rewrite.
+- User-facing labels should be idiomatic in the user's language. In Korean, prefer `핵심 용어`,
+  `구성 요소`, and `사용되는 용어`; avoid exposing the literal label `원자`.
 - No term appears in prose before the table.
 - For coding/codebase topics, include one short "사람 생각 -> 기계 단계" bridge before any code.
 - Never replace the process trace with a summary sentence when the topic is code, algorithm, system

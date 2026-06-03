@@ -34,6 +34,12 @@ Coding/debug runs record before Intake writes:
 ```json
 "base_branch": "main",
 "target_branch": "main",
+"branch_ref_verification": {
+  "repo_root": "/abs/path/to/target/repo",
+  "base_ref_exists": true,
+  "target_ref_exists": true,
+  "verified_before_worktree": true
+},
 "run_branch": "supergoal/2026-06-02-add-sso",
 "worktree_path": "/abs/path/.supergoal-worktrees/2026-06-02-add-sso",
 "worktree_retention": {
@@ -44,11 +50,14 @@ Coding/debug runs record before Intake writes:
 }
 ```
 
-`base_branch` creates the run worktree. `target_branch` receives the accepted merge; default equals base
-if the user gave only one branch. `run_branch` stores implementation commits. `worktree_path` is where
-Build/Fix writers work. `worktree_retention` keeps accepted run worktrees available for review while
-preventing repo-local worktree buildup; it never targets the active run worktree, original checkout, or
-manual worktrees outside the repo-managed pool.
+`base_branch` is the user-confirmed source branch and creates the run worktree. `target_branch`
+receives the accepted merge; default equals base if the user gave only one branch. Verify both refs in
+the resolved target repo before worktree creation and record the result in `branch_ref_verification`;
+if either ref is missing, ask for corrected source/target branch names instead of substituting another
+branch. `run_branch` stores implementation commits. `worktree_path` is where Build/Fix writers work.
+`worktree_retention` keeps accepted run worktrees available for review while preventing repo-local
+worktree buildup; it never targets the active run worktree, original checkout, or manual worktrees
+outside the repo-managed pool.
 
 ## `cycles`
 

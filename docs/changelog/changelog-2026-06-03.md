@@ -93,3 +93,19 @@ template:
 The fallback contract did not spell out terminology pressure, scenario pressure, code contradiction
 checks, and the bar for durable decisions. The domain-agent template now carries those rules so
 first-run knowledge packs avoid becoming generic implementation notes.
+
+## Branch Ref Verification Before Worktree
+
+### Decision
+
+Require coding/debug/legacy runs to resolve the target repository first, ask for the source branch
+and target branch unless both are explicit, and verify both refs in that repo before creating the run
+worktree. Missing refs now stop the run and ask for corrected source/target branch names instead of
+guessing from nearby branches.
+
+### Reasoning
+
+The previous wording required base/target collection but did not force repo-local ref verification
+before worktree creation. In a multi-repo checkout, a branch name can exist at the umbrella root while
+being absent in the actual target repo. The new check prevents wasted `git worktree add` attempts and
+keeps branch choice explicit.

@@ -42,8 +42,12 @@ explain-back instead of persistent goal tools; see `reference/learn.md`.
 
 For **GREENFIELD**, **DEBUG**, and **LEGACY**, isolate before any repo mutation:
 
-1. Immediately after mode detection, ask the user for the base git branch and ask the user for the
-   target branch. If the user gives only base, the default target branch is the base branch.
+1. Immediately after mode detection, resolve the target repo root, then ask the user for the base git
+   branch (the source branch) and ask the user for the target branch unless both are explicitly
+   provided. If the user gives only base, the default target branch is the base branch. Before any
+   vault write or worktree command, verify both refs exist in the target repo before creating the
+   worktree. If either ref is missing, ask for corrected source/target branch names; do not
+   substitute nearby branch names or create files.
 2. Record `base_branch`, `target_branch`, `run_branch`, `worktree_path`, and
    `worktree_retention` in `state.json` and the run `README.md`.
 3. Create the run worktree from the base branch before Intake writes to the repo:

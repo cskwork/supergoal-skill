@@ -7,12 +7,14 @@ Vault: `docs/changelog/<date>-<slug>/`, six files only; see `vault.md`.
 
 ## Branch/worktree isolation
 
-For GREENFIELD, DEBUG, and LEGACY, ask `base_branch` and `target_branch` immediately after mode
-detection. Default target to base when only one branch is given. Create a run branch/worktree from
-base; implementation phases run inside the branch-scoped worktree. After Deliver passes and the user
-accepts, merge run branch into target. Keep the three most recent completed run worktrees for the
-repo; prune only the oldest repo-managed completed run worktree when the retained count exceeds
-three.
+For GREENFIELD, DEBUG, and LEGACY, resolve the target repo first, then ask `base_branch`
+(source branch) and `target_branch` immediately after mode detection unless both are explicit.
+Default target to base when only one branch is given. Verify both source/base and target refs in that
+repo before creating the run worktree; if either ref is missing, ask for corrected branch names
+instead of guessing. Create a run branch/worktree from base; implementation phases run inside the
+branch-scoped worktree. After Deliver passes and the user accepts, merge run branch into target. Keep
+the three most recent completed run worktrees for the repo; prune only the oldest repo-managed
+completed run worktree when the retained count exceeds three.
 
 ## Topology rule
 

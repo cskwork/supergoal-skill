@@ -5,6 +5,12 @@
   "topology": "fan-out | single-driver",
   "base_branch": "<user-provided base branch for the run worktree>",
   "target_branch": "<target branch for final merge; defaults to base_branch>",
+  "branch_ref_verification": {
+    "repo_root": "<absolute path to the target repo root>",
+    "base_ref_exists": true,
+    "target_ref_exists": true,
+    "verified_before_worktree": true
+  },
   "run_branch": "supergoal/<date>-<slug>",
   "worktree_path": "<absolute path to the run worktree>",
   "worktree_retention": {

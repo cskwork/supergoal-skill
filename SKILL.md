@@ -21,8 +21,9 @@ work; use normal direct collaboration.
 - Never weaken, skip, or edit gate scripts to pass.
 - Human Feedback approval is required before Build/Fix.
 - Builder != Verifier; Deliver needs hard gates plus architect/security/code-review approval.
-- Atomic explanations: name atoms -> define -> connect -> compose. Use before Human Feedback, LEARN
-  Bridge, or teaching.
+- Atomic explanations: visible atom map -> plain definition -> process trace -> composed
+  explanation. Use before Human Feedback, LEARN Bridge, or teaching. A glossary alone is not enough;
+  trace trigger -> read/derive -> decide -> write/call -> fallback/stop -> result.
 
 ## Step 0 - Mode
 

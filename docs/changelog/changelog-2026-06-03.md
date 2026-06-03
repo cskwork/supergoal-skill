@@ -1,5 +1,21 @@
 # Changelog 2026-06-03
 
+## LEARN Atom Map and Process Trace Enforcement
+
+### Decision
+
+Make LEARN explanations visibly decompose knowledge into an atom map, plain definitions, a process
+trace, and only then the composed explanation.
+
+Added `tests/learn-contract.test.sh` so future edits keep the atom-role table, process-trace table,
+low-difficulty trace requirement, and glossary-only rejection in place.
+
+### Reasoning
+
+Definitions alone do not explain behavior. The stricter contract forces each lesson to show what
+the pieces are, what role each piece plays, and what happens step by step, including decision points,
+side effects, and fallback/stop rows when they exist.
+
 ## Domain Context Overlay
 
 - Added `reference/domain-context.md` so `supergoal` can keep domain expertise separate from the run

@@ -93,6 +93,12 @@ them once in the run's `README.md` (`## Priority Rules`) and carry them into eve
 quality; they never replace gates. Mechanism:
 `reference/domain-rules.md`.
 
+**Domain context overlay**: for GREENFIELD Plan, DEBUG Reproduce/Diagnose, and LEGACY Explore, load
+`reference/domain-context.md`. It retrieves or initializes repo-local knowledge at the target repo
+root, default `.domain-agent/`, then writes a compact `## Domain Brief` to the run `README.md`.
+If no knowledge pack exists, ask where to store it and add the chosen path to `.gitignore` before
+writing local knowledge. Saved context routes exploration; current docs/code remain authoritative.
+
 **UI/UX overlay**: if the objective ships user-facing visual UI (landing page, redesign, "make it
 look good", frontend look-and-feel), load `reference/ui-ux.md`. It makes
 `reference/taste-skill-v2.md` the design authority and adds Designer + pre-flight QA. Load only on
@@ -150,6 +156,7 @@ also dispatch **Designer** with `reference/taste-skill-v2.md` (see `reference/ui
 | `agents/<role>.md` | Role dispatch: bundled persona prompt; one file per role |
 | `reference/vault.md` | At Intake (create vault) and whenever a phase passes state |
 | `reference/domain-rules.md` | Intake: route to `ten-rules`; distill <=10 priority rules |
+| `reference/domain-context.md` | GREENFIELD Plan, DEBUG Reproduce/Diagnose, LEGACY Explore: repo-local Domain Brief |
 | `reference/market-research.md` | GREENFIELD Validate: demand validation |
 | `reference/quality-gates.md` | Verify, Review, Deliver: production-readiness gates |
 | `reference/debugging.md` | DEBUG Diagnose: `diagnose` feedback-loop method |
@@ -169,6 +176,7 @@ also dispatch **Designer** with `reference/taste-skill-v2.md` (see `reference/ui
 | `templates/contrast-gate.mjs <pairs.json>` | UI/UX QA: computes WCAG contrast (body AAA, other text AA); no eyeballing |
 | `templates/human-feedback-gate.mjs <vault> <Build\|Fix>` | Human Feedback: checks both briefs + recorded approval |
 | `templates/circuit-breaker.mjs <state.json> <sig>` | Failed fix cycle: trips after 3 identical normalized error signatures |
+| `templates/domain-agent/` | Domain context first-run scaffold copied to the target repo knowledge path |
 
 ## Escalation & stop conditions
 
@@ -181,6 +189,7 @@ also dispatch **Designer** with `reference/taste-skill-v2.md` (see `reference/ui
 ## Final checklist (before claiming done)
 
 - [ ] Mode stated and correct pipeline run
+- [ ] Domain Brief created or explicitly skipped, and any first-run `.domain-agent/` path is ignored
 - [ ] Plan grounded (`reference/plan-grounding.md`, agent-answered) before the plan froze
 - [ ] Human Feedback stage produced the plain-language and technical briefs, and approval was recorded before Build/Fix
 - [ ] Every `claims.md` entry has a GREEN verdict in `verification.md` from the adversarial pass

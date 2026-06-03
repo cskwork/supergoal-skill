@@ -25,6 +25,10 @@ read-only through investigation. All modes pause at Human Feedback before first 
 ## Shared overlays
 
 - **Domain rules:** At Intake, record <=10 `ten-rules` priority rules in `README.md`. Advisory only.
+- **Domain context:** For GREENFIELD Plan, DEBUG Reproduce/Diagnose, and LEGACY Explore, load
+  `reference/domain-context.md`. It builds a compact `## Domain Brief` from repo-local knowledge
+  (default `.domain-agent/`) and current-code verification. If the knowledge pack is missing, ask
+  where to create it and add the chosen path to `.gitignore` before writing it.
 - **UI/UX:** If deliverable is visual UI, add Design Read/dials at Plan, Designer at Build, and taste
   Pre-Flight at QA. See `reference/ui-ux.md`.
 - **Plan grounding:** Before Human Feedback, planner self-grounds `plan.md` against docs/code. See
@@ -38,7 +42,7 @@ read-only through investigation. All modes pause at Human Feedback before first 
 |---|---|---|---|
 | Intake | Brief goal, audience, acceptance, non-goals | `brief.md`, `state.json` | machine-checkable acceptance criteria |
 | Validate | Demand evidence + scoped MVP | `brief.md` `## Validation` | `templates/validate-gate.sh <vault>` exits 0; requires `Decision: GO` |
-| Plan | Ground plan, decompose slices, choose stack/contracts | frozen `plan.md` | task table; each slice <=5 files / about 500 lines; acceptance check; store `plan_hash` |
+| Plan | Domain Brief, grounded plan, slices, stack/contracts | `README.md`, frozen `plan.md` | task table; each slice <=5 files / about 500 lines; acceptance check; store `plan_hash` |
 | Human Feedback | Human approves, revises, or stops | `plan.md` `## Human Feedback`, `state.json.approval` | required two briefs; human approves Build; `human-feedback-gate.mjs` exits 0 |
 | Build | Implement slices in run worktree | code, `claims.md` | slice tests pass; each claim has `run-to-prove` |
 | Verify | Clean-state adversarial re-run | `verification.md` | all claims GREEN; `## Coverage`; `Not covered:`; `Regression tests:`; completeness critic; aggregate `verdict: GREEN` |
@@ -52,8 +56,8 @@ Single-driver. Read-only through Human Feedback.
 | Phase | Goal | Writes | Exit gate |
 |---|---|---|---|
 | Intake | Capture symptom, env, expected vs actual | `brief.md` | symptom + expected behavior stated |
-| Reproduce | Deterministic failing repro | failing test/script, `claims.md` | repro fails on current code in clean sandbox |
-| Diagnose | Hypothesis-driven root cause | `README.md`, frozen `plan.md` | one hypothesis confirmed; minimal fix plan written |
+| Reproduce | Domain-scoped deterministic failing repro | `README.md`, failing test/script, `claims.md` | repro fails on current code in clean sandbox |
+| Diagnose | Hypothesis-driven root cause | `README.md`, frozen `plan.md` | one hypothesis confirmed against Domain Brief/current code; minimal fix plan written |
 | Human Feedback | Explain cause + fix plan | `plan.md`, `state.json.approval` | human approves Fix; `human-feedback-gate.mjs` exits 0 |
 | Fix | Smallest root-cause change in run worktree | code patch | previously failing repro passes |
 | Verify | Re-run repro + suite cleanly | `verification.md` | repro GREEN; suite GREEN; coverage map; completeness critic; aggregate GREEN |
@@ -69,7 +73,7 @@ Single-driver with targeted helper probes. Read-only through Human Feedback.
 | Phase | Goal | Writes | Exit gate |
 |---|---|---|---|
 | Intake | Feature spec + acceptance | `brief.md` | acceptance criteria stated |
-| Explore | Map affected code with citations | `README.md` | entry points, call paths, blast radius documented |
+| Explore | Domain Brief + affected-code map with citations | `README.md` | entry points, call paths, blast radius, invariants, and test commands documented |
 | Plan | Ground surgical change plan | frozen `plan.md` | smallest blast radius; reuse noted; store `plan_hash` |
 | Human Feedback | Explain implementation plan | `plan.md`, `state.json.approval` | human approves Build; `human-feedback-gate.mjs` exits 0 |
 | Build | Implement in existing style | code, `claims.md` | slice tests pass; no unrelated churn |

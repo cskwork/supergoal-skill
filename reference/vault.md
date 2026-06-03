@@ -21,6 +21,12 @@ Merged legacy files: `validation.md` -> `brief.md`; `architecture.md`/`contracts
 `qa-report.md` -> `verification.md`; `decisions.log` -> `README.md`. When consolidating existing vaults,
 use `git rm` for removed legacy files.
 
+## Non-vault domain knowledge
+
+Repo-local domain knowledge lives outside the vault, default `.domain-agent/`; see
+`reference/domain-context.md`. The vault may contain a compact `## Domain Brief` and audit entries
+about domain-context initialization or updates, but not the full knowledge pack.
+
 ## Branch/worktree fields
 
 Coding/debug runs record before Intake writes:

@@ -38,6 +38,13 @@ claims by re-running them, and deliver only on evidence.
 - Pure brainstorming with no intent to build — use `brainstorming`.
 - The user wants to drive each step themselves — use `ultrawork`.
 
+
+## Atomic concept decomposition
+
+Break composite concepts into atomic concepts before user-facing explanations, Human Feedback briefs, LEARN Bridge output, or teaching turns.
+
+Order: name the atoms, define each atom, show how they connect, then compose the full flow. Do not let one label hide source data, display policy, persistence, and fallback behavior.
+
 ## Step 0 — Mode detection (ALWAYS do this first)
 
 Classify the objective first. State the mode to the user in one line before proceeding.

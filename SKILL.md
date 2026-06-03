@@ -74,7 +74,9 @@ Required so multiple agents can work without editing the same checkout.
 - Domain context: GREENFIELD Plan, DEBUG Reproduce/Diagnose, LEGACY Explore load
   `reference/domain-context.md`; default `.domain-agent/`; if missing, ask where to store it and
   add the chosen path to `.gitignore`.
-- UI/UX: visual UI loads `reference/ui-ux.md`; Designer uses `reference/taste-skill-v2.md`.
+- UI/UX: user-facing UI loads `reference/ui-ux.md`, which routes to a tier — Expressive (landing/
+  marketing) uses `reference/taste-skill-v2.md`; Functional (dashboard/table/admin/internal tool) uses
+  `reference/functional-ui.md`. Designer implements to the named tier.
 - Plan grounding: before freeze, run `reference/plan-grounding.md`; answer from current docs/code
   before asking the human.
 
@@ -117,8 +119,9 @@ evidence + file refs only. Full procedure: `reference/experts.md`.
 | `reference/learn.md` | LEARN: teach/check flow + journaling |
 | `reference/plan-grounding.md` | Plan: agent-run grounding before freeze |
 | `reference/qa.md` | QA: drive running web/CLI app; record as-is/to-be evidence |
-| `reference/ui-ux.md` | Visual UI jobs: taste-skill overlay |
-| `reference/taste-skill-v2.md` | UI/UX Designer Build + QA pre-flight; large, load only then |
+| `reference/ui-ux.md` | Any user-facing UI: classify surface into Expressive vs Functional tier |
+| `reference/taste-skill-v2.md` | Expressive-tier Designer Build + QA pre-flight; large, load only then |
+| `reference/functional-ui.md` | Functional-tier (dashboard/table/admin) Designer Build + QA; lighter baseline |
 
 ### Template scripts (referenced by the gates above)
 

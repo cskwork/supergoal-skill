@@ -45,8 +45,9 @@ unverified claims. `/supergoal` imposes the discipline a senior team would (see 
 - **Topology, not preference, picks the architecture.** Fan out for wide-and-shallow work
   (validation, scaffolding); single-driver for deep-and-narrow work (one bug, one feature).
 - **Branch-scoped worktree isolation.** Coding/debug runs ask for a base branch and target branch,
-  build in a dedicated `git worktree`, merge accepted work into the target branch, then remove the
-  worktree after user acceptance so parallel agents do not edit the same checkout.
+  build in a dedicated `git worktree`, merge accepted work into the target branch, then keep the
+  three most recent completed run worktrees so parallel agents do not edit the same checkout. Older
+  repo-managed completed run worktrees are pruned only when the retained count exceeds three.
 - **Builder != Verifier.** The agent that writes code never approves it. A fresh adversarial Verify
   agent re-runs every `run-to-prove` from a clean state. (`claims.md` is untrusted.)
 - **Human Feedback before implementation.** After intake/repro/diagnosis/planning, the skill pauses

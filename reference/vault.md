@@ -35,12 +35,20 @@ Coding/debug runs record before Intake writes:
 "base_branch": "main",
 "target_branch": "main",
 "run_branch": "supergoal/2026-06-02-add-sso",
-"worktree_path": "/abs/path/.supergoal-worktrees/2026-06-02-add-sso"
+"worktree_path": "/abs/path/.supergoal-worktrees/2026-06-02-add-sso",
+"worktree_retention": {
+  "scope": "repo-managed completed run worktrees",
+  "keep_recent": 3,
+  "recent_by": "accepted_at timestamp; fallback to worktree directory mtime",
+  "prune": "oldest first only when retained count exceeds keep_recent"
+}
 ```
 
 `base_branch` creates the run worktree. `target_branch` receives the accepted merge; default equals base
 if the user gave only one branch. `run_branch` stores implementation commits. `worktree_path` is where
-Build/Fix writers work.
+Build/Fix writers work. `worktree_retention` keeps accepted run worktrees available for review while
+preventing repo-local worktree buildup; it never targets the active run worktree, original checkout, or
+manual worktrees outside the repo-managed pool.
 
 ## `cycles`
 

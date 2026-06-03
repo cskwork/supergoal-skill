@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # /supergoal worktree workflow contract.
-# Fails if the skill stops requiring branch-scoped worktree isolation for coding/debug runs.
+# Fails if the skill stops requiring branch-scoped worktree isolation and retention.
 
 set -u
 
@@ -31,10 +31,13 @@ require_text "skill asks for target branch" "SKILL.md" "ask the user for the tar
 require_text "target defaults to base" "SKILL.md" "default target branch is the base branch"
 require_text "worktree comes from base" "SKILL.md" "create the run worktree from the base branch"
 require_text "merge goes into target" "SKILL.md" "merge the accepted worktree commit into the target branch"
-require_text "cleanup waits for acceptance" "SKILL.md" "remove the run worktree only after the user accepts"
+require_text "retains three recent worktrees" "SKILL.md" "keep the three most recent completed run worktrees"
+require_text "prunes oldest over cap" "SKILL.md" "prune only the oldest repo-managed completed run worktree when the retained count exceeds three"
 require_text "conflict rationale is explicit" "SKILL.md" "multiple agents can work without editing the same checkout"
 require_text "pipeline keeps implementation in worktree" "reference/pipeline.md" "implementation phases run inside the branch-scoped worktree"
+require_text "pipeline states retention cap" "reference/pipeline.md" "keep the three most recent completed run worktrees"
 require_text "experts dispatch uses run worktree" "reference/experts.md" "dispatch Build/Fix writers inside the run worktree"
+require_text "state records retention policy" "templates/state.json" "\"keep_recent\": 3"
 
 printf '\nSummary: %s passed, %s failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

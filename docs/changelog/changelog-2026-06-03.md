@@ -47,6 +47,33 @@ compression removed three contract-anchor phrases. The test is intentionally lit
 branch-scoped isolation prevents multiple agents from editing the same checkout and keeps Build/Fix
 writers inside the run worktree.
 
+## Completed Run Worktree Retention
+
+### Decision
+
+Change the post-acceptance worktree policy from remove-after-merge to repo-scoped retention:
+`supergoal` keeps the three most recent completed run worktrees and prunes only the oldest
+repo-managed completed run worktree when the retained count exceeds three.
+
+### Reasoning
+
+Retained worktrees preserve recent run context for review and follow-up. The cap prevents unbounded
+local checkout growth, and the repo-managed boundary avoids deleting the active run worktree, original
+checkout, or manual worktrees.
+
+## Agent-Only Skill Entrypoint Compression
+
+### Decision
+
+Compress `SKILL.md` into a thin agent contract: core invariants, mode routing, worktree setup,
+gates, vault, dispatch, and reference map.
+
+### Reasoning
+
+Only agents need to operate this file. Detailed explanations already live in `reference/` and gate
+scripts, so the entrypoint should route behavior with minimal prose while preserving literal contract
+anchors for tests.
+
 ## Plan Grounding Pressure Test
 
 ### Decision

@@ -7,6 +7,12 @@
   "target_branch": "<target branch for final merge; defaults to base_branch>",
   "run_branch": "supergoal/<date>-<slug>",
   "worktree_path": "<absolute path to the run worktree>",
+  "worktree_retention": {
+    "scope": "repo-managed completed run worktrees",
+    "keep_recent": 3,
+    "recent_by": "accepted_at timestamp; fallback to worktree directory mtime",
+    "prune": "oldest first only when retained count exceeds keep_recent"
+  },
   "current_phase": "Intake",
   "phases_completed": [],
   "go_decision": null,

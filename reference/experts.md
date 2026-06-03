@@ -61,8 +61,10 @@ isolation is weaker than harness allowlists. Claude Code plugin wrapping is opti
 3. Background operations expected to run >30s.
 4. Fan out only wide-and-shallow work. DEBUG and LEGACY default single-driver.
 5. Parallel writers require isolated `git worktree`s from the run branch. Verify always gets a clean
-   worktree at the build commit. Remove child worktrees after the wave; remove the run worktree only
-   after final user acceptance.
+   worktree at the build commit. Remove child worktrees after the wave. After final user acceptance,
+   retain the completed run worktree under the repo policy: keep the three most recent completed run
+   worktrees and prune only the oldest repo-managed completed run worktree when the retained count
+   exceeds three.
 
 ## Committee gate
 

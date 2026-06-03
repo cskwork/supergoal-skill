@@ -5,49 +5,28 @@ description: Run one objective through a gated build/debug/legacy workflow with 
 
 # /supergoal
 
-One objective in, verified result out. This skill is the **conductor**: it decomposes the objective,
-dispatches **expert subagents** through a **forward-only pipeline**, and claims success only after
-machine-checkable gates pass.
+One objective -> gated subagents -> verified delivery.
 
-**Orchestrate only.** During a run, the conductor never edits, writes, runs, builds, or fixes code,
-even for one-line work. Every unit is dispatched to a subagent and gated. If the whole request is one
-trivial edit, do it directly instead of using this skill.
+Use only for whole-objective build/debug/legacy work, or explicit `/supergoal`. For a trivial
+single edit, skip this skill and edit directly.
+Do not use for pure brainstorming; use `brainstorming`. Do not use for user-driven step-by-step
+work; use normal direct collaboration.
 
-The system is gated lanes over one shared vault. `claims.md` is untrusted until a fresh adversary
-re-verifies it. The delivery gate is literal bash and is never edited to pass. Use the harness's
-sub-agent mechanism (Claude Code `Task`/`Agent`; other CLIs use their equivalent). Role personas live
-in `agents/`; nothing extra is installed. Coding/debug runs use `git worktree`; Verify uses a clean
-worktree at the build commit.
+## Core Contract
 
-## Why this exists
+- Conductor orchestrates only: do not write production code, run the build, fix failures, or approve
+  your own work. Dispatch role agents from `agents/` and consume compressed evidence summaries.
+- Shared state is only the vault: `docs/changelog/<date>-<slug>/`; see `reference/vault.md`.
+- `claims.md` is untrusted until a fresh adversarial Verify agent proves it from a clean worktree.
+- Never weaken, skip, or edit gate scripts to pass.
+- Human Feedback approval is required before Build/Fix.
+- Builder != Verifier; Deliver needs hard gates plus architect/security/code-review approval.
+- Atomic explanations: name atoms -> define -> connect -> compose. Use before Human Feedback, LEARN
+  Bridge, or teaching.
 
-Big single-agent runs drift: skipped validation, self-approved "done", unverified claims.
-`/supergoal` enforces senior-team discipline: validate first, separate builder from verifier, prove
-claims by re-running them, and deliver only on evidence.
+## Step 0 - Mode
 
-## Use when
-
-- "/supergoal build a habit-tracker app and ship it"
-- "/supergoal the checkout page hangs intermittently in production — fix it"
-- "/supergoal add SSO to our legacy Django monolith"
-- The user hands off a whole objective and wants the full process run autonomously.
-
-## Do NOT use when
-
-- A single, well-scoped edit ("rename this variable") — do it directly.
-- Pure brainstorming with no intent to build — use `brainstorming`.
-- The user wants to drive each step themselves — use `ultrawork`.
-
-
-## Atomic concept decomposition
-
-Break composite concepts into atomic concepts before user-facing explanations, Human Feedback briefs, LEARN Bridge output, or teaching turns.
-
-Order: name the atoms, define each atom, show how they connect, then compose the full flow. Do not let one label hide source data, display policy, persistence, and fallback behavior.
-
-## Step 0 — Mode detection (ALWAYS do this first)
-
-Classify the objective first. State the mode to the user in one line before proceeding.
+Classify first; state the mode to the user in one line.
 
 | Signal in the objective | Mode | Pipeline (see `reference/pipeline.md`) |
 |---|---|---|
@@ -56,98 +35,64 @@ Classify the objective first. State the mode to the user in one line before proc
 | "add / integrate X into existing/legacy codebase" — or "improve / refactor / decouple / clean up / make testable" existing code | **LEGACY** | Intake → Explore → Plan → **Human Feedback** → Build → Verify → QA → Deliver |
 | "explain / understand / teach me / how does X work" (learn, no code change) | **LEARN** | Intake → Source → **Bridge** → Teach loop → **Check (explain-back)** → Journal |
 
-If ambiguous, ask one clarifying question, then proceed. Mode selects the pipeline; gates and vault
-contracts stay shared.
+If ambiguous, ask one question. LEARN writes no code, uses no implementation gates, and uses chat
+explain-back instead of persistent goal tools; see `reference/learn.md`.
 
-LEARN is the exception: no code writes, no implementation gates, no persistent goal tools
-(`create_goal`/`update_goal`). Its Check gate is chat explain-back only; see `reference/learn.md`.
+## Step 0A - Worktree
 
-## Step 0A — Branch-scoped worktree setup (coding/debug modes only)
-
-For **GREENFIELD**, **DEBUG**, and **LEGACY**, isolate the run before any repo mutation.
+For **GREENFIELD**, **DEBUG**, and **LEGACY**, isolate before any repo mutation:
 
 1. Immediately after mode detection, ask the user for the base git branch and ask the user for the
-   target branch. If the user just gives the base, the default target branch is the base branch.
-2. Record `base_branch`, `target_branch`, `run_branch`, and `worktree_path` in `state.json` and the
-   run's `README.md`. Use a unique `run_branch` such as `supergoal/<date>-<slug>`.
+   target branch. If the user gives only base, the default target branch is the base branch.
+2. Record `base_branch`, `target_branch`, `run_branch`, `worktree_path`, and
+   `worktree_retention` in `state.json` and the run `README.md`.
 3. Create the run worktree from the base branch before Intake writes to the repo:
    `git worktree add -b <run_branch> <worktree_path> <base_branch>`.
-4. Run all implementation phases inside that branch-scoped worktree. The original checkout is only
-   for orchestration, branch inspection, and final integration.
+4. Run implementation phases inside the branch-scoped worktree; original checkout is orchestration
+   and final integration only.
 5. After the delivery gate passes, ask the user to accept the result. On acceptance, merge the
-   accepted worktree commit into the target branch. Then remove the run worktree only after the user
-   accepts. If the user asks for changes, keep the worktree and rewind through the relevant phase.
+   accepted worktree commit into the target branch. Keep the three most recent completed run
+   worktrees for this repo; prune only the oldest repo-managed completed run worktree when the
+   retained count exceeds three. Never prune the active run worktree, original checkout, or manual
+   worktrees outside the repo-managed pool. If the user asks for changes, keep the active worktree
+   and rewind through the relevant phase.
 
-Do not skip this for small objectives. It prevents checkout conflicts: multiple agents can work
-without editing the same checkout, and final integration stays explicit.
+Required so multiple agents can work without editing the same checkout.
 
-**Topology rule:** task shape picks architecture. Fan out only for *wide-and-shallow* work
-(validation research, independent modules). Use a *single driving agent* for *deep-and-narrow* work,
-so **DEBUG and LEGACY default to single-driver** with helpers only for independent probes. **All
-modes require Human Feedback before the first implementation write**. Details:
-`reference/pipeline.md`.
+## Routing Rules
 
-**Domain routing** (advisory): right after mode detection, route the objective through the
-`ten-rules` skill and distill **<=10 abstract priority rules** for the detected domain(s). Record
-them once in the run's `README.md` (`## Priority Rules`) and carry them into every phase. They guide
-quality; they never replace gates. Mechanism:
-`reference/domain-rules.md`.
+- Topology: fan out only wide-and-shallow work; DEBUG and LEGACY default single-driver. Details:
+  `reference/pipeline.md`.
+- Domain rules: at Intake, use `ten-rules`; record <=10 `## Priority Rules` in vault `README.md`.
+- Domain context: GREENFIELD Plan, DEBUG Reproduce/Diagnose, LEGACY Explore load
+  `reference/domain-context.md`; default `.domain-agent/`; if missing, ask where to store it and
+  add the chosen path to `.gitignore`.
+- UI/UX: visual UI loads `reference/ui-ux.md`; Designer uses `reference/taste-skill-v2.md`.
+- Plan grounding: before freeze, run `reference/plan-grounding.md`; answer from current docs/code
+  before asking the human.
 
-**Domain context overlay**: for GREENFIELD Plan, DEBUG Reproduce/Diagnose, and LEGACY Explore, load
-`reference/domain-context.md`. It retrieves or initializes repo-local knowledge at the target repo
-root, default `.domain-agent/`, then writes a compact `## Domain Brief` to the run `README.md`.
-If no knowledge pack exists, ask where to store it and add the chosen path to `.gitignore` before
-writing local knowledge. Saved context routes exploration; current docs/code remain authoritative.
+## Gates
 
-**UI/UX overlay**: if the objective ships user-facing visual UI (landing page, redesign, "make it
-look good", frontend look-and-feel), load `reference/ui-ux.md`. It makes
-`reference/taste-skill-v2.md` the design authority and adds Designer + pre-flight QA. Load only on
-demand; modes and gates do not change.
+1. GREENFIELD Validate: `templates/validate-gate.sh <vault>` requires `Decision: GO`.
+2. Plan freezes scope; Build/Fix implements, not redesigns.
+3. Human Feedback: two briefs + recorded approval; `human-feedback-gate.mjs` must pass.
+4. Verify: fresh adversary reruns every `run-to-prove`; completeness critic names gaps; high-risk
+   claims need >=3 verifier lenses.
+5. Committee: architect + security-reviewer + code-reviewer all approve.
+6. Deliver: `templates/delivery-gate.sh` exits 0 with artifacts, aggregate `verdict: GREEN`,
+   `## Coverage`, `Not covered:`, `Regression tests:`, and project tests.
+7. Retry bound: max 5 cycles; same normalized error 3x trips `circuit-breaker.mjs`.
 
-**Plan grounding**: before `plan.md` freezes, the planner grounds it in the project's own
-domain/architecture. This is agent-run; the human approval remains the later Human Feedback gate.
-Feature/novel work runs a decision-tree pressure test: resolve dependent choices one branch at a
-time, challenge terminology against selected knowledge, stress concrete scenarios, and answer from
-explored docs/code before asking the human. Improve/refactor work self-runs an
-`improve-codebase-architecture`-style pass.
-Method: `reference/plan-grounding.md`.
+## Vault
 
-## The non-negotiable gates
+Create `docs/changelog/<date>-<slug>/` with exactly:
+`README.md`, `brief.md`, `plan.md`, `claims.md`, `verification.md`, `state.json`.
 
-Never weaken, skip, or edit these gates to pass (`reference/quality-gates.md`).
+## Dispatch
 
-1. **Validate-before-build** (GREENFIELD): Build won't open until `templates/validate-gate.sh <vault>` exits 0 (requires `Decision: GO` in `brief.md`). Details: `reference/quality-gates.md`.
-2. **Plan freezes scope**: `plan.md` is written once and frozen; Build/Fix implements it, does not redesign.
-3. **Human Feedback before implementation**: after the brief, reproduction/diagnosis, and plan are ready, pause for explicit human approval. `plan.md` must contain a top plain-language brief and a lower technical novice-dev brief; `templates/human-feedback-gate.mjs <vault> <Build|Fix>` must pass before Build/Fix opens.
-4. **Builder != Verifier**: the coding agent never approves its own work. A fresh **adversarial
-   Verify** agent re-runs every `run-to-prove` in `claims.md` from a clean worktree at the build
-   commit, never the builder's dirty tree. Before GREEN, a **completeness critic** names omissions;
-   **high-severity claims get a >=3-lens verifier panel** (majority RED -> RED).
-   `reference/quality-gates.md`.
-5. **Multi-expert review before deliver**: architect + security-reviewer + code-reviewer run in parallel; ALL must approve (`reference/experts.md`).
-6. **Literal delivery gate**: `templates/delivery-gate.sh` must exit 0: required artifacts present,
-   aggregate `verdict: GREEN`, `## Coverage` map with `Not covered:` + `Regression tests:` lines,
-   `Decision: GO` for greenfield, project tests pass. GREEN means *every enumerated claim was
-   re-verified*, not *safe*. No "done" without this.
-7. **Bounded retry + circuit breaker**: max 5 fix cycles per phase; the same normalized error
-   signature 3x trips `templates/circuit-breaker.mjs` -> stop and root-cause to user. Mechanism:
-   `reference/vault.md`.
-
-## The vault (only cross-phase state)
-
-Every run creates `docs/changelog/<date>-<slug>/` in the target repo. This is the only cross-phase
-blackboard and the permanent changelog. Fresh subagent contexts communicate through it. Six files:
-`README.md`, `brief.md`, `plan.md`, `claims.md`, `verification.md`, `state.json`. Full contract:
-`reference/vault.md`.
-
-## Expert roster
-
-Dispatch roles as fresh subagents with the minimum vault read-set. Each persona is bundled in
-`agents/<role>.md`, making dispatch harness-agnostic: Claude Code, Codex, agy, or any CLI selects the
-file, spawns a fresh sub-context (or isolated pass if no sub-agent mechanism exists), and collects
-only its summary. Claude Code plugin wrapping is optional. Verifier read scope is harness-enforced
-where available (`claims.md` + source only). Full table/procedure: `reference/experts.md`. UI/UX jobs
-also dispatch **Designer** with `reference/taste-skill-v2.md` (see `reference/ui-ux.md`).
+Use harness subagents when available (`Task`/`Agent`, Codex equivalent, etc.). Otherwise run a fresh
+isolated pass. Load exactly one `agents/<role>.md`, give minimal vault reads, and collect decisions +
+evidence + file refs only. Full procedure: `reference/experts.md`.
 
 ## Reference map (load only what the current phase needs)
 

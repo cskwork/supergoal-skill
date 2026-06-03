@@ -10,7 +10,9 @@ Vault: `docs/changelog/<date>-<slug>/`, six files only; see `vault.md`.
 For GREENFIELD, DEBUG, and LEGACY, ask `base_branch` and `target_branch` immediately after mode
 detection. Default target to base when only one branch is given. Create a run branch/worktree from
 base; implementation phases run inside the branch-scoped worktree. After Deliver passes and the user
-accepts, merge run branch into target, then remove the worktree.
+accepts, merge run branch into target. Keep the three most recent completed run worktrees for the
+repo; prune only the oldest repo-managed completed run worktree when the retained count exceeds
+three.
 
 ## Topology rule
 

@@ -16,12 +16,19 @@ Verifier's job.
 - **Human Feedback:** `templates/human-feedback-gate.mjs <vault> <Build|Fix>` passes only with the
   two-part packet in `plan.md` and `state.json.approval.status = APPROVED` for the target phase.
 - **Plan freeze:** Deliver requires `plan.md` hash to match `state.json.plan_hash`, unless `README.md`
-  logs `RE-PLAN:`.
+  logs `RE-PLAN:`. `delivery-gate.sh` recomputes the hash (CR-stripped sha256) and fails on mismatch.
+- **UI contrast:** UI/UX runs record `UI-tier:` in `verification.md` `## QA` and enumerate pairs to
+  `qa/contrast-pairs.json`; `qa-gate.sh` runs `contrast-gate.mjs` and blocks Deliver on any
+  sub-threshold pair. Same gate for both Expressive and Functional tiers.
+- **Cycle bound:** `templates/cycle-bound.mjs <state.json> <phase>` trips at `max_cycles_per_phase`
+  (default 5), bounding retries that fail with a *different* error each cycle (which the
+  identical-signature circuit breaker would never catch).
 
 ### 2. Soft gate - quality committee
 
 Architect, security reviewer, and code reviewer check maintainability, security, and correctness beyond
-tests. Soft approval never overrides failing hard tests.
+tests. Soft approval never overrides failing hard tests. `delivery-gate.sh` requires a `Committee:`
+line in `verification.md` naming all three reviewers as APPROVED (no reject/changes-requested).
 
 ## Adversarial Verify
 

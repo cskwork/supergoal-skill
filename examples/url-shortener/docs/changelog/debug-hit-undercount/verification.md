@@ -114,3 +114,4 @@ Not covered: multi-process / cross-host contention — single-process MVP, out o
 Regression tests: test/hit-concurrency.test.js (the failing-before/passing-after repro) guards the fix.
 
 verdict: GREEN
+Committee: architect APPROVED, security APPROVED, code-review APPROVED

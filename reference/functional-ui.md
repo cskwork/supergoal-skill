@@ -38,6 +38,7 @@ No self-approval.
 ## QA overlay
 
 Run beside normal QA: a11y (keyboard focus, labels), reduced motion, all UI states present, density
-matches dials, contrast via `node templates/contrast-gate.mjs <vault>/qa/contrast-pairs.json`,
-`color-scheme` declared. Completeness critic audits the pair list. Any fail rewinds to Build, blocks
-Deliver.
+matches dials, `color-scheme` declared. Record `UI-tier: Functional` in `verification.md` `## QA` and
+enumerate every text/bg pair to `<vault>/qa/contrast-pairs.json`; `qa-gate.sh` runs
+`node templates/contrast-gate.mjs` on it (completeness critic audits the pair list). Any fail rewinds
+to Build, blocks Deliver.

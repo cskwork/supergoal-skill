@@ -10,7 +10,7 @@
   "circuit_breaker_threshold": 3,
   "approval": {"phase": "Build", "status": "APPROVED"},
   "approval_target_phase": "Build",
-  "plan_hash": null,
+  "plan_hash": "fc39271fbe166e3ae969ccee50c52a490f0f208c7414a92d9deb4d9491f43a43",
   "committee": "security APPROVE, code-review APPROVE (LOW only)",
   "started_at": "2026-05-30T00:10:00+09:00",
   "updated_at": "2026-05-30T00:45:00+09:00"

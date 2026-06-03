@@ -37,6 +37,22 @@ echo "vault: $VAULT  app-type: $APPTYPE"
 grep -qiE '^##[[:space:]]+QA\b' "$VERIF" \
   || fail "verification.md has no '## QA' section — QA evidence was never recorded"
 
+# UI/UX contrast enforcement — makes "contrast is computed, not eyeballed" a real gate for BOTH the
+# Expressive (taste-skill-v2) and Functional (functional-ui) tiers. It fires when the run declares a
+# tier (a 'UI-tier: Expressive|Functional' line in ## QA) OR a pairs file exists. A UI run that omits
+# the pair list, or whose palette has a sub-threshold pair, fails here — no silent eyeballed contrast.
+PAIRS="$QA/contrast-pairs.json"
+ui_tier_line="$(grep -iE '^[[:space:]]*[-*]?[[:space:]]*UI-tier:' "$VERIF" | head -1 || true)"
+if printf '%s' "$ui_tier_line" | grep -qiE 'expressive|functional' || [ -f "$PAIRS" ]; then
+  [ -f "$PAIRS" ] \
+    || fail "UI-tier run but no 'qa/contrast-pairs.json' — enumerate the text/bg pairs (reference/ui-ux.md or reference/functional-ui.md)"
+  CONTRAST_GATE="$(dirname "$0")/contrast-gate.mjs"
+  [ -f "$CONTRAST_GATE" ] || fail "contrast-gate.mjs not found next to qa-gate.sh"
+  node "$CONTRAST_GATE" "$PAIRS" \
+    || fail "contrast gate failed on qa/contrast-pairs.json — fix the palette (rewind to Build); never lower the threshold"
+  echo "  ok: contrast gate passed for UI run"
+fi
+
 # CLI/library: no browser, so an integration-smoke record under '## QA' is the whole contract.
 if [ "$APPTYPE" = cli ]; then
   echo "  ok: ## QA present (CLI/library integration smoke; no browser evidence required)"

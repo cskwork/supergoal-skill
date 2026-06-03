@@ -64,7 +64,15 @@ EOF
 
 write_state() { printf '{ "approval": %s }\n' "$2" > "$1/state.json"; }
 
-# A contract-complete verification.md: GREEN + coverage map + named gaps + regression line.
+# sha256 over CR-stripped plan.md, matching delivery-gate.sh's hash_file_lf (CRLF/LF safe).
+plan_hash_of() {
+  if command -v sha256sum >/dev/null 2>&1; then tr -d '\r' < "$1" | sha256sum   | awk '{print $1}'
+  else                                          tr -d '\r' < "$1" | shasum -a 256 | awk '{print $1}'; fi
+}
+# Freeze a vault: record its plan.md hash so the delivery-gate plan-freeze check passes.
+write_frozen_state() { printf '{ "plan_hash": "%s" }\n' "$(plan_hash_of "$1/plan.md")" > "$1/state.json"; }
+
+# A contract-complete verification.md: GREEN + coverage map + named gaps + regression line + committee.
 write_complete_verif() {
   cat > "$1/verification.md" <<'EOF'
 claim s1: GREEN — re-ran from clean state
@@ -75,6 +83,7 @@ verdict: GREEN
 - SSRF checklist (trailing-dot FQDN, IPv6-mapped, octal/hex IP, NAT64): probed GREEN
 Not covered: none — all acceptance criteria + domain checklist items mapped
 Regression tests: none (verify-only fixture)
+Committee: architect APPROVED, security APPROVED, code-review APPROVED
 EOF
 }
 
@@ -130,6 +139,7 @@ printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\n' > "$v/ve
 run_case "2.5d no Regression line -> blocked"       1 "no 'Regression tests:'" bash "$DELIVERY" "$v" true
 # Contract-complete verification for the PASS / downstream-check paths.
 write_complete_verif "$v"
+write_frozen_state "$v"
 printf 'b\nThe NO-GO bar is high.\nDecision: GO\n' > "$v/brief.md"
 run_case "2.6 complete + Decision GO + prose NO-GO" 0 "GATE PASS"            bash "$DELIVERY" "$v" true
 printf 'b\nDecision: NO-GO\n' > "$v/brief.md"
@@ -140,16 +150,16 @@ run_case "2.9 valid + test-cmd false -> fail"       1 "test suite did not pass" 
 run_case "2.10 valid + test-cmd true -> PASS"       0 "GATE PASS"            bash "$DELIVERY" "$v" true
 # 2.11: no test-cmd, run from a clean dir with no detectable runner.
 v_clean=$(mkvault s2clean)
-cp "$v/brief.md" "$v/plan.md" "$v/verification.md" "$v_clean/" 2>/dev/null
+cp "$v/brief.md" "$v/plan.md" "$v/verification.md" "$v/state.json" "$v_clean/" 2>/dev/null
 run_case "2.11 no test-cmd, no runner -> blocked"   1 "no test command"     \
   bash -c "cd '$v_clean' && bash '$DELIVERY' . "
 # 2.12-2.13: QA backstop — a qa/ dir makes delivery enforce the browser QA gate too.
 v_qa=$(mkvault s2qa)
 printf 'b\n' > "$v_qa/brief.md"; printf 'p\n' > "$v_qa/plan.md"
-write_complete_verif "$v_qa"
+write_complete_verif "$v_qa"; write_frozen_state "$v_qa"
 mkdir -p "$v_qa/qa"; : > "$v_qa/qa/as-is-1040.png"; : > "$v_qa/qa/to-be-1040.png"
 run_case "2.12 qa/ dir, QA non-compliant -> blocked" 1 "QA gate fails"      bash "$DELIVERY" "$v_qa" true
-printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nRegression tests: none\n## QA\nagent-browser doctor: pass\nTool: agent-browser\n' > "$v_qa/verification.md"
+printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nRegression tests: none\nCommittee: architect APPROVED, security APPROVED, code-review APPROVED\n## QA\nagent-browser doctor: pass\nTool: agent-browser\n' > "$v_qa/verification.md"
 run_case "2.13 qa/ dir + compliant QA -> PASS"       0 "GATE PASS"          bash "$DELIVERY" "$v_qa" true
 
 # ----------------------------------------------------------------------
@@ -288,6 +298,66 @@ run_case "7.7 body tier needs AAA -> FAIL"          1 "below WCAG threshold" nod
 # Decorative pair below 3:1 is allowed (not text).
 printf '[{"el":"dot","fg":"#3f3b35","bg":"#221e17","size":"decorative"}]\n' > "$v/decor.json"
 run_case "7.8 decorative pair -> PASS"              0 "CONTRAST GATE PASS" node "$CONTRAST" "$v/decor.json"
+
+# ----------------------------------------------------------------------
+echo; echo "SCENARIO 8 — delivery-gate.sh : committee approval + plan freeze"
+# ----------------------------------------------------------------------
+v=$(mkvault s8)
+printf 'b\nDecision: GO\n' > "$v/brief.md"
+printf 'the approved plan body\n' > "$v/plan.md"
+write_complete_verif "$v"; write_frozen_state "$v"
+run_case "8.1 complete + committee + frozen hash -> PASS" 0 "GATE PASS"     bash "$DELIVERY" "$v" true
+# Committee line missing entirely.
+printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nRegression tests: none\n' > "$v/verification.md"
+run_case "8.2 no Committee line -> blocked"          1 "no 'Committee:' line" bash "$DELIVERY" "$v" true
+# Committee shows a non-approval verdict.
+printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nRegression tests: none\nCommittee: architect APPROVED, security REJECT, code-review APPROVED\n' > "$v/verification.md"
+run_case "8.3 committee shows reject -> blocked"     1 "non-approval"        bash "$DELIVERY" "$v" true
+# Committee missing a reviewer.
+printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nRegression tests: none\nCommittee: architect APPROVED, security APPROVED\n' > "$v/verification.md"
+run_case "8.4 committee missing code-review -> blocked" 1 "does not name the 'code'" bash "$DELIVERY" "$v" true
+# Restore good committee; now exercise plan freeze.
+write_complete_verif "$v"
+printf 'plan body CHANGED after freeze\n' > "$v/plan.md"
+run_case "8.5 plan.md changed -> hash mismatch blocked" 1 "does not match state.json.plan_hash" bash "$DELIVERY" "$v" true
+# RE-PLAN escape waives the freeze.
+printf 'RE-PLAN: scope expanded with re-approval\n' > "$v/README.md"
+run_case "8.6 RE-PLAN escape -> PASS"                0 "GATE PASS"           bash "$DELIVERY" "$v" true
+rm -f "$v/README.md"
+# Null plan_hash with no escape.
+printf 'the approved plan body\n' > "$v/plan.md"
+printf '{ "plan_hash": null }\n' > "$v/state.json"
+run_case "8.7 plan_hash null, no RE-PLAN -> blocked" 1 "no 64-hex 'plan_hash'" bash "$DELIVERY" "$v" true
+
+# ----------------------------------------------------------------------
+echo; echo "SCENARIO 9 — qa-gate.sh : contrast gate is wired in for UI runs"
+# ----------------------------------------------------------------------
+QAGATE="$SKILL_DIR/templates/qa-gate.sh"
+v=$(mkvault s9); mkdir -p "$v/qa"; : > "$v/qa/as-is-1040.png"; : > "$v/qa/to-be-1040.png"
+printf 'verdict: GREEN\n## QA\nagent-browser doctor: pass\nTool: agent-browser\nUI-tier: Functional\n- as-is/to-be captured\n' > "$v/verification.md"
+run_case "9.1 UI-tier declared, no pairs file -> blocked" 1 "no 'qa/contrast-pairs.json'" bash "$QAGATE" "$v" browser
+printf '[{"el":"body","fg":"#f4efe7","bg":"#16140f","size":"body"},{"el":"t","fg":"#8a8275","bg":"#221e17","size":"normal"}]\n' > "$v/qa/contrast-pairs.json"
+run_case "9.2 UI-tier + sub-AA pair -> blocked"      1 "contrast gate failed" bash "$QAGATE" "$v" browser
+printf '[{"el":"body","fg":"#f4efe7","bg":"#16140f","size":"body"},{"el":"t","fg":"#9a9081","bg":"#221e17","size":"normal"}]\n' > "$v/qa/contrast-pairs.json"
+run_case "9.3 UI-tier + passing palette -> PASS"     0 "QA GATE PASS"         bash "$QAGATE" "$v" browser
+# No UI-tier and no pairs file: contrast block is skipped, behaviour unchanged.
+rm -f "$v/qa/contrast-pairs.json"
+printf 'verdict: GREEN\n## QA\nagent-browser doctor: pass\nTool: agent-browser\n- as-is/to-be captured\n' > "$v/verification.md"
+run_case "9.4 no UI-tier, no pairs -> PASS (unaffected)" 0 "QA GATE PASS"     bash "$QAGATE" "$v" browser
+
+# ----------------------------------------------------------------------
+echo; echo "SCENARIO 10 — cycle-bound.mjs : bounds same-phase retries by count"
+# ----------------------------------------------------------------------
+CYCLE="$SKILL_DIR/templates/cycle-bound.mjs"
+v=$(mkvault s10)
+printf '{ "max_cycles_per_phase": 3, "cycles": { "build": 0, "fix": 0 } }\n' > "$v/state.json"
+run_case "10.1 build cycle #1 -> below"             0 "1/3"  node "$CYCLE" "$v/state.json" build
+run_case "10.2 build cycle #2 -> below"             0 "2/3"  node "$CYCLE" "$v/state.json" build
+run_case "10.3 build cycle #3 -> TRIP"              1 "CYCLE-BOUND TRIP" node "$CYCLE" "$v/state.json" build
+run_case "10.4 different phase is independent"      0 "1/3"  node "$CYCLE" "$v/state.json" fix
+run_case "10.5 unknown phase -> exit 2"             2 "unknown phase"   node "$CYCLE" "$v/state.json" deploy
+run_case "10.6 missing phase arg -> exit 2"         2 "usage"           node "$CYCLE" "$v/state.json"
+run_case "10.7 missing state file -> exit 2"        2 "cannot read/parse" node "$CYCLE" "$v/nope.json" build
 
 # ----------------------------------------------------------------------
 echo

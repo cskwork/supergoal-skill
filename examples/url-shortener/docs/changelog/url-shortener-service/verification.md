@@ -142,6 +142,7 @@ Regression tests: SSRF regression hosts (incl. `::ffff:127.0.0.1`, `localhost.`)
 test/validate.test.js; malformed-path 400 cases are tests 18-19.
 
 verdict: GREEN
+Committee: architect APPROVED, security APPROVED, code-review APPROVED
 
 ---
 

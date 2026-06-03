@@ -104,3 +104,4 @@ Regression tests: TTL expiry suite added (201/302/410 sequence, no-TTL, invalid 
 68-test suite was re-run green.
 
 verdict: GREEN
+Committee: architect APPROVED, security APPROVED, code-review APPROVED

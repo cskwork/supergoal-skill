@@ -10,7 +10,7 @@
   "circuit_breaker_threshold": 3,
   "approval": { "phase": "Fix", "status": "APPROVED" },
   "approval_target_phase": "Fix",
-  "plan_hash": null,
+  "plan_hash": "f02f5da29d566065d6687541cdfe059f01d37cfd687be6611589b279d80bced7",
   "root_cause": "incrementHit read hoisted outside the enqueue() mutex -> lost-update race on concurrent hits",
   "started_at": "2026-05-29T23:40:00+09:00",
   "updated_at": "2026-05-29T23:55:00+09:00"

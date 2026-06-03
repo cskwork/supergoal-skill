@@ -20,7 +20,9 @@ the summary and evidence paths. Do not run browser QA from the conductor.
    `agent-browser install` for Chrome-for-Testing. Missing browser binary is not fallback-worthy; run
    step 2. If both steps are genuinely blocked, stop and ask the user.
 4. **Drive flows.** Use `open`, `snapshot`, `click`/`type`/`fill`, `screenshot`. Golden path, edge cases,
-   and a11y must pass. UI/UX jobs also run `reference/ui-ux.md` pre-flight.
+   and a11y must pass. UI/UX jobs also run `reference/ui-ux.md` pre-flight (Expressive or Functional
+   tier), record a `UI-tier: Expressive|Functional` line in `## QA`, and enumerate the text/background
+   pairs to `qa/contrast-pairs.json` — `qa-gate.sh` runs the contrast gate on it and blocks on any FAIL.
 5. **Fallback only when install is impossible.** A headless Chrome/Edge driver may replace
    `agent-browser` only inside `qa-tester`, never the conductor, and only for QA. Verify remains pure
    `run-to-prove` re-execution.

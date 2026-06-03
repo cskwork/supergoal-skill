@@ -31,7 +31,7 @@ isolation is weaker than harness allowlists. Claude Code plugin wrapping is opti
 | Explorer (LEGACY) | `explore` (+ `Explore` helpers) | Sonnet | brief | `README.md` code map + citations |
 | Architect (Plan) | `architect` | Opus | brief, map | `plan.md` |
 | Builder | `executor` | Sonnet; Opus for novel/algorithmic | plan | code + `claims.md` |
-| Designer (UI/UX) | `designer` | Sonnet | `plan.md`, `reference/taste-skill-v2.md` | UI code + `claims.md` |
+| Designer (UI/UX) | `designer` | Sonnet | `plan.md` + tier authority via `reference/ui-ux.md` (Expressive -> `taste-skill-v2.md`; Functional -> `functional-ui.md`) | UI code + `claims.md` |
 | Verifier | `verifier` / `critic` | Opus | `claims.md` + source only | `verification.md` verdicts |
 | Completeness critic | `completeness-critic` | Opus | required coverage + code, not `claims.md` rationale | gaps -> REDs or `Not covered:` |
 | Security reviewer | `security-reviewer` | Sonnet | diff | findings |
@@ -50,7 +50,8 @@ isolation is weaker than harness allowlists. Claude Code plugin wrapping is opti
 
 ## Planning and UI notes
 
-- Architect plans; executor edits. Designer handles UI/UX surfaces and never self-approves.
+- Architect plans; executor edits. Designer handles UI/UX surfaces to the tier the conductor names
+  (Expressive vs Functional, routed by `reference/ui-ux.md`) and never self-approves.
 - Before freezing `plan.md`, Architect self-runs plan grounding from `reference/plan-grounding.md`.
   Human approval remains the later Human Feedback gate.
 

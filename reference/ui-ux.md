@@ -21,7 +21,7 @@ per surface.
 |---|---|
 | Plan | Add one-line **Design Read** and dials `DESIGN_VARIANCE`, `MOTION_INTENSITY`, `VISUAL_DENSITY` to `plan.md`. Pick official design system vs aesthetic. For known brands, use existing brand color/type as accent source and record it. |
 | Build | Dispatch **Designer** with `plan.md` + `reference/taste-skill-v2.md`. Enforce anti-default rules, real/generated images, reduced-motion fallback, hard visual bans, locked accent, no off-brand gradient/glow slop, and no self-approval. |
-| QA | Run taste Pre-Flight beside normal QA. Required: a11y, reduced motion, Color Consistency Lock, LILA rule, dark/light or justified single-mode lock. Compute contrast from `<vault>/qa/contrast-pairs.json` via `node templates/contrast-gate.mjs <vault>/qa/contrast-pairs.json`; completeness critic audits the pair list. Any fail rewinds to Build and blocks Deliver. |
+| QA | Run taste Pre-Flight beside normal QA. Required: a11y, reduced motion, Color Consistency Lock, LILA rule, dark/light or justified single-mode lock. Record `UI-tier: Expressive` in `verification.md` `## QA` and enumerate every text/bg pair to `<vault>/qa/contrast-pairs.json`; `qa-gate.sh` runs `node templates/contrast-gate.mjs` on it (completeness critic audits the pair list). Any fail rewinds to Build and blocks Deliver. |
 
 Progressive disclosure:
 

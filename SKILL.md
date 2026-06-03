@@ -87,10 +87,13 @@ Required so multiple agents can work without editing the same checkout.
 3. Human Feedback: two briefs + recorded approval; `human-feedback-gate.mjs` must pass.
 4. Verify: fresh adversary reruns every `run-to-prove`; completeness critic names gaps; high-risk
    claims need >=3 verifier lenses.
-5. Committee: architect + security-reviewer + code-reviewer all approve.
+5. Committee: architect + security-reviewer + code-reviewer all approve; recorded as a `Committee:`
+   line in `verification.md` that the delivery gate checks.
 6. Deliver: `templates/delivery-gate.sh` exits 0 with artifacts, aggregate `verdict: GREEN`,
-   `## Coverage`, `Not covered:`, `Regression tests:`, and project tests.
-7. Retry bound: max 5 cycles; same normalized error 3x trips `circuit-breaker.mjs`.
+   `## Coverage`, `Not covered:`, `Regression tests:`, the `Committee:` line (all three APPROVED),
+   `plan.md` matching `state.json.plan_hash` (or a `RE-PLAN:` line in `README.md`), and project tests.
+7. Retry bound: `cycle-bound.mjs` trips at max 5 cycles/phase (any errors); the same normalized error
+   3x trips `circuit-breaker.mjs`.
 
 ## Vault
 
@@ -129,10 +132,11 @@ evidence + file refs only. Full procedure: `reference/experts.md`.
 |---|---|
 | `templates/delivery-gate.sh` | Deliver: hard exit-0 artifact + test gate |
 | `templates/validate-gate.sh <vault>` | GREENFIELD Validate: checks `Decision: GO` before Build |
-| `templates/qa-gate.sh <vault> <browser\|cli>` | QA: checks `## QA`; browser apps need `as-is`/`to-be`, `Tool:`, and non-agent-browser `Fallback:` |
+| `templates/qa-gate.sh <vault> <browser\|cli>` | QA: checks `## QA`; browser apps need `as-is`/`to-be`, `Tool:`, non-agent-browser `Fallback:`; UI runs (`UI-tier:`) run the contrast gate on `qa/contrast-pairs.json` |
 | `templates/contrast-gate.mjs <pairs.json>` | UI/UX QA: computes WCAG contrast (body AAA, other text AA); no eyeballing |
 | `templates/human-feedback-gate.mjs <vault> <Build\|Fix>` | Human Feedback: checks both briefs + recorded approval |
 | `templates/circuit-breaker.mjs <state.json> <sig>` | Failed fix cycle: trips after 3 identical normalized error signatures |
+| `templates/cycle-bound.mjs <state.json> <phase>` | Failed cycle: trips at `max_cycles_per_phase` (default 5) regardless of error identity |
 | `templates/domain-agent/` | Domain context first-run scaffold copied to the target repo knowledge path |
 
 ## Escalation & stop conditions

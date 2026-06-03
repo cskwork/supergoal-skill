@@ -22,6 +22,12 @@ VAULT="${1:?usage: delivery-gate.sh <vault-dir> [test-command]}"
 TEST_CMD="${2:-}"
 fail() { echo "GATE FAIL: $*" >&2; exit 1; }
 pass() { echo "  ok: $*"; }
+# sha256 over CR-stripped bytes, so CRLF/LF checkout drift cannot break the plan-freeze match.
+hash_file_lf() {
+  if command -v sha256sum >/dev/null 2>&1;   then tr -d '\r' < "$1" | sha256sum   | awk '{print $1}'
+  elif command -v shasum  >/dev/null 2>&1;   then tr -d '\r' < "$1" | shasum -a 256 | awk '{print $1}'
+  else echo "__NO_SHA_TOOL__"; fi
+}
 
 echo "== /supergoal delivery gate =="
 echo "vault: $VAULT"
@@ -52,6 +58,40 @@ grep -qiE '^[[:space:]]*[-*]?[[:space:]]*Not[[:space:]]+covered:' "$VAULT/verifi
 grep -qiE '^[[:space:]]*[-*]?[[:space:]]*Regression[[:space:]]+tests?:' "$VAULT/verification.md" \
   || fail "verification.md has no 'Regression tests:' line — a fixed RED must add a permanent test; a verify-only run states 'none'"
 pass "completeness contract (coverage map + named gaps + regression ratchet)"
+
+# 2.55) Committee soft gate — architect + security + code-review must all have APPROVED before Deliver
+#       (SKILL.md Core Contract). Recorded as a single 'Committee:' line in verification.md, the same
+#       line-checkable shape as the coverage lines above. A non-approval verdict blocks delivery.
+COMMITTEE="$(grep -iE '^[[:space:]]*[-*]?[[:space:]]*Committee:' "$VAULT/verification.md" | head -1 || true)"
+[ -n "$COMMITTEE" ] \
+  || fail "verification.md has no 'Committee:' line — record architect + security + code-review verdicts (e.g. 'Committee: architect APPROVED, security APPROVED, code-review APPROVED')"
+for who in architect security code; do
+  printf '%s' "$COMMITTEE" | grep -qi "$who" \
+    || fail "Committee line does not name the '$who' reviewer — all three (architect, security, code-review) must be recorded"
+done
+if printf '%s' "$COMMITTEE" | grep -qiE 'reject|changes[ -]?requested|not[ -]approved'; then
+  fail "Committee line shows a non-approval (reject/changes-requested) — resolve it before Deliver"
+fi
+printf '%s' "$COMMITTEE" | grep -qi 'approv' \
+  || fail "Committee line records no APPROVED verdict"
+pass "committee approved (architect + security + code-review)"
+
+# 2.56) Plan freeze — Build implements the approved plan, it does not redesign. plan.md must hash-match
+#       state.json.plan_hash, unless README.md logs a 'RE-PLAN:' escape (an approved re-plan).
+if [ -f "$VAULT/README.md" ] && grep -qiE '^[[:space:]]*[-*#]*[[:space:]]*RE-?PLAN:' "$VAULT/README.md"; then
+  pass "plan freeze waived (README.md logs RE-PLAN)"
+else
+  [ -s "$VAULT/state.json" ] \
+    || fail "state.json missing/empty — cannot verify plan freeze; record sha256 of the approved plan.md in state.json.plan_hash, or log 'RE-PLAN:' in README.md"
+  expected="$(grep -oE '"plan_hash"[[:space:]]*:[[:space:]]*"[0-9a-fA-F]{64}"' "$VAULT/state.json" | grep -oiE '[0-9a-f]{64}' | head -1 || true)"
+  [ -n "$expected" ] \
+    || fail "state.json has no 64-hex 'plan_hash' (scope was never frozen) — record sha256 of the approved plan.md, or log 'RE-PLAN:' in README.md"
+  actual="$(hash_file_lf "$VAULT/plan.md")"
+  [ "$actual" = "__NO_SHA_TOOL__" ] && fail "no sha256 tool (sha256sum/shasum) available to verify plan freeze"
+  [ "$(printf '%s' "$expected" | tr 'A-F' 'a-f')" = "$actual" ] \
+    || fail "plan.md hash ($actual) does not match state.json.plan_hash — Build changed scope past the approved plan; re-approve and log 'RE-PLAN:' in README.md, or restore the approved plan"
+  pass "plan freeze (plan.md matches approved plan_hash)"
+fi
 
 # 2.6) QA evidence backstop — if this run produced browser-QA evidence (a qa/ dir), it must still
 #      satisfy the QA gate at delivery (as-is/to-be + named driver + justified fallback). CLI/library

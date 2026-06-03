@@ -8,7 +8,7 @@
   "go_decision": "GO",
   "approval": { "phase": "Build", "status": "APPROVED" },
   "approval_target_phase": "Build",
-  "plan_hash": null,
+  "plan_hash": "2f910c698358f372622c37d8705d5e7fff944a49809f1c287410aa72cd4cd65d",
   "cycles": { "Build": 3, "Verify": 3, "QA": 1, "Fix": 2 },
   "max_cycles_per_phase": 5,
   "error_signatures": { "ssrf-bypass-v1": 1, "malformed-path-500": 1 },

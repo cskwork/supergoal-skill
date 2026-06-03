@@ -168,3 +168,56 @@ empty decoration) are universal across tiers; the rest stay Expressive-only.
 `reference/functional-ui.md` (new), `reference/ui-ux.md` (tier dispatcher), `agents/designer.md`
 (tier-aware authority + starred universal bans), `SKILL.md` (routing + reference map), 
 `reference/pipeline.md`, `README.md` (layout note). Full suite green: 74 + 17 + 30 + 11 = 132 passed.
+
+## Gate hardening: tier follow-through + enforced committee/plan-freeze/contrast/cycle-bound
+
+### Decision
+
+Close the loose ends the v0.1.4 tier split left, and convert four contract claims that were prose-only
+into machine-checked gates. Driven by an adversarial review (consistency audit + critic) of the skill.
+
+### P0 — finish the tier split
+
+- `reference/experts.md`: the Designer dispatch row pointed only at `taste-skill-v2.md`, so a conductor
+  following the table verbatim would hand a Functional surface the Expressive (marketing) authority -
+  the exact bug the split was meant to fix. Row + planning note are now tier-routed via `ui-ux.md`.
+- `agents/designer.md`: frontmatter and the `taste Pre-Flight` wording were single-tier; made
+  tier-neutral and added explicit FUNCTIONAL-TIER bans (design-system-not-hand-rolled, table states,
+  density-matches-dial, low motion) so the Functional self-audit is not weaker than Expressive's.
+- `reference/qa.md`, `reference/quality-gates.md`: documented the two tiers, the `UI-tier:` line, and
+  the now-enforced contrast/committee/plan-freeze/cycle-bound checks.
+- `tests/ui-ux-contract.test.sh` (new): 17-assertion contract test guarding the dispatcher, the
+  Functional authority, the tier-aware Designer, and the gate wiring against silent regression.
+
+### P1 — enforce the claimed gates
+
+- **Contrast wired into QA gate.** `templates/qa-gate.sh` now detects a `UI-tier:` line (or a
+  `qa/contrast-pairs.json`) and runs `contrast-gate.mjs`, failing the gate (and, via the existing
+  delivery backstop, Deliver) on a missing pair list or any sub-threshold pair. Previously the
+  "contrast blocks Deliver" claim was prose with no gate (`grep -c contrast qa-gate.sh` was 0).
+- **Committee + plan-freeze in delivery gate.** `templates/delivery-gate.sh` now requires a
+  `Committee:` line in `verification.md` with all three reviewers APPROVED (no reject/changes), and
+  recomputes a CR-stripped sha256 of `plan.md` to match `state.json.plan_hash` (RE-PLAN escape via
+  `README.md`). Both were declared in SKILL.md/quality-gates but checked nowhere.
+- **Cycle bound.** `templates/cycle-bound.mjs` (new) trips at `max_cycles_per_phase` (default 5)
+  regardless of error identity - the runaway case the identical-signature circuit breaker never caught.
+
+### Deployment
+
+`supergoal` is symlinked into `~/.claude/skills`, `~/.codex/skills`, and `~/.config/opencode/skills`,
+so all three CLIs pick up the repo edits with no copy step.
+
+### Verification
+
+Full suite green: gate-scenarios 92 (was 74; +18 for committee/plan-freeze/contrast/cycle-bound),
+ui-ux-contract 17 (new), worktree 17, domain-context 30, learn 11 = 167 passed, 0 failed. The three
+REAL committed example vaults (5.2-5.4) updated with a Committee line + computed plan_hash and still
+deliver GREEN.
+
+### Files
+
+`reference/experts.md`, `agents/designer.md`, `reference/qa.md`, `reference/quality-gates.md`,
+`reference/ui-ux.md`, `reference/functional-ui.md`, `templates/qa-gate.sh`,
+`templates/delivery-gate.sh`, `templates/cycle-bound.mjs` (new), `SKILL.md`,
+`tests/gate-scenarios.test.sh`, `tests/ui-ux-contract.test.sh` (new), and the three example vaults'
+`state.json` + `verification.md`.

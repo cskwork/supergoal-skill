@@ -138,3 +138,33 @@ The previous wording required base/target collection but did not force repo-loca
 before worktree creation. In a multi-repo checkout, a branch name can exist at the umbrella root while
 being absent in the actual target repo. The new check prevents wasted `git worktree add` attempts and
 keeps branch choice explicit.
+
+## Functional UI design tier
+
+### Decision
+
+Split the UI/UX overlay into two tiers. `reference/ui-ux.md` now classifies a surface as Expressive
+(landing/marketing -> `reference/taste-skill-v2.md`) or Functional (dashboard/table/admin/internal
+tool -> new `reference/functional-ui.md`). Designer reads whichever authority the conductor names.
+
+### Reasoning
+
+The overlay previously skipped dashboards and internal tools entirely, so the Designer agent and the
+contrast gate never ran on them and a plain executor built them with no design discipline. The cause
+was not "design does not matter for admin UI" but that taste-skill-v2 is a landing-page ruleset
+(hero, motion choreography, anti-slop) that is wrong for dense UI - its own section 13 says so.
+
+Functional UI still needs a baseline: a real design system (Carbon/Fluent/Material/Polaris/Atlaskit/
+Radix/shadcn - reusing taste-skill-v2 section 2), computed WCAG contrast (reusing
+`templates/contrast-gate.mjs` unchanged), one accent/type/spacing/radius, all UI states
+(loading/empty/error/focus/...), density-first dials, minimal motion. The new file carries only that
+baseline; the heavy marketing rules stay scoped to the Expressive tier.
+
+Designer hard-visual-bans are now marked: starred (*) bans (one accent, contrast, color-scheme, no
+empty decoration) are universal across tiers; the rest stay Expressive-only.
+
+### Files
+
+`reference/functional-ui.md` (new), `reference/ui-ux.md` (tier dispatcher), `agents/designer.md`
+(tier-aware authority + starred universal bans), `SKILL.md` (routing + reference map), 
+`reference/pipeline.md`, `README.md` (layout note). Full suite green: 74 + 17 + 30 + 11 = 132 passed.

@@ -1,12 +1,21 @@
 # UI/UX overlay - design authority
 
-Load only when the objective ships user-facing visual UI: landing page, portfolio, marketing site,
-redesign, "make it look good/premium/on-brand", or frontend look-and-feel. Skip dashboards, data
-tables, and internal tools unless visual polish is explicit.
+Load whenever the objective ships user-facing UI. Classify the surface into one tier, then load that
+tier's authority. Pure non-visual work (lib, API, CLI without TUI) loads neither.
 
-When active, `reference/taste-skill-v2.md` governs UI decisions. It overlays the normal mode; phases,
-gates, vault, and topology stay unchanged. UI scaffolding may fan out, but one page's look-and-feel is
-deep-and-narrow: use one Designer driver per surface.
+| Surface | Tier | Authority |
+|---|---|---|
+| landing, portfolio, marketing site, redesign, "make it look good/premium/on-brand", frontend look-and-feel | **Expressive** | `reference/taste-skill-v2.md` |
+| dashboard, data table, admin panel, internal tool, settings, wizard, CRUD form | **Functional** | `reference/functional-ui.md` |
+
+Functional is the default for dense/admin UI: it still needs design system, contrast, consistent
+type/spacing/density, and complete UI states - just not marketing aesthetic. A mixed product applies
+each tier to its own surface. The rest of this file describes the Expressive tier; Functional defines
+its own (lighter) Plan/Build/QA overlay in its file.
+
+The chosen authority overlays the normal mode; phases, gates, vault, and topology stay unchanged. UI
+scaffolding may fan out, but one surface's look-and-feel is deep-and-narrow: use one Designer driver
+per surface.
 
 | Phase | Overlay |
 |---|---|

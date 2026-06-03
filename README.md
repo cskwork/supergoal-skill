@@ -82,7 +82,7 @@ Then in Claude Code: `/supergoal <your objective>`.
 SKILL.md            thin spine: mode detection, gates, reference map
 agents/             one persona file per role (system prompt), harness-agnostic dispatch source of truth
 reference/          pipeline · experts · vault · market-research · quality-gates · debugging · qa · domain-rules · plan-grounding · learn
-reference/ui-ux.md  UI/UX overlay -> taste-skill v2 (reference/taste-skill-v2.md, vendored) as design authority
+reference/ui-ux.md  UI/UX overlay -> routes to Expressive (taste-skill-v2, vendored) or Functional (functional-ui) tier
 learn/              LEARN-mode session journals (one file per session) + README template
 templates/          delivery-gate.sh · validate-gate.sh · human-feedback-gate.mjs · state.json
 DESIGN.md           research -> decision mapping (cited)

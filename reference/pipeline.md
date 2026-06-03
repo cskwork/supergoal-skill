@@ -33,8 +33,9 @@ read-only through investigation. All modes pause at Human Feedback before first 
   `reference/domain-context.md`. It builds a compact `## Domain Brief` from repo-local knowledge
   (default `.domain-agent/`) and current-code verification. If the knowledge pack is missing, ask
   where to create it and add the chosen path to `.gitignore` before writing it.
-- **UI/UX:** If deliverable is visual UI, add Design Read/dials at Plan, Designer at Build, and taste
-  Pre-Flight at QA. See `reference/ui-ux.md`.
+- **UI/UX:** If deliverable is user-facing UI, add Design Read/dials at Plan, Designer at Build, and
+  tier Pre-Flight at QA. `reference/ui-ux.md` routes to the Expressive (taste-skill-v2) or Functional
+  (functional-ui) tier by surface.
 - **Plan grounding:** Before Human Feedback, planner self-grounds `plan.md` against docs/code. See
   `reference/plan-grounding.md`.
 - **Artifact skips:** If a prior spec/plan/PRD already satisfies a phase, seed/skip it and log the skip

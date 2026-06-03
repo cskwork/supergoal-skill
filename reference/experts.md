@@ -15,8 +15,8 @@ name-b` cell means `agents/<name-a>.md`; `name-b` is only an optional host alias
 
 1. **Select** `agents/<name>.md`; never improvise a role prompt.
 2. **Spawn** a fresh sub-context with that file as system prompt, declared read scope, and model tier
-   where the harness allows it. Build/Fix writers run in `state.json.worktree_path`, never the original
-   checkout.
+   where the harness allows it. Always dispatch Build/Fix writers inside the run worktree
+   (`state.json.worktree_path`), never the original checkout.
    - Claude Code: use `Task`/`Agent` or pass the persona body inline.
    - Codex / agy / other CLIs: use the harness subtask mechanism. If none exists, run a fresh isolated
      reasoning pass, not blended context.

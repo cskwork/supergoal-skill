@@ -71,8 +71,8 @@ For **GREENFIELD**, **DEBUG**, and **LEGACY**, isolate the run before any repo m
    accepted worktree commit into the target branch. Then remove the run worktree only after the user
    accepts. If the user asks for changes, keep the worktree and rewind through the relevant phase.
 
-Do not skip this for small objectives. It prevents checkout conflicts and makes final integration
-explicit.
+Do not skip this for small objectives. It prevents checkout conflicts: multiple agents can work
+without editing the same checkout, and final integration stays explicit.
 
 **Topology rule:** task shape picks architecture. Fan out only for *wide-and-shallow* work
 (validation research, independent modules). Use a *single driving agent* for *deep-and-narrow* work,

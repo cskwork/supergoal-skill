@@ -24,7 +24,10 @@ Check happens in chat explain-back only.
 1. **Source.** Gather before teaching. Codebase topics use read-only `explore`/`architect`; concepts use
    authoritative sources. Do not guess.
 2. **Bridge.** Ask one calibration question. Connect the topic to the user's world using a saved
-   interest. Terms may lead only with plain-language definitions.
+   interest. Terms may lead only with plain-language definitions. For coding, algorithm, or codebase
+   mechanics, add the Human-to-Code bridge:
+   `human words -> tiny worked example -> explicit rules -> state/variables -> flow/code -> trace`.
+   The point is not to dump code; it is to show how an intuitive human move becomes a mechanical step.
 3. **Teach loop.** Use Feynman + Socratic style via `grill-me`.
    - First turn uses the Output format below.
    - Every turn matches saved difficulty.
@@ -73,7 +76,34 @@ Rules:
 - Level 5 uses about 5 terms. Levels 1-2 use 1-2 terms and one micro-step.
 - Definitions must fit the saved level. If they need jargon, define or rewrite.
 - No term appears in prose before the table.
+- For coding/codebase topics, include one short "사람 생각 -> 기계 단계" bridge before any code.
 - End the opening with one question, then the difficulty menu.
+
+## Human-to-Code bridge
+
+Use this bridge whenever the lesson needs to turn "I get it intuitively" into "I can express it in
+code/system steps." It is adapted from `https://github.com/cskwork/human-to-code-translation-skill`.
+
+| Bridge step | LEARN action |
+|---|---|
+| Human words | Restate the problem/concept in the user's plain language. |
+| Tiny worked example | Pick the smallest concrete example that can be traced by hand. |
+| Explicit rules | Name the implicit rule behind each "just do it" human move. |
+| State/variables | Ask "what must be remembered?" and turn that into terms, variables, objects, or data. |
+| Flow/code | Map actions to `if`, loop, function call, event, request, state transition, or module boundary. |
+| Trace | Walk one normal case and one boundary/failure case; fix gaps before adding more detail. |
+
+Use a two-column mini-table when useful:
+
+```markdown
+| 사람 생각 | 기계/코드 단계 |
+|---|---|
+| "기억해 둔다" | 변수나 상태에 저장한다 |
+| "하나씩 본다" | 반복문, iterator, query cursor, or event stream |
+```
+
+At levels 1-4, use only one or two rows. At level 5, use three to five rows. At levels 6-10, add
+precise names and edge cases, but keep the same bridge order.
 
 ## Difficulty ladder
 
@@ -138,3 +168,5 @@ Read it at step 0. Do not re-ask each session. Use it without lecturing about it
 8. Always include one realistic example and one takeaway.
 9. After the opening, drive with one question at a time.
 10. A term is known only when the user can define it back plainly.
+11. For coding/codebase lessons, never jump straight from concept to code; translate the human move
+    into explicit state and flow first.

@@ -106,8 +106,10 @@ demand; modes and gates do not change.
 
 **Plan grounding**: before `plan.md` freezes, the planner grounds it in the project's own
 domain/architecture. This is agent-run; the human approval remains the later Human Feedback gate.
-Feature/novel work self-runs a `grill-with-docs`-style design-tree grill and answers each challenge
-from explored docs. Improve/refactor work self-runs an `improve-codebase-architecture`-style pass.
+Feature/novel work runs a decision-tree pressure test: resolve dependent choices one branch at a
+time, challenge terminology against selected knowledge, stress concrete scenarios, and answer from
+explored docs/code before asking the human. Improve/refactor work self-runs an
+`improve-codebase-architecture`-style pass.
 Method: `reference/plan-grounding.md`.
 
 ## The non-negotiable gates

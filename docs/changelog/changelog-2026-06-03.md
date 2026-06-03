@@ -46,3 +46,23 @@ The LEARN change did not touch worktree behavior, but verification exposed that 
 compression removed three contract-anchor phrases. The test is intentionally literal because
 branch-scoped isolation prevents multiple agents from editing the same checkout and keeps Build/Fix
 writers inside the run worktree.
+
+## Plan Grounding Pressure Test
+
+### Decision
+
+Fold design-tree pressure-test behavior into `supergoal` Plan grounding and the domain-agent
+template:
+
+- Walk a design tree by dependencies, one branch at a time.
+- Answer questions from current docs/code before asking the human.
+- Challenge vague or conflicting terminology against selected knowledge, current repo docs when
+  present, and the domain-agent glossary.
+- Stress decisions with concrete normal, boundary, failure, and ownership scenarios.
+- Save glossary and decision knowledge only after it is resolved and useful for future routing.
+
+### Reasoning
+
+The fallback contract did not spell out terminology pressure, scenario pressure, code contradiction
+checks, and the bar for durable decisions. The domain-agent template now carries those rules so
+first-run knowledge packs avoid becoming generic implementation notes.

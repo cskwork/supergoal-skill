@@ -6,15 +6,15 @@ Goal: keep domain context useful without making every run spend tokens on stale-
 
 - Light refresh threshold: 5 days after `config.json.lastUpdated`.
 - Full review threshold: 30 days after `config.json.lastUpdated`.
-- Triggered refresh: selected knowledge conflicts with current code, or a run proves a stable new fact
-  that improves future routing.
+- Triggered refresh: selected knowledge conflicts with current code, terminology conflicts with the
+  glossary, or a run proves a stable new fact that improves future routing.
 
 ## Every Run
 
 1. Read `config.json` and `index.md`.
 2. Select at most five domain files.
 3. Verify load-bearing facts against current code/docs.
-4. Write only a compact Domain Brief to the run vault.
+4. Write only a compact Domain Brief to the run vault, including terminology conflicts.
 
 ## Light Refresh
 

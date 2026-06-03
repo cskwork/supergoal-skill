@@ -28,6 +28,12 @@ Recommended shape:
 
 - <rule that must not break>
 
+## Scenario Checks
+
+- Normal: <expected happy path>
+- Boundary: <edge case that often causes ambiguity>
+- Failure: <error or missing-data path to verify>
+
 ## Verification
 
 - <command or inspection path>

@@ -72,7 +72,8 @@ read first on every run.
 ### `glossary.md`
 
 Domain terms, aliases, IDs, and overloaded words. Terms must define what they mean in this repo, not
-generic industry meaning.
+generic industry meaning. Pick a canonical term when synonyms compete; list avoided aliases instead
+of letting future runs use several words for one concept.
 
 ### `invariants.md`
 
@@ -96,8 +97,9 @@ One source-grounded feature or business flow per file. Prefer names users and ti
 
 ### `decisions/*.md`
 
-Durable domain decisions only. Put surprising, hard-to-reverse choices here when no tracked ADR
-system exists.
+Durable domain decisions only. Prefer the repo's tracked decision system if one exists. Put a
+decision here only when no existing decision record covers it and the choice is hard to reverse,
+surprising without context, and based on a real tradeoff.
 
 ### `tickets/*.md`
 
@@ -167,6 +169,7 @@ more context.
 - Knowledge path: `.domain-agent/`
 - Selected knowledge files: `index.md`, `flows/<name>.md`, `test-map.md`
 - Stable terms: <term -> meaning>
+- Terminology conflicts: <conflicts found, or 'none'>
 - Invariants: <rules that affect this change>
 - Current-code verification: <symbols/routes/files checked now>
 - Entry points: <route/method/class/file>
@@ -203,6 +206,23 @@ Append updates surgically:
 - New command -> `test-map.md`
 - New flow -> `flows/<flow>.md`
 - Stable failure pattern -> `tickets/<short-slug>.md`
+
+Terminology updates:
+
+- Capture a resolved term as soon as it becomes stable enough to help future routing.
+- Challenge vague or overloaded words against selected knowledge files, current repo docs when
+  present, and the domain-agent glossary before adding a synonym.
+- Keep implementation details out of `glossary.md`; put routes, classes, tables, and commands in
+  `code-map.md`, `flows/*.md`, or `test-map.md`.
+- If the user's wording conflicts with saved language, record the conflict in the Domain Brief and
+  do not silently invent a new term.
+
+Decision updates:
+
+- Prefer the repo's existing decision records when they exist.
+- Use `decisions/*.md` only for choices that are hard to reverse, surprising without context, and
+  made between real alternatives.
+- Do not save ordinary implementation notes as decisions.
 
 After each save, update `index.md` search keys and `config.json.lastUpdated`.
 

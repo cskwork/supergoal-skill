@@ -18,6 +18,11 @@ Purpose: route agents to the smallest useful domain context for this repo.
 
 - `<domain term>`, `<route>`, `<DTO/entity>`, `<external system>`, `<error phrase>`
 
+## Terminology Routing
+
+- If a user/ticket term conflicts with `glossary.md`, surface the conflict before planning.
+- Prefer the canonical term in saved notes; list rejected synonyms in `glossary.md` under `Avoid`.
+
 ## Update Rules
 
 - Keep this file short.

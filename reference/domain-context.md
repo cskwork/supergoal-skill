@@ -56,6 +56,7 @@ If the user declines storage, run with an ephemeral Domain Brief in the vault on
   flows/
   decisions/
   tickets/
+  qa/
 ```
 
 Use the folder names above even when the user chooses a different root path.
@@ -105,6 +106,12 @@ surprising without context, and based on a real tradeoff.
 
 Reusable postmortems only. Do not archive every ticket. Save a ticket note only when it teaches a
 stable failure mode, invariant, or reproduction pattern.
+
+### `qa/*.md`
+
+Reusable QA suites from QA-ONLY runs (`reference/qa-only.md`): scenario list, `Comparison:` type, the
+DB checks by name, any saved baseline values (for `before-after`), and the re-run command / Playwright
+spec path. Index each in `index.md` under `## QA Suites`. No secrets, raw rows, or PII.
 
 ## Retrieval loop
 
@@ -206,6 +213,7 @@ Append updates surgically:
 - New command -> `test-map.md`
 - New flow -> `flows/<flow>.md`
 - Stable failure pattern -> `tickets/<short-slug>.md`
+- Reusable QA suite -> `qa/<suite>.md` (indexed in `index.md` `## QA Suites`)
 
 Terminology updates:
 

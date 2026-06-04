@@ -3,7 +3,8 @@
 Forward-only lanes. A phase opens only after the previous exit gate passes. Rewinds are explicit
 (Verify/QA may reopen Build/Fix).
 
-Vault: `docs/changelog/<date>-<slug>/`, six files only; see `vault.md`.
+Vault: `docs/changelog/<date>-<slug>/`, six files for coding modes; QA-ONLY uses a reduced folder (see
+its section below) and LEARN writes a journal; see `vault.md`.
 
 ## Branch/worktree isolation
 
@@ -100,6 +101,28 @@ Single-driver with targeted helper probes. Read-only through Human Feedback.
 | Verify | Clean-state claims + suite | `verification.md` | claims GREEN; suite GREEN; coverage map; completeness critic; aggregate GREEN |
 | QA | Exercise feature + adjacent flows | `verification.md` `## QA`, `qa/` | `qa-gate.sh <vault> <browser|cli>` exits 0 |
 | Deliver | Gate + package | commit / PR | plan hash matches; `delivery-gate.sh` exits 0 |
+
+## QA-ONLY - Intake -> Target & Access -> Scenario checkpoint -> Exercise -> Cross-check -> Report -> Persist
+
+No-code mode: exercise an already-running app (and a read-only DB) to QA behavior or compare data.
+Read-only except the run folder and the `.domain-agent/qa/` suite. No worktree, no Validate/Human
+Feedback/Committee/Deliver gates. The Scenario checkpoint is the only pause (nothing ships). Reduced run
+folder: `brief.md`, `verification.md` (`## QA`), `report.md`, `qa/`, `state.json`. See `reference/qa-only.md`.
+
+| Phase | Goal | Writes | Exit gate |
+|---|---|---|---|
+| Intake | QA goal, scenarios, `Comparison:` type, acceptance | `brief.md`, `state.json` | scenarios + comparison type stated |
+| Target & Access | Running-app target (URL/env, not built), browser driver, read-only DB access, budget | `brief.md` | target reachable; driver + DB named; `action_cap` set (default 100) |
+| Scenario checkpoint | Show scenarios + budget + comparison; let user narrow | run note | user confirms or narrows; proceed unless told to wait |
+| Exercise | Drive app via `qa-auditor`, capped | `verification.md` `## QA`, `qa/` | per-scenario pass/fail; combined `action_count <= action_cap` |
+| Cross-check | Read-only DB via `db-reader`: auth, UI-value integrity, dataset/env diff | `verification.md` `## QA`, `qa/expected.md` | per-check pass/fail + small diff; no raw dumps |
+| Report | Human-friendly result | `report.md` | `## What worked`/`## What didn't`/`## What I discovered`/`## How to re-run` |
+| Persist | Save reusable suite, index it | `.domain-agent/qa/<suite>.md`, `index.md` `## QA Suites` | suite + re-run steps; no secrets/PII; gitignored |
+
+Gate: `bash templates/qa-only-gate.sh <vault> <browser|cli>` exits 0. Browser driver is `agent-browser`
+by default, attach-to-browser (Playwright CLI) for authenticated sessions. DB access is read-only and
+DB-independent (`reference/db-access.md`). `qa-auditor` and `db-reader` are separate read-only subagents
+so DB raw rows/PII never enter the browser agent; the conductor relays a small `qa/expected.md`.
 
 ## Rewinds and circuit breaker
 

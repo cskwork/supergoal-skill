@@ -18,6 +18,10 @@ Purpose: route agents to the smallest useful domain context for this repo.
 
 - `<domain term>`, `<route>`, `<DTO/entity>`, `<external system>`, `<error phrase>`
 
+## QA Suites
+
+- `<feature/flow>`: `qa/<suite>.md` (`<functional|data-integrity|before-after|ab|env>`) — reusable QA-ONLY check, re-run on request
+
 ## Terminology Routing
 
 - If a user/ticket term conflicts with `glossary.md`, surface the conflict before planning.

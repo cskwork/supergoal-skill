@@ -15,7 +15,12 @@ Keep six files unless read-scope requires more separation:
 | `plan.md` | Architect; DEBUG Diagnose | frozen once written | slice/fix plan, Architecture, Contracts, `## Human Feedback` packet |
 | `claims.md` | Builder | append-only, untrusted | one claim per slice + `run-to-prove` |
 | `verification.md` | Verifier + QA | append-only | claim verdicts, one aggregate `verdict: GREEN/RED`, `## Coverage`, `## QA` |
-| `state.json` | orchestrator | live machine state | mode, phase, cycles, signatures, plan hash, approval, branches/worktree |
+| `state.json` | orchestrator | live machine state | mode, phase, cycles, signatures, plan hash, approval, branches/worktree; QA-ONLY adds `action_count`/`action_cap` |
+
+The six-file set is for the coding modes (GREENFIELD/DEBUG/LEGACY). Read-only modes differ: LEARN writes
+a chat journal, not a vault; **QA-ONLY** uses a reduced run folder — `brief.md`, `verification.md`
+(`## QA`), `report.md` (human), `qa/`, `state.json` — with no `plan.md`/`claims.md`. See
+`reference/qa-only.md`.
 
 Merged legacy files: `validation.md` -> `brief.md`; `architecture.md`/`contracts.md` -> `plan.md`;
 `qa-report.md` -> `verification.md`; `decisions.log` -> `README.md`. When consolidating existing vaults,

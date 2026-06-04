@@ -44,6 +44,8 @@ isolation is weaker than harness allowlists. Claude Code plugin wrapping is opti
 | Security reviewer | `security-reviewer` | Sonnet | diff | findings |
 | Code reviewer | `code-reviewer` | Sonnet | diff + `plan.md` | findings |
 | QA | `qa-tester` | Sonnet | running app | `verification.md` `## QA` + `qa/` evidence |
+| QA auditor (QA-ONLY) | `qa-auditor` | Sonnet | running app | `verification.md` `## QA` + `qa/` evidence; UI-value diffs |
+| DB reader (QA-ONLY) | `db-reader` | Sonnet | read-only DB | `## QA` `DB:` line + `qa/expected.md`; small diffs only |
 | Debugger (DEBUG) | `debugger` / `tracer` | Opus | repo, repro | root cause in `README.md` |
 
 ## Verify isolation and completeness

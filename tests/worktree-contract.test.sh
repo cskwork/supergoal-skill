@@ -33,7 +33,7 @@ require_text "target defaults to base" "SKILL.md" "default target branch is the 
 require_text "skill verifies refs in target repo" "SKILL.md" "verify both refs exist in the target repo before creating the worktree"
 require_text "missing ref asks for correction" "SKILL.md" "ask for corrected source/target branch names"
 require_text "worktree comes from base" "SKILL.md" "create the run worktree from the base branch"
-require_text "merge goes into target" "SKILL.md" "merge the accepted worktree commit into the target branch"
+require_text "merge goes into target" "SKILL.md" "integrate only by a merge commit into"
 require_text "retains three recent worktrees" "SKILL.md" "keep the three most recent completed run worktrees"
 require_text "prunes oldest over cap" "SKILL.md" "prune only the oldest repo-managed completed run worktree when the retained count exceeds three"
 require_text "conflict rationale is explicit" "SKILL.md" "multiple agents can work without editing the same checkout"

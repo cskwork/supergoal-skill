@@ -145,6 +145,52 @@ Save under the existing `domain-context.md` saving loop - surgical appends only,
 - No secrets, tokens, raw logs, customer data, or PII. Do not commit `.domain-agent/` unless the user
   asks for a sanitized publication path; `.gitignore` must already contain it.
 
+## Step 7 - Onboard (human handbook, HTML)
+
+After Persist, render the grounded pack into one self-contained HTML handbook **for humans only**:
+`<knowledgePath>/onboarding.html` (default `.domain-agent/onboarding.html`, gitignored with the pack).
+Agents keep reading the markdown pack, which stays the source of truth; the HTML is a derived snapshot,
+never a second source. It exists so a new engineer can grasp what the domain encompasses fast - simple
+to onboard with, yet comprehensive and carrying the discovered expertise.
+
+Clone `templates/domain-onboarding.html` and fill it **from the pack only** - introduce no fact absent
+from the pack, and never upgrade an `unverified` fact to verified to make the page read better. Sections,
+plain summary first then expert detail:
+
+1. Orientation - what this system is, who it serves, the one-paragraph mental model.
+2. Key terms - `glossary.md` in this repo's meaning, each in plain language (not generic industry meaning).
+3. Architecture - systems, bounded contexts, entry points, and how a request/data moves; one inline
+   diagram (inline SVG or CSS boxes, no external scripts).
+4. Key flows - per `flows/<ctx>.md`, entry -> service -> data/external in human terms + invariants touched.
+5. Rules that must not break - `invariants.md`, each with its grounding status shown.
+6. Get hands-on - the key `test-map.md` commands a newcomer runs to see the system work.
+7. Trust & freshness - a verified/unverified legend, `config.json.lastUpdated`, and a line stating the
+   markdown pack is the source of truth and this page a derived snapshot.
+
+Constraints:
+
+- **Functional tier, not Expressive.** This is an internal documentation tool, so follow
+  `reference/functional-ui.md` as the visual authority: one accent + one type/spacing/radius scale,
+  computed WCAG-AA contrast (body AAA), information density, minimal motion honoring
+  `prefers-reduced-motion`, a declared `color-scheme` with light+dark tokens, and no empty decoration.
+  Because the handbook must stay self-contained and offline, implement that baseline with a small inline
+  token set rather than pulling a named external design system (Fluent/Carbon/shadcn) - the offline /
+  no-CDN constraint below overrides functional-ui's "adopt one named system" rule.
+- Single self-contained file: inline CSS only; **no external scripts, fonts, CDN, or network requests**
+  (works offline, adds no security surface). Use inline SVG for any diagram.
+- Carry each load-bearing fact's grounding as a visible badge (verified / unverified) so a reader is
+  never misled; put expert detail (signatures, file paths, probe commands) in `<details>` for
+  progressive disclosure - simple on the surface, expert underneath.
+- Accessible and responsive: semantic HTML, a table of contents with anchors, usable below 768px.
+- Language: prose in the user's language; keep identifiers, signatures, file paths, and commands verbatim.
+- No secrets, tokens, raw logs, or PII (the pack already passed the secret scan; add no new content).
+- Committing exposes internal architecture: keep it in the gitignored knowledge path; ask before moving
+  it outside, exactly like publishing the pack.
+
+LEARN-DOMAIN runs no implementation gates, so the Onboard render does not pull the product Designer's
+`claims.md` / QA contrast gate / committee apparatus; the agent self-applies the functional-ui baseline.
+On a later Freshness run, regenerate the handbook from the refreshed pack so it never drifts from it.
+
 ## Freshness loop (incremental, not full re-learn)
 
 Keep the pack fresh without re-summarizing the repo each change:
@@ -166,6 +212,7 @@ Keep the pack fresh without re-summarizing the repo each change:
 | Deepen | `explore` per context; `architect` for boundaries | repo, draft map | `flows/*.md`, `glossary.md`, `invariants.md`, `test-map.md` |
 | Ground | `executor` runs probes in sandbox; `verifier` confirms | the claim + cited source only | `Grounding:` markers |
 | Completeness | `completeness-critic` | bounded-context list + code | gaps -> work or `unverified` |
+| Onboard | `explore` renders to the Functional tier (`reference/functional-ui.md`) | persisted pack | `onboarding.html` |
 
 Locked-prompt template and isolation rules: `reference/experts.md`. Language: write pack prose in the
 user's language; keep identifiers, signatures, commands, and `Grounding:`/`verified:` markers verbatim
@@ -178,3 +225,5 @@ so the gate keeps matching.
 - Grounding gate cannot pass: report which facts lack a `Grounding:` marker; never fake verification.
 - Scope too large for the budget: narrow N and defer the rest to later runs; log what was deferred so
   coverage is not silently truncated.
+- Onboard would need an ungrounded claim to read well: keep it `unverified` with its badge; never invent
+  facts or upgrade grounding to make the handbook look more complete.

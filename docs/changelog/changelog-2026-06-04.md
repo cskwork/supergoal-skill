@@ -1,5 +1,62 @@
 # Changelog 2026-06-04
 
+## LEARN-DOMAIN Onboard: Step 7 spec + Functional-tier handbook + contract tests
+
+### Decision
+
+Complete the LEARN-DOMAIN **Onboard** step (pipeline row, phase table, and `domain-onboarding.html`
+template already landed in `0ff5ef0`) by adding the full Step 7 spec, dispatch wiring, a stop condition,
+the Functional-tier visual binding, and contract tests.
+
+`reference/learn-domain.md` now carries `## Step 7 - Onboard (human handbook, HTML)`: render the grounded
+pack into one self-contained `<knowledgePath>/onboarding.html` for humans only (default
+`.domain-agent/onboarding.html`, gitignored). Seven sections, plain summary first then expert detail in
+`<details>`: Orientation, Key terms, Architecture (+ one inline diagram), Key flows, Rules that must not
+break (with grounding status), Get hands-on (`test-map.md` commands), Trust & freshness
+(verified/unverified legend + `lastUpdated`). Rendered from the pack only - no new facts, never upgrade
+`unverified` to verified; each load-bearing fact carries a visible verified/unverified badge; the
+markdown pack stays the agent's source of truth and the HTML is a derived snapshot regenerated on every
+Freshness run. Dispatch row added (`explore` renders to the Functional tier); stop condition added
+(never invent facts or upgrade grounding to make the page read fuller).
+
+Per the follow-up question, the handbook is bound to the **Functional tier**
+(`reference/functional-ui.md`), not the Expressive taste tier: one accent + one type/spacing/radius
+scale, computed WCAG-AA contrast (body AAA), information density, minimal motion honoring
+`prefers-reduced-motion`, declared `color-scheme` with light+dark tokens, no empty decoration. Because the
+file must stay self-contained and offline (inline CSS, no external scripts/fonts/CDN/network, inline SVG
+for diagrams), that baseline is implemented with a small inline token set rather than a named external
+design system (Fluent/Carbon/shadcn) - the offline/no-CDN constraint overrides functional-ui's "adopt one
+named system" rule. LEARN-DOMAIN runs no implementation gates, so the render deliberately does not pull
+the product Designer's `claims.md` / QA contrast gate / committee apparatus; the agent self-applies the
+functional-ui baseline. The `templates/domain-onboarding.html` header comment now names the tier so the
+reconciliation travels with the artifact.
+
+### Reasoning
+
+The agent-facing pack (terse markdown, signatures, grounding markers) is not a good human onboarding
+read; the Onboard step closes that gap as a derived rendering, not a second source of truth, so it
+inherits the pack's grounding discipline and shows each fact's verification status instead of presenting
+everything as fact. Self-contained/offline matches the mode's existing security posture (it rejects
+embeddings partly because they "double the security surface") and the harness-agnostic, no-network
+constraint of the pack. An onboarding handbook is an internal documentation tool - a Functional surface,
+never Expressive - so functional-ui.md is the correct authority. The step is procedural like the
+clarifying interview, so no new machine gate was added; `learn-grounding-gate.mjs` still validates the
+markdown pack only and is unaffected by the new `.html`.
+
+### Verification
+
+Full contract suite passes with no regressions: domain-context, gate-scenarios, interview, learn,
+learn-domain (29/0, +12 new Onboard assertions covering the SKILL pipeline/template wiring, the
+human-only + self-contained + Functional-tier + source-of-truth reference rules, and the template's
+no-external-scripts / verified-badge / color-scheme markers), ui-ux, worktree. Template confirmed
+self-contained: a grep for `https?://|src=|<script|cdn\.|@import|<link|url\(` matches only the in-comment
+instruction forbidding scripts, no real external reference.
+
+### Files
+
+`reference/learn-domain.md` (Step 7 + dispatch row + stop condition), `templates/domain-onboarding.html`
+(Functional-tier header comment), `tests/learn-domain-contract.test.sh` (+12 assertions).
+
 ## Root cleanup: move DESIGN.md + user-preference files into subfolders
 
 ### Decision

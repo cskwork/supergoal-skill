@@ -50,5 +50,19 @@ require_text "code-map has signature section" "templates/domain-agent/code-map.m
 require_text "invariants carry a Grounding line" "templates/domain-agent/invariants.md" "Grounding:"
 require_text "flows carry a Grounding line" "templates/domain-agent/flows/README.md" "Grounding:"
 
+# Onboard stage: one self-contained human HTML handbook, Functional tier, derived from the pack.
+require_text "SKILL pipeline adds Onboard stage" "SKILL.md" "Onboard"
+require_text "SKILL maps the onboarding template" "SKILL.md" "domain-onboarding.html"
+require_text "reference describes the onboarding HTML" "reference/learn-domain.md" "onboarding.html"
+require_text "reference keeps the handbook human-only" "reference/learn-domain.md" "for humans only"
+require_text "reference requires a self-contained file" "reference/learn-domain.md" "self-contained file"
+require_text "reference forbids external scripts/CDN" "reference/learn-domain.md" "no external scripts"
+require_text "reference renders to the Functional tier" "reference/learn-domain.md" "functional-ui.md"
+require_text "reference keeps the pack the source of truth" "reference/learn-domain.md" "source of truth"
+require_text "template names the Functional tier" "templates/domain-onboarding.html" "functional-ui.md"
+require_text "template forbids external scripts" "templates/domain-onboarding.html" "NO external scripts"
+require_text "template carries a verified badge" "templates/domain-onboarding.html" "badge verified"
+require_text "template declares color-scheme" "templates/domain-onboarding.html" "color-scheme"
+
 printf '\nSummary: %s passed, %s failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

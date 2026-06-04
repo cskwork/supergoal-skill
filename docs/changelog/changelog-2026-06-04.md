@@ -1,5 +1,26 @@
 # Changelog 2026-06-04
 
+## README: surface LEARN-DOMAIN mode + Onboard handbook
+
+### Decision
+
+Add the missing **LEARN-DOMAIN** row to the README Modes table (its pipeline ends in
+`Onboard (human handbook)`), with a one-paragraph note that the final Onboard step renders one
+self-contained `onboarding.html` for humans while the markdown pack stays the agent's source of truth.
+Add a LEARN-DOMAIN example command, generalize the landing-page blurb from "the three modes" to "the
+modes", and list `interview` + `learn-domain` in the Layout `reference/` summary.
+
+### Reasoning
+
+LEARN-DOMAIN shipped in v0.1.5 but the README Modes table still listed only four modes and the prose
+said "three modes", so the mode that hosts the new onboarding handbook was undocumented at the top level.
+This is the smallest accurate fix; the README stays a high-level overview and does not enumerate
+per-step internals.
+
+### Files
+
+`README.md`.
+
 ## LEARN-DOMAIN Onboard: Step 7 spec + Functional-tier handbook + contract tests
 
 ### Decision

@@ -110,7 +110,7 @@ agents/             one persona file per role (system prompt), harness-agnostic 
 reference/          pipeline · experts · vault · market-research · quality-gates · debugging · qa · qa-only · db-access · domain-rules · plan-grounding · interview · learn · learn-domain
 reference/ui-ux.md  UI/UX overlay -> routes to Expressive (taste-skill-v2, vendored) or Functional (functional-ui) tier
 learn/              LEARN-mode session journals (one file per session) + README template + USER_PREFERENCE(.template).md
-templates/          delivery-gate.sh · validate-gate.sh · human-feedback-gate.mjs · state.json
+templates/          delivery-gate.sh · validate-gate.sh · qa-gate.sh · qa-only-gate.sh · human-feedback-gate.mjs · qa-report.md · state.json
 docs/               DESIGN.md (research -> decision mapping, cited) · research-brief.md · e2e-test-plan.md · changelog/ · index.html (landing)
 examples/url-shortener/   a real service the harness built/debugged/extended (audit trail in docs/changelog/)
 ```
@@ -130,6 +130,12 @@ each run is in [`examples/url-shortener/docs/changelog/`](examples/url-shortener
   that predate the field), committee-approved, gate-green.
 
 Adversarial verification caught a real defect in 2 of 3 runs.
+
+**QA-ONLY** was separately dogfooded against a live, Cloudflare-protected site. The mode tried
+`agent-browser`, hit the bot challenge, and recorded an honest **BLOCKED** verdict (no fabricated pass)
+with as-is/to-be evidence, recommended **attach-to-browser** as the remediation, and its terminal gate
+(`qa-only-gate.sh`) passed on the truthful evidence — the same no-fake-pass discipline, applied to a
+no-code run.
 
 A separate evidence-only private-codebase benchmark compared plain Codex CLI, `/supergoal`, and
 Codex Goal mode on the same hard backend task with the same hidden scorer. See

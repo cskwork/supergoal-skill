@@ -1,7 +1,7 @@
 # 2026-05-30 — research → build → validate → publish → self-review
 
 Context-sharing log for how `/supergoal` was created. Reasoning lives here; the *what* lives in the
-code and [`../../../DESIGN.md`](../../../DESIGN.md). New decision/context docs go under
+code and [`../../DESIGN.md`](../../DESIGN.md). New decision/context docs go under
 `docs/changelog/<date>-<title>/`.
 
 ## Phases

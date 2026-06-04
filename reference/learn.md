@@ -43,10 +43,10 @@ failure path, include one fallback/stop row before the takeaway.
 
 ## Flow
 
-0. **Preference first.** Read `<skill>/USER_PREFERENCE.md`. It stores difficulty (1-10, default 5) and
+0. **Preference first.** Read `<skill>/learn/USER_PREFERENCE.md`. It stores difficulty (1-10, default 5) and
    1-3 interests.
    - If present: use silently.
-   - If missing/empty: seed from `USER_PREFERENCE.template.md`, ask once for 1-3 interests, save, then
+   - If missing/empty: seed from `learn/USER_PREFERENCE.template.md`, ask once for 1-3 interests, save, then
      continue.
    - Difficulty controls register and chunk size. Interests drive analogies/examples.
    - Difficulty changes automatically on tuning; interests change only on request.
@@ -171,14 +171,14 @@ Every teaching turn ends with:
 
 - Bare `1` = level -1; bare `2` = hold; bare `3` = level +1.
 - Clamp to 1-10 and say when already at edge.
-- On change, rewrite `USER_PREFERENCE.md`, confirm briefly, and re-pitch the same content at the new
+- On change, rewrite `learn/USER_PREFERENCE.md`, confirm briefly, and re-pitch the same content at the new
   level.
 - Treat anything beyond bare 1/2/3 as lesson content.
 
 ## User preference profile
 
-Persistent file: `<skill>/USER_PREFERENCE.md`. It is git-ignored; never commit personal data. On first
-run, seed from `USER_PREFERENCE.template.md`.
+Persistent file: `<skill>/learn/USER_PREFERENCE.md`. It is git-ignored; never commit personal data. On first
+run, seed from `learn/USER_PREFERENCE.template.md`.
 
 ```markdown
 # User preference profile

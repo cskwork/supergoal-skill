@@ -40,7 +40,7 @@ it inline where none exists). **Nothing to install but the skill itself.** (Work
 ## Why it exists
 
 A single agent given a big objective drifts: it skips validation, trusts its own "done", and leaves
-unverified claims. `/supergoal` imposes the discipline a senior team would (see [`DESIGN.md`](DESIGN.md) and [`docs/research-brief.md`](docs/research-brief.md)):
+unverified claims. `/supergoal` imposes the discipline a senior team would (see [`docs/DESIGN.md`](docs/DESIGN.md) and [`docs/research-brief.md`](docs/research-brief.md)):
 
 - **Topology, not preference, picks the architecture.** Fan out for wide-and-shallow work
   (validation, scaffolding); single-driver for deep-and-narrow work (one bug, one feature).
@@ -93,10 +93,9 @@ SKILL.md            thin spine: mode detection, gates, reference map
 agents/             one persona file per role (system prompt), harness-agnostic dispatch source of truth
 reference/          pipeline · experts · vault · market-research · quality-gates · debugging · qa · domain-rules · plan-grounding · learn
 reference/ui-ux.md  UI/UX overlay -> routes to Expressive (taste-skill-v2, vendored) or Functional (functional-ui) tier
-learn/              LEARN-mode session journals (one file per session) + README template
+learn/              LEARN-mode session journals (one file per session) + README template + USER_PREFERENCE(.template).md
 templates/          delivery-gate.sh · validate-gate.sh · human-feedback-gate.mjs · state.json
-DESIGN.md           research -> decision mapping (cited)
-docs/               research-brief.md · e2e-test-plan.md · changelog/ · index.html (landing)
+docs/               DESIGN.md (research -> decision mapping, cited) · research-brief.md · e2e-test-plan.md · changelog/ · index.html (landing)
 examples/url-shortener/   a real service the harness built/debugged/extended (audit trail in docs/changelog/)
 ```
 

@@ -31,7 +31,7 @@ The technique choices below are deliberate, not defaults. One-clause rationale e
 
 ## Pipeline
 
-`Intake -> Survey -> Scope checkpoint -> Map -> Deepen -> Ground -> Persist -> Freshness loop`
+`Intake -> Survey -> Scope checkpoint -> Map -> Deepen -> Ground -> Persist -> Onboard -> Freshness loop`
 
 Read-only except the knowledge pack and sandbox probes. No production source changes. No Human Feedback
 implementation gate (nothing ships), but the Scope checkpoint pauses for the user before deep fan-out.
@@ -45,6 +45,7 @@ implementation gate (nothing ships), but the Scope checkpoint pauses for the use
 | Deepen | Per bounded-context fan-out; bottom-up summaries grounded in domain meaning | `glossary.md`, `invariants.md`, `flows/<ctx>.md`, `test-map.md` | each context has a flow file with current code path |
 | Ground | Generate + run probes that prove load-bearing facts; mark verified/unverified | `verified:`/`Grounding:` markers in pack | `learn-grounding-gate.mjs <knowledgePath>` exits 0; completeness critic finds no un-named context |
 | Persist | Surgical save under the existing saving loop | `index.md` keys, `config.json.lastUpdated` | no secrets/PII; `.gitignore` contains the path |
+| Onboard | Render the grounded pack into one human-facing HTML handbook | `onboarding.html` | self-contained HTML built only from the pack; no new facts; no external scripts |
 
 ## Step 0 - Intake and budget
 

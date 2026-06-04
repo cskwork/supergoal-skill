@@ -1,5 +1,37 @@
 # Changelog 2026-06-04
 
+## Root cleanup: move DESIGN.md + user-preference files into subfolders
+
+### Decision
+
+Keep the repo root to `SKILL.md`, `README.md`, `LICENSE` only. Moved the three stray root files:
+`DESIGN.md` -> `docs/DESIGN.md` (joins the other docs), `USER_PREFERENCE.template.md` ->
+`learn/USER_PREFERENCE.template.md`, and the git-ignored runtime profile `USER_PREFERENCE.md` ->
+`learn/USER_PREFERENCE.md` (grouped with the LEARN-mode artifacts it belongs to).
+
+### Reasoning
+
+The root mixed the skill entrypoint/readme/license with design docs and LEARN runtime files. Grouping
+by purpose: design rationale lives under `docs/`, all LEARN preference state lives under `learn/`
+alongside the session journals (which `.gitignore` already special-cases). The live profile is the
+LEARN flow's persistent state, so its home is the LEARN folder, not root.
+
+### Path updates
+
+- `.gitignore`: dropped the root `USER_PREFERENCE.md` rule (now covered by `learn/*.md`); added
+  `!learn/USER_PREFERENCE.template.md` so the tracked template survives the `learn/*.md` ignore.
+- `reference/learn.md`: 4 path references -> `learn/USER_PREFERENCE.md` and
+  `learn/USER_PREFERENCE.template.md` (the LEARN flow now reads/writes/seeds from `learn/`).
+- `README.md`: DESIGN.md link -> `docs/DESIGN.md`; Layout block folds DESIGN.md into the `docs/` row
+  and notes `USER_PREFERENCE(.template).md` under `learn/`.
+- `docs/changelog/2026-05-30-research-build-validate/README.md`: relative link `../../../DESIGN.md`
+  -> `../../DESIGN.md`. DESIGN.md's own code-span paths are root-relative descriptions, left as-is.
+
+### Files
+
+`docs/DESIGN.md` (moved), `learn/USER_PREFERENCE.template.md` (moved), `.gitignore`,
+`reference/learn.md`, `README.md`, `docs/changelog/2026-05-30-research-build-validate/README.md`.
+
 ## Clarifying-interview step before plan freeze (GREENFIELD/DEBUG/LEGACY)
 
 ### Decision

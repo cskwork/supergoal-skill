@@ -17,7 +17,7 @@ it inline where none exists). **Nothing to install but the skill itself.** (Work
 [oh-my-symphony](https://github.com/cskwork/oh-my-symphony).)
 
 > **New here? Start with the landing page** -> **[cskwork.github.io/supergoal-skill](https://cskwork.github.io/supergoal-skill/)**
-> A bilingual (English / 한국어) walkthrough with a 3-step quickstart, the three modes, how the
+> A bilingual (English / 한국어) walkthrough with a 3-step quickstart, the modes, how the
 > builder-vs-verifier split catches real bugs, and the evidence it produces. Best onboarding path before you clone.
 
 ## Modes
@@ -30,11 +30,18 @@ it inline where none exists). **Nothing to install but the skill itself.** (Work
 | "fix / broken / failing / why does" | **DEBUG** | Intake -> Reproduce -> Diagnose -> **Human Feedback** -> Fix -> Verify -> Deliver |
 | "add X to our existing/legacy code" | **LEGACY** | Intake -> Explore -> Plan -> **Human Feedback** -> Build -> Verify -> QA -> Deliver |
 | "explain / understand / teach me X" (learn, no code) | **LEARN** | Intake -> Source -> Bridge -> Teach loop -> Check (explain-back) -> Journal |
+| "learn / map / onboard onto this codebase" (build a domain wiki for the agent) | **LEARN-DOMAIN** | Intake -> Survey -> Scope checkpoint -> Map -> Deepen -> **Ground** -> Persist -> **Onboard (human handbook)** -> Freshness |
+
+LEARN-DOMAIN learns a codebase *for the agent* and persists a source-grounded, execution-verified
+`.domain-agent/` wiki so later runs route fast. Its final **Onboard** step also renders one self-contained
+`onboarding.html` handbook **for humans** (what the domain is, key terms, architecture, flows, and the
+rules that must not break) - the markdown pack stays the agent's source of truth.
 
 ```text
 /supergoal build a habit-tracker app and ship it
 /supergoal the checkout page hangs intermittently in prod. fix it
 /supergoal add SSO to our legacy Django monolith
+/supergoal learn this codebase and build a domain wiki
 ```
 
 ## Why it exists
@@ -91,7 +98,7 @@ Windows checkout keeps scripts as LF and bash parses them cleanly. Two notes:
 ```
 SKILL.md            thin spine: mode detection, gates, reference map
 agents/             one persona file per role (system prompt), harness-agnostic dispatch source of truth
-reference/          pipeline · experts · vault · market-research · quality-gates · debugging · qa · domain-rules · plan-grounding · learn
+reference/          pipeline · experts · vault · market-research · quality-gates · debugging · qa · domain-rules · plan-grounding · interview · learn · learn-domain
 reference/ui-ux.md  UI/UX overlay -> routes to Expressive (taste-skill-v2, vendored) or Functional (functional-ui) tier
 learn/              LEARN-mode session journals (one file per session) + README template + USER_PREFERENCE(.template).md
 templates/          delivery-gate.sh · validate-gate.sh · human-feedback-gate.mjs · state.json

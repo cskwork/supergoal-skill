@@ -53,8 +53,11 @@ When the failure spans DB, API, network, or message-queue boundaries, map before
    ledger format in `reference/vault.md`: symptom, candidate cause, evidence-for, evidence-against,
    and "definite & imminent?". Pick the next probe that best separates them. Resist fixating on the
    first plausible cause; advance only causes backed by direct evidence.
-4. **Confirm.** Back one hypothesis with direct evidence at the boundary, then write the fix plan and
-   ask for Human Feedback.
+4. **Confirm.** Before locking the cause, present the 3-5 ranked hypotheses to the user for re-ranking
+   (cheap checkpoint, non-blocking — proceed on your own ranking if the user is AFK; see
+   `reference/interview.md`). Then back one hypothesis with direct evidence at the boundary, advancing
+   a user-preferred hypothesis only when evidence still supports it. Write the fix plan and ask for
+   Human Feedback.
 5. **Fix root cause (minimal diff, checkpoint per step).** Smallest change that addresses cause, not
    symptom. No silencing, fake success, broad refactor, or unrelated cleanup. Checkpoint after each
    plan step so every change traces to one observed outcome; do not free-form edit until green.

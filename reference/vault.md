@@ -132,6 +132,24 @@ Plain-language comes before technical. Technical defines hard terms. The gate ch
    `claims.md` + source. Self-reported done is insufficient.
 2. **Frozen files stay frozen.** Build implements `plan.md`; it does not redesign mid-build.
 
+## Hypothesis ledger format (DEBUG `README.md`)
+
+DEBUG records competing root causes in `README.md` so a fresh context never re-investigates solved
+ground. Force evidence on both sides to resist confirmation bias and premature fixation:
+
+```md
+## Hypotheses
+### H1: <candidate cause>
+symptom: <observed failure, in golden-signal terms where cross-boundary>
+evidence-for: <facts/links that support this cause>
+evidence-against: <facts/links that weaken it>
+definite & imminent?: <yes/no — only confirmed causes advance to fix>
+status: <open | confirmed | refuted>
+```
+
+A cause advances to the fix plan only after one hypothesis is `confirmed` by direct evidence at the
+failing boundary; refuted hypotheses stay logged, not deleted.
+
 ## `claims.md` format
 
 ```md

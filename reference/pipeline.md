@@ -62,15 +62,17 @@ read-only through investigation. All modes pause at Human Feedback before first 
 
 ## DEBUG - Intake -> Reproduce -> Diagnose -> Human Feedback -> Fix -> Verify -> Deliver
 
-Single-driver. Read-only through Human Feedback.
+Single-driver by default; escalate to split localize/fix contexts when the bug spans many files or
+multiple services. Read-only through Human Feedback. See `reference/debugging.md` for the loop,
+distributed triage, and escalation rule.
 
 | Phase | Goal | Writes | Exit gate |
 |---|---|---|---|
 | Intake | Capture symptom, env, expected vs actual | `brief.md` | symptom + expected behavior stated |
-| Reproduce | Domain-scoped deterministic failing repro | `README.md`, failing test/script, `claims.md` | repro fails on current code in clean sandbox |
-| Diagnose | Hypothesis-driven root cause | `README.md`, frozen `plan.md` | one hypothesis confirmed against Domain Brief/current code; minimal fix plan written |
+| Reproduce | Domain-scoped deterministic failing repro | `README.md`, failing test/script, `claims.md` | repro FAILS on current code and is expected to PASS after fix (F->P) in a clean sandbox; flaky/timing bugs fail consistently over N runs |
+| Diagnose | Hypothesis-driven root cause | `README.md` hypothesis ledger, frozen `plan.md` | one hypothesis confirmed by direct evidence against Domain Brief/current code; cross-boundary bugs pass distributed triage; minimal fix plan written |
 | Human Feedback | Explain cause + fix plan | `plan.md`, `state.json.approval` | human approves Fix; `human-feedback-gate.mjs` exits 0 |
-| Fix | Smallest root-cause change in run worktree | code patch | previously failing repro passes |
+| Fix | Smallest root-cause change in run worktree | code patch | previously failing repro passes; minimal diff, no unrelated churn |
 | Verify | Re-run repro + suite cleanly | `verification.md` | repro GREEN; suite GREEN; coverage map; completeness critic; aggregate GREEN |
 | Deliver | Gate + package | commit / PR | `delivery-gate.sh` exits 0 |
 

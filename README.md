@@ -76,6 +76,16 @@ ln -s "$(pwd)/supergoal-skill" ~/.claude/skills/supergoal
 
 Then in Claude Code: `/supergoal <your objective>`.
 
+### Windows
+
+The skill runs on Windows; the gate and test scripts are POSIX shell, so run them under **Git Bash**
+or **WSL** (both ship bash; `node` must be on `PATH`). The repo pins `.gitattributes eol=lf`, so a
+Windows checkout keeps scripts as LF and bash parses them cleanly. Two notes:
+
+- Install by **copy** if symlinks need admin rights: `cp -R supergoal-skill "$HOME/.claude/skills/supergoal"` (Git Bash/WSL) or `mklink /D` from an elevated `cmd`.
+- Run the contract tests under **WSL** bash. Git Bash's bundled `grep` can abort on piped input, which
+  makes the suites mis-report; WSL avoids it.
+
 ## Layout
 
 ```

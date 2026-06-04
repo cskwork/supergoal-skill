@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<!--
+  /supergoal LEARN-DOMAIN Onboard handbook - HUMAN ONLY.
+
+  This is a self-contained skeleton. Clone it and fill every <!-- FILL ... --> region
+  FROM THE PERSISTED .domain-agent/ PACK ONLY. Rules:
+    - Introduce no fact absent from the pack. Never upgrade an `unverified` fact to verified.
+    - Self-contained: inline CSS only. NO external scripts, fonts, CDN, or network requests.
+      Any diagram is inline SVG or CSS boxes. Works offline.
+    - Carry each load-bearing fact's grounding as a visible badge (Verified / Unverified).
+    - Put expert detail (signatures, file paths, probe commands) inside <details> blocks.
+    - Prose in the user's language; keep identifiers, signatures, file paths, commands verbatim.
+    - No secrets, tokens, raw logs, or PII.
+  Source map: §1 index.md  §2 glossary.md  §3 index.md+code-map.md  §4 flows/*.md
+              §5 invariants.md  §6 test-map.md  §7 config.json
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><!-- FILL: System name --> — Domain Onboarding Handbook</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #ffffff; --surface: #f5f6f8; --border: #d8dce2;
+      --text: #1b1f24; --muted: #586069; --accent: #2f6feb;
+      --ok-bg: #e6f4ea; --ok-fg: #1a7f37; --warn-bg: #fff4e5; --warn-fg: #9a6700;
+      --code-bg: #f0f1f3;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d1117; --surface: #161b22; --border: #30363d;
+        --text: #e6edf3; --muted: #9da7b3; --accent: #6ea8ff;
+        --ok-bg: #11271a; --ok-fg: #56d364; --warn-bg: #2b2111; --warn-fg: #e3b341;
+        --code-bg: #1c2128;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font: 16px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px 96px; }
+    header.page {
+      border-bottom: 1px solid var(--border); padding: 32px 0 24px; margin-bottom: 8px;
+    }
+    header.page h1 { margin: 0 0 4px; font-size: 1.9rem; line-height: 1.2; }
+    header.page p.lede { margin: 0; color: var(--muted); max-width: 64ch; }
+    nav.toc {
+      position: sticky; top: 0; background: var(--bg); border-bottom: 1px solid var(--border);
+      padding: 12px 0; margin-bottom: 32px; font-size: 0.92rem;
+    }
+    nav.toc ol { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0; padding: 0; }
+    nav.toc a { color: var(--accent); text-decoration: none; }
+    nav.toc a:hover, nav.toc a:focus { text-decoration: underline; }
+    section { margin: 0 0 48px; scroll-margin-top: 64px; }
+    section > h2 { font-size: 1.4rem; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+    h3 { font-size: 1.08rem; margin: 28px 0 8px; }
+    p, li { max-width: 72ch; }
+    code, pre {
+      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      background: var(--code-bg); border-radius: 4px;
+    }
+    code { padding: 1px 5px; font-size: 0.9em; }
+    pre { padding: 12px 14px; overflow-x: auto; border: 1px solid var(--border); }
+    .badge {
+      display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: .02em;
+      padding: 2px 8px; border-radius: 999px; vertical-align: middle; white-space: nowrap;
+    }
+    .badge.verified { background: var(--ok-bg); color: var(--ok-fg); }
+    .badge.unverified { background: var(--warn-bg); color: var(--warn-fg); }
+    dl.glossary { display: grid; grid-template-columns: minmax(140px, 1fr) 3fr; gap: 4px 20px; }
+    dl.glossary dt { font-weight: 600; }
+    dl.glossary dd { margin: 0 0 8px; color: var(--text); }
+    table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { background: var(--surface); }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 14px 16px; margin: 12px 0;
+    }
+    details { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 8px 14px; margin: 8px 0; }
+    details > summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    .legend { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+    figure.diagram { margin: 16px 0; overflow-x: auto; }
+    figure.diagram svg { max-width: 100%; height: auto; }
+    .updated { color: var(--muted); font-size: 0.9rem; }
+    @media (max-width: 768px) {
+      dl.glossary { grid-template-columns: 1fr; gap: 2px; }
+      .wrap { padding: 0 16px 64px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="page">
+      <h1><!-- FILL: System name --></h1>
+      <p class="lede"><!-- FILL §1: one-sentence "what this is and who it serves" --></p>
+    </header>
+
+    <nav class="toc" aria-label="Sections">
+      <ol>
+        <li><a href="#orientation">1. Orientation</a></li>
+        <li><a href="#terms">2. Key terms</a></li>
+        <li><a href="#architecture">3. Architecture</a></li>
+        <li><a href="#flows">4. Key flows</a></li>
+        <li><a href="#rules">5. Rules that must not break</a></li>
+        <li><a href="#hands-on">6. Get hands-on</a></li>
+        <li><a href="#trust">7. Trust &amp; freshness</a></li>
+      </ol>
+    </nav>
+
+    <!-- §1 Orientation (source: index.md) -->
+    <section id="orientation">
+      <h2>1. Orientation</h2>
+      <p><!-- FILL: plain-language mental model — what problem the system solves, the big pieces, in 1–2 short paragraphs --></p>
+    </section>
+
+    <!-- §2 Key terms (source: glossary.md — this repo's meaning, NOT generic industry meaning) -->
+    <section id="terms">
+      <h2>2. Key terms</h2>
+      <dl class="glossary">
+        <dt><!-- FILL: term --></dt>
+        <dd><!-- FILL: what it means in THIS repo, in plain language --></dd>
+        <!-- repeat dt/dd per glossary entry -->
+      </dl>
+    </section>
+
+    <!-- §3 Architecture (source: index.md systems + code-map.md entry points) -->
+    <section id="architecture">
+      <h2>3. Architecture</h2>
+      <p><!-- FILL: how a request / piece of data moves through the system, in plain language --></p>
+      <figure class="diagram">
+        <!-- FILL: inline SVG or CSS boxes only. No <script>, no external diagram libraries. -->
+        <figcaption class="updated"><!-- FILL: one-line caption --></figcaption>
+      </figure>
+      <details>
+        <summary>Entry points &amp; key symbols (expert detail)</summary>
+        <!-- FILL: code-map.md signatures, file paths, routes — verbatim -->
+      </details>
+    </section>
+
+    <!-- §4 Key flows (source: flows/<ctx>.md — one per flow, entry -> service -> data/external) -->
+    <section id="flows">
+      <h2>4. Key flows</h2>
+      <article class="card">
+        <h3><!-- FILL: flow name --> <span class="badge verified">Verified</span></h3>
+        <p><!-- FILL: entry -> service -> data/external in human terms; name the invariants it touches --></p>
+        <details>
+          <summary>Code path &amp; probe (expert detail)</summary>
+          <!-- FILL: cited file:line path and the proof command from test-map.md -->
+        </details>
+      </article>
+      <!-- repeat one card per flow file -->
+    </section>
+
+    <!-- §5 Rules that must not break (source: invariants.md — show grounding status on each) -->
+    <section id="rules">
+      <h2>5. Rules that must not break</h2>
+      <table>
+        <thead><tr><th>Rule</th><th>Why it matters</th><th>Grounding</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><!-- FILL: invariant --></td>
+            <td><!-- FILL: consequence if broken --></td>
+            <td><span class="badge verified">Verified</span><!-- or unverified; match invariants.md --></td>
+          </tr>
+          <!-- repeat per invariant -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- §6 Get hands-on (source: test-map.md — exact commands a newcomer runs) -->
+    <section id="hands-on">
+      <h2>6. Get hands-on</h2>
+      <p>Run these to see the system work and to verify the facts above yourself:</p>
+      <pre><code><!-- FILL: exact commands from test-map.md, verbatim --></code></pre>
+    </section>
+
+    <!-- §7 Trust & freshness (source: config.json) -->
+    <section id="trust">
+      <h2>7. Trust &amp; freshness</h2>
+      <div class="legend">
+        <span><span class="badge verified">Verified</span> proven by a probe that ran (see the expert detail).</span>
+        <span><span class="badge unverified">Unverified</span> not executable; treat with care.</span>
+      </div>
+      <p class="updated">Last learned: <!-- FILL: config.json.lastUpdated -->.</p>
+      <p>Source of truth: the <code>.domain-agent/</code> markdown pack the agent reads. This handbook is
+        a derived, human-facing snapshot — if it disagrees with current code or the pack, the pack and the
+        code win. Regenerated on each LEARN-DOMAIN run.</p>
+    </section>
+  </div>
+</body>
+</html>

@@ -360,6 +360,44 @@ run_case "10.6 missing phase arg -> exit 2"         2 "usage"           node "$C
 run_case "10.7 missing state file -> exit 2"        2 "cannot read/parse" node "$CYCLE" "$v/nope.json" build
 
 # ----------------------------------------------------------------------
+echo; echo "SCENARIO 11 — learn-grounding-gate.mjs : LEARN-DOMAIN wiki must be execution-grounded"
+# ----------------------------------------------------------------------
+LEARNGATE="$SKILL_DIR/templates/learn-grounding-gate.mjs"
+# Build a populated .domain-agent pack that should PASS.
+mkpack() {
+  local d="$T/$1/.domain-agent"; rm -rf "$d"; mkdir -p "$d/flows"
+  printf '{ "version": 1, "lastUpdated": "2026-06-04" }\n' > "$d/config.json"
+  printf '# Index\n## Common Entry Points\n- "refund a charge": POST /api/refunds -> RefundController.refund\n' > "$d/index.md"
+  printf '# Invariants\n## Rules\n### Refund never exceeds capture\n- Rule: refund <= captured\n- Grounding: verified -- ran RefundServiceTest.refundCapped, green\n' > "$d/invariants.md"
+  printf '# Refund Flow\n## Verification\n- Grounding: verified -- probe ran green\n' > "$d/flows/refund.md"
+  echo "$d"
+}
+p=$(mkpack s11)
+run_case "11.0 missing path -> usage (exit 2)"       2 "usage"                node "$LEARNGATE"
+run_case "11.1 grounded pack -> PASS"                0 "LEARN-GROUNDING GATE PASS" node "$LEARNGATE" "$p"
+# Real invariant heading with a generic type must still be grounding-checked (not treated as placeholder).
+printf '# Invariants\n## Rules\n### Queue<Message> capacity rule\n- Rule: queue must not overflow\n- Confidence: high\n' > "$p/invariants.md"
+run_case "11.1b generic-type heading still checked"  1 "missing 'Grounding"   node "$LEARNGATE" "$p"
+printf '# Invariants\n## Rules\n### Refund never exceeds capture\n- Grounding: verified -- ran test\n' > "$p/invariants.md"
+# Ungrounded invariant (no Grounding marker).
+printf '# Invariants\n## Rules\n### Refund never exceeds capture\n- Rule: refund <= captured\n- Confidence: high\n' > "$p/invariants.md"
+run_case "11.2 ungrounded invariant -> blocked"      1 "missing 'Grounding"   node "$LEARNGATE" "$p"
+# Template-only invariants (placeholder heading) -> no populated invariant.
+printf '# Invariants\n## Rules\n### `<invariant>`\n- Grounding: `verified -- <x> | unverified -- <y>`\n' > "$p/invariants.md"
+run_case "11.3 template-only invariants -> blocked"  1 "no populated invariant" node "$LEARNGATE" "$p"
+# Restore good invariants; placeholder-only entry points must fail.
+printf '# Invariants\n## Rules\n### Real rule\n- Grounding: verified -- ran test\n' > "$p/invariants.md"
+printf '# Index\n## Common Entry Points\n- "<user wording>": <route or symbol>\n' > "$p/index.md"
+run_case "11.4 placeholder-only entry point -> blocked" 1 "no concrete"        node "$LEARNGATE" "$p"
+# Restore index; secret in a flow file must fail.
+printf '# Index\n## Common Entry Points\n- "refund": POST /api/refunds -> RefundController.refund\n' > "$p/index.md"
+printf '# Refund Flow\n## Verification\n- Grounding: verified -- probe green\nAKIAIOSFODNN7EXAMPLE\n' > "$p/flows/refund.md"
+run_case "11.5 secret in pack -> blocked"            1 "AWS access key"        node "$LEARNGATE" "$p"
+# No flow files at all -> blocked.
+rm -f "$p/flows/refund.md"
+run_case "11.6 no flow files -> blocked"             1 "no flows"              node "$LEARNGATE" "$p"
+
+# ----------------------------------------------------------------------
 echo
 echo "=================================================================="
 printf " RESULT: %d passed, %d failed\n" "$PASS" "$FAIL"

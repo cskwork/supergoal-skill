@@ -1,5 +1,64 @@
 # Changelog 2026-06-04
 
+## LEARN-DOMAIN mode: agentic-discovery wiki with execution-grounded verification
+
+### Decision
+
+Add a fifth mode, **LEARN-DOMAIN**, that learns a large/cryptic codebase *for the agent* and persists a
+source-grounded `.domain-agent/` wiki (distinct from LEARN, which teaches a human). Pipeline:
+`Intake -> Survey -> Scope checkpoint -> Map -> Deepen -> Ground -> Persist -> Freshness`. It writes no
+production code and uses no implementation gates; its only writes are the knowledge pack plus throwaway
+sandbox probes.
+
+New `reference/learn-domain.md` encodes six research-backed technique choices:
+
+1. **Agentic discovery, not embeddings/RAG** - read structure, read files, follow imports, grep. Vector
+   indexing fragments call/definition coherence, doubles the security surface (invertible embeddings),
+   and goes stale on every edit; Cline and Claude Code abandoned it for code.
+2. **Markdown-first persistence** - Aider repo-map pattern (key symbols + signatures, not full files);
+   lightweight, git-friendly, harness-agnostic across Claude Code/Codex/agy.
+3. **Bottom-up hierarchy** - symbol -> file -> package -> bounded context -> repo, grounded in business
+   meaning; direct whole-file summarization measurably drops functions/variables (arXiv 2501.07857).
+4. **Optional structural index only** - a local tree-sitter/ctags graph (no vectors) is a cache, never
+   required; graph scaffolding does not reliably beat a grep baseline (ContextBench, arXiv 2602.05892).
+5. **Balanced budget** - moderate retrieval rounds and chunk sizes beat whole-file dumps and
+   hyper-fragmentation; start small, deepen on later runs (over-engineering is a documented failure).
+6. **Execution-grounded verification** - each load-bearing fact is proven by a probe that runs; ~1/5 of
+   even the best LLM's code descriptions are inaccurate and static self-checks do not correlate with
+   accuracy (arXiv 2406.14836). Facts that cannot be executed are marked `unverified`, never faked.
+
+Supporting edits: `SKILL.md` (mode table row, LEARN-vs-LEARN-DOMAIN note, reference map, template-script
+row); `templates/domain-agent/code-map.md` (Aider-style `Key Symbols (signatures)` section);
+`templates/domain-agent/invariants.md` and `flows/README.md` (`Grounding: verified|unverified` field);
+new gate `templates/learn-grounding-gate.mjs` enforcing that every populated invariant/flow carries a
+grounding marker, `index.md` names a concrete entry point, and a high-precision secret scan passes.
+
+### Reasoning
+
+The repo already had the *retrieval/freshness/saving* half of domain knowledge (`domain-context.md` +
+`.domain-agent/`), but first-run setup only scaffolded empty templates - there was no workflow to
+*actively learn and verify* a big unknown codebase. A fact-checked deep-research pass (5 angles, 25
+sources, 22/25 claims confirmed) converged on agentic discovery + markdown-first + bottom-up + grounded
+verification, and explicitly refuted the "graph/embeddings beat grep" and "graph index cuts tokens"
+narratives (both 0-3), so the structural index is encoded as optional-cache, not a requirement. The
+grounding gate exists because the strongest finding was that static consistency checks have no
+relationship with summary accuracy; only execution-grounded proof does. Harness-agnostic constraint is
+honored: every artifact is plain markdown; any SQLite/graph cache is local and re-derived from code.
+
+### Verification
+
+Full suite under WSL: gate-scenarios 99/0 (new SCENARIO 11 = 7 cases for the grounding gate),
+learn-domain-contract 17/0 (new), learn-contract and domain-context-contract unchanged and green. Gate
+logic also exercised directly with node across pass + ungrounded + template-only + placeholder-entry +
+secret + no-flows cases. No regressions.
+
+### Files
+
+`reference/learn-domain.md` (new), `templates/learn-grounding-gate.mjs` (new),
+`tests/learn-domain-contract.test.sh` (new), `SKILL.md`, `templates/domain-agent/code-map.md`,
+`templates/domain-agent/invariants.md`, `templates/domain-agent/flows/README.md`,
+`tests/gate-scenarios.test.sh`.
+
 ## DEBUG hardening: distributed triage, F->P repro, evidence ledger, context isolation
 
 ### Decision

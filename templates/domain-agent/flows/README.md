@@ -37,6 +37,7 @@ Recommended shape:
 ## Verification
 
 - <command or inspection path>
+- Grounding: verified -- <probe run + result> | unverified -- <why it cannot be executed>
 
 ## Last Verified
 

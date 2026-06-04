@@ -28,6 +28,8 @@
     --amber-soft: rgba(255, 191, 71, .13);
     --red: #ff6f6f;
     --red-soft: rgba(255, 111, 111, .11);
+    --violet: #b69cff;
+    --pink: #ff8fcf;
     --mono: "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
     --sans: "Avenir Next", "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     --radius: 8px;
@@ -547,7 +549,7 @@
 
   .mode-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
   }
   .mode-card {
@@ -578,6 +580,8 @@
   .mode-card.debug::after { background: var(--amber); }
   .mode-card.legacy::after { background: var(--cyan); }
   .mode-card.learn::after { background: var(--red); }
+  .mode-card.learn-domain::after { background: var(--violet); }
+  .mode-card.qa-only::after { background: var(--pink); }
   .mode-label {
     display: block;
     margin-bottom: 38px;
@@ -959,7 +963,7 @@
         <p class="lead ko">큰 단일 에이전트 실행은 쉽게 흔들립니다. `/supergoal`은 작업을 단계화하고, 검토 가능하게 만들고, 증거로 게이트를 겁니다.</p>
       </div>
       <div class="metric-grid">
-        <div class="metric reveal"><strong>4</strong><span class="en">modes: GREENFIELD, DEBUG, LEGACY, LEARN.</span><span class="ko">모드: GREENFIELD, DEBUG, LEGACY, LEARN.</span></div>
+        <div class="metric reveal"><strong>6</strong><span class="en">modes: GREENFIELD, DEBUG, LEGACY, LEARN, LEARN-DOMAIN, QA-ONLY.</span><span class="ko">모드: GREENFIELD, DEBUG, LEGACY, LEARN, LEARN-DOMAIN, QA-ONLY.</span></div>
         <div class="metric reveal"><strong>7</strong><span class="en">hard gates that cannot be weakened to pass.</span><span class="ko">약화해서 통과시킬 수 없는 하드 게이트.</span></div>
         <div class="metric reveal"><strong>0</strong><span class="en">self-approval. The coder never grades the code.</span><span class="ko">자가 승인 없음. 작성자가 자기 코드를 채점하지 않습니다.</span></div>
         <div class="metric reveal"><strong>68</strong><span class="en">service tests in the public proof run.</span><span class="ko">공개 증명 실행에 사용된 서비스 테스트.</span></div>
@@ -1001,7 +1005,7 @@
   <section id="modes">
     <div class="wrap">
       <div class="section-head reveal">
-        <h2><span class="en">One command. Four lanes.</span><span class="ko">명령 하나. 네 가지 레인.</span></h2>
+        <h2><span class="en">One command. Six lanes.</span><span class="ko">명령 하나. 여섯 가지 레인.</span></h2>
         <p class="lead en">The objective picks the lane. Broad work can fan out. Deep bug or legacy work stays with a single driver.</p>
         <p class="lead ko">목표가 레인을 고릅니다. 넓은 작업은 펼치고, 깊은 버그나 레거시 작업은 단일 드라이버가 맡습니다.</p>
       </div>
@@ -1033,6 +1037,20 @@
           <p class="en">Source facts, teach, then check that you can explain it back.</p>
           <p class="ko">사실을 모으고 가르친 뒤, 사용자가 다시 설명할 수 있는지 확인합니다.</p>
           <div class="mode-pipe">Intake -> Source -> Bridge -> Teach -> <b>Check</b> -> Journal</div>
+        </article>
+        <article class="mode-card learn-domain reveal">
+          <span class="mode-label">LEARN-DOMAIN</span>
+          <h3><span class="en">Map a codebase, no code.</span><span class="ko">코드베이스 파악, 코드 없음.</span></h3>
+          <p class="en">Learn the repo for the agent; persist a grounded wiki and a human handbook.</p>
+          <p class="ko">에이전트를 위해 레포를 학습해, 검증된 위키와 사람용 핸드북을 남깁니다.</p>
+          <div class="mode-pipe">Intake -> Survey -> Map -> Deepen -> <b>Ground</b> -> Persist -> Onboard</div>
+        </article>
+        <article class="mode-card qa-only reveal">
+          <span class="mode-label">QA-ONLY</span>
+          <h3><span class="en">QA or compare data, no code.</span><span class="ko">QA·데이터 비교, 코드 없음.</span></h3>
+          <p class="en">Drive a running app and a read-only DB; report what worked, what didn't, what it found.</p>
+          <p class="ko">실행 중인 앱과 읽기전용 DB를 구동해, 된 것·안 된 것·발견을 리포트합니다.</p>
+          <div class="mode-pipe">Intake -> Target -> Scenario -> Exercise -> Cross-check -> <b>Report</b> -> Persist</div>
         </article>
       </div>
     </div>

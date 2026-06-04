@@ -90,3 +90,28 @@ bash dependency entirely if bash-free PowerShell support is later required.
 ### Files
 
 `.gitattributes` (new); LF renormalization of tracked `*.sh`/`*.mjs` working copies.
+
+## Output language follows the user
+
+### Decision
+
+Agent-authored prose (vault `README.md`/`brief.md`/`plan.md`/`claims.md`/`verification.md`
+descriptions, both Human Feedback briefs, run notes, changelog, LEARN journals, and every returned
+summary) is written in the user's language, defaulting to English only when unknown. Machine-checked
+anchors, structural keys, code, identifiers, file paths, shell commands, and commit messages stay in
+canonical English.
+
+### Reasoning
+
+The skill previously localized only atomic-explanation labels, leaving the rest English by default. The
+gates grep literal English anchors (`Decision: GO`, `verdict: GREEN`, `## Coverage`, `Not covered:`,
+`Regression tests:`, `Committee:`, `RE-PLAN:`, `APPROVED`, `run-to-prove`, `## Human Feedback`), so a
+blanket "translate everything" rule would break them. The rule therefore splits prose (translated) from
+machine tokens (verbatim), extending the existing label-localization pattern. Applied at three reach
+points: the `SKILL.md` Core Contract (authoritative), the `reference/experts.md` dispatch procedure and
+locked-prompt template (the literal text each writing agent receives), and a `reference/vault.md` note.
+Full suite stays 167 passed, 0 failed.
+
+### Files
+
+`SKILL.md`, `reference/experts.md`, `reference/vault.md`.

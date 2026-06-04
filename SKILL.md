@@ -26,6 +26,15 @@ work; use normal direct collaboration.
   in the output language; Korean should say `핵심 용어`/`구성 요소`, not literal `원자`.
   A glossary alone is not enough; trace trigger -> read/derive -> decide -> write/call ->
   fallback/stop -> result.
+- Output language: write agent-authored prose in the user's language (match the language the user
+  writes in; default to English only when it is unknown). This covers `README.md`, `brief.md`,
+  `plan.md` (incl. both Human Feedback briefs), `claims.md` and `verification.md` descriptions, run
+  audit notes, changelog entries, LEARN journals, and every agent's returned summary. Keep
+  machine-checked anchors, structural keys, code, identifiers, file paths, shell commands, and commit
+  messages in canonical English so gates keep matching — e.g. `Decision: GO`, `verdict: GREEN`,
+  `## Coverage`, `Not covered:`, `Regression tests:`, `Committee:`, `RE-PLAN:`, `APPROVED`,
+  `run-to-prove`, and `## Human Feedback` headings stay verbatim; only their surrounding prose is
+  translated.
 
 ## Step 0 - Mode
 

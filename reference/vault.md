@@ -21,6 +21,11 @@ Merged legacy files: `validation.md` -> `brief.md`; `architecture.md`/`contracts
 `qa-report.md` -> `verification.md`; `decisions.log` -> `README.md`. When consolidating existing vaults,
 use `git rm` for removed legacy files.
 
+Write file prose in the user's language (default English only when unknown). Keep the structural
+keys and machine-checked anchors below verbatim in English — `Decision: GO`, `verdict: GREEN`,
+`## Coverage`, `Not covered:`, `Regression tests:`, `Committee:`, `RE-PLAN:`, `APPROVED`,
+`run-to-prove`, `## Human Feedback` — so the gates keep matching. See `SKILL.md` `Output language`.
+
 ## Non-vault domain knowledge
 
 Repo-local domain knowledge lives outside the vault, default `.domain-agent/`; see

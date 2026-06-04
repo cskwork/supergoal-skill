@@ -19,6 +19,9 @@ work; use normal direct collaboration.
 - Shared state is only the vault: `docs/changelog/<date>-<slug>/`; see `reference/vault.md`.
 - `claims.md` is untrusted until a fresh adversarial Verify agent proves it from a clean worktree.
 - Never weaken, skip, or edit gate scripts to pass.
+- Clarifying interview is required before plan freeze for GREENFIELD/DEBUG/LEGACY when the request is
+  underspecified; resolve code-answerable questions by reading code, ask at most 3-5 high-leverage
+  questions, and gate the freeze on must-have answers. See `reference/interview.md`. LEARN skips it.
 - Human Feedback approval is required before Build/Fix.
 - Builder != Verifier; Deliver needs hard gates plus architect/security/code-review approval.
 - Atomic explanations: visible atom map -> plain definition -> process trace -> composed
@@ -42,9 +45,9 @@ Classify first; state the mode to the user in one line.
 
 | Signal in the objective | Mode | Pipeline (see `reference/pipeline.md`) |
 |---|---|---|
-| "build / make / ship / launch a new app/product/site/tool" | **GREENFIELD** | Intake → **Validate** → Plan → **Human Feedback** → Build → Verify → QA → Deliver |
-| "fix / broken / failing / crash / hang / regression / why does" | **DEBUG** | Intake → Reproduce → Diagnose → **Human Feedback** → Fix → Verify → Deliver |
-| "add / integrate X into existing/legacy codebase" — or "improve / refactor / decouple / clean up / make testable" existing code | **LEGACY** | Intake → Explore → Plan → **Human Feedback** → Build → Verify → QA → Deliver |
+| "build / make / ship / launch a new app/product/site/tool" | **GREENFIELD** | Intake → **Validate** → **Interview** → Plan → **Human Feedback** → Build → Verify → QA → Deliver |
+| "fix / broken / failing / crash / hang / regression / why does" | **DEBUG** | Intake → Reproduce → Diagnose (+ **Interview**: hypothesis re-rank) → **Human Feedback** → Fix → Verify → Deliver |
+| "add / integrate X into existing/legacy codebase" — or "improve / refactor / decouple / clean up / make testable" existing code | **LEGACY** | Intake → Explore → **Interview** → Plan → **Human Feedback** → Build → Verify → QA → Deliver |
 | "explain / understand / teach me / how does X work" (learn, no code change) | **LEARN** | Intake → Source → **Bridge** → Teach loop → **Check (explain-back)** → Journal |
 | "learn / onboard / map this codebase", "build a domain wiki", "도메인 파악" (learn for the agent, persist a wiki) | **LEARN-DOMAIN** | Intake → Survey → **Scope checkpoint** → Map → Deepen → **Ground** → Persist → Freshness |
 
@@ -99,6 +102,8 @@ Required so multiple agents can work without editing the same checkout.
 - UI/UX: user-facing UI loads `reference/ui-ux.md`, which routes to a tier — Expressive (landing/
   marketing) uses `reference/taste-skill-v2.md`; Functional (dashboard/table/admin/internal tool) uses
   `reference/functional-ui.md`. Designer implements to the named tier.
+- Interview: before plan freeze, run `reference/interview.md` for GREENFIELD/DEBUG/LEGACY; gated on
+  ambiguity, code-answerable questions resolved by reading code first, 3-5 questions max, one round.
 - Plan grounding: before freeze, run `reference/plan-grounding.md`; answer from current docs/code
   before asking the human.
 
@@ -143,6 +148,7 @@ evidence + file refs only. Full procedure: `reference/experts.md`.
 | `reference/debugging.md` | DEBUG Diagnose: `diagnose` feedback-loop method |
 | `reference/learn.md` | LEARN: teach/check flow + journaling |
 | `reference/learn-domain.md` | LEARN-DOMAIN: agentic discovery + bottom-up summaries + grounded `.domain-agent/` wiki |
+| `reference/interview.md` | GREENFIELD/LEGACY Plan start, DEBUG Diagnose end: ambiguity-gated 3-5 question interview / hypothesis re-rank before plan freeze |
 | `reference/plan-grounding.md` | Plan: agent-run grounding before freeze |
 | `reference/qa.md` | QA: drive running web/CLI app; record as-is/to-be evidence |
 | `reference/ui-ux.md` | Any user-facing UI: classify surface into Expressive vs Functional tier |
@@ -175,6 +181,7 @@ evidence + file refs only. Full procedure: `reference/experts.md`.
 
 - [ ] Mode stated and correct pipeline run
 - [ ] Domain Brief created or explicitly skipped, and any first-run `.domain-agent/` path is ignored
+- [ ] Clarifying interview run or explicitly skipped (logged in `README.md`) before the plan froze; must-have answers or user-approved assumptions recorded in `plan.md` `## Interview`
 - [ ] Plan grounded (`reference/plan-grounding.md`, agent-answered) before the plan froze
 - [ ] Human Feedback stage produced the plain-language and technical briefs, and approval was recorded before Build/Fix
 - [ ] Every `claims.md` entry has a GREEN verdict in `verification.md` from the adversarial pass

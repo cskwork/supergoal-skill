@@ -42,17 +42,23 @@ read-only through investigation. All modes pause at Human Feedback before first 
 - **UI/UX:** If deliverable is user-facing UI, add Design Read/dials at Plan, Designer at Build, and
   tier Pre-Flight at QA. `reference/ui-ux.md` routes to the Expressive (taste-skill-v2) or Functional
   (functional-ui) tier by surface.
+- **Interview:** Before plan freeze (GREENFIELD/LEGACY Plan start, DEBUG Diagnose end), run an
+  ambiguity-gated clarifying interview: skip if the request is clear or a cheap code read answers it;
+  otherwise resolve code-answerable questions by reading code, then ask at most 3-5 high-leverage
+  questions one at a time (DEBUG instead re-ranks 3-5 root-cause hypotheses, non-blocking). Gate the
+  freeze on must-have answers or a user-approved assumption. See `reference/interview.md`.
 - **Plan grounding:** Before Human Feedback, planner self-grounds `plan.md` against docs/code. See
   `reference/plan-grounding.md`.
 - **Artifact skips:** If a prior spec/plan/PRD already satisfies a phase, seed/skip it and log the skip
   in `README.md`.
 
-## GREENFIELD - Intake -> Validate -> Plan -> Human Feedback -> Build -> Verify -> QA -> Deliver
+## GREENFIELD - Intake -> Validate -> Interview -> Plan -> Human Feedback -> Build -> Verify -> QA -> Deliver
 
 | Phase | Goal | Writes | Exit gate |
 |---|---|---|---|
 | Intake | Brief goal, audience, acceptance, non-goals | `brief.md`, `state.json` | machine-checkable acceptance criteria |
 | Validate | Demand evidence + scoped MVP | `brief.md` `## Validation` | `templates/validate-gate.sh <vault>` exits 0; requires `Decision: GO` |
+| Interview | Crystallize requirements if underspecified | `plan.md` `## Interview` (or skip note in `README.md`) | ambiguity-gated 3-5 questions answered or skipped; must-have answers / user-approved assumptions recorded; see `reference/interview.md` |
 | Plan | Domain Brief, grounded plan, slices, stack/contracts | `README.md`, frozen `plan.md` | task table; each slice <=5 files / about 500 lines; acceptance check; store `plan_hash` |
 | Human Feedback | Human approves, revises, or stops | `plan.md` `## Human Feedback`, `state.json.approval` | required two briefs; human approves Build; `human-feedback-gate.mjs` exits 0 |
 | Build | Implement slices in run worktree | code, `claims.md` | slice tests pass; each claim has `run-to-prove` |
@@ -60,7 +66,7 @@ read-only through investigation. All modes pause at Human Feedback before first 
 | QA | Black-box app exercise | `verification.md` `## QA`, `qa/` | browser/CLI QA passes; `qa-gate.sh <vault> <browser|cli>` exits 0 |
 | Deliver | Literal gate + package | commit / PR | plan hash matches; `delivery-gate.sh` exits 0 |
 
-## DEBUG - Intake -> Reproduce -> Diagnose -> Human Feedback -> Fix -> Verify -> Deliver
+## DEBUG - Intake -> Reproduce -> Diagnose (+ Interview: hypothesis re-rank) -> Human Feedback -> Fix -> Verify -> Deliver
 
 Single-driver by default; escalate to split localize/fix contexts when the bug spans many files or
 multiple services. Read-only through Human Feedback. See `reference/debugging.md` for the loop,
@@ -70,7 +76,7 @@ distributed triage, and escalation rule.
 |---|---|---|---|
 | Intake | Capture symptom, env, expected vs actual | `brief.md` | symptom + expected behavior stated |
 | Reproduce | Domain-scoped deterministic failing repro | `README.md`, failing test/script, `claims.md` | repro FAILS on current code and is expected to PASS after fix (F->P) in a clean sandbox; flaky/timing bugs fail consistently over N runs |
-| Diagnose | Hypothesis-driven root cause | `README.md` hypothesis ledger, frozen `plan.md` | one hypothesis confirmed by direct evidence against Domain Brief/current code; cross-boundary bugs pass distributed triage; minimal fix plan written |
+| Diagnose | Hypothesis-driven root cause | `README.md` hypothesis ledger, frozen `plan.md` | 3-5 ranked hypotheses presented to user for re-rank (non-blocking; see `reference/interview.md`); one hypothesis confirmed by direct evidence against Domain Brief/current code; cross-boundary bugs pass distributed triage; minimal fix plan written |
 | Human Feedback | Explain cause + fix plan | `plan.md`, `state.json.approval` | human approves Fix; `human-feedback-gate.mjs` exits 0 |
 | Fix | Smallest root-cause change in run worktree | code patch | previously failing repro passes; minimal diff, no unrelated churn |
 | Verify | Re-run repro + suite cleanly | `verification.md` | repro GREEN; suite GREEN; coverage map; completeness critic; aggregate GREEN |
@@ -79,7 +85,7 @@ distributed triage, and escalation rule.
 DEBUG's valid proof is failing-before -> passing-after in a clean sandbox. DEBUG still writes `plan.md`;
 the delivery gate requires `brief.md`, `plan.md`, and `verification.md` in every mode.
 
-## LEGACY - Intake -> Explore -> Plan -> Human Feedback -> Build -> Verify -> QA -> Deliver
+## LEGACY - Intake -> Explore -> Interview -> Plan -> Human Feedback -> Build -> Verify -> QA -> Deliver
 
 Single-driver with targeted helper probes. Read-only through Human Feedback.
 
@@ -87,6 +93,7 @@ Single-driver with targeted helper probes. Read-only through Human Feedback.
 |---|---|---|---|
 | Intake | Feature spec + acceptance | `brief.md` | acceptance criteria stated |
 | Explore | Domain Brief + affected-code map with citations | `README.md` | entry points, call paths, blast radius, invariants, and test commands documented |
+| Interview | Crystallize requirements if underspecified | `plan.md` `## Interview` (or skip note in `README.md`) | ambiguity-gated 3-5 questions answered or skipped; must-have answers / user-approved assumptions recorded; see `reference/interview.md` |
 | Plan | Ground surgical change plan | frozen `plan.md` | smallest blast radius; reuse noted; store `plan_hash` |
 | Human Feedback | Explain implementation plan | `plan.md`, `state.json.approval` | human approves Build; `human-feedback-gate.mjs` exits 0 |
 | Build | Implement in existing style | code, `claims.md` | slice tests pass; no unrelated churn |

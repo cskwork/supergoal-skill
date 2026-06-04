@@ -1,5 +1,61 @@
 # Changelog 2026-06-04
 
+## Clarifying-interview step before plan freeze (GREENFIELD/DEBUG/LEGACY)
+
+### Decision
+
+Insert a conditional, ambiguity-gated clarifying interview after context-gathering and before plan
+freeze for GREENFIELD, DEBUG, and LEGACY. LEARN and LEARN-DOMAIN are exempt (LEARN already asks one
+calibration question; learn-domain is for the agent). New `reference/interview.md` is the standalone
+contract; `SKILL.md`, `reference/pipeline.md`, and `reference/debugging.md` wire it into the pipelines.
+
+Insertion points (inline sub-step of the existing phase, not a new dispatched agent):
+- GREENFIELD/LEGACY: start of Plan, before plan-grounding/freeze.
+- DEBUG: end of Diagnose - present 3-5 ranked root-cause hypotheses for user re-ranking, non-blocking
+  (proceed on own ranking if AFK), instead of abstract requirement questions.
+
+Encoded rules: (1) gate on ambiguity - fire only on multiple plausible interpretations or unclear key
+detail, skip when clear or a cheap code read answers it, and log the skip; (2) code-first - resolve
+code-answerable questions by reading current docs/code (reuse `plan-grounding.md`), only user-only
+load-bearing choices reach the user; (3) cap at 3-5 high-leverage questions, one round, one at a time,
+each with a recommended answer (no batching); (4) draw questions from a six-dimension menu - objective,
+definition-of-done, scope, constraints, environment, safety/reversibility - picking the few that matter;
+(5) select by information gain (most narrows the viable-plan space; drop already-answered aspects); (6)
+hard gate - block plan freeze until must-have answers or a user-approved assumption; (7) mandate the
+gate explicitly, since LLMs default to not asking and misjudge underspecification. Resolved choices /
+approved assumptions recorded in `plan.md` `## Interview` (DEBUG: in `README.md` by the hypothesis
+ledger).
+
+### Reasoning
+
+A fact-checked deep-research pass (6 angles, 21 sources, 25 claims adversarially verified, 22 confirmed)
+converged on this shape across peer-reviewed work (Ambig-SWE/CMU, Active Task Disambiguation/ICLR 2025,
+SAGE-Agent, Ask-before-Plan, ClarEval) and the agentskills `ask-questions-if-underspecified` convention.
+The 3-5 cap is backed by Ambig-SWE's finding that Claude-style balanced specificity-plus-quantity
+(~3.5-3.8 questions) beats too-few/too-many/templated questioning, and directly fits the requested goal.
+Of the three named inspiration harnesses: mattpocock/skills supplied the technique (one-at-a-time,
+recommend-an-answer, code-exploration gate, and the diagnose skill's 3-5 ranked-hypothesis checkpoint)
+but its deliberate no-numeric-cap philosophy was rejected as an anti-fit for a capped interview;
+Hermes-agent is a deliberate contrast (one brief question, no interview skill) showing what not to
+over-build; Q00/ouroboros yielded no surviving interview pattern and was dropped from the set. Verified
+refutations were honored: question batching is not assumed superior to one-at-a-time (refuted 0-3), and
+the dramatic GPT-4o 89%-vs-8.94% figure was not cited (refuted 1-2). The step is procedural (recorded
+in `plan.md`, like plan-grounding), so no new machine gate was added; it reinforces, not replaces, the
+existing `human-feedback-gate.mjs` (interview crystallizes what to build; Human Feedback approves the
+plan).
+
+### Verification
+
+Full suite under WSL: interview-contract 26/0 (new), gate-scenarios 100/0, domain-context 30/0,
+worktree 17/0, ui-ux 17/0, learn-domain 17/0, learn 11/0 = 218 passed, 0 failed. New test asserts the
+interview wiring in `SKILL.md`/`pipeline.md` and the gate/cap/code-first/DEBUG-rerank/hard-gate rules in
+`interview.md`/`debugging.md`. No regressions.
+
+### Files
+
+`reference/interview.md` (new), `tests/interview-contract.test.sh` (new), `SKILL.md`,
+`reference/pipeline.md`, `reference/debugging.md`.
+
 ## LEARN-DOMAIN mode: agentic-discovery wiki with execution-grounded verification
 
 ### Decision

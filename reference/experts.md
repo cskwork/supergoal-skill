@@ -21,6 +21,9 @@ name-b` cell means `agents/<name-a>.md`; `name-b` is only an optional host alias
    - Codex / agy / other CLIs: use the harness subtask mechanism. If none exists, run a fresh isolated
      reasoning pass, not blended context.
 3. **Collect** only decisions, evidence, and file references. Never ingest raw transcripts.
+4. **Language**: tell the agent the user's language; it writes prose and its returned summary in that
+   language (default English only when unknown), keeping code, identifiers, and machine-checked vault
+   anchors verbatim. See the `Output language` rule in `SKILL.md`.
 
 Tools/model/read-scope frontmatter is enforced where supported and advisory elsewhere. Instruction-only
 isolation is weaker than harness allowlists. Claude Code plugin wrapping is optional ergonomics only.
@@ -85,6 +88,7 @@ ROLE: <role>. You run in isolation; you cannot see other agents' transcripts.
 READ ONLY THESE VAULT FILES: <list>.
 DO: <one job>.
 RULES: <role-relevant Priority Rules; omit for Verifier>.
+LANGUAGE: write prose and your summary in <user language>; keep code, identifiers, and gate anchors verbatim.
 WRITE: <exact vault file(s)>.
 RETURN: compressed summary (decisions + evidence + file:line), not transcript.
 GATE: <machine-checkable exit condition>.

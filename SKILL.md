@@ -57,12 +57,19 @@ For **GREENFIELD**, **DEBUG**, and **LEGACY**, isolate before any repo mutation:
    `git worktree add -b <run_branch> <worktree_path> <base_branch>`.
 4. Run implementation phases inside the branch-scoped worktree; original checkout is orchestration
    and final integration only.
-5. After the delivery gate passes, ask the user to accept the result. On acceptance, merge the
-   accepted worktree commit into the target branch. Keep the three most recent completed run
-   worktrees for this repo; prune only the oldest repo-managed completed run worktree when the
-   retained count exceeds three. Never prune the active run worktree, original checkout, or manual
-   worktrees outside the repo-managed pool. If the user asks for changes, keep the active worktree
-   and rewind through the relevant phase.
+5. After the delivery gate passes, ask the user to accept the result. On acceptance, integrate only by
+   a merge commit into `target_branch`, normally `git merge --no-ff <run_branch>` from a clean target
+   checkout or clean target integration worktree. Never manually port/copy/apply the accepted diff to
+   the target branch, never cherry-pick/squash/rebase it, and never replace the merge with direct
+   target-branch edits unless the human explicitly overrides the merge-commit policy after being told
+   the result will not be a merge commit. If a repo guard, dirty unrelated worktree, missing checkout,
+   or permission issue blocks the merge commit, stop and report the blocker; do not invent a fallback.
+   Resolve merge conflicts only inside the active merge state, preserving target-branch behavior, then
+   commit the merge. Record the merge commit SHA and target branch in the run `README.md` or
+   `verification.md`. Keep the three most recent completed run worktrees for this repo; prune only the
+   oldest repo-managed completed run worktree when the retained count exceeds three. Never prune the
+   active run worktree, original checkout, or manual worktrees outside the repo-managed pool. If the
+   user asks for changes, keep the active worktree and rewind through the relevant phase.
 
 Required so multiple agents can work without editing the same checkout.
 
@@ -157,5 +164,6 @@ evidence + file refs only. Full procedure: `reference/experts.md`.
 - [ ] `verification.md` carries a `## Coverage` map (acceptance criteria + domain checklist), a `Not covered:` line, and a `Regression tests:` line; a completeness critic found no un-named gap
 - [ ] architect + security + code-review all approved
 - [ ] `delivery-gate.sh` exited 0; paste the output as evidence
+- [ ] Accepted work, if integrated, landed on `target_branch` as an explicit merge commit
 - [ ] the run's `README.md` captures the key choices and any escalations
 - [ ] Reported what was verified, with command output — no unverified "done"

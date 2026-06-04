@@ -31,6 +31,14 @@ it inline where none exists). **Nothing to install but the skill itself.** (Work
 | "add X to our existing/legacy code" | **LEGACY** | Intake -> Explore -> Plan -> **Human Feedback** -> Build -> Verify -> QA -> Deliver |
 | "explain / understand / teach me X" (learn, no code) | **LEARN** | Intake -> Source -> Bridge -> Teach loop -> Check (explain-back) -> Journal |
 | "learn / map / onboard onto this codebase" (build a domain wiki for the agent) | **LEARN-DOMAIN** | Intake -> Survey -> Scope checkpoint -> Map -> Deepen -> **Ground** -> Persist -> **Onboard (human handbook)** -> Freshness |
+| "QA only / verify / compare data — no code change" | **QA-ONLY** | Intake -> Target & Access -> Scenario checkpoint -> Exercise -> Cross-check -> **Report** -> Persist |
+
+QA-ONLY exercises an already-running app (and a read-only, DB-independent database) to QA behavior or
+compare data — it writes no code, creates no worktree, and runs no implementation gates. It produces a
+human-friendly `report.md` (what worked / what didn't / what it discovered) and persists a reusable,
+indexed QA suite under `.domain-agent/qa/` so the same check re-runs fast. Browser driving uses
+`agent-browser` by default, attach-to-browser (Playwright CLI) for authenticated sessions; app-driving
+and DB-reading run in separate read-only subagents so raw rows never mix into the browser context.
 
 LEARN-DOMAIN learns a codebase *for the agent* and persists a source-grounded, execution-verified
 `.domain-agent/` wiki so later runs route fast. Its final **Onboard** step also renders one self-contained
@@ -42,6 +50,7 @@ rules that must not break) - the markdown pack stays the agent's source of truth
 /supergoal the checkout page hangs intermittently in prod. fix it
 /supergoal add SSO to our legacy Django monolith
 /supergoal learn this codebase and build a domain wiki
+/supergoal QA the checkout flow on staging and check the order totals match the DB (no code change)
 ```
 
 ## Why it exists
@@ -98,7 +107,7 @@ Windows checkout keeps scripts as LF and bash parses them cleanly. Two notes:
 ```
 SKILL.md            thin spine: mode detection, gates, reference map
 agents/             one persona file per role (system prompt), harness-agnostic dispatch source of truth
-reference/          pipeline · experts · vault · market-research · quality-gates · debugging · qa · domain-rules · plan-grounding · interview · learn · learn-domain
+reference/          pipeline · experts · vault · market-research · quality-gates · debugging · qa · qa-only · db-access · domain-rules · plan-grounding · interview · learn · learn-domain
 reference/ui-ux.md  UI/UX overlay -> routes to Expressive (taste-skill-v2, vendored) or Functional (functional-ui) tier
 learn/              LEARN-mode session journals (one file per session) + README template + USER_PREFERENCE(.template).md
 templates/          delivery-gate.sh · validate-gate.sh · human-feedback-gate.mjs · state.json

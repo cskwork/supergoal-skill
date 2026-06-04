@@ -1,6 +1,6 @@
 ---
 name: supergoal
-description: Run one objective through a gated build/debug/legacy workflow with subagents, Human Feedback before implementation, adversarial verification, and a delivery gate. Use for "/supergoal", "supergoal", "build X end to end", "fix this bug", or "add this feature".
+description: Run one objective through a gated build/debug/legacy workflow with subagents, Human Feedback before implementation, adversarial verification, and a delivery gate. Use for "/supergoal", "supergoal", "build X end to end", "fix this bug", "add this feature", or "QA / verify data only, no code change".
 ---
 
 # /supergoal
@@ -50,9 +50,16 @@ Classify first; state the mode to the user in one line.
 | "add / integrate X into existing/legacy codebase" — or "improve / refactor / decouple / clean up / make testable" existing code | **LEGACY** | Intake → Explore → **Interview** → Plan → **Human Feedback** → Build → Verify → QA → Deliver |
 | "explain / understand / teach me / how does X work" (learn, no code change) | **LEARN** | Intake → Source → **Bridge** → Teach loop → **Check (explain-back)** → Journal |
 | "learn / onboard / map this codebase", "build a domain wiki", "도메인 파악" (learn for the agent, persist a wiki) | **LEARN-DOMAIN** | Intake → Survey → **Scope checkpoint** → Map → Deepen → **Ground** → Persist → **Onboard** → Freshness |
+| "QA only / verify / 검증만 / 데이터 정합성 / 데이터 비교 / API 수정 전후 확인 / A/B" (exercise a running app, no code change) | **QA-ONLY** | Intake → Target & Access → **Scenario checkpoint** → Exercise → Cross-check → **Report** → Persist |
 
 If ambiguous, ask one question. LEARN writes no code, uses no implementation gates, and uses chat
 explain-back instead of persistent goal tools; see `reference/learn.md`.
+
+QA-ONLY exercises an already-running app (and a read-only DB) to QA behavior or compare data, writes no
+production code, creates no worktree, and runs none of the implementation gates. It produces a
+human-friendly `report.md` (what worked / didn't / discovered) and persists a reusable, indexed QA suite
+to `.domain-agent/qa/` so the same check re-runs fast. If the request needs a fix or feature, route to
+DEBUG/LEGACY instead. See `reference/qa-only.md`.
 
 LEARN vs LEARN-DOMAIN: LEARN teaches a human and writes only a chat-time journal. LEARN-DOMAIN learns
 *for the agent* and persists a source-grounded `.domain-agent/` wiki (agentic discovery, no embeddings;
@@ -129,6 +136,10 @@ Required so multiple agents can work without editing the same checkout.
 Create `docs/changelog/<date>-<slug>/` with exactly:
 `README.md`, `brief.md`, `plan.md`, `claims.md`, `verification.md`, `state.json`.
 
+LEARN writes a journal instead of a vault; QA-ONLY uses a reduced run folder (`brief.md`,
+`verification.md`, `report.md`, `qa/`, `state.json` — no `plan.md`/`claims.md`); see
+`reference/qa-only.md`.
+
 ## Dispatch
 
 Use harness subagents when available (`Task`/`Agent`, Codex equivalent, etc.). Otherwise run a fresh
@@ -153,6 +164,8 @@ evidence + file refs only. Full procedure: `reference/experts.md`.
 | `reference/interview.md` | GREENFIELD/LEGACY Plan start, DEBUG Diagnose end: ambiguity-gated 3-5 question interview / hypothesis re-rank before plan freeze |
 | `reference/plan-grounding.md` | Plan: agent-run grounding before freeze |
 | `reference/qa.md` | QA: drive running web/CLI app; record as-is/to-be evidence |
+| `reference/qa-only.md` | QA-ONLY mode: no-code QA / data-comparison run; report + persisted reusable suite |
+| `reference/db-access.md` | QA cross-check: read-only, DB-independent (mysql/postgres/sqlite) data access |
 | `reference/ui-ux.md` | Any user-facing UI: classify surface into Expressive vs Functional tier |
 | `reference/taste-skill-v2.md` | Expressive-tier Designer Build + QA pre-flight; large, load only then |
 | `reference/functional-ui.md` | Functional-tier (dashboard/table/admin) Designer Build + QA; lighter baseline |
@@ -164,6 +177,8 @@ evidence + file refs only. Full procedure: `reference/experts.md`.
 | `templates/delivery-gate.sh` | Deliver: hard exit-0 artifact + test gate |
 | `templates/validate-gate.sh <vault>` | GREENFIELD Validate: checks `Decision: GO` before Build |
 | `templates/qa-gate.sh <vault> <browser\|cli>` | QA: checks `## QA`; browser apps need `as-is`/`to-be`, `Tool:`, non-agent-browser `Fallback:`; UI runs (`UI-tier:`) run the contrast gate on `qa/contrast-pairs.json` |
+| `templates/qa-only-gate.sh <vault> <browser\|cli>` | QA-ONLY terminal gate: `report.md` anchors + `qa-gate.sh` evidence + `action_count <= action_cap` + DB read-only |
+| `templates/qa-report.md` | QA-ONLY human report skeleton: `What worked` / `What didn't` / `What I discovered` / `How to re-run` |
 | `templates/contrast-gate.mjs <pairs.json>` | UI/UX QA: computes WCAG contrast (body AAA, other text AA); no eyeballing |
 | `templates/human-feedback-gate.mjs <vault> <Build\|Fix>` | Human Feedback: checks both briefs + recorded approval |
 | `templates/circuit-breaker.mjs <state.json> <sig>` | Failed fix cycle: trips after 3 identical normalized error signatures |

@@ -30,6 +30,18 @@ the summary and evidence paths. Do not run browser QA from the conductor.
    `qa/as-is-<view>.png` before, `qa/to-be-<view>.png` after. For DEBUG, as-is is the failure and to-be
    is fixed behavior.
 
+## Authenticated sessions (attach-to-browser)
+
+`agent-browser` is the default driver. When a flow needs a real, already-logged-in session that
+`agent-browser`'s fresh Chrome-for-Testing cannot carry, switch to **attach-to-browser** — drive the
+user's existing browser over the Playwright CLI (`https://github.com/cskwork/attach-to-browser-skill`).
+Still run and record the `agent-browser doctor` preflight first (the gate requires it for every browser
+run; it documents that agent-browser was checked). Then record the driver on the `Tool:` line (e.g.
+`Tool: attach-to-browser`) and justify on the `Fallback:` line (`Fallback: authenticated session
+required; agent-browser cannot carry the logged-in session`), so the QA gate's non-agent-browser check
+is satisfied. Capture as-is/to-be the same way. This is a sanctioned driver, not a silent shortcut; a
+headless-Chrome render is still only for impossible installs.
+
 ## CLI / library
 
 Run an integration smoke: real invocation against a fixture, stdout/stderr/exit-code compared to

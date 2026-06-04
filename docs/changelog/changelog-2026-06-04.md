@@ -1,5 +1,47 @@
 # Changelog 2026-06-04
 
+## Domain Brief reaches the dispatched agents (close the consumption gap)
+
+### Decision
+
+Make the `## Domain Brief` a first-class dispatch input so the saved `.domain-agent/` knowledge actually
+reaches the agents that GREENFIELD/DEBUG/LEGACY rely on, instead of living only in conductor-facing docs.
+
+- `reference/experts.md`: add a `DOMAIN BRIEF` slot to the locked-prompt template (routing index only;
+  verify against current code, current code wins; never bulk-read the pack), plus a dispatch-procedure
+  step 5 that passes the Brief to the architect (GREENFIELD Plan), debugger/tracer (DEBUG
+  Reproduce/Diagnose), and explorer (LEGACY Explore).
+- `agents/explore.md` and `agents/debugger.md`: add the run's `## Domain Brief` to their READ scope (the
+  debugger persona previously could not see it at all) and a one-line rule to route by it but verify
+  load-bearing facts against current code; do not bulk-read the pack.
+- `agents/architect.md`: name the `## Domain Brief` explicitly in its READ scope (was the vague "selected
+  domain/architecture docs") with the same current-code-wins caveat.
+- `agents/executor.md`: unchanged - the builder works from the frozen `plan.md`, into which the architect
+  has already folded the relevant domain context.
+- `tests/domain-context-contract.test.sh`: +7 assertions that the template slot, the dispatch step, and
+  the three personas reference the Brief and keep the current-code-wins / no-bulk-read discipline.
+
+### Reasoning
+
+A grep showed no persona file and not the locked-prompt template mentioned the pack, the Brief, or
+`.domain-agent/`; `debugger.md` and `explore.md` did not even have the Brief in their READ scope, so the
+retrieval/freshness/saving machinery in `domain-context.md` could be fully built and still never reach
+the agent doing the work - it depended on the conductor remembering to add it to each read list. The fix
+deliberately passes the *capped, current-code-verified Domain Brief* (<=5 files, <=80 lines) rather than
+the raw pack path, preserving the retrieval cap, the "current code always wins" trust rule, and the ban
+on subagents bulk-reading the vault. The human `onboarding.html` is untouched - it is a human artifact,
+never an agent input.
+
+### Verification
+
+Full contract suite: domain-context-contract 37/0 (+7 new), gate-scenarios 100/0, interview 26/0, learn
+11/0, learn-domain 29/0, ui-ux 17/0, worktree 17/0. No regressions.
+
+### Files
+
+`reference/experts.md`, `agents/explore.md`, `agents/debugger.md`, `agents/architect.md`,
+`tests/domain-context-contract.test.sh`.
+
 ## README: surface LEARN-DOMAIN mode + Onboard handbook
 
 ### Decision

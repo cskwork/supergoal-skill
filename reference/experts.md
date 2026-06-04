@@ -24,6 +24,10 @@ name-b` cell means `agents/<name-a>.md`; `name-b` is only an optional host alias
 4. **Language**: tell the agent the user's language; it writes prose and its returned summary in that
    language (default English only when unknown), keeping code, identifiers, and machine-checked vault
    anchors verbatim. See the `Output language` rule in `SKILL.md`.
+5. **Domain Brief**: when `reference/domain-context.md` produced a `## Domain Brief` (GREENFIELD Plan,
+   DEBUG Reproduce/Diagnose, LEGACY Explore), pass it through the `DOMAIN BRIEF` slot to the architect,
+   debugger/tracer, and explorer respectively. It is a routing index, not a source of truth — current
+   code wins and agents must not bulk-read the `.domain-agent/` pack.
 
 Tools/model/read-scope frontmatter is enforced where supported and advisory elsewhere. Instruction-only
 isolation is weaker than harness allowlists. Claude Code plugin wrapping is optional ergonomics only.
@@ -86,6 +90,7 @@ Rules as advisory findings.
 ```text
 ROLE: <role>. You run in isolation; you cannot see other agents' transcripts.
 READ ONLY THESE VAULT FILES: <list>.
+DOMAIN BRIEF (when domain context exists): <inline Domain Brief, or its `README.md` `## Domain Brief` anchor>; use as a routing index only — verify load-bearing facts against current code (current code wins), never bulk-read the .domain-agent/ pack.
 DO: <one job>.
 RULES: <role-relevant Priority Rules; omit for Verifier>.
 LANGUAGE: write prose and your summary in <user language>; keep code, identifiers, and gate anchors verbatim.

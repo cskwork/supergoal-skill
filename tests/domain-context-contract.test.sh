@@ -69,5 +69,14 @@ require_text "decisions template has durable-decision gate" "templates/domain-ag
 require_text "template config carries refresh policy" "templates/domain-agent/config.json" "staleAfterDays"
 require_text "vault names non-vault knowledge" "reference/vault.md" "Repo-local domain knowledge lives outside the vault"
 
+# Domain Brief actually reaches the dispatched agents (not just the conductor).
+require_text "locked prompt carries a Domain Brief slot" "reference/experts.md" "DOMAIN BRIEF (when domain context exists)"
+require_text "dispatch passes the Brief to role agents" "reference/experts.md" 'pass it through the `DOMAIN BRIEF` slot'
+require_text "Brief consumption keeps current code authoritative" "reference/experts.md" "current code wins"
+require_text "Brief consumption forbids bulk pack reads" "reference/experts.md" "never bulk-read the .domain-agent/ pack"
+require_text "explorer consumes the Domain Brief" "agents/explore.md" "use its terms/entry points/flows to route"
+require_text "debugger consumes the Domain Brief" "agents/debugger.md" "saved invariants/flows/terms in the Domain Brief"
+require_text "architect consumes the Domain Brief" "agents/architect.md" "Treat the Domain Brief as a routing index"
+
 printf '\nSummary: %s passed, %s failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

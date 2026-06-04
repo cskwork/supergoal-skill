@@ -49,7 +49,7 @@ Classify first; state the mode to the user in one line.
 | "fix / broken / failing / crash / hang / regression / why does" | **DEBUG** | Intake → Reproduce → Diagnose (+ **Interview**: hypothesis re-rank) → **Human Feedback** → Fix → Verify → Deliver |
 | "add / integrate X into existing/legacy codebase" — or "improve / refactor / decouple / clean up / make testable" existing code | **LEGACY** | Intake → Explore → **Interview** → Plan → **Human Feedback** → Build → Verify → QA → Deliver |
 | "explain / understand / teach me / how does X work" (learn, no code change) | **LEARN** | Intake → Source → **Bridge** → Teach loop → **Check (explain-back)** → Journal |
-| "learn / onboard / map this codebase", "build a domain wiki", "도메인 파악" (learn for the agent, persist a wiki) | **LEARN-DOMAIN** | Intake → Survey → **Scope checkpoint** → Map → Deepen → **Ground** → Persist → Freshness |
+| "learn / onboard / map this codebase", "build a domain wiki", "도메인 파악" (learn for the agent, persist a wiki) | **LEARN-DOMAIN** | Intake → Survey → **Scope checkpoint** → Map → Deepen → **Ground** → Persist → **Onboard** → Freshness |
 
 If ambiguous, ask one question. LEARN writes no code, uses no implementation gates, and uses chat
 explain-back instead of persistent goal tools; see `reference/learn.md`.
@@ -57,7 +57,9 @@ explain-back instead of persistent goal tools; see `reference/learn.md`.
 LEARN vs LEARN-DOMAIN: LEARN teaches a human and writes only a chat-time journal. LEARN-DOMAIN learns
 *for the agent* and persists a source-grounded `.domain-agent/` wiki (agentic discovery, no embeddings;
 Aider-style repo map; bottom-up summaries; execution-grounded verification) so later build/debug/legacy
-runs route fast. It writes no production code; see `reference/learn-domain.md`.
+runs route fast. Its final Onboard step also renders one self-contained `onboarding.html` handbook for
+humans (derived from the pack; the markdown pack stays the agent's source of truth). It writes no
+production code; see `reference/learn-domain.md`.
 
 ## Step 0A - Worktree
 
@@ -168,6 +170,7 @@ evidence + file refs only. Full procedure: `reference/experts.md`.
 | `templates/cycle-bound.mjs <state.json> <phase>` | Failed cycle: trips at `max_cycles_per_phase` (default 5) regardless of error identity |
 | `templates/domain-agent/` | Domain context first-run scaffold copied to the target repo knowledge path |
 | `templates/learn-grounding-gate.mjs <knowledgePath>` | LEARN-DOMAIN Ground: every load-bearing invariant/flow fact carries a `Grounding: verified\|unverified` marker; `index.md` has a concrete entry point; basic secret scan |
+| `templates/domain-onboarding.html` | LEARN-DOMAIN Onboard: self-contained human handbook skeleton, filled only from the persisted pack (no external scripts/CDN) |
 
 ## Escalation & stop conditions
 

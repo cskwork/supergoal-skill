@@ -1,5 +1,7 @@
 # /supergoal
 
+**English** | [한국어](README.ko.md)
+
 **One objective in, a verified result out.**
 Give it a goal; it runs the full gated pipeline with expert subagents and refuses to declare success until a machine-checkable gate passes.
 No extra install: clone the repo, symlink it into your skills directory, then `/supergoal <objective>`.
@@ -116,10 +118,10 @@ Windows checkout keeps scripts as LF and bash parses them cleanly. Two notes:
 ```
 SKILL.md            thin spine: mode detection, gates, reference map
 agents/             one persona file per role (system prompt), harness-agnostic dispatch source of truth
-reference/          pipeline · experts · vault · market-research · quality-gates · debugging · qa · qa-only · db-access · domain-rules · plan-grounding · interview · learn · learn-domain
+reference/          pipeline · experts · vault · market-research · quality-gates · debugging · qa · qa-only · db-access · domain-rules · plan-grounding · interview · learn · learn-domain · skill-mine
 reference/ui-ux.md  UI/UX overlay -> routes to Expressive (taste-skill-v2, vendored) or Functional (functional-ui) tier
 learn/              LEARN-mode session journals (one file per session) + README template + USER_PREFERENCE(.template).md
-templates/          delivery-gate.sh · validate-gate.sh · qa-gate.sh · qa-only-gate.sh · human-feedback-gate.mjs · qa-report.md · state.json
+templates/          delivery-gate.sh · validate-gate.sh · qa-gate.sh · qa-only-gate.sh · human-feedback-gate.mjs · skill-mine/ · skill-frontmatter-gate.mjs · qa-report.md · state.json
 docs/               DESIGN.md (research -> decision mapping, cited) · research-brief.md · e2e-test-plan.md · changelog/ · index.html (landing)
 examples/url-shortener/   a real service the harness built/debugged/extended (audit trail in docs/changelog/)
 ```

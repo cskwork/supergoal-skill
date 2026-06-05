@@ -93,16 +93,27 @@ Intake:
 | opencode | `~/.config/opencode/skills/<name>/SKILL.md` | personal unless confirmed |
 | Hermes | `~/.hermes/skills/<name>/SKILL.md` | - |
 
-Default: install a REAL `SKILL.md` dir per chosen agent so each agent is self-contained and independent
-(no shared store or symlink hub to break). Only if the user explicitly keeps one canonical store and asks
-for it, symlink each agent dir to that store instead - but a real copy per agent is the safe default.
-Propagating a later edit to every agent is the `sync-skill` job. Never silently overwrite an existing
-skill of the same name; on collision show a diff and ask.
+Recommended: keep ONE canonical real dir (e.g. `~/.agents/skills/<name>/` - a plain dir, NOT a symlink
+into a skill-manager store) and symlink it into each chosen agent dir, so one edit lands everywhere
+(claude/codex use relative `../../.agents/skills/<name>`, opencode/hermes absolute). Alternatively, for a
+fully standalone setup, copy a real `SKILL.md` dir into each agent. Either way `sync-skill` does the
+propagation. Never silently overwrite an existing skill of the same name; on collision show a diff and ask.
 
 ## Journal
 
 Append to `learn/skill-mined-<name>-YYYY-MM-DD.md`: the mining window, the candidate set shown, what the
 user picked/rejected, the recurrence evidence, and the install targets. Create `learn/` if missing.
+
+## Always state the source location (required)
+
+End every SKILL-MINE run by telling the user where the canonical SOURCE skill(s) live - the single dir to
+edit, which the per-agent installs point at. Put it on the last line of your reply, e.g.:
+
+`Source: ~/.agents/skills/<name>/  (edit here; agents symlink to it)`
+
+Use the actual canonical path chosen at Install (default `~/.agents/skills/<name>/`). If skills were
+installed as standalone real copies per agent instead, list each copy's path. Never end without saying
+where the source is.
 
 ## Stop conditions
 

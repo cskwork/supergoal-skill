@@ -93,9 +93,11 @@ Intake:
 | opencode | `~/.config/opencode/skills/<name>/SKILL.md` | personal unless confirmed |
 | Hermes | `~/.hermes/skills/<name>/SKILL.md` | - |
 
-If `~/.skills-manager/skills/` exists, prefer the user's existing pattern: write the canonical skill there
-once and symlink it into each agent dir (one source, deploy-to-all) instead of copying N times. Never
-silently overwrite an existing skill of the same name; on collision show a diff and ask.
+Default: install a REAL `SKILL.md` dir per chosen agent so each agent is self-contained and independent
+(no shared store or symlink hub to break). Only if the user explicitly keeps one canonical store and asks
+for it, symlink each agent dir to that store instead - but a real copy per agent is the safe default.
+Propagating a later edit to every agent is the `sync-skill` job. Never silently overwrite an existing
+skill of the same name; on collision show a diff and ask.
 
 ## Journal
 

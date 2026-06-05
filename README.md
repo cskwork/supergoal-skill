@@ -32,6 +32,7 @@ it inline where none exists). **Nothing to install but the skill itself.** (Work
 | "explain / understand / teach me X" (learn, no code) | **LEARN** | Intake -> Source -> Bridge -> Teach loop -> Check (explain-back) -> Journal |
 | "learn / map / onboard onto this codebase" (build a domain wiki for the agent) | **LEARN-DOMAIN** | Intake -> Survey -> Scope checkpoint -> Map -> Deepen -> **Ground** -> Persist -> **Onboard (human handbook)** -> Freshness |
 | "QA only / verify / compare data — no code change" | **QA-ONLY** | Intake -> Target & Access -> Scenario checkpoint -> Exercise -> Cross-check -> **Report** -> Persist |
+| "make a skill / learn new skill / make skill from history — no product code" | **SKILL-MINE** | Intake -> Window -> Mine -> Rank -> Suggest -> **Human pick/reject** -> Forge -> Verify -> Install -> Journal |
 
 QA-ONLY exercises an already-running app (and a read-only, DB-independent database) to QA behavior or
 compare data — it writes no code, creates no worktree, and runs no implementation gates. It produces a
@@ -44,6 +45,14 @@ LEARN-DOMAIN learns a codebase *for the agent* and persists a source-grounded, e
 `.domain-agent/` wiki so later runs route fast. Its final **Onboard** step also renders one self-contained
 `onboarding.html` handbook **for humans** (what the domain is, key terms, architecture, flows, and the
 rules that must not break) - the markdown pack stays the agent's source of truth.
+
+SKILL-MINE turns repeated work into a reusable skill. It mines recent agent session history
+(`~/.claude/projects/*.jsonl`, adaptive 7-30 day window), surfaces 3-5 candidate skills ranked by
+frequency x payoff, and lets you pick / reject / name a new one. On your pick it forges ONE
+cross-agent-portable `SKILL.md` (the agentskills.io standard) and installs it to each chosen agent
+(`~/.claude/skills`, `~/.codex/skills`, `~/.config/opencode/skills`, `~/.hermes/skills`). The human pick
+is a hard gate - it never creates or installs a skill you did not approve. It writes no product code and
+no worktree.
 
 ```text
 /supergoal build a habit-tracker app and ship it

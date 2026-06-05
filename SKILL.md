@@ -51,6 +51,7 @@ Classify first; state the mode to the user in one line.
 | "explain / understand / teach me / how does X work" (learn, no code change) | **LEARN** | Intake → Source → **Bridge** → Teach loop → **Check (explain-back)** → Journal |
 | "learn / onboard / map this codebase", "build a domain wiki", "도메인 파악" (learn for the agent, persist a wiki) | **LEARN-DOMAIN** | Intake → Survey → **Scope checkpoint** → Map → Deepen → **Ground** → Persist → **Onboard** → Freshness |
 | "QA only / verify / 검증만 / 데이터 정합성 / 데이터 비교 / API 수정 전후 확인 / A/B" (exercise a running app, no code change) | **QA-ONLY** | Intake → Target & Access → **Scenario checkpoint** → Exercise → Cross-check → **Report** → Persist |
+| "make a skill / 스킬 만들어 / learn new skill / make skill from history / 이거 자주 하는데 스킬로" (turn repeated work into a reusable skill, no product code) | **SKILL-MINE** | Intake → Window → Mine → Rank → Suggest → **Human pick/reject** → Forge → Verify → Install → Journal |
 
 If ambiguous, ask one question. LEARN writes no code, uses no implementation gates, and uses chat
 explain-back instead of persistent goal tools; see `reference/learn.md`.
@@ -67,6 +68,14 @@ Aider-style repo map; bottom-up summaries; execution-grounded verification) so l
 runs route fast. Its final Onboard step also renders one self-contained `onboarding.html` handbook for
 humans (derived from the pack; the markdown pack stays the agent's source of truth). It writes no
 production code; see `reference/learn-domain.md`.
+
+SKILL-MINE turns repeated work into a reusable skill. It mines recent agent session history
+(`~/.claude/projects/*.jsonl`, adaptive 7-30 day window), surfaces 3-5 candidate skills ranked by
+frequency x payoff, and lets the user pick / reject / name a new one. On approval it forges ONE
+cross-agent-portable `SKILL.md` (agentskills.io standard) and installs it to each chosen agent dir
+(`~/.claude/skills`, `~/.codex/skills`, `~/.config/opencode/skills`, `~/.hermes/skills`; no auto-sync).
+The human pick is a hard gate - it never creates or installs a skill the user did not approve. It writes
+no production code and no worktree; see `reference/skill-mine.md`.
 
 ## Step 0A - Worktree
 
@@ -138,7 +147,8 @@ Create `docs/changelog/<date>-<slug>/` with exactly:
 
 LEARN writes a journal instead of a vault; QA-ONLY uses a reduced run folder (`brief.md`,
 `verification.md`, `report.md`, `qa/`, `state.json` — no `plan.md`/`claims.md`); see
-`reference/qa-only.md`.
+`reference/qa-only.md`. SKILL-MINE writes no vault either — only the generated skill directory, its
+install targets, and a `learn/skill-mined-<name>-<date>.md` journal; see `reference/skill-mine.md`.
 
 ## Dispatch
 
@@ -165,6 +175,7 @@ evidence + file refs only. Full procedure: `reference/experts.md`.
 | `reference/plan-grounding.md` | Plan: agent-run grounding before freeze |
 | `reference/qa.md` | QA: drive running web/CLI app; record as-is/to-be evidence |
 | `reference/qa-only.md` | QA-ONLY mode: no-code QA / data-comparison run; report + persisted reusable suite |
+| `reference/skill-mine.md` | SKILL-MINE mode: mine history → suggest 3-5 skills → human pick → forge portable SKILL.md → install |
 | `reference/db-access.md` | QA cross-check: read-only, DB-independent (mysql/postgres/sqlite) data access |
 | `reference/ui-ux.md` | Any user-facing UI: classify surface into Expressive vs Functional tier |
 | `reference/taste-skill-v2.md` | Expressive-tier Designer Build + QA pre-flight; large, load only then |
@@ -186,6 +197,9 @@ evidence + file refs only. Full procedure: `reference/experts.md`.
 | `templates/domain-agent/` | Domain context first-run scaffold copied to the target repo knowledge path |
 | `templates/learn-grounding-gate.mjs <knowledgePath>` | LEARN-DOMAIN Ground: every load-bearing invariant/flow fact carries a `Grounding: verified\|unverified` marker; `index.md` has a concrete entry point; basic secret scan |
 | `templates/domain-onboarding.html` | LEARN-DOMAIN Onboard: self-contained human handbook skeleton, filled only from the persisted pack (no external scripts/CDN) |
+| `templates/skill-mine/mine.mjs` | SKILL-MINE Mine: reads `~/.claude/projects/*.jsonl`, adaptive window, emits frequent tool n-grams + Bash signatures + intent hints |
+| `templates/skill-frontmatter-gate.mjs` | SKILL-MINE Verify: checks generated `SKILL.md` name/description(+`when_to_use` ≤1536)/body limits; exits 0 only when portable |
+| `templates/skill.md.template` | SKILL-MINE Forge: portable `SKILL.md` skeleton (frontmatter + When to use + Steps + Notes) |
 
 ## Escalation & stop conditions
 

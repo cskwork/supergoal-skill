@@ -1,0 +1,23 @@
+---
+name: <skill-name>
+description: <what it does>. Use when <trigger phrases / when to reach for it - key use case first>.
+---
+
+# <skill-name>
+
+<One line: trigger -> action -> result.>
+
+## When to use
+- <concrete trigger 1>
+- <concrete trigger 2>
+
+Not for: <the adjacent case this is NOT, so it does not over-fire>.
+
+## Steps
+1. <imperative step - the mined procedure>
+2. <step>
+3. <step>
+
+## Notes
+<Only non-obvious gotchas; keep terse. Long reference, data, or scripts go in a sibling file loaded on
+demand (e.g. `reference.md`, `scripts/*.sh`), not in this body.>

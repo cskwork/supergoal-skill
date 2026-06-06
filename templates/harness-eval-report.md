@@ -10,6 +10,13 @@ Quality winner:
 Overall winner:
 Claim status:
 
+## Adversarial Verification Loop
+
+| Case | Harness verifier run? | Verifier-authored tests/checks | REDs found | REDs fixed | Visible tests only false-GREEN? |
+|---|---|---:|---:|---:|---|
+
+Notes: for hard cases, `None` or `visible tests only` means `Not proven`.
+
 ## Machine Checks
 
 | Case | Run | Check | Status | Evidence |

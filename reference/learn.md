@@ -32,14 +32,11 @@ filter, fallback, and final label.
 
 ## Process explanation gate
 
-For every codebase, algorithm, or system lesson, include a small trace that has all applicable
-columns:
-
-| Step | Atom used | What happens | Rule/condition | Result/side effect |
-|---|---|---|---|---|
-
-At low difficulty, use fewer rows and plainer words; do not remove the trace. If the process has a
-failure path, include one fallback/stop row before the takeaway.
+For every codebase, algorithm, or system lesson, narrate a small trace as natural prose - walk the
+steps in order, each naming the atom used, what happens, the rule/condition, and the result/side
+effect. Number the steps if it helps; do not use a table. At low difficulty, use fewer steps and
+plainer words, but do not skip the trace. If the process has a failure path, narrate the
+fallback/stop before the takeaway.
 
 ## Flow
 
@@ -90,13 +87,10 @@ and a process role before the full explanation.
 
 이 주제를 왜 쓰는지: [어디에 쓰이고 어떤 문제를 푸는지]
 
-과정 추적:
-
-| 단계 | 사용되는 용어 | 일어나는 일 | 규칙/조건 | 결과/부작용 |
-|---|---|---|---|---|
-| 1 | ... | ... | ... | ... |
-| 2 | ... | ... | ... | ... |
-| 실패/중단 | ... | ... | ... | ... |
+과정 추적 (표 말고 문장으로):
+① 먼저 [용어]가 [무엇을 한다] - [규칙/조건] 때문에 [결과/부작용].
+② 그다음 [용어]가 [무엇을 한다] - [결과].
+실패하면: [대체/중단 경로로 빠진다].
 
 합쳐서 말하면: [전체 개념/코드 경로를 한 단락으로 설명]
 
@@ -112,11 +106,13 @@ and a process role before the full explanation.
 
 Rules:
 
-- Level 5 uses about 5 atoms and 3-5 trace rows. Levels 1-2 use 1-3 atoms and one trace row.
-- Definitions and trace rows must fit the saved level. If they need jargon, define or rewrite.
+- Level 5 uses about 5 atoms and 3-5 trace steps. Levels 1-2 use 1-3 atoms and one trace step.
+- Definitions and trace steps must fit the saved level. If they need jargon, define or rewrite.
+- Use a markdown table only for the key-terms glossary; render the process trace, the
+  human-to-code mapping, and the difficulty ladder as natural prose.
 - User-facing labels should be idiomatic in the user's language. In Korean, prefer `핵심 용어`,
   `구성 요소`, and `사용되는 용어`; avoid exposing the literal label `원자`.
-- No term appears in prose before the table.
+- No term appears in prose before the glossary table.
 - For coding/codebase topics, include one short "사람 생각 -> 기계 단계" bridge before any code.
 - Never replace the process trace with a summary sentence when the topic is code, algorithm, system
   behavior, data flow, or a business workflow.
@@ -127,39 +123,31 @@ Rules:
 Use this bridge whenever the lesson needs to turn "I get it intuitively" into "I can express it in
 code/system steps." It is adapted from `https://github.com/cskwork/human-to-code-translation-skill`.
 
-| Bridge step | LEARN action |
-|---|---|
-| Human words | Restate the problem/concept in the user's plain language. |
-| Tiny worked example | Pick the smallest concrete example that can be traced by hand. |
-| Explicit rules | Name the implicit rule behind each "just do it" human move. |
-| State/variables | Ask "what must be remembered?" and turn that into terms, variables, objects, or data. |
-| Flow/code | Map actions to `if`, loop, function call, event, request, state transition, or module boundary. |
-| Trace | Walk one normal case and one boundary/failure case; fix gaps before adding more detail. |
+Walk these bridge steps in order, as prose (not a table): **human words** - restate the
+problem/concept in the user's plain language; **tiny worked example** - pick the smallest concrete
+example that can be traced by hand; **explicit rules** - name the implicit rule behind each "just
+do it" human move; **state/variables** - ask "what must be remembered?" and turn that into terms,
+variables, objects, or data; **flow/code** - map actions to `if`, loop, function call, event,
+request, state transition, or module boundary; **trace** - walk one normal case and one
+boundary/failure case, fixing gaps before adding more detail.
 
-Use a two-column mini-table when useful:
+Phrase the mapping in plain sentences when useful, e.g. "'기억해 둔다'는 변수나 상태에 저장하는
+것, '하나씩 본다'는 반복문·iterator·query cursor·event stream으로 순회하는 것" - sentences, not a
+table.
 
-```markdown
-| 사람 생각 | 기계/코드 단계 |
-|---|---|
-| "기억해 둔다" | 변수나 상태에 저장한다 |
-| "하나씩 본다" | 반복문, iterator, query cursor, or event stream |
-```
-
-At levels 1-4, use only one or two rows. At level 5, use three to five rows. At levels 6-10, add
+At levels 1-4, use only one or two steps. At level 5, use three to five steps. At levels 6-10, add
 precise names and edge cases, but keep the same bridge order.
 
 ## Difficulty ladder
 
-| Level | Audience | Register |
-|---|---|---|
-| 1-2 | 막 말을 뗀 아이 | one tiny idea, 1-2 terms, concrete analogy, zero jargon |
-| 3-4 | 입문자 | plain words, about 4 terms, no assumed background |
-| 5 | 일반 성인 비전공자 | default format: about 5 terms, why, flow, example |
-| 6-7 | 초중급자 | standard terms defined, more mechanics, second example |
-| 8-9 | 실무자/숙련자 | precise vocabulary, fewer hand-holds, edge cases |
-| 10 | 박사/전문가 | formal rigor, hard cases, literature |
+Same structure at every level; only altitude and bite size change. By level:
 
-Same structure at every level; only altitude and bite size change.
+- **1-2 (막 말을 뗀 아이):** one tiny idea, 1-2 terms, concrete analogy, zero jargon.
+- **3-4 (입문자):** plain words, about 4 terms, no assumed background.
+- **5 (일반 성인 비전공자):** default format - about 5 terms, why, flow, example.
+- **6-7 (초중급자):** standard terms defined, more mechanics, second example.
+- **8-9 (실무자/숙련자):** precise vocabulary, fewer hand-holds, edge cases.
+- **10 (박사/전문가):** formal rigor, hard cases, literature.
 
 ## Difficulty tuning
 

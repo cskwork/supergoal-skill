@@ -72,7 +72,7 @@ plan_hash_of() {
 # Freeze a vault: record its plan.md hash so the delivery-gate plan-freeze check passes.
 write_frozen_state() { printf '{ "plan_hash": "%s" }\n' "$(plan_hash_of "$1/plan.md")" > "$1/state.json"; }
 
-# A contract-complete verification.md: GREEN + coverage map + named gaps + regression line + committee.
+# A contract-complete verification.md: GREEN + coverage map + named gaps + high-risk marker + regression line + committee.
 write_complete_verif() {
   cat > "$1/verification.md" <<'EOF'
 claim s1: GREEN — re-ran from clean state
@@ -82,6 +82,7 @@ verdict: GREEN
 - AC1 (endpoints + error paths): claim s1 GREEN
 - SSRF checklist (trailing-dot FQDN, IPv6-mapped, octal/hex IP, NAT64): probed GREEN
 Not covered: none — all acceptance criteria + domain checklist items mapped
+High-risk fixed RED: none
 Regression tests: none (verify-only fixture)
 Committee: architect APPROVED, security APPROVED, code-review APPROVED
 EOF
@@ -136,7 +137,9 @@ run_case "2.5b GREEN, no ## Coverage -> blocked"    1 "no '## Coverage'"     bas
 printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\n' > "$v/verification.md"
 run_case "2.5c Coverage, no Not-covered -> blocked" 1 "no 'Not covered:'"    bash "$DELIVERY" "$v" true
 printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\n' > "$v/verification.md"
-run_case "2.5d no Regression line -> blocked"       1 "no 'Regression tests:'" bash "$DELIVERY" "$v" true
+run_case "2.5d no High-risk fixed RED line -> blocked" 1 "no 'High-risk fixed RED:'" bash "$DELIVERY" "$v" true
+printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nHigh-risk fixed RED: none\n' > "$v/verification.md"
+run_case "2.5e no Regression line -> blocked"       1 "no 'Regression tests:'" bash "$DELIVERY" "$v" true
 # Contract-complete verification for the PASS / downstream-check paths.
 write_complete_verif "$v"
 write_frozen_state "$v"
@@ -159,7 +162,7 @@ printf 'b\n' > "$v_qa/brief.md"; printf 'p\n' > "$v_qa/plan.md"
 write_complete_verif "$v_qa"; write_frozen_state "$v_qa"
 mkdir -p "$v_qa/qa"; : > "$v_qa/qa/as-is-1040.png"; : > "$v_qa/qa/to-be-1040.png"
 run_case "2.12 qa/ dir, QA non-compliant -> blocked" 1 "QA gate fails"      bash "$DELIVERY" "$v_qa" true
-printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nRegression tests: none\nCommittee: architect APPROVED, security APPROVED, code-review APPROVED\n## QA\nagent-browser doctor: pass\nTool: agent-browser\n' > "$v_qa/verification.md"
+printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nHigh-risk fixed RED: none\nRegression tests: none\nCommittee: architect APPROVED, security APPROVED, code-review APPROVED\n## QA\nagent-browser doctor: pass\nTool: agent-browser\n' > "$v_qa/verification.md"
 run_case "2.13 qa/ dir + compliant QA -> PASS"       0 "GATE PASS"          bash "$DELIVERY" "$v_qa" true
 
 # ----------------------------------------------------------------------
@@ -308,14 +311,20 @@ printf 'the approved plan body\n' > "$v/plan.md"
 write_complete_verif "$v"; write_frozen_state "$v"
 run_case "8.1 complete + committee + frozen hash -> PASS" 0 "GATE PASS"     bash "$DELIVERY" "$v" true
 # Committee line missing entirely.
-printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nRegression tests: none\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nHigh-risk fixed RED: none\nRegression tests: none\n' > "$v/verification.md"
 run_case "8.2 no Committee line -> blocked"          1 "no 'Committee:' line" bash "$DELIVERY" "$v" true
 # Committee shows a non-approval verdict.
-printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nRegression tests: none\nCommittee: architect APPROVED, security REJECT, code-review APPROVED\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nHigh-risk fixed RED: none\nRegression tests: none\nCommittee: architect APPROVED, security REJECT, code-review APPROVED\n' > "$v/verification.md"
 run_case "8.3 committee shows reject -> blocked"     1 "non-approval"        bash "$DELIVERY" "$v" true
 # Committee missing a reviewer.
-printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nRegression tests: none\nCommittee: architect APPROVED, security APPROVED\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nHigh-risk fixed RED: none\nRegression tests: none\nCommittee: architect APPROVED, security APPROVED\n' > "$v/verification.md"
 run_case "8.4 committee missing code-review -> blocked" 1 "does not name the 'code'" bash "$DELIVERY" "$v" true
+printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nHigh-risk fixed RED: security SSRF\nRegression tests: none\nCommittee: architect APPROVED, security APPROVED, code-review APPROVED\n' > "$v/verification.md"
+run_case "8.4a high-risk fixed RED no regression -> blocked" 1 "high-risk fixed RED" bash "$DELIVERY" "$v" true
+
+printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nHigh-risk fixed RED: security SSRF\nRegression tests: none\nRegression exception: external provider sandbox cannot reproduce callback signature; covered by contract test in upstream suite\nCommittee: architect APPROVED, security APPROVED, code-review APPROVED\n' > "$v/verification.md"
+run_case "8.4b high-risk fixed RED exception -> PASS" 0 "GATE PASS" bash "$DELIVERY" "$v" true
+
 # Restore good committee; now exercise plan freeze.
 write_complete_verif "$v"
 printf 'plan body CHANGED after freeze\n' > "$v/plan.md"

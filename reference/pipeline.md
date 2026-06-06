@@ -63,7 +63,7 @@ read-only through investigation. All modes pause at Human Feedback before first 
 | Plan | Domain Brief, grounded plan, slices, stack/contracts | `README.md`, frozen `plan.md` | task table; each slice <=5 files / about 500 lines; acceptance check; store `plan_hash` |
 | Human Feedback | Human approves, revises, or stops | `plan.md` `## Human Feedback`, `state.json.approval` | required two briefs; human approves Build; `human-feedback-gate.mjs` exits 0 |
 | Build | Implement slices in run worktree | code, `claims.md` | slice tests pass; each claim has `run-to-prove` |
-| Verify | Clean-state adversarial re-run | `verification.md` | all claims GREEN; `## Coverage`; `Not covered:`; `Regression tests:`; completeness critic; aggregate `verdict: GREEN` |
+| Verify | Clean-state adversarial re-run | `verification.md` | all claims GREEN; `## Coverage`; `Not covered:`; `High-risk fixed RED:`; `Regression tests:`; completeness critic; aggregate `verdict: GREEN` |
 | QA | Black-box app exercise | `verification.md` `## QA`, `qa/` | browser/CLI QA passes; `qa-gate.sh <vault> <browser|cli>` exits 0 |
 | Deliver | Literal gate + package | commit / PR | plan hash matches; `delivery-gate.sh` exits 0 |
 

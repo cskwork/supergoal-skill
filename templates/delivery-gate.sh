@@ -50,13 +50,29 @@ pass "verification GREEN, no RED"
 #      cannot pass as a clean GREEN. Three line-checkable requirements in verification.md:
 #        - a '## Coverage' section that maps acceptance criteria + the domain checklist to evidence
 #        - a 'Not covered:' line that names the vectors/flows/properties NOT verified (or 'none')
+#        - a 'High-risk fixed RED:' line — 'none' for verify-only / low-risk, or the fixed class
 #        - a 'Regression tests:' line — a fixed RED must land a permanent test ('none' for verify-only)
+#        - a 'Regression exception:' line only when a high-risk fixed RED cannot land a test
 grep -qiE '^##[[:space:]]+Coverage\b' "$VAULT/verification.md" \
   || fail "verification.md has no '## Coverage' section — the claim set is unbounded; map each acceptance criterion + domain-checklist item to its evidence"
 grep -qiE '^[[:space:]]*[-*]?[[:space:]]*Not[[:space:]]+covered:' "$VAULT/verification.md" \
   || fail "verification.md has no 'Not covered:' line — name what was NOT verified (or state 'none', justified). Silent omission is the false-GREEN bug"
+HIGH_RISK_FIXED_RED="$(grep -iE '^[[:space:]]*[-*]?[[:space:]]*High-risk[[:space:]]+fixed[[:space:]]+RED:' "$VAULT/verification.md" | head -1 || true)"
+[ -n "$HIGH_RISK_FIXED_RED" ] \
+  || fail "verification.md has no 'High-risk fixed RED:' line — state none, or name the fixed security/data/concurrency/auth class"
+REGRESSION_TESTS="$(grep -iE '^[[:space:]]*[-*]?[[:space:]]*Regression[[:space:]]+tests?:' "$VAULT/verification.md" | head -1 || true)"
 grep -qiE '^[[:space:]]*[-*]?[[:space:]]*Regression[[:space:]]+tests?:' "$VAULT/verification.md" \
   || fail "verification.md has no 'Regression tests:' line — a fixed RED must add a permanent test; a verify-only run states 'none'"
+if printf '%s' "$HIGH_RISK_FIXED_RED" | grep -qiE ':[[:space:]]*(yes|true|security|ssrf|auth|data|concurrency|ordering|race|privacy|pii)'; then
+  if printf '%s' "$REGRESSION_TESTS" | grep -qiE ':[[:space:]]*none([[:space:]]|$|\()'; then
+    REGRESSION_EXCEPTION="$(grep -iE '^[[:space:]]*[-*]?[[:space:]]*Regression[[:space:]]+exception:' "$VAULT/verification.md" | head -1 || true)"
+    [ -n "$REGRESSION_EXCEPTION" ] \
+      || fail "high-risk fixed RED has 'Regression tests: none' — add a permanent regression test or a 'Regression exception:' reason"
+    if printf '%s' "$REGRESSION_EXCEPTION" | grep -qiE ':[[:space:]]*(none|n/a|na)?[[:space:]]*$'; then
+      fail "Regression exception must name why no permanent test can guard the high-risk fix"
+    fi
+  fi
+fi
 pass "completeness contract (coverage map + named gaps + regression ratchet)"
 
 # 2.55) Committee soft gate — architect + security + code-review must all have APPROVED before Deliver

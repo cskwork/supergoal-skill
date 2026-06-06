@@ -138,6 +138,7 @@ Required-coverage list = brief acceptance criteria (AC1-5) + SSRF/URL-validation
 Not covered: NAT64 `64:ff9b::/96` and mapped wildcard `::ffff:0.0.0.0` — LOW, redirect-only blast
 radius, out of scope for the v3 routing fix (logged §4); octal/hex IP encodings are rejected
 structurally by `parseIpv4` (non-decimal forms return null), so not separately probed.
+High-risk fixed RED: security SSRF
 Regression tests: SSRF regression hosts (incl. `::ffff:127.0.0.1`, `localhost.`) are asserted in
 test/validate.test.js; malformed-path 400 cases are tests 18-19.
 

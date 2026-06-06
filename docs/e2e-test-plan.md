@@ -232,7 +232,8 @@ Check: `ls docs/changelog/*/` and `git ls-files docs/changelog/`.
 - F4: landing `docs/index.html` has balanced `<section>`/`</section>` and the vault table lists the 6 files.
 - F5: the gate harness passes — `bash tests/gate-scenarios.test.sh` exits 0 (covers the literal
   validate / delivery / human-feedback / circuit-breaker scenarios, including the completeness
-  contract: a GREEN verification with no `## Coverage` / `Not covered:` / `Regression tests:` is blocked).
+  contract: a GREEN verification with no `## Coverage` / `Not covered:` / `High-risk fixed RED:` /
+  `Regression tests:` is blocked).
 
 ---
 

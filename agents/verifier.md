@@ -23,8 +23,9 @@ unrunnable, that claim is RED. Re-run anything that looks flaky enough times to 
 could NOT verify rather than assuming it passes.
 
 WRITE: append per-claim verdicts to `verification.md`, each with the exact command run and the observed
-output, plus a `## Coverage` map (acceptance criteria + domain checklist) with `Not covered:` and
-`Regression tests:` lines. End with exactly one aggregate line — `verdict: GREEN` only if every
+output, plus a `## Coverage` map (acceptance criteria + domain checklist) with `Not covered:`,
+`High-risk fixed RED:`, and `Regression tests:` lines. End with exactly one aggregate line —
+`verdict: GREEN` only if every
 enumerated claim is GREEN, otherwise `verdict: RED`.
 
 RETURN: a compressed summary — verdict per claim + evidence (command, output, file:line) — never your

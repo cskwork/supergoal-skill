@@ -17,6 +17,13 @@ Required controls:
 - blind or label-swapped grading
 - cost, time, and tool count recorded
 
+Required outcome accounting:
+
+- bug-catch matrix: planted bugs, hidden checks, and discovered real bugs by arm
+- false-GREEN count: self-reported ship/green while machine or ground-truth checks still fail
+- regression protection: permanent tests added for fixed REDs, or explicit exception
+- overclaim guard: a better audit trail is not a win unless it changes shipped correctness or preserved evidence
+
 ## Pipeline
 
 `Scope -> Cases -> Baseline Run -> Harness Run -> Machine Checks -> Blind Grade -> Compare -> Report -> Persist`
@@ -55,10 +62,11 @@ Move to 8-15 cases only after the 3-case pilot exposes useful signal.
    - Grade against the case rubric, not against harness marketing claims.
 
 6. Compare
-   - Record winner, delta, cost/time tradeoff, failure notes, and grader uncertainty.
+- Record winner, bug-catch delta, false-GREEN delta, regression-test delta, cost/time tradeoff,
+  failure notes, and grader uncertainty.
 
 7. Report
-   - Use `templates/harness-eval-report.md`.
+- Use `templates/harness-eval-report.md`.
    - Claim improvement only when machine checks and blind grading both support it.
    - Otherwise say `Not proven`.
 

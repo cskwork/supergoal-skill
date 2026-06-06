@@ -1,0 +1,59 @@
+id: revfactory-case-007
+upstream_id: case-007
+title: "Mini programming language interpreter"
+difficulty: expert
+category: complex-system
+source: "RevFactory claude-code-harness"
+source_url: "https://github.com/revfactory/claude-code-harness/blob/main/experiments/cases/case-007-interpreter.yaml"
+runtime_adapter: portable
+repo_snapshot: "<git sha or immutable snapshot id>"
+task: |-
+  Implement the RevFactory case-007 MiniLang interpreter from the upstream
+  case file, including parser, evaluator, functions, closures, and tests.
+acceptance:
+  - "All required language constructs execute correctly."
+  - "Closures, recursion, and higher-order behavior work."
+  - "Parse/runtime errors are reported clearly."
+machine_checks:
+  - "parser unit tests"
+  - "interpreter scenario tests"
+  - "lint/typecheck/build where available"
+hidden_checks:
+  - "closure captures mutated outer state correctly"
+  - "recursive function scenario"
+  - "syntax and runtime error paths"
+bug_catch_matrix:
+  planted_or_hidden_bugs:
+    - "Parser accepts only examples and fails nested expressions."
+    - "Function scope or closure resolution is wrong."
+  expected_false_green_risk: "Agent passes arithmetic samples while missing closures or recursion."
+  extra_bug_discovery: "Record any grammar ambiguity or runtime edge case found."
+regression_protection:
+  high_risk_fixed_red: "language semantics"
+  permanent_test_required: true
+  exception_allowed_only_with_reason: true
+rubric:
+  quality_score:
+    method: "RevFactory-style 100-point score; 10 dimensions, each 0-10."
+    dimensions:
+      - feature_completeness
+      - test_coverage
+      - code_quality
+      - error_handling
+      - efficiency
+      - correctness
+      - architecture
+      - extensibility
+      - documentation
+      - dev_environment
+    anchors:
+      - "No meaningful tests cap test_coverage at 3."
+      - "Missing requested behavior caps feature_completeness at 7."
+      - "Failed machine or hidden checks cap correctness at 6."
+cost_fields:
+  - wall_clock_minutes
+  - model
+  - reasoning_effort
+  - tool_calls
+  - token_estimate
+persist_path: "docs/changelog/<date>-harness-eval/cases/revfactory-case-007-interpreter.yaml"

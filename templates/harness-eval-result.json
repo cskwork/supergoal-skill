@@ -6,31 +6,66 @@
   "baseline": {
     "condition": "without_harness",
     "machine_checks": [
-      { "name": "test", "status": "pass", "evidence": "<command output or path>" },
-      { "name": "lint", "status": "pass", "evidence": "<command output or path>" },
-      { "name": "build", "status": "pass", "evidence": "<command output or path>" }
+      { "name": "test", "status": "pass", "evidence": "command and artifact path" },
+      { "name": "lint", "status": "pass", "evidence": "command and artifact path" },
+      { "name": "build", "status": "pass", "evidence": "command and artifact path" }
     ],
-    "cost": {
-      "tokens": 0,
-      "duration_ms": 0,
-      "tool_calls": 0
-    }
+    "cost": { "tokens": 1000, "duration_ms": 1000, "tool_calls": 10 }
   },
   "harness": {
     "condition": "with_harness",
     "machine_checks": [
-      { "name": "test", "status": "pass", "evidence": "<command output or path>" },
-      { "name": "lint", "status": "pass", "evidence": "<command output or path>" },
-      { "name": "build", "status": "pass", "evidence": "<command output or path>" }
+      { "name": "test", "status": "pass", "evidence": "command and artifact path" },
+      { "name": "lint", "status": "pass", "evidence": "command and artifact path" },
+      { "name": "build", "status": "pass", "evidence": "command and artifact path" }
     ],
-    "cost": {
-      "tokens": 0,
-      "duration_ms": 0,
-      "tool_calls": 0
-    }
+    "cost": { "tokens": 1200, "duration_ms": 1400, "tool_calls": 12 }
+  },
+  "quality": {
+    "method": "RevFactory-style 10 dimensions, each 0-10, total 100; anchored to observable code properties.",
+    "baseline": {
+      "average_total": 70,
+      "by_case": {
+        "case-001": {
+          "total": 70,
+          "dimensions": {
+            "feature_completeness": { "score": 8, "rationale": "Requirements mostly implemented." },
+            "test_coverage": { "score": 6, "rationale": "Relevant tests exist but miss edge cases." },
+            "code_quality": { "score": 7, "rationale": "Readable and consistent." },
+            "error_handling": { "score": 6, "rationale": "Basic validation and failures." },
+            "efficiency": { "score": 8, "rationale": "Appropriate algorithms and dependencies." },
+            "correctness": { "score": 7, "rationale": "Machine checks pass with remaining risks." },
+            "architecture": { "score": 7, "rationale": "Structure fits task size." },
+            "extensibility": { "score": 7, "rationale": "Can be extended safely." },
+            "documentation": { "score": 6, "rationale": "Some usage or changelog notes." },
+            "dev_environment": { "score": 8, "rationale": "Runnable scripts and checks." }
+          }
+        }
+      }
+    },
+    "harness": {
+      "average_total": 78,
+      "by_case": {
+        "case-001": {
+          "total": 78,
+          "dimensions": {
+            "feature_completeness": { "score": 9, "rationale": "Requirements fully implemented." },
+            "test_coverage": { "score": 8, "rationale": "Edge-case tests included." },
+            "code_quality": { "score": 8, "rationale": "Readable and consistent." },
+            "error_handling": { "score": 8, "rationale": "Explicit validation and failures." },
+            "efficiency": { "score": 8, "rationale": "Appropriate algorithms and dependencies." },
+            "correctness": { "score": 9, "rationale": "Machine and hidden checks pass." },
+            "architecture": { "score": 8, "rationale": "Structure fits task and future changes." },
+            "extensibility": { "score": 8, "rationale": "Clear helpers and boundaries." },
+            "documentation": { "score": 6, "rationale": "Some usage or changelog notes." },
+            "dev_environment": { "score": 6, "rationale": "Runnable scripts and checks." }
+          }
+        }
+      }
+    },
+    "winner": "harness"
   },
   "blind_grading": true,
-  "winner": "not_proven",
-  "claim_status": "not_proven",
-  "notes": []
+  "winner": "harness",
+  "claim_status": "not_proven"
 }

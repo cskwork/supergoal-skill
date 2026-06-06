@@ -1,0 +1,59 @@
+id: revfactory-case-006
+upstream_id: case-006
+title: "State-management library technical research"
+difficulty: medium
+category: research
+source: "RevFactory claude-code-harness"
+source_url: "https://github.com/revfactory/claude-code-harness/blob/main/experiments/cases/case-006-research.yaml"
+runtime_adapter: portable
+repo_snapshot: "<git sha or immutable snapshot id>"
+task: |-
+  Complete the RevFactory case-006 state-management library technical research
+  task from the upstream case file.
+acceptance:
+  - "Comparison is source-grounded and current for the evaluation date."
+  - "Tradeoffs are tied to concrete project criteria."
+  - "Recommendations distinguish evidence from judgment."
+machine_checks:
+  - "source link checks"
+  - "citation completeness review"
+  - "markdown/report checks"
+hidden_checks:
+  - "outdated library claim"
+  - "missing tradeoff for a required criterion"
+  - "unsupported recommendation"
+bug_catch_matrix:
+  planted_or_hidden_bugs:
+    - "Invented or stale library capability."
+    - "Recommendation ignores a required constraint."
+  expected_false_green_risk: "Agent writes plausible research without source evidence."
+  extra_bug_discovery: "Record any changed package status or deprecation found during evaluation."
+regression_protection:
+  high_risk_fixed_red: "research accuracy"
+  permanent_test_required: true
+  exception_allowed_only_with_reason: true
+rubric:
+  quality_score:
+    method: "RevFactory-style 100-point score; 10 dimensions, each 0-10."
+    dimensions:
+      - feature_completeness
+      - test_coverage
+      - code_quality
+      - error_handling
+      - efficiency
+      - correctness
+      - architecture
+      - extensibility
+      - documentation
+      - dev_environment
+    anchors:
+      - "No meaningful tests cap test_coverage at 3."
+      - "Missing requested behavior caps feature_completeness at 7."
+      - "Failed machine or hidden checks cap correctness at 6."
+cost_fields:
+  - wall_clock_minutes
+  - model
+  - reasoning_effort
+  - tool_calls
+  - token_estimate
+persist_path: "docs/changelog/<date>-harness-eval/cases/revfactory-case-006-research.yaml"

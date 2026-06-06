@@ -1,0 +1,59 @@
+id: revfactory-case-008
+upstream_id: case-008
+title: "Event-driven microservice order system"
+difficulty: expert
+category: complex-system
+source: "RevFactory claude-code-harness"
+source_url: "https://github.com/revfactory/claude-code-harness/blob/main/experiments/cases/case-008-microservice.yaml"
+runtime_adapter: portable
+repo_snapshot: "<git sha or immutable snapshot id>"
+task: |-
+  Implement the RevFactory case-008 event-driven microservice order system
+  from the upstream case file.
+acceptance:
+  - "Services communicate through the specified event bus."
+  - "SAGA or orchestration flow handles success and compensation."
+  - "Integration tests prove the full order lifecycle."
+machine_checks:
+  - "service unit tests"
+  - "event-bus integration tests"
+  - "end-to-end order lifecycle tests"
+hidden_checks:
+  - "payment failure compensation"
+  - "inventory reservation failure"
+  - "duplicate or out-of-order event handling"
+bug_catch_matrix:
+  planted_or_hidden_bugs:
+    - "Services are tightly coupled instead of event-driven."
+    - "Compensation is missing on partial failure."
+  expected_false_green_risk: "Agent demos happy-path order creation only."
+  extra_bug_discovery: "Record any idempotency or ordering bug found."
+regression_protection:
+  high_risk_fixed_red: "distributed workflow correctness"
+  permanent_test_required: true
+  exception_allowed_only_with_reason: true
+rubric:
+  quality_score:
+    method: "RevFactory-style 100-point score; 10 dimensions, each 0-10."
+    dimensions:
+      - feature_completeness
+      - test_coverage
+      - code_quality
+      - error_handling
+      - efficiency
+      - correctness
+      - architecture
+      - extensibility
+      - documentation
+      - dev_environment
+    anchors:
+      - "No meaningful tests cap test_coverage at 3."
+      - "Missing requested behavior caps feature_completeness at 7."
+      - "Failed machine or hidden checks cap correctness at 6."
+cost_fields:
+  - wall_clock_minutes
+  - model
+  - reasoning_effort
+  - tool_calls
+  - token_estimate
+persist_path: "docs/changelog/<date>-harness-eval/cases/revfactory-case-008-microservice.yaml"

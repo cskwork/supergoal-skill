@@ -52,7 +52,7 @@ Classify first; state the mode to the user in one line.
 | "learn / onboard / map this codebase", "build a domain wiki", "도메인 파악" (learn for the agent, persist a wiki) | **LEARN-DOMAIN** | Intake → Survey → **Scope checkpoint** → Map → Deepen → **Ground** → Persist → **Onboard** → Freshness |
 | "QA only / verify / 검증만 / 데이터 정합성 / 데이터 비교 / API 수정 전후 확인 / A/B" (exercise a running app, no code change) | **QA-ONLY** | Intake → Target & Access → **Scenario checkpoint** → Exercise → Cross-check → **Report** → Persist |
 | "build/design/integrate/audit harness, agent team, workflow pack, reusable role/skill system" | **HARNESS-MAKE** | Intake → Domain Audit → Pattern Pick → Agent/Skill Map → Orchestrator Draft → **Human Feedback** → Generate → Verify → Install/Document → Journal |
-| "test harness effectiveness / compare with and without harness / benchmark agent workflow" | **HARNESS-EVAL** | Scope → Cases → Baseline Run → Harness Run → Machine Checks → Blind Grade → Compare → Report → Persist |
+| "test harness effectiveness / compare with and without harness / benchmark agent workflow" | **HARNESS-EVAL** | Scope → Cases → Baseline Run → Harness Run → Machine Checks → Quality Score → Blind Grade → Compare → Report → Persist |
 | "make a skill / 스킬 만들어 / learn new skill / make skill from history / 이거 자주 하는데 스킬로" (turn repeated work into a reusable skill, no product code) | **SKILL-MINE** | Intake → Window → Mine → Rank → Suggest → **Human pick/reject** → Forge → Verify → Install → Journal |
 
 If ambiguous, ask one question. LEARN writes no code, uses no implementation gates, and uses chat
@@ -179,7 +179,7 @@ evidence + file refs only. Full procedure: `reference/experts.md`.
 | `reference/qa-only.md` | QA-ONLY mode: no-code QA / data-comparison run; report + persisted reusable suite |
 | `reference/harness-make.md` | HARNESS-MAKE: runtime-neutral agent/skill/orchestrator design; approved files install to `active_install_target` |
 | `reference/harness-patterns.md` | HARNESS-MAKE Pattern Pick: choose smallest useful team topology |
-| `reference/harness-eval.md` | HARNESS-EVAL: same snapshot with/without harness, machine checks, blind grading, `Not proven` if weak |
+| `reference/harness-eval.md` | HARNESS-EVAL: same snapshot with/without harness, reusable case templates, machine checks, RevFactory-style 100-point quality score, blind grading, `Not proven` if weak |
 | `reference/skill-mine.md` | SKILL-MINE mode: mine history → suggest 3-5 skills → human pick → forge portable SKILL.md → install |
 | `reference/db-access.md` | QA cross-check: read-only, DB-independent (mysql/postgres/sqlite) data access |
 | `reference/ui-ux.md` | Any user-facing UI: classify surface into Expressive vs Functional tier |

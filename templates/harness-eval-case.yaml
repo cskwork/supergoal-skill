@@ -1,6 +1,7 @@
 id: case-001
 title: "Short task title"
 difficulty: simple
+source: "<pilot, rerun, upstream URL, or repo-specific>"
 runtime_adapter: portable
 repo_snapshot: "<git sha or immutable snapshot id>"
 task: |
@@ -12,6 +13,8 @@ machine_checks:
   - test
   - lint
   - build
+hidden_checks:
+  - "Hidden or evaluator-only check the run must pass"
 bug_catch_matrix:
   planted_or_hidden_bugs:
     - "Bug or hidden check the run must catch before shipping"
@@ -22,8 +25,16 @@ regression_protection:
   permanent_test_required: true
   exception_allowed_only_with_reason: true
 rubric:
+  quality_score: "RevFactory-style 100-point score across 10 dimensions, each 0-10."
   correctness: "Does the result meet the task without known bugs?"
   tests: "Are relevant regression or acceptance tests present?"
   architecture: "Is the structure appropriate for the task size?"
   maintainability: "Can a future agent or engineer extend it safely?"
   efficiency: "Was overhead justified by quality?"
+cost_fields:
+  - wall_clock_minutes
+  - model
+  - reasoning_effort
+  - tool_calls
+  - token_estimate
+persist_path: "docs/changelog/<date>-harness-eval/cases/<id>.yaml or .domain-agent/qa/harness-eval/<id>.yaml"

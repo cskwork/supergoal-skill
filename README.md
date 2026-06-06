@@ -35,7 +35,7 @@ it inline where none exists). **Nothing to install but the skill itself.** (Work
 | "learn / map / onboard onto this codebase" (build a domain wiki for the agent) | **LEARN-DOMAIN** | Intake -> Survey -> Scope checkpoint -> Map -> Deepen -> **Ground** -> Persist -> **Onboard (human handbook)** -> Freshness |
 | "QA only / verify / compare data — no code change" | **QA-ONLY** | Intake -> Target & Access -> Scenario checkpoint -> Exercise -> Cross-check -> **Report** -> Persist |
 | "build/design/integrate/audit a harness or agent team" | **HARNESS-MAKE** | Intake -> Domain Audit -> Pattern Pick -> Agent/Skill Map -> Orchestrator Draft -> **Human Feedback** -> Generate -> Verify -> Install/Document -> Journal |
-| "test harness effectiveness / compare with and without harness" | **HARNESS-EVAL** | Scope -> Cases -> Baseline Run -> Harness Run -> Machine Checks -> Blind Grade -> Compare -> Report -> Persist |
+| "test harness effectiveness / compare with and without harness" | **HARNESS-EVAL** | Scope -> Cases -> Baseline Run -> Harness Run -> Machine Checks -> Quality Score -> Blind Grade -> Compare -> Report -> Persist |
 | "make a skill / learn new skill / make skill from history — no product code" | **SKILL-MINE** | Intake -> Window -> Mine -> Rank -> Suggest -> **Human pick/reject** -> Forge -> Verify -> Install -> Journal |
 
 QA-ONLY exercises an already-running app (and a read-only, DB-independent database) to QA behavior or
@@ -64,8 +64,10 @@ and installs approved active files only to the selected adapter target. Draft ha
 artifacts, not active agent registries.
 
 HARNESS-EVAL tests whether a harness helps. It compares the same task with and without the harness on
-the same repo snapshot, records structured machine checks (`name`, `status`, `evidence`), blind or
-label-swapped grading, cost, time, and tool calls. Weak evidence is reported as `Not proven`.
+the same repo snapshot, records structured machine checks (`name`, `status`, `evidence`),
+RevFactory-style 100-point quality scoring, blind or label-swapped grading, cost, time, and tool
+calls. Reusable case templates live in `templates/harness-eval-cases/`; weak evidence is reported as
+`Not proven`.
 
 ```text
 /supergoal build a habit-tracker app and ship it
@@ -170,6 +172,11 @@ Codex Goal mode on the same hard backend task with the same hidden scorer. See
 - **Codex Goal mode:** fixed the main code path and passed focused checks, but missed one hidden
   fallback/preservation coverage check.
 - **Plain Codex CLI:** produced no usable result: idle run, no solution diff, no final output.
+
+## Harness Eval Reference
+
+HARNESS-EVAL reusable sample cases come from RevFactory's `claude-code-harness`:
+https://github.com/revfactory/claude-code-harness/
 
 ## Credit
 

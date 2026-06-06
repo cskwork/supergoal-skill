@@ -96,7 +96,11 @@ require_text "step 0 has harness eval row" "SKILL.md" "| \"test harness effectiv
 require_text "eval requires same snapshot" "reference/harness-eval.md" "same repo snapshot"
 require_text "eval requires blind grading" "reference/harness-eval.md" "blind or label-swapped grading"
 require_text "eval avoids inflated claims" "reference/harness-eval.md" "Not proven"
+require_text "eval records bug-catch matrix" "reference/harness-eval.md" "bug-catch matrix"
+require_text "eval records false GREEN" "reference/harness-eval.md" "false-GREEN count"
 require_text "report records not proven" "templates/harness-eval-report.md" "## Not proven"
+require_text "report records bug-catch matrix" "templates/harness-eval-report.md" "## Bug-Catch Matrix"
+require_text "case template records regression protection" "templates/harness-eval-case.yaml" "regression_protection"
 require_text "gate requires passed checks" "templates/harness-eval-gate.mjs" "check.status !== \"pass\""
 
 PASS_CHECKS='[{"name":"test","status":"pass","evidence":"tests passed"},{"name":"lint","status":"pass","evidence":"lint passed"},{"name":"build","status":"pass","evidence":"build passed"}]'

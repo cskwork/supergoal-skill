@@ -47,7 +47,9 @@ evidence. Required list = brief acceptance criteria + domain property/risk check
 `reference/domain-rules.md`. It must also include:
 
 - `Not covered:` naming unverified required items with justification, or `none`.
-- `Regression tests:` naming permanent tests for fixed REDs, or `none`.
+- `High-risk fixed RED:` naming the fixed security/data/concurrency/auth class, or `none`.
+- `Regression tests:` naming permanent tests for fixed REDs, or `none` for verify-only / low-risk runs.
+- `Regression exception:` only when a high-risk fixed RED cannot land a permanent regression test; name why.
 
 `delivery-gate.sh` fails if these lines are missing.
 

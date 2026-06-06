@@ -73,3 +73,14 @@ Changed:
 - `README.md` and `SKILL.md` reflect the active install target rule.
 
 Verification: added `tests/harness-make-contract.test.sh` to assert the HARNESS-MAKE active-install contract.
+## SSRF harness-eval and regression-ratchet hardening
+
+Decision: treat the SSRF skill-vs-no-skill result as a claim-completeness failure, not proof that the
+skill catches every hard security bug.
+
+Reason: both arms still shipped the trailing-dot SSRF bypass, so the effective lever is bounding the
+verified claim set and forcing durable regression protection for high-risk fixes.
+
+Changed: HARNESS-EVAL now records bug-catch, false-GREEN, and regression-protection outcomes. Deliver
+now requires `High-risk fixed RED:` in `verification.md` and blocks high-risk fixed REDs with
+`Regression tests: none` unless a `Regression exception:` reason is recorded.

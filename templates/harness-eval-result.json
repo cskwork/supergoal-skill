@@ -1,0 +1,36 @@
+{
+  "case_id": "case-001",
+  "runtime_adapter": "portable",
+  "same_repo_snapshot": true,
+  "isolated_worktrees": true,
+  "baseline": {
+    "condition": "without_harness",
+    "machine_checks": [
+      { "name": "test", "status": "pass", "evidence": "<command output or path>" },
+      { "name": "lint", "status": "pass", "evidence": "<command output or path>" },
+      { "name": "build", "status": "pass", "evidence": "<command output or path>" }
+    ],
+    "cost": {
+      "tokens": 0,
+      "duration_ms": 0,
+      "tool_calls": 0
+    }
+  },
+  "harness": {
+    "condition": "with_harness",
+    "machine_checks": [
+      { "name": "test", "status": "pass", "evidence": "<command output or path>" },
+      { "name": "lint", "status": "pass", "evidence": "<command output or path>" },
+      { "name": "build", "status": "pass", "evidence": "<command output or path>" }
+    ],
+    "cost": {
+      "tokens": 0,
+      "duration_ms": 0,
+      "tool_calls": 0
+    }
+  },
+  "blind_grading": true,
+  "winner": "not_proven",
+  "claim_status": "not_proven",
+  "notes": []
+}

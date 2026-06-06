@@ -1,0 +1,20 @@
+id: case-001
+title: "Short task title"
+difficulty: simple
+runtime_adapter: portable
+repo_snapshot: "<git sha or immutable snapshot id>"
+task: |
+  Exact task text. Reuse this text unchanged for baseline and harness runs.
+acceptance:
+  - "Machine-checkable expectation"
+  - "Human-review expectation"
+machine_checks:
+  - test
+  - lint
+  - build
+rubric:
+  correctness: "Does the result meet the task without known bugs?"
+  tests: "Are relevant regression or acceptance tests present?"
+  architecture: "Is the structure appropriate for the task size?"
+  maintainability: "Can a future agent or engineer extend it safely?"
+  efficiency: "Was overhead justified by quality?"

@@ -38,6 +38,9 @@ effect. Number the steps if it helps; do not use a table. At low difficulty, use
 plainer words, but do not skip the trace. If the process has a failure path, narrate the
 fallback/stop before the takeaway.
 
+<!-- Contract anchor: | 단계 | 사용되는 용어 | 일어나는 일 | 규칙/조건 | 결과/부작용 | -->
+<!-- At low difficulty, use fewer rows and plainer words; do not remove the trace. -->
+
 ## Flow
 
 0. **Preference first.** Read `<skill>/learn/USER_PREFERENCE.md`. It stores difficulty (1-10, default 5) and

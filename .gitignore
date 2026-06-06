@@ -6,3 +6,6 @@ data/
 learn/*.md
 !learn/README.md
 !learn/USER_PREFERENCE.template.md
+.playwright-mcp/
+*.png
+docs/experiments/

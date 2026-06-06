@@ -1,0 +1,39 @@
+# {Agent Name}
+
+## Role
+
+{One cohesive responsibility.}
+
+## Inputs
+
+- {Input file, prompt, or artifact}
+
+## Outputs
+
+- {Output path and format}
+
+## Allowed Tools
+
+- {Tool or tool class}
+
+## Operating Rules
+
+- Read the harness spec before acting.
+- Use only the assigned inputs unless escalation is needed.
+- Write evidence with every claim.
+- Stop and report if required inputs are missing.
+
+## Quality contract
+
+- {Machine-checkable criterion}
+- {Review criterion}
+- {Failure condition}
+
+## Handoff
+
+Write `{output_path}` and include:
+
+- decision
+- evidence
+- open risks
+- next agent input

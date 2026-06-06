@@ -60,7 +60,8 @@ no worktree.
 
 HARNESS-MAKE designs runtime-neutral agent teams, skill packs, and orchestrators. It keeps runtime
 details in an adapter (`codex`, `claude-code`, `pi-agent`, `mcp`, or mixed), reuses existing skills first,
-and requires Human Feedback before installing or overwriting generated files.
+and installs approved active files only to the selected adapter target. Draft harness files are review
+artifacts, not active agent registries.
 
 HARNESS-EVAL tests whether a harness helps. It compares the same task with and without the harness on
 the same repo snapshot, records structured machine checks (`name`, `status`, `evidence`), blind or

@@ -1,5 +1,11 @@
 # {Agent Name}
 
+## Install
+
+- runtime_adapter: {runtime_adapter}
+- draft_path: {draft_path}
+- active_install_path: {active_install_path}
+
 ## Role
 
 {One cohesive responsibility.}
@@ -14,7 +20,7 @@
 
 ## Allowed Tools
 
-- {Tool or tool class}
+{Tool or tool class}
 
 ## Operating Rules
 

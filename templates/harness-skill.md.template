@@ -5,6 +5,12 @@ description: "{Specific trigger phrases and boundaries. Use when ... Do not use 
 
 # {Skill Name}
 
+## Install
+
+- runtime_adapter: {runtime_adapter}
+- draft_path: {draft_path}
+- active_install_path: {active_install_path}
+
 ## Purpose
 
 {What this skill helps an agent do.}
@@ -34,4 +40,5 @@ description: "{Specific trigger phrases and boundaries. Use when ... Do not use 
 
 ## Portability
 
-No runtime-specific tool names in the portable body. Put runtime mapping in the harness spec `runtime_adapter`.
+No runtime-specific tool names in the portable body. Put runtime mapping in the
+harness spec `runtime_adapter`.

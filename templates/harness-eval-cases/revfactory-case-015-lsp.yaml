@@ -1,0 +1,62 @@
+id: revfactory-case-015
+upstream_id: case-015
+title: "Language Server Protocol server"
+difficulty: expert
+category: complex-system
+source: "RevFactory claude-code-harness"
+source_url: "https://github.com/revfactory/claude-code-harness/blob/main/experiments/cases/case-015-lsp.yaml"
+runtime_adapter: portable
+repo_snapshot: "<git sha or immutable snapshot id>"
+task: |-
+  Implement the RevFactory case-015 MiniLang Language Server Protocol server
+  from the upstream case file.
+acceptance:
+  - "JSON-RPC Content-Length transport and initialize/shutdown lifecycle work."
+  - "Diagnostics, completion, go-to-definition, hover, and didChange updates work."
+  - "Parser recovery and symbol table behavior support the LSP providers."
+machine_checks:
+  - "JSON-RPC transport tests"
+  - "provider unit tests"
+  - "LSP integration tests"
+hidden_checks:
+  - "undefined symbol diagnostic after incremental edit"
+  - "function arity diagnostic"
+  - "completion prefix filtering inside scope"
+  - "go-to-definition for function call"
+  - "hover for function signature"
+bug_catch_matrix:
+  planted_or_hidden_bugs:
+    - "didChange updates text but leaves stale diagnostics."
+    - "Completion returns all symbols without prefix or scope filtering."
+    - "Go-to-definition ignores function calls."
+  expected_false_green_risk: "Agent claims LSP support after only unit-testing parser helpers."
+  extra_bug_discovery: "Record any protocol framing, position mapping, or scope bug found."
+regression_protection:
+  high_risk_fixed_red: "protocol and editor workflow correctness"
+  permanent_test_required: true
+  exception_allowed_only_with_reason: true
+rubric:
+  quality_score:
+    method: "RevFactory-style 100-point score; 10 dimensions, each 0-10."
+    dimensions:
+      - feature_completeness
+      - test_coverage
+      - code_quality
+      - error_handling
+      - efficiency
+      - correctness
+      - architecture
+      - extensibility
+      - documentation
+      - dev_environment
+    anchors:
+      - "No meaningful tests cap test_coverage at 3."
+      - "Missing requested behavior caps feature_completeness at 7."
+      - "Failed machine or hidden checks cap correctness at 6."
+cost_fields:
+  - wall_clock_minutes
+  - model
+  - reasoning_effort
+  - tool_calls
+  - token_estimate
+persist_path: "docs/changelog/<date>-harness-eval/cases/revfactory-case-015-lsp.yaml"

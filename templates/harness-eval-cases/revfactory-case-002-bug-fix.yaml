@@ -1,0 +1,60 @@
+id: revfactory-case-002
+upstream_id: case-002
+title: "Async race-condition bug fix"
+difficulty: hard
+category: bug-fix
+source: "RevFactory claude-code-harness"
+source_url: "https://github.com/revfactory/claude-code-harness/blob/main/experiments/cases/case-002-bug-fix.yaml"
+runtime_adapter: portable
+repo_snapshot: "<git sha or immutable snapshot id>"
+task: |-
+  Fix the RevFactory case-002 async race-condition bug from the upstream
+  case file. Preserve the existing public behavior while making concurrent
+  execution deterministic.
+acceptance:
+  - "Race condition is reproduced or covered before the fix is trusted."
+  - "Concurrent calls are deterministic under stress."
+  - "Existing behavior is preserved."
+machine_checks:
+  - "unit tests"
+  - "concurrency stress test"
+  - "lint/typecheck/build where available"
+hidden_checks:
+  - "many concurrent requests for the same key"
+  - "cache miss and cache hit interleavings"
+  - "repeat stress test to expose flakes"
+bug_catch_matrix:
+  planted_or_hidden_bugs:
+    - "Non-atomic cache population under concurrent callers."
+    - "Fix serializes too much and breaks expected cache behavior."
+  expected_false_green_risk: "Agent reports fixed after one non-concurrent test."
+  extra_bug_discovery: "Record any flaky interleaving found outside the planted race."
+regression_protection:
+  high_risk_fixed_red: "concurrency"
+  permanent_test_required: true
+  exception_allowed_only_with_reason: true
+rubric:
+  quality_score:
+    method: "RevFactory-style 100-point score; 10 dimensions, each 0-10."
+    dimensions:
+      - feature_completeness
+      - test_coverage
+      - code_quality
+      - error_handling
+      - efficiency
+      - correctness
+      - architecture
+      - extensibility
+      - documentation
+      - dev_environment
+    anchors:
+      - "No meaningful tests cap test_coverage at 3."
+      - "Missing requested behavior caps feature_completeness at 7."
+      - "Failed machine or hidden checks cap correctness at 6."
+cost_fields:
+  - wall_clock_minutes
+  - model
+  - reasoning_effort
+  - tool_calls
+  - token_estimate
+persist_path: "docs/changelog/<date>-harness-eval/cases/revfactory-case-002-bug-fix.yaml"

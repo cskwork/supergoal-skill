@@ -84,3 +84,56 @@ verified claim set and forcing durable regression protection for high-risk fixes
 Changed: HARNESS-EVAL now records bug-catch, false-GREEN, and regression-protection outcomes. Deliver
 now requires `High-risk fixed RED:` in `verification.md` and blocks high-risk fixed REDs with
 `Regression tests: none` unless a `Regression exception:` reason is recorded.
+
+## HARNESS-EVAL 3-case pilot run
+
+Decision: run the requested one-pass eval as a 3-case clean-slate Codex pilot, not as a generalized effectiveness claim.
+
+Reasoning: one easy, one medium, and one hard case can prove the eval harness works mechanically, but it is too small to prove that `supergoal` improves outcomes.
+
+Outcome:
+- Baseline Codex and Codex with a copied `supergoal` skill reference both passed all three cases.
+- Winner is `tie`; `claim_status` remains `not_proven`.
+- The harness arm used more runtime, tokens, and parsed tool calls, so the pilot shows overhead without a quality delta.
+
+Artifacts:
+- Ignored local run files live under `docs/experiments/2026-06-06-harness-eval-3case/`.
+
+## HARNESS-EVAL RevFactory-style quality score
+
+Decision: make HARNESS-EVAL report both pass/fail evidence and a RevFactory-style 100-point quality score.
+
+Reasoning: the upstream Harness experiment scores outputs across 10 quality dimensions, so supergoal evals should not collapse comparison to machine-check pass status alone.
+
+Changed:
+- `reference/harness-eval.md` adds a `Quality Score` phase before blind grading.
+- `templates/harness-eval-result.json` now includes `quality.baseline` and `quality.harness` scored across 10 dimensions.
+- `templates/harness-eval-report.md` adds a `## Quality Score` section and score anchors.
+- `templates/harness-eval-gate.mjs` blocks missing or out-of-range quality scores and blocks `claim_status: proven` unless the harness also wins quality.
+- `tests/harness-eval-contract.test.sh` covers complete, missing, invalid, and quality-loss result cases.
+
+## HARNESS-EVAL low-effort 2-case rerun
+
+Decision: rerun HARNESS-EVAL with `gpt-5.5` low reasoning effort on two fresh tasks and evaluate both pass/fail and quality.
+
+Reasoning: the previous 3-case pilot only showed pass/fail parity. The RevFactory-style quality score gives a second axis for structure, test coverage, correctness, and maintainability.
+
+Outcome:
+- Medium price-basket task: baseline pass, harness pass, quality 77 vs 77.
+- Hard JSON Patch task: baseline pass, harness pass, quality 74 vs 78.
+- Aggregate pass winner is `tie`; quality winner is `harness` at 77.5 vs 75.5.
+- Overall `claim_status` remains `not_proven` because two cases are too small and harness cost was higher.
+
+## HARNESS-EVAL reusable case templates
+
+Decision: keep reusable HARNESS-EVAL case templates all and only from RevFactory's
+`claude-code-harness`. Reasoning: ignored local experiment folders are run evidence, while future
+clean-slate evaluations need stable external templates with machine-check, hidden-check,
+regression-protection, cost, and RevFactory-style quality-score fields.
+
+Changed: replaced local pilot/rerun reusable case templates with RevFactory case-001 through case-015
+under `templates/harness-eval-cases/`. Each template keeps the upstream source URL plus supergoal's
+HARNESS-EVAL fields. `reference/harness-eval.md`, `README.md`, `SKILL.md`, and
+`templates/harness-eval-report.md` now point at the reusable case directory. HARNESS-EVAL contract
+test requires exactly 15 `revfactory-case-*.yaml` files and checks each reusable case for
+`machine_checks`, `hidden_checks`, `quality_score`, `source_url`, and `persist_path`.

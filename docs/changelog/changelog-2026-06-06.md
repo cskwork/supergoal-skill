@@ -137,3 +137,15 @@ HARNESS-EVAL fields. `reference/harness-eval.md`, `README.md`, `SKILL.md`, and
 `templates/harness-eval-report.md` now point at the reusable case directory. HARNESS-EVAL contract
 test requires exactly 15 `revfactory-case-*.yaml` files and checks each reusable case for
 `machine_checks`, `hidden_checks`, `quality_score`, `source_url`, and `persist_path`.
+
+## HARNESS-EVAL adversarial verifier loop
+
+Decision: hard HARNESS-EVAL harness arms now require a separate adversarial verifier before final machine checks.
+
+Reasoning: the Spark high LSP run showed both arms could pass visible tests and still miss hidden acceptance edges. Supergoal needs to force verifier-authored tests for protocol, state, scope, parser recovery, and similar hidden-check analogs before a harness arm can claim GREEN.
+
+Changed:
+- `reference/harness-eval.md` adds `Adversarial Verify` and `Repair Loop` phases, names visible-test-only GREEN as false-GREEN, and requires verifier-authored tests for hard cases.
+- `SKILL.md` routes HARNESS-EVAL through `Harness Run → Adversarial Verify → Repair Loop → Machine Checks`.
+- `templates/harness-eval-report.md` adds `## Adversarial Verification Loop`.
+- `tests/harness-eval-contract.test.sh` guards the new contract anchors.

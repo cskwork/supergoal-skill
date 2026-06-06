@@ -34,6 +34,8 @@ it inline where none exists). **Nothing to install but the skill itself.** (Work
 | "explain / understand / teach me X" (learn, no code) | **LEARN** | Intake -> Source -> Bridge -> Teach loop -> Check (explain-back) -> Journal |
 | "learn / map / onboard onto this codebase" (build a domain wiki for the agent) | **LEARN-DOMAIN** | Intake -> Survey -> Scope checkpoint -> Map -> Deepen -> **Ground** -> Persist -> **Onboard (human handbook)** -> Freshness |
 | "QA only / verify / compare data — no code change" | **QA-ONLY** | Intake -> Target & Access -> Scenario checkpoint -> Exercise -> Cross-check -> **Report** -> Persist |
+| "build/design/integrate/audit a harness or agent team" | **HARNESS-MAKE** | Intake -> Domain Audit -> Pattern Pick -> Agent/Skill Map -> Orchestrator Draft -> **Human Feedback** -> Generate -> Verify -> Install/Document -> Journal |
+| "test harness effectiveness / compare with and without harness" | **HARNESS-EVAL** | Scope -> Cases -> Baseline Run -> Harness Run -> Machine Checks -> Blind Grade -> Compare -> Report -> Persist |
 | "make a skill / learn new skill / make skill from history — no product code" | **SKILL-MINE** | Intake -> Window -> Mine -> Rank -> Suggest -> **Human pick/reject** -> Forge -> Verify -> Install -> Journal |
 
 QA-ONLY exercises an already-running app (and a read-only, DB-independent database) to QA behavior or
@@ -56,12 +58,22 @@ cross-agent-portable `SKILL.md` (the agentskills.io standard) and installs it to
 is a hard gate - it never creates or installs a skill you did not approve. It writes no product code and
 no worktree.
 
+HARNESS-MAKE designs runtime-neutral agent teams, skill packs, and orchestrators. It keeps runtime
+details in an adapter (`codex`, `claude-code`, `pi-agent`, `mcp`, or mixed), reuses existing skills first,
+and requires Human Feedback before installing or overwriting generated files.
+
+HARNESS-EVAL tests whether a harness helps. It compares the same task with and without the harness on
+the same repo snapshot, records structured machine checks (`name`, `status`, `evidence`), blind or
+label-swapped grading, cost, time, and tool calls. Weak evidence is reported as `Not proven`.
+
 ```text
 /supergoal build a habit-tracker app and ship it
 /supergoal the checkout page hangs intermittently in prod. fix it
 /supergoal add SSO to our legacy Django monolith
 /supergoal learn this codebase and build a domain wiki
 /supergoal QA the checkout flow on staging and check the order totals match the DB (no code change)
+/supergoal design a Codex/Claude harness for our migration workflow
+/supergoal compare this migration harness with and without the harness on 3 cases
 ```
 
 ## Why it exists
@@ -118,10 +130,10 @@ Windows checkout keeps scripts as LF and bash parses them cleanly. Two notes:
 ```
 SKILL.md            thin spine: mode detection, gates, reference map
 agents/             one persona file per role (system prompt), harness-agnostic dispatch source of truth
-reference/          pipeline · experts · vault · market-research · quality-gates · debugging · qa · qa-only · db-access · domain-rules · plan-grounding · interview · learn · learn-domain · skill-mine
+reference/          pipeline · experts · vault · market-research · quality-gates · debugging · qa · qa-only · db-access · domain-rules · plan-grounding · interview · learn · learn-domain · harness-make · harness-patterns · harness-eval · skill-mine
 reference/ui-ux.md  UI/UX overlay -> routes to Expressive (taste-skill-v2, vendored) or Functional (functional-ui) tier
 learn/              LEARN-mode session journals (one file per session) + README template + USER_PREFERENCE(.template).md
-templates/          delivery-gate.sh · validate-gate.sh · qa-gate.sh · qa-only-gate.sh · human-feedback-gate.mjs · skill-mine/ · skill-frontmatter-gate.mjs · qa-report.md · state.json
+templates/          delivery-gate.sh · validate-gate.sh · qa-gate.sh · qa-only-gate.sh · human-feedback-gate.mjs · harness-spec.md · harness-eval-gate.mjs · skill-mine/ · skill-frontmatter-gate.mjs · qa-report.md · state.json
 docs/               DESIGN.md (research -> decision mapping, cited) · research-brief.md · e2e-test-plan.md · changelog/ · index.html (landing)
 examples/url-shortener/   a real service the harness built/debugged/extended (audit trail in docs/changelog/)
 ```

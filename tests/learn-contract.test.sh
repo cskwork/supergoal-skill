@@ -34,6 +34,7 @@ require_text "learn reference requires visible order" "reference/learn.md" "Mand
 require_text "learn reference requires process gate" "reference/learn.md" "Process explanation gate"
 require_text "learn template uses natural Korean term label" "reference/learn.md" "| 핵심 용어 | 쉬운 뜻 | 흐름에서 하는 일 |"
 require_text "learn template uses natural Korean trace label" "reference/learn.md" "| 단계 | 사용되는 용어 | 일어나는 일 | 규칙/조건 | 결과/부작용 |"
+require_text "learn trace anchor is comment-only" "reference/learn.md" "<!-- Contract anchor:"
 require_text "learn keeps trace at low difficulty" "reference/learn.md" "At low difficulty, use fewer rows and plainer words; do not remove the trace"
 require_text "learn blocks summary replacing trace" "reference/learn.md" "Never replace the process trace with a summary sentence"
 require_text "learn check includes process role" "reference/learn.md" "define its role and place in the process"

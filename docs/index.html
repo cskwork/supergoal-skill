@@ -4,9 +4,9 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>/supergoal - ship agent work with proof</title>
-<meta name="description" content="/supergoal is a proof-first agent workflow skill: one objective in, gated subagents, human approval, adversarial verification, and a machine-checkable delivery gate out. English and Korean." />
+<meta name="description" content="/supergoal is a proof-first agent workflow skill: gated subagents, human approval, adversarial verification, harness design, harness evaluation, and machine-checkable delivery. English and Korean." />
 <meta property="og:title" content="/supergoal - ship agent work with proof" />
-<meta property="og:description" content="A gated agent workflow for full objectives. Builder is not Verifier. Claims stay untrusted until scripts and adversarial checks pass." />
+<meta property="og:description" content="A gated agent workflow for full objectives, QA-only runs, harness design, and harness effectiveness testing. Claims stay untrusted until checks pass." />
 <meta property="og:type" content="website" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%2305070a'/%3E%3Cpath d='M15 34 27 46 49 18' fill='none' stroke='%235cff9a' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
 <style>
@@ -583,6 +583,8 @@
   .mode-card.learn::after { background: var(--red); }
   .mode-card.learn-domain::after { background: var(--violet); }
   .mode-card.qa-only::after { background: var(--pink); }
+  .mode-card.harness-make::after { background: var(--green); }
+  .mode-card.harness-eval::after { background: var(--amber); }
   .mode-card.skill-mine::after { background: var(--blue); }
   .mode-label {
     display: block;
@@ -731,6 +733,11 @@
     border: 1px solid var(--line);
     border-radius: var(--radius);
     background: var(--panel);
+  }
+  .install-card h2 {
+    font-size: calc(clamp(28px, 4.6vw, 52px) * var(--fs));
+    line-height: 1;
+    overflow-wrap: anywhere;
   }
   .install-card p {
     margin: 0 0 18px;
@@ -948,11 +955,13 @@
     <span>claims.md stays untrusted</span>
     <span>delivery-gate.sh must exit 0</span>
     <span>bounded retry, circuit breaker</span>
+    <span>harness eval reports Not proven when evidence is weak</span>
     <span><b>Builder != Verifier</b></span>
     <span>Human Feedback before implementation</span>
     <span>claims.md stays untrusted</span>
     <span>delivery-gate.sh must exit 0</span>
     <span>bounded retry, circuit breaker</span>
+    <span>harness eval reports Not proven when evidence is weak</span>
   </div>
 </div>
 
@@ -965,7 +974,7 @@
         <p class="lead ko">큰 단일 에이전트 실행은 쉽게 흔들립니다. `/supergoal`은 작업을 단계화하고, 검토 가능하게 만들고, 증거로 게이트를 겁니다.</p>
       </div>
       <div class="metric-grid">
-        <div class="metric reveal"><strong>6</strong><span class="en">modes: GREENFIELD, DEBUG, LEGACY, LEARN, LEARN-DOMAIN, QA-ONLY.</span><span class="ko">모드: GREENFIELD, DEBUG, LEGACY, LEARN, LEARN-DOMAIN, QA-ONLY.</span></div>
+        <div class="metric reveal"><strong>9</strong><span class="en">modes, including harness design and harness effectiveness testing.</span><span class="ko">하네스 설계와 효과 검증을 포함한 9개 모드.</span></div>
         <div class="metric reveal"><strong>7</strong><span class="en">hard gates that cannot be weakened to pass.</span><span class="ko">약화해서 통과시킬 수 없는 하드 게이트.</span></div>
         <div class="metric reveal"><strong>0</strong><span class="en">self-approval. The coder never grades the code.</span><span class="ko">자가 승인 없음. 작성자가 자기 코드를 채점하지 않습니다.</span></div>
         <div class="metric reveal"><strong>68</strong><span class="en">service tests in the public proof run.</span><span class="ko">공개 증명 실행에 사용된 서비스 테스트.</span></div>
@@ -1007,9 +1016,9 @@
   <section id="modes">
     <div class="wrap">
       <div class="section-head reveal">
-        <h2><span class="en">One command. Seven lanes.</span><span class="ko">명령 하나. 일곱 가지 레인.</span></h2>
-        <p class="lead en">The objective picks the lane. Broad work can fan out. Deep bug or legacy work stays with a single driver.</p>
-        <p class="lead ko">목표가 레인을 고릅니다. 넓은 작업은 펼치고, 깊은 버그나 레거시 작업은 단일 드라이버가 맡습니다.</p>
+        <h2><span class="en">One command. Nine lanes.</span><span class="ko">명령 하나. 아홉 가지 레인.</span></h2>
+        <p class="lead en">The objective picks the lane. Broad work can fan out. Deep bug work stays with a single driver. Harness work gets designed and tested separately.</p>
+        <p class="lead ko">목표가 레인을 고릅니다. 넓은 작업은 펼치고, 깊은 버그는 단일 드라이버가 맡습니다. 하네스 작업은 설계와 효과 검증을 분리합니다.</p>
       </div>
       <div class="mode-grid">
         <article class="mode-card reveal">
@@ -1053,6 +1062,20 @@
           <p class="en">Drive a running app and a read-only DB; report what worked, what didn't, what it found.</p>
           <p class="ko">실행 중인 앱과 읽기전용 DB를 구동해, 된 것·안 된 것·발견을 리포트합니다.</p>
           <div class="mode-pipe">Intake -> Target -> Scenario -> Exercise -> Cross-check -> <b>Report</b> -> Persist</div>
+        </article>
+        <article class="mode-card harness-make reveal">
+          <span class="mode-label">HARNESS-MAKE</span>
+          <h3><span class="en">Design an agent harness.</span><span class="ko">에이전트 하네스 설계.</span></h3>
+          <p class="en">Map roles, skills, and orchestration; install only after Human Feedback.</p>
+          <p class="ko">역할, 스킬, 오케스트레이션을 설계하고 Human Feedback 뒤에만 설치합니다.</p>
+          <div class="mode-pipe">Audit -> Pattern -> Map -> Draft -> <b>Approve</b> -> Generate -> Verify</div>
+        </article>
+        <article class="mode-card harness-eval reveal">
+          <span class="mode-label">HARNESS-EVAL</span>
+          <h3><span class="en">Test whether the harness helps.</span><span class="ko">하네스가 실제로 돕는지 검증.</span></h3>
+          <p class="en">Compare the same task with and without it; weak evidence says Not proven.</p>
+          <p class="ko">같은 작업을 하네스 유무로 비교합니다. 증거가 약하면 Not proven입니다.</p>
+          <div class="mode-pipe">Cases -> Baseline -> Harness -> Checks -> <b>Blind grade</b> -> Report</div>
         </article>
         <article class="mode-card skill-mine reveal">
           <span class="mode-label">SKILL-MINE</span>
@@ -1162,7 +1185,7 @@ ln -s "$(pwd)/supergoal-skill" ~/.claude/skills/supergoal
 <span class="c-cyan">/supergoal</span> CLI 할 일 앱을 만들고 출시해줘</pre>
       </div>
       <div class="install-card reveal">
-        <h2><span class="en">No service. No TUI. No extra orchestrator.</span><span class="ko">서비스 없음. TUI 없음. 추가 오케스트레이터 없음.</span></h2>
+        <h2><span class="en">No service. No TUI.<br>No extra orchestrator.</span><span class="ko">서비스 없음. TUI 없음.<br>추가 오케스트레이터 없음.</span></h2>
         <p class="en">This repo is the skill. Clone it, link it, and hand one objective to `/supergoal`.</p>
         <p class="ko">이 저장소가 곧 스킬입니다. 클론하고, 연결하고, `/supergoal`에 목표 하나를 맡기세요.</p>
         <div class="pill-row">

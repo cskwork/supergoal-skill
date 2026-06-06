@@ -1,9 +1,9 @@
 # LEARN mode - teach, do not change code
 
-Use for "explain/understand/teach me" on codebase areas or concepts. No production code writes.
+Use for "explain/understand/teach me" on codebase areas or concepts. Do not write production code.
 Done means the user can define key terms and explain the idea back unaided.
 
-LEARN skips Validate/Build/Verify/QA/Deliver and all implementation gates. It uses:
+LEARN skips Validate/Build/Verify/QA/Deliver and all implementation gates. It uses this lightweight flow:
 
 `Intake -> Preference -> Source -> Bridge -> Teach loop -> Check -> Journal`
 
@@ -15,7 +15,7 @@ Check happens in chat explain-back only.
 
 ## Atomic concept decomposition
 
-Split composite ideas into atoms before Bridge or Teach loop output. An atom is one actor, data
+Split composite ideas into atoms before the Bridge or Teach loop output. An atom is one actor, data
 source, field, relationship, operation, rule, condition, fallback, side effect, or stop condition.
 
 Mandatory visible order:
@@ -64,8 +64,8 @@ failure path, include one fallback/stop row before the takeaway.
    - Ask one question at a time. Fill gaps and re-ask. Park edge cases under "later."
    - End every teaching turn with the difficulty menu.
 4. **Check gate.** User restates each key term and the whole idea unaided. Gaps return to Teach loop.
-5. **Journal live.** Append to `learn/<topic>-YYYY-MM-DD.md`: question, bridge, terms, user explanation,
-   open questions. Create `learn/` if missing; format described in `learn/README.md`.
+5. **Journal live.** Append to `learn/<topic>-YYYY-MM-DD.md` with the question, bridge, terms, user
+   explanation, and open questions. Create `learn/` if missing; follow `learn/README.md`.
 
 ## Opening output format
 
@@ -197,7 +197,7 @@ Updated: YYYY-MM-DD
 <optional tone, what worked, analogies to avoid>
 ```
 
-Read it at step 0. Do not re-ask each session. Use it without lecturing about it.
+Read it at step 0. Do not re-ask each session. Use the profile without lecturing about it.
 
 ## Tutor contract
 

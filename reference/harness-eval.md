@@ -13,6 +13,7 @@ Required controls:
 - identical task statement
 - baseline gets no harness references
 - harness run gets only the approved harness
+- hard tasks require a separate adversarial verifier before Machine Checks
 - machine checks before subjective scoring
 - RevFactory-style 100-point quality score before final comparison
 - blind or label-swapped grading
@@ -22,13 +23,14 @@ Required outcome accounting:
 
 - bug-catch matrix: planted bugs, hidden checks, and discovered real bugs by arm
 - false-GREEN count: self-reported ship/green while machine or ground-truth checks still fail
+- Visible tests only is false-GREEN when acceptance criteria imply protocol, state, security, scope, parser, concurrency, or error-recovery edges.
 - regression protection: permanent tests added for fixed REDs, or explicit exception
 - quality score: feature completeness, test coverage, code quality, error handling, efficiency, correctness, architecture, extensibility, documentation, and dev environment
 - overclaim guard: audit trail alone is not a win unless it changes shipped correctness or quality
 
 ## Pipeline
 
-`Scope -> Cases -> Baseline Run -> Harness Run -> Machine Checks -> Quality Score -> Blind Grade -> Compare -> Report -> Persist`
+`Scope -> Cases -> Baseline Run -> Harness Run -> Adversarial Verify -> Repair Loop -> Machine Checks -> Quality Score -> Blind Grade -> Compare -> Report -> Persist`
 
 ## Cases
 
@@ -70,32 +72,41 @@ Move to 8-15 cases only after the pilot exposes useful signal.
 
 3. Harness Run
 - Run the same agent/tool family with only the approved harness added.
+- For hard cases, the harness arm must run a separate adversarial verifier that reads the acceptance criteria and implementation after Build.
+- The verifier writes verifier-authored tests or check scripts before the final claim. Provided visible tests do not count as verifier-authored tests.
+- The builder repairs every verifier RED or records `Not proven`; do not advance on a visible-test-only GREEN.
 
-4. Machine Checks
+4. Adversarial Verify and Repair Loop
+- Required for hard tasks and optional for simple tasks with low hidden-check risk.
+- Verifier checklist: acceptance criteria coverage, hidden-check analogs, state updates, scope/shadowing, parser/error recovery, protocol framing/lifecycle, security boundaries, concurrency/idempotency, and regression risk.
+- If verifier tests fail, repair in the harness sandbox and rerun the verifier. Stop after the configured cycle bound and report `Not proven` with the failing checks.
+- Record verifier-authored tests, REDs fixed, remaining REDs, and false-GREEN caught in the bug-catch matrix.
+
+5. Machine Checks
 - Run project-relevant checks: tests, lint, typecheck, build, smoke, browser QA, hidden tests, or data checks.
 - Record each check as `{name, status, evidence}` in both result objects.
 - `claim_status: proven` requires all baseline and harness checks to pass.
 
-5. Quality Score
+6. Quality Score
 - Score each arm with a RevFactory-style 100-point quality rubric.
 - Use 10 dimensions, each 0-10: `feature_completeness`, `test_coverage`, `code_quality`, `error_handling`, `efficiency`, `correctness`, `architecture`, `extensibility`, `documentation`, `dev_environment`.
 - Anchor scores to observable properties: no tests caps `test_coverage`, a single-file monolith caps `architecture` when the task requires multiple modules, missing major requested features caps `feature_completeness`, and failing machine/hidden checks cap `correctness`.
 - Record score rationale per dimension in `quality.baseline` and `quality.harness`.
 
-6. Blind Grade
+7. Blind Grade
 - Hide labels or swap labels before subjective scoring.
 - Grade against the case rubric, not against harness marketing claims.
 
-7. Compare
+8. Compare
 - Record pass winner, quality winner, bug-catch delta, false-GREEN delta, regression-test delta, cost/time tradeoff, failure notes, and grader uncertainty.
 - `claim_status: proven` requires both machine-check support and a harness quality-score win.
 
-8. Report
+9. Report
 - Use `templates/harness-eval-report.md`.
 - Claim improvement only when machine checks, quality scoring, and blind grading support it.
 - Otherwise say `Not proven`.
 
-9. Persist
+10. Persist
 - Save run-specific cases under the vault or `.domain-agent/qa/`.
 - Save broadly reusable case templates under `templates/harness-eval-cases/`.
 - Promote a case into the skill only when it is clean-slate, runtime-portable,

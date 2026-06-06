@@ -15,7 +15,7 @@ work; use normal direct collaboration.
 ## Core Contract
 
 - Conductor orchestrates only: do not write production code, run the build, fix failures, or approve
-  your own work. Dispatch role agents from `agents/` and consume compressed evidence summaries.
+  work directly. Dispatch role agents from `agents/` and consume compressed evidence summaries.
 - Shared state is only the vault: `docs/changelog/<date>-<slug>/`; see `reference/vault.md`.
 - `claims.md` is untrusted until a fresh adversarial Verify agent proves it from a clean worktree.
 - Never weaken, skip, or edit gate scripts to pass.

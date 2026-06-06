@@ -100,6 +100,7 @@ Required-coverage list = feature acceptance criteria + SSRF/regression domain ch
 - SSRF checklist (loopback/private/link-local, IPv6-mapped, trailing-dot FQDN): pre-existing suite GREEN
 Not covered: clustering/HA and DB-backed store — explicit non-goals; multi-process expiry races —
 single-process MVP, out of scope.
+High-risk fixed RED: none
 Regression tests: TTL expiry suite added (201/302/410 sequence, no-TTL, invalid ttl); the existing
 68-test suite was re-run green.
 

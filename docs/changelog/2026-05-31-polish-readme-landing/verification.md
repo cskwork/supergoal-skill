@@ -32,6 +32,7 @@ claim s5-uiux-doc: GREEN — the added clarification in `reference/ui-ux.md` nam
 - Domain checklist — WCAG-AA contrast / visible focus on all controls / prefers-reduced-motion / bilingual parity+no-leak / zero external requests / valid HTML5 / README link integrity / content accuracy-sync / surgical diff / no-regression: all GREEN (responsive at exact widths pending a live render — QA).
 
 Not covered: AC11/AC12 do not exist in the brief (numbering jumps 10->13) — nothing to verify. A live browser render at the four exact viewport widths was NOT executed by the Verify agents (static CSS reasoning only); the single residual risk it leaves (320px gate-bar horizontal packing) is carried to QA. Actual execution of `tests/gate-scenarios.test.sh` was performed by the Verifier (51/51), not by the critic.
+High-risk fixed RED: none
 Regression tests: none (verify-only docs run — the edited files are landing/README/reference markup+HTML, not code under `tests/`; no permanent test added or needed).
 
 ## Named gaps (adversarial completeness hunt — disposition)

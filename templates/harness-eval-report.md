@@ -12,6 +12,16 @@
 | Case | Run | Check | Status | Evidence |
 |---|---|---|---|---|
 
+## Bug-Catch Matrix
+
+| Case | Run | Planted/hidden bugs caught | Bugs still shipped | Extra real bugs found | False GREEN? |
+|---|---|---|---|---|---|
+
+## Regression Protection
+
+| Case | Run | Fixed REDs | Permanent regression tests | Exception |
+|---|---|---|---|---|
+
 ## Blind Grading
 
 | Case | A | B | Winner | Confidence |

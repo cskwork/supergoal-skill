@@ -111,6 +111,7 @@ Required-coverage list = the bug's repro + full-suite regression + concurrency d
 - Concurrency checklist (lost-update under contention, mutex-protected read): GREEN
 - SSRF/validate, auth, ratelimit, codec, store atomicity re-checked: GREEN (no collateral regression)
 Not covered: multi-process / cross-host contention — single-process MVP, out of scope.
+High-risk fixed RED: concurrency lost-update race
 Regression tests: test/hit-concurrency.test.js (the failing-before/passing-after repro) guards the fix.
 
 verdict: GREEN

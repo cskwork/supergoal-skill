@@ -28,7 +28,7 @@ use `git rm` for removed legacy files.
 
 Write file prose in the user's language (default English only when unknown). Keep the structural
 keys and machine-checked anchors below verbatim in English — `Decision: GO`, `verdict: GREEN`,
-`## Coverage`, `Not covered:`, `Regression tests:`, `Committee:`, `RE-PLAN:`, `APPROVED`,
+`## Coverage`, `Not covered:`, `High-risk fixed RED:`, `Regression tests:`, `Committee:`, `RE-PLAN:`, `APPROVED`,
 `run-to-prove`, `## Human Feedback` — so the gates keep matching. See `SKILL.md` `Output language`.
 
 ## Non-vault domain knowledge
@@ -178,7 +178,9 @@ expected: <passing output>
 - <criterion / vuln-class>: <claim id or probe> - GREEN
 ...
 Not covered: <items not verified with justification, or 'none'>
+High-risk fixed RED: <none, or fixed security/data/concurrency/auth class>
 Regression tests: <permanent tests for fixed REDs, or 'none'>
+Regression exception: <reason only if high-risk fixed RED has no permanent test>
 ```
 
 GREEN means every enumerated item re-verified. `Not covered:` forces known gaps into review.

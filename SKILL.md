@@ -35,7 +35,7 @@ work; use normal direct collaboration.
   audit notes, changelog entries, LEARN journals, and every agent's returned summary. Keep
   machine-checked anchors, structural keys, code, identifiers, file paths, shell commands, and commit
   messages in canonical English so gates keep matching — e.g. `Decision: GO`, `verdict: GREEN`,
-  `## Coverage`, `Not covered:`, `Regression tests:`, `Committee:`, `RE-PLAN:`, `APPROVED`,
+  `## Coverage`, `Not covered:`, `High-risk fixed RED:`, `Regression tests:`, `Committee:`, `RE-PLAN:`, `APPROVED`,
   `run-to-prove`, and `## Human Feedback` headings stay verbatim; only their surrounding prose is
   translated.
 
@@ -137,7 +137,7 @@ Required so multiple agents can work without editing the same checkout.
 5. Committee: architect + security-reviewer + code-reviewer all approve; recorded as a `Committee:`
    line in `verification.md` that the delivery gate checks.
 6. Deliver: `templates/delivery-gate.sh` exits 0 with artifacts, aggregate `verdict: GREEN`,
-   `## Coverage`, `Not covered:`, `Regression tests:`, the `Committee:` line (all three APPROVED),
+   `## Coverage`, `Not covered:`, `High-risk fixed RED:`, `Regression tests:`, the `Committee:` line (all three APPROVED),
    `plan.md` matching `state.json.plan_hash` (or a `RE-PLAN:` line in `README.md`), and project tests.
 7. Retry bound: `cycle-bound.mjs` trips at max 5 cycles/phase (any errors); the same normalized error
    3x trips `circuit-breaker.mjs`.
@@ -222,7 +222,7 @@ evidence + file refs only. Full procedure: `reference/experts.md`.
 - [ ] Plan grounded (`reference/plan-grounding.md`, agent-answered) before the plan froze
 - [ ] Human Feedback stage produced the plain-language and technical briefs, and approval was recorded before Build/Fix
 - [ ] Every `claims.md` entry has a GREEN verdict in `verification.md` from the adversarial pass
-- [ ] `verification.md` carries a `## Coverage` map (acceptance criteria + domain checklist), a `Not covered:` line, and a `Regression tests:` line; a completeness critic found no un-named gap
+- [ ] `verification.md` carries a `## Coverage` map (acceptance criteria + domain checklist), `Not covered:`, `High-risk fixed RED:`, and `Regression tests:` lines; a completeness critic found no un-named gap
 - [ ] architect + security + code-review all approved
 - [ ] `delivery-gate.sh` exited 0; paste the output as evidence
 - [ ] Accepted work, if integrated, landed on `target_branch` as an explicit merge commit

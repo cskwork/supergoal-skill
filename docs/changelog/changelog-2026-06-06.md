@@ -62,3 +62,14 @@ Changed:
 - README now lists the two harness workflows, examples, and layout references.
 - Landing page mode count and mode cards now include harness design and effectiveness testing.
 - Landing copy says weak harness evidence is `Not proven`.
+
+## HARNESS-MAKE active install target
+
+Decision: approved harness generation installs to an active runtime adapter target, not an inert draft folder.
+
+Changed:
+- `reference/harness-make.md` separates `draft_root` from `active_install_target`, states that draft paths are not active runtime registries, and continues automatically after explicit approval unless a new overwrite or install target appears.
+- `templates/harness-spec.md`, `templates/harness-agent.md.template`, and `templates/harness-skill.md.template` record draft and active install paths.
+- `README.md` and `SKILL.md` reflect the active install target rule.
+
+Verification: added `tests/harness-make-contract.test.sh` to assert the HARNESS-MAKE active-install contract.

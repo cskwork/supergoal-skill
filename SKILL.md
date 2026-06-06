@@ -177,7 +177,7 @@ evidence + file refs only. Full procedure: `reference/experts.md`.
 | `reference/plan-grounding.md` | Plan: agent-run grounding before freeze |
 | `reference/qa.md` | QA: drive running web/CLI app; record as-is/to-be evidence |
 | `reference/qa-only.md` | QA-ONLY mode: no-code QA / data-comparison run; report + persisted reusable suite |
-| `reference/harness-make.md` | HARNESS-MAKE: runtime-neutral agent/skill/orchestrator design; approve before install |
+| `reference/harness-make.md` | HARNESS-MAKE: runtime-neutral agent/skill/orchestrator design; approved files install to `active_install_target` |
 | `reference/harness-patterns.md` | HARNESS-MAKE Pattern Pick: choose smallest useful team topology |
 | `reference/harness-eval.md` | HARNESS-EVAL: same snapshot with/without harness, machine checks, blind grading, `Not proven` if weak |
 | `reference/skill-mine.md` | SKILL-MINE mode: mine history → suggest 3-5 skills → human pick → forge portable SKILL.md → install |

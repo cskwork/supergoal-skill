@@ -558,9 +558,16 @@ on u1, n=3: naive scored 4/4 EVERY seed, 0 false-GREEN - BETTER than the skill's
 u1 gap was COMPUTE, not the skill: plain iteration catches proto-pollution + null at least as well, and the
 role-loop's critic->fixer serialization actually left null unfixed 2/3. CORRECTED conclusion: across the
 ENTIRE 2026-06-07 sweep there is NO regime where the supergoal role-loop beats an equal-compute no-skill
-baseline. Skill value that survives: high-effort crash stability + single-pass cost reduction, not
-role-loop correctness. This is exactly why the equal-compute control is now mandatory in the skill (the
+baseline. This is exactly why the equal-compute control is now mandatory in the skill (the
 `harness-eval-underspecified-n3` result is cited there as the worked example).
+
+Balanced reading (user's point, folded into the skill + writeups): the equal-compute result is a
+MECHANISM note, not "the skill is useless." Vs the REALISTIC default - a single one-shot pass, which is
+what a user gets by NOT invoking the skill - the skill IS useful: it forces the verification a one-shot
+skips and caught the prototype-pollution vuln the baseline shipped as a false-GREEN (3.3 vs 2.3). Forcing
+useful compute is legitimate value. The control only shows the active ingredient is the extra passes, not
+the role-separation (naive 4/4 >= role-loop 3.3/4), so the mechanism could be leaner. Two distinct claims,
+both now required in the eval methodology: (a) skill vs one-shot default, (b) mechanism vs equal compute.
 
 ## Skill update (per user request: "remember to do eval this way next time")
 

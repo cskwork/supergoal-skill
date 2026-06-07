@@ -33,20 +33,24 @@ everything, including null.
 
 u2 (csv) ties everywhere - quote handling is canonical, baseline does it unprompted.
 
-## Verdict
+## Verdict - two framings (both true, they answer different questions)
 
-**Not proven - corrected.** The earlier "first real win" was a compute artifact. Across the whole
-2026-06-07 sweep there is now NO regime where the supergoal role-loop beats an EQUAL-COMPUTE no-skill
-baseline:
-- explicit-spec (002/003/015): ties.
-- under-specified u1: the lift over a 1-pass baseline is compute; an equal-compute naive loop matches
-  it and then some (4.0 > 3.3); the skill's structure did not help.
-- under-specified u2: tie.
+**1. Skill vs the realistic default (one-shot): the skill is USEFUL.** What a user actually gets
+without the skill is the single-pass baseline (2.3/4, ships the prototype-pollution vuln 2/3 as a
+false-GREEN). With the skill they get 3.3/4 and the vuln caught 3/3. Nobody hand-runs a 4-pass review
+loop, so vs the real alternative the skill converts a shipped security bug into a catch. Forcing the
+verification a one-shot skips is a legitimate, valuable function - it just costs ~6x tokens.
 
-What still holds about the skill: stability at high effort (the INLINE fix prevents the spark-high
-context crash) and, in single-pass skill-ref form, lower cost for the same result. Its multi-pass
-role-loop does not buy correctness over simply iterating the same number of passes - and costs ~6x a
-1-pass baseline.
+**2. Skill mechanism vs equal compute: the role-separation is NOT the active ingredient.** Give a
+no-skill agent the same 4 passes (naive build+review) and it scores 4/4 - as good or better than the
+role-loop's 3.3/4. So the value comes from the extra verification passes the skill induces, not from
+its critic->fixer->verifier structure. The structure could be leaner (a plain review loop did better).
+
+Net: the skill earns its keep by FORCING verification compute on tasks where a one-shot leaves an
+easy-to-miss correctness/security gap (u1). It is pure overhead where the one-shot already solves the
+task (explicit-spec 002/003/015; canonical u2) - tie at 2-6x cost. And what survives independent of
+this: high-effort crash stability (INLINE fix) and, in single-pass skill-ref form, lower cost for the
+same result.
 
 ## Methodological takeaway
 

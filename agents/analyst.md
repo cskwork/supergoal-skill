@@ -23,5 +23,5 @@ WRITE: `brief.md` (Intake) and its `## Validation` section + the `Decision:` lin
 
 RETURN: a compressed summary — the criteria, the validation decision, key evidence — not your transcript.
 
-GATE: `brief.md` has explicit machine-checkable acceptance criteria; for GREENFIELD, a line-start
-`Decision: GO` (so `templates/validate-gate.sh` can pass) backed by stated demand evidence.
+GATE: `brief.md` has explicit machine-checkable acceptance criteria; for GREENFIELD, confirm demand and
+scope with the user (a line-start `Decision: GO` backed by stated demand evidence) before building.

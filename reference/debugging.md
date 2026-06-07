@@ -49,8 +49,8 @@ When the failure spans DB, API, network, or message-queue boundaries, map before
 2. **Localize.** Narrow the smallest region. Use `git bisect`, input/state binary search, the
    distributed triage above, and focused instrumentation instead of guessing. Read structure/skeleton
    first; load full code only for the few suspects that survive.
-3. **Compete hypotheses (symptom vs cause).** Put 2-3 root causes in `README.md` using the hypothesis
-   ledger format in `reference/vault.md`: symptom, candidate cause, evidence-for, evidence-against,
+3. **Compete hypotheses (symptom vs cause).** Put 2-3 root causes in `README.md` using a hypothesis
+   ledger format: symptom, candidate cause, evidence-for, evidence-against,
    and "definite & imminent?". Pick the next probe that best separates them. Resist fixating on the
    first plausible cause; advance only causes backed by direct evidence.
 4. **Confirm.** Before locking the cause, present the 3-5 ranked hypotheses to the user for re-ranking

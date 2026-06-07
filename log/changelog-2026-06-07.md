@@ -612,3 +612,17 @@ Changed:
 
 Verify: `tests/learn-contract.test.sh` 8/4 -> 12/0. Full suite pass 172 -> 176, fail 55 -> 51 (only
 learn-contract changed; every other mode's pass/fail count is identical to baseline - no regression).
+
+## Feature: critic records surfaced requirements as a durable markdown trail (v0.2.0)
+
+Per user request: when the role-loop runs a real task, the implicit requirements the critic surfaces
+should be left on record as markdown, not only as tests. The critic now appends each surfaced requirement
+to `docs/surfaced-requirements.md` (what the spec implies / why it is required though unstated / the
+failing test that covers it / status: open); the verifier marks them fixed. Tests remain the
+machine-checkable form; this file is the human-readable "why".
+
+Changed: `reference/role-loop.md` (Critic records to the doc; Verify closes entries), `SKILL.md` (Critic
+step logs to the doc - one clause, lean), new `templates/surfaced-requirements.md` (format + example),
+new `tests/role-loop-contract.test.sh` (8/0, locks the behavior in). Did NOT touch `agents/code-reviewer.md`
+- its committee mandate is deliberately read-only; the write duty lives in the role-loop critic step. Full
+suite green (role-loop 8/0; harness-eval 126/0).

@@ -18,7 +18,11 @@ Use for any non-trivial feature/bug/refactor. Skip for a trivial single edit - e
      filter behavior, incremental update, concurrency, protocol/state).
    - Write a NEW FAILING test for each, in a separate file, derived strictly from the spec. Prefer
      black-box behavior tests and properties (roundtrip, idempotency, invariants).
-   - Log open defects to a NOTES file. Leave the failing tests red.
+   - Record each surfaced requirement in `docs/surfaced-requirements.md` (create if absent; format in
+     `templates/surfaced-requirements.md`): a dated section, one bullet per requirement - what the spec
+     implies, why it is required though the prompt never stated it, and the failing test that now covers
+     it (status: open). This is the durable, human-readable trail of what the prompt left implicit.
+   - Leave the failing tests red.
 
 3. **Fixer** (`agents/executor.md`) - DO NOT edit test files.
    - Read NOTES + run the suite. Make the failing tests pass with the SMALLEST change.
@@ -28,6 +32,7 @@ Use for any non-trivial feature/bug/refactor. Skip for a trivial single edit - e
 4. **Verify vs ground truth** (`agents/qa-auditor.md` / `security-reviewer.md`)
    - Re-run the project's REAL tests; re-read the prose spec for uncovered rules. Fix residual failures/
      regressions minimally. Stop on green; report what was verified with command output.
+   - Update `docs/surfaced-requirements.md`: mark each surfaced requirement fixed, or note why it stays open.
 
 Loop critic->fixer only while a fresh red appears. The verifier pass is a regression guard - in the
 eval it equalled the fixer (no extra gain), so make it conditional / drop it when the fixer is already

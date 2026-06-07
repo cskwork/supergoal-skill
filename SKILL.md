@@ -53,8 +53,9 @@ the loop and edit directly.
 3. **Critic (independent; no src edits).** Re-read the prose spec + repo/data rules
    (`reference/domain-context.md`, `domain-rules.md`; legacy `reference/learn-domain.md`). For each
    required behavior the existing tests do NOT exercise, write a FAILING test (black-box/property,
-   derived strictly from the spec); do not weaken or delete existing tests. These SURFACE hidden
-   requirements - a signal, not the acceptance oracle.
+   derived strictly from the spec) and log it in `docs/surfaced-requirements.md` (what the spec implies,
+   why, covering test); do not weaken or delete existing tests. These SURFACE hidden requirements - a
+   signal, not the acceptance oracle.
 4. **Fixer (no test edits).** Make the failing tests pass with the smallest change; no padding (no code
    not tied to a failing test or a listed defect); do not break passing tests.
 5. **Verify vs ground truth.** Re-run the project's REAL tests; re-read the prose spec for uncovered

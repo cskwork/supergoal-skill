@@ -8,4 +8,4 @@ learn/*.md
 !learn/USER_PREFERENCE.template.md
 .playwright-mcp/
 *.png
-docs/experiments/
+# docs/experiments/

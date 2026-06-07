@@ -1,0 +1,250 @@
+{
+  "runtime_adapter": "codex-exec-harnessmake:gpt-5.3-codex-spark:reasoning-high",
+  "mode": "HARNESS-MAKE-designed role pipeline vs no-harness",
+  "per_case": [
+    {
+      "id": "billing-tax",
+      "baseline": {
+        "score": 80,
+        "passed": 8,
+        "total": 8,
+        "crashed": false,
+        "tokens": 1733861,
+        "duration_ms": 139424
+      },
+      "harness": {
+        "score": 80,
+        "passed": 8,
+        "total": 8,
+        "crashed": false,
+        "tokens": 3885399,
+        "duration_ms": 394879,
+        "design_ok": true,
+        "pipeline": [
+          "planner",
+          "implementer",
+          "adversarial-reviewer"
+        ],
+        "roles": [
+          {
+            "label": "design",
+            "tokens": 364217,
+            "duration_ms": 48835,
+            "crashed": false
+          },
+          {
+            "label": "s1-planner",
+            "tokens": 1064823,
+            "duration_ms": 110288,
+            "crashed": false
+          },
+          {
+            "label": "s2-implementer",
+            "tokens": 1241904,
+            "duration_ms": 138492,
+            "crashed": false
+          },
+          {
+            "label": "s3-adversarial-reviewer",
+            "tokens": 1214455,
+            "duration_ms": 97264,
+            "crashed": false
+          }
+        ]
+      }
+    }
+  ],
+  "aggregate": {
+    "baseline_avg_score": 80,
+    "harness_avg_score": 80,
+    "baseline_avg_passfrac": 1,
+    "harness_avg_passfrac": 1,
+    "baseline_avg_tokens": 1733861,
+    "harness_avg_tokens": 3885399,
+    "baseline_crashes": 0,
+    "harness_crashes": 0
+  },
+  "cases": {
+    "billing-tax": {
+      "baseline": {
+        "cost": {
+          "tokens": 1733861,
+          "duration_ms": 139424,
+          "tool_calls": 122,
+          "turns_completed": 1,
+          "crashed": false,
+          "label": "run",
+          "roles": [
+            {
+              "label": "run",
+              "tokens": 1733861,
+              "duration_ms": 139424,
+              "crashed": false
+            }
+          ]
+        },
+        "granular": [
+          {
+            "name": "visible: standard line totals with 20% tax",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "visible: exempt category is not taxed",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "visible: per-line percentage discount then tax",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "visible: reduced-rate line at 5%",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: tax is computed per line then summed, not on the rounded subtotal",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: rounding ties go to even (bankers), not half-up",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: order-level discount reduces subtotal only, not tax",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: shipping is added after tax and is not taxed",
+            "kind": "hidden",
+            "status": "pass"
+          }
+        ],
+        "quality": {
+          "total": 80,
+          "pass_fraction": 1,
+          "checks_passed": 8,
+          "checks_total": 8,
+          "dimensions": {
+            "feature_completeness": 10,
+            "test_coverage": 8,
+            "code_quality": 10,
+            "error_handling": 6,
+            "efficiency": 10,
+            "correctness": 10,
+            "architecture": 6,
+            "extensibility": 7,
+            "documentation": 4,
+            "dev_environment": 9
+          }
+        }
+      },
+      "harness": {
+        "cost": {
+          "tokens": 3885399,
+          "duration_ms": 394879,
+          "tool_calls": 284,
+          "turns_completed": 4,
+          "crashed": false,
+          "roles": [
+            {
+              "label": "design",
+              "tokens": 364217,
+              "duration_ms": 48835,
+              "crashed": false
+            },
+            {
+              "label": "s1-planner",
+              "tokens": 1064823,
+              "duration_ms": 110288,
+              "crashed": false
+            },
+            {
+              "label": "s2-implementer",
+              "tokens": 1241904,
+              "duration_ms": 138492,
+              "crashed": false
+            },
+            {
+              "label": "s3-adversarial-reviewer",
+              "tokens": 1214455,
+              "duration_ms": 97264,
+              "crashed": false
+            }
+          ],
+          "design_ok": true,
+          "pipeline": [
+            "planner",
+            "implementer",
+            "adversarial-reviewer"
+          ]
+        },
+        "granular": [
+          {
+            "name": "visible: standard line totals with 20% tax",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "visible: exempt category is not taxed",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "visible: per-line percentage discount then tax",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "visible: reduced-rate line at 5%",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: tax is computed per line then summed, not on the rounded subtotal",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: rounding ties go to even (bankers), not half-up",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: order-level discount reduces subtotal only, not tax",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: shipping is added after tax and is not taxed",
+            "kind": "hidden",
+            "status": "pass"
+          }
+        ],
+        "quality": {
+          "total": 80,
+          "pass_fraction": 1,
+          "checks_passed": 8,
+          "checks_total": 8,
+          "dimensions": {
+            "feature_completeness": 10,
+            "test_coverage": 8,
+            "code_quality": 10,
+            "error_handling": 6,
+            "efficiency": 10,
+            "correctness": 10,
+            "architecture": 6,
+            "extensibility": 7,
+            "documentation": 4,
+            "dev_environment": 9
+          }
+        }
+      }
+    }
+  }
+}

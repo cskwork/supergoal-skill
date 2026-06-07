@@ -1,0 +1,22 @@
+Implemented.
+
+Done in one file: `[src/server.mjs](/private/tmp/supergoal-harness-eval-spark-high-lsp/sandboxes/revfactory-case-015-lsp/baseline/src/server.mjs)`
+
+What was added:
+- `encodeMessage(message)` with JSON-RPC `Content-Length` framing.
+- `MessageBuffer` with incremental `push(chunk)` parsing (supports split frames + multiple messages).
+- `parseMiniLang(text)` with:
+  - MiniLang parsing for `fn`, `let`, `return`, function calls, and `#` comments
+  - best-effort/error-recovery diagnostics
+  - symbol construction (functions + variables, params/local scope)
+- `MiniLangServer` with:
+  - `initialize` lifecycle capabilities
+  - `shutdown` and `exit` handling
+  - `textDocument/didOpen` and `textDocument/didChange` (incremental updates)
+  - diagnostics publishing via `textDocument/publishDiagnostics`
+  - `completion`, `definition`, `hover`
+  - `takeNotifications()` and `getDiagnostics(uri)`.
+
+Verification:
+- Ran `npm test` in the sandbox.
+- Result: 5 tests passed, 0 failed.

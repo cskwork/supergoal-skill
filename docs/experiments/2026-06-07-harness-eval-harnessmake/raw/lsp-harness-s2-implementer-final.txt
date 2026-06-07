@@ -1,0 +1,27 @@
+Implemented end-to-end in `src/server.mjs` to satisfy the mapped contract and keep behavior aligned with `RULES.md`.
+
+### 변경 결과
+- `encodeMessage`와 `MessageBuffer.push`를 JSON-RPC 규격( `Content-Length` + 스트림 단위 파싱 )에 맞게 정리.
+- `MiniLangServer` 라이프사이클을 구현:
+  - `initialize`에서 `textDocumentSync: 2`, `completion`, `definition`, `hover` capability 반환
+  - `shutdown`에서 `result: null`과 shutdown 플래그 설정
+  - `exit`에서 요청 순서에 따른 종료 코드 상태 반영(반환값은 `null`).
+- 문서 진단/캐시 갱신:
+  - `textDocument/didOpen`, `textDocument/didChange`에서 문서 파싱 후 URI별 진단 갱신
+  - `didChange`는 전체 텍스트 갱신(no-apply) 방식
+  - `takeNotifications`로 publish된 진단을 가져오면 큐가 비워져 stale 진단이 누적되지 않음.
+- 파서/분석:
+  - `parseMiniLang`에서 심볼(함수/변수/매개변수) 수집, 스코프 추적, 중괄호 복구(누락된 `}` 시에도 파싱 유지), 미정의 심볼 및 arity 오류 진단.
+- 핸들러:
+  - `textDocument/completion`: prefix + 현재 스코프 기반 제안, 함수면 시그니처 insertText 제공.
+  - `textDocument/definition`: 해당 위치 심볼의 로컬 우선 정답 위치 반환.
+  - `textDocument/hover`: 함수/심볼 정보 반환.
+
+### 검증
+- `npm test`: 모든 테스트 통과 (5/5)
+  - 실행 위치: `/tmp/sg-harnessmake-eval/sandboxes/lsp/harness`
+  - `RULES.md`는 전체 스펙으로 확인했고, `test/lsp.visible.test.mjs`도 함께 반영해 수정했습니다.
+
+### 변경 파일
+- [src/server.mjs](/tmp/sg-harnessmake-eval/sandboxes/lsp/harness/src/server.mjs)
+- [docs/changelog/changelog-2026-06-07.md](/tmp/sg-harnessmake-eval/sandboxes/lsp/harness/docs/changelog/changelog-2026-06-07.md)

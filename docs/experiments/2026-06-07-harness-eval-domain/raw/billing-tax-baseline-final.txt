@@ -1,0 +1,21 @@
+Implemented. `src/billing.mjs` now follows the RULES spec as a complete invoice engine (no harness changes).
+
+What changed in [src/billing.mjs](/tmp/sg-domain-eval/sandboxes/billing-tax/baseline/src/billing.mjs):
+- Added strict defaults: `lines = []`, `orderDiscountMinor = 0`, `shippingMinor = 0`.
+- Added banker's rounding helper (half to even).
+- Computed per-line:
+  - `gross = qty * unitPriceMinor`
+  - `lineDiscount = roundHalfToEvenDivide(gross * lineDiscountBps, 10000)`
+  - `lineNet = gross - lineDiscount`
+  - `lineTax = roundHalfToEvenDivide(lineNet * categoryRate, 10000)` by category (`standard`: 2000, `reduced`: 500, `exempt`: 0)
+- Sum `subtotal` across line nets.
+- Sum `totalTax` across per-line taxes.
+- Applied order discount only to subtotal, floored at 0.
+- Added shipping after tax and returned:
+  - `{ subtotal, totalTax, shipping, grandTotal }`
+  - `grandTotal = max(0, max(0, subtotal - orderDiscountMinor) + totalTax + shippingMinor)`
+- Exported `computeInvoice` as default for test compatibility.
+
+Verification:
+- Ran `npm test` → **pass** (`4 passed, 0 failed`).
+

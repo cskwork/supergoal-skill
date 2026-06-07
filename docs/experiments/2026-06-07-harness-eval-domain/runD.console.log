@@ -1,0 +1,56 @@
+Domain eval started 06:36:36 — spark high, billing+shipping, baseline+harness(INLINE)
+{
+  "per_case": [
+    {
+      "id": "billing-tax",
+      "baseline": {
+        "score": 80,
+        "passed": 8,
+        "total": 8,
+        "crashed": false,
+        "tokens": 1812514,
+        "duration_ms": 119789
+      },
+      "harness": {
+        "score": 76,
+        "passed": 6,
+        "total": 8,
+        "crashed": false,
+        "tokens": 910535,
+        "duration_ms": 76213
+      }
+    },
+    {
+      "id": "shipping-rates",
+      "baseline": {
+        "score": 78,
+        "passed": 7,
+        "total": 7,
+        "crashed": false,
+        "tokens": 807267,
+        "duration_ms": 76363
+      },
+      "harness": {
+        "score": 78,
+        "passed": 7,
+        "total": 7,
+        "crashed": false,
+        "tokens": 1025624,
+        "duration_ms": 85225
+      }
+    }
+  ],
+  "aggregate": {
+    "baseline_avg_score": 79,
+    "harness_avg_score": 77,
+    "baseline_avg_passfrac": 1,
+    "harness_avg_passfrac": 0.9,
+    "baseline_avg_tokens": 1309891,
+    "harness_avg_tokens": 968080,
+    "baseline_crashes": 0,
+    "harness_crashes": 0
+  },
+  "adapter": "codex-exec:gpt-5.3-codex-spark:reasoning-high",
+  "skill": "current"
+}
+EXIT=0 at 06:42:36

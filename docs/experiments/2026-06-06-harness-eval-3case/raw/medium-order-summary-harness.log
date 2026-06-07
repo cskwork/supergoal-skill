@@ -1,0 +1,2608 @@
+Implemented `summarizeOrders(orders)` in [src/summarizeOrders.mjs](/tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness/src/summarizeOrders.mjs:1).
+
+Changes:
+- Filters to paid orders.
+- Validates paid order `currency`, `amountCents`, and `createdAt`.
+- Groups by currency with count, total, first date, last date.
+- Sorts by `totalCents` descending, then `currency`.
+- Throws `TypeError` for invalid order data.
+- Added sort/tie coverage in [test/summarizeOrders.test.mjs](/tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness/test/summarizeOrders.test.mjs:19).
+- Recorded route/assumptions in [docs/changelog/changelog-2026-06-06.md](/tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness/docs/changelog/changelog-2026-06-06.md:1).
+
+Verification:
+- Pre-fix `npm test` failed on the missing grouping behavior.
+- Final `npm test` passed: `3` tests, `3` pass, `0` fail.
+Reading additional input from stdin...
+2026-06-06T12:47:16.427171Z ERROR codex_models_manager::manager: failed to refresh available models: stream disconnected before completion: failed to decode models response: missing field `models` at line 1 column 425; body: {"object": "list", "data": [{"id": "gpt-5.5", "object": "model", "created": 0, "owned_by": "openai"}, {"id": "gpt-5.4", "object": "model", "created": 0, "owned_by": "openai"}, {"id": "gpt-5.4-mini", "object": "model", "created": 0, "owned_by": "openai"}, {"id": "gpt-5.3-codex-spark", "object": "model", "created": 0, "owned_by": "openai"}, {"id": "codex-auto-review", "object": "model", "created": 0, "owned_by": "openai"}]}
+OpenAI Codex v0.137.0
+--------
+workdir: /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+model: gpt-5.5
+provider: headroom
+approval: on-request
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /tmp/supergoal-harness-eval-3case/harness-ref] (network access enabled)
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 019e9cf9-2dcb-7731-b3d8-f1d9de34bf65
+--------
+user
+Condition: with_harness.
+
+Use the approved supergoal skill at /tmp/supergoal-harness-eval-3case/harness-ref/SKILL.md.
+
+Read it first, route the task through the smallest applicable supergoal mode,
+
+and apply its verification discipline in this noninteractive eval. The task
+
+statement is implementation approval; record any assumptions instead of pausing
+
+for Human Feedback. Do not edit the harness reference directory.
+
+Case: medium-order-summary (medium)
+Task: Implement summarizeOrders(orders). It must keep only paid orders, validate uppercase 3-letter currency codes, positive integer amountCents, and YYYY-MM-DD dates, group by currency, return count, totalCents, firstOrderDate, and lastOrderDate, then sort by totalCents descending with currency as the tie-breaker. Throw TypeError for invalid order data.
+Constraints: edit only this sandbox, keep changes minimal, do not add dependencies,
+do not ask follow-up questions, and run the relevant checks before finishing.
+deprecated: `[features].codex_hooks` is deprecated. Use `[features].hooks` instead.
+Enable it with `--enable hooks` or `[features].hooks` in config.toml. See https://developers.openai.com/codex/config-basic#feature-flags for details.
+hook: SessionStart
+hook: SessionStart Completed
+codex
+I’ll implement `summarizeOrders(orders)` in this sandbox only: keep paid orders, validate the required fields, aggregate by currency, sort as specified, and run the repo’s relevant checks. I’m reading the approved Supergoal skill first and will record assumptions instead of pausing for feedback.
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc "sed -n '1,220p' /tmp/supergoal-harness-eval-3case/harness-ref/SKILL.md" in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+ succeeded in 0ms:
+---
+name: supergoal
+description: Run one objective through a gated build/debug/legacy workflow with subagents, Human Feedback before implementation, adversarial verification, and a delivery gate. Use for "/supergoal", "supergoal", "build X end to end", "fix this bug", "add this feature", or "QA / verify data only, no code change".
+---
+
+# /supergoal
+
+One objective -> gated subagents -> verified delivery.
+
+Use only for whole-objective build/debug/legacy work, or explicit `/supergoal`. For a trivial
+single edit, skip this skill and edit directly.
+Do not use for pure brainstorming; use `brainstorming`. Do not use for user-driven step-by-step
+work; use normal direct collaboration.
+
+## Core Contract
+
+- Conductor orchestrates only: do not write production code, run the build, fix failures, or approve
+  work directly. Dispatch role agents from `agents/` and consume compressed evidence summaries.
+- Shared state is only the vault: `docs/changelog/<date>-<slug>/`; see `reference/vault.md`.
+- `claims.md` is untrusted until a fresh adversarial Verify agent proves it from a clean worktree.
+- Never weaken, skip, or edit gate scripts to pass.
+- Clarifying interview is required before plan freeze for GREENFIELD/DEBUG/LEGACY when the request is
+  underspecified; resolve code-answerable questions by reading code, ask at most 3-5 high-leverage
+  questions, and gate the freeze on must-have answers. See `reference/interview.md`. LEARN skips it.
+- Human Feedback approval is required before Build/Fix.
+- Builder != Verifier; Deliver needs hard gates plus architect/security/code-review approval.
+- Atomic explanations: visible atom map -> plain definition -> process trace -> composed
+  explanation. Use before Human Feedback, LEARN Bridge, or teaching. Use natural user-facing labels
+  in the output language; Korean should say `핵심 용어`/`구성 요소`, not literal `원자`.
+  A glossary alone is not enough; trace trigger -> read/derive -> decide -> write/call ->
+  fallback/stop -> result.
+- Output language: write agent-authored prose in the user's language (match the language the user
+  writes in; default to English only when it is unknown). This covers `README.md`, `brief.md`,
+  `plan.md` (incl. both Human Feedback briefs), `claims.md` and `verification.md` descriptions, run
+  audit notes, changelog entries, LEARN journals, and every agent's returned summary. Keep
+  machine-checked anchors, structural keys, code, identifiers, file paths, shell commands, and commit
+  messages in canonical English so gates keep matching — e.g. `Decision: GO`, `verdict: GREEN`,
+  `## Coverage`, `Not covered:`, `Regression tests:`, `Committee:`, `RE-PLAN:`, `APPROVED`,
+  `run-to-prove`, and `## Human Feedback` headings stay verbatim; only their surrounding prose is
+  translated.
+
+## Step 0 - Mode
+
+Classify first; state the mode to the user in one line.
+
+| Signal in the objective | Mode | Pipeline (see `reference/pipeline.md`) |
+|---|---|---|
+| "build / make / ship / launch a new app/product/site/tool" | **GREENFIELD** | Intake → **Validate** → **Interview** → Plan → **Human Feedback** → Build → Verify → QA → Deliver |
+| "fix / broken / failing / crash / hang / regression / why does" | **DEBUG** | Intake → Reproduce → Diagnose (+ **Interview**: hypothesis re-rank) → **Human Feedback** → Fix → Verify → Deliver |
+| "add / integrate X into existing/legacy codebase" — or "improve / refactor / decouple / clean up / make testable" existing code | **LEGACY** | Intake → Explore → **Interview** → Plan → **Human Feedback** → Build → Verify → QA → Deliver |
+| "explain / understand / teach me / how does X work" (learn, no code change) | **LEARN** | Intake → Source → **Bridge** → Teach loop → **Check (explain-back)** → Journal |
+| "learn / onboard / map this codebase", "build a domain wiki", "도메인 파악" (learn for the agent, persist a wiki) | **LEARN-DOMAIN** | Intake → Survey → **Scope checkpoint** → Map → Deepen → **Ground** → Persist → **Onboard** → Freshness |
+| "QA only / verify / 검증만 / 데이터 정합성 / 데이터 비교 / API 수정 전후 확인 / A/B" (exercise a running app, no code change) | **QA-ONLY** | Intake → Target & Access → **Scenario checkpoint** → Exercise → Cross-check → **Report** → Persist |
+| "build/design/integrate/audit harness, agent team, workflow pack, reusable role/skill system" | **HARNESS-MAKE** | Intake → Domain Audit → Pattern Pick → Agent/Skill Map → Orchestrator Draft → **Human Feedback** → Generate → Verify → Install/Document → Journal |
+| "test harness effectiveness / compare with and without harness / benchmark agent workflow" | **HARNESS-EVAL** | Scope → Cases → Baseline Run → Harness Run → Machine Checks → Blind Grade → Compare → Report → Persist |
+| "make a skill / 스킬 만들어 / learn new skill / make skill from history / 이거 자주 하는데 스킬로" (turn repeated work into a reusable skill, no product code) | **SKILL-MINE** | Intake → Window → Mine → Rank → Suggest → **Human pick/reject** → Forge → Verify → Install → Journal |
+
+If ambiguous, ask one question. LEARN writes no code, uses no implementation gates, and uses chat
+explain-back instead of persistent goal tools; see `reference/learn.md`.
+
+QA-ONLY exercises an already-running app (and a read-only DB) to QA behavior or compare data, writes no
+production code, creates no worktree, and runs none of the implementation gates. It produces a
+human-friendly `report.md` (what worked / didn't / discovered) and persists a reusable, indexed QA suite
+to `.domain-agent/qa/` so the same check re-runs fast. If the request needs a fix or feature, route to
+DEBUG/LEGACY instead. See `reference/qa-only.md`.
+
+LEARN vs LEARN-DOMAIN: LEARN teaches a human and writes only a chat-time journal. LEARN-DOMAIN learns
+*for the agent* and persists a source-grounded `.domain-agent/` wiki (agentic discovery, no embeddings;
+Aider-style repo map; bottom-up summaries; execution-grounded verification) so later build/debug/legacy
+runs route fast. Its final Onboard step also renders one self-contained `onboarding.html` handbook for
+humans (derived from the pack; the markdown pack stays the agent's source of truth). It writes no
+production code; see `reference/learn-domain.md`.
+
+SKILL-MINE turns repeated work into a reusable skill. It mines recent agent session history
+(`~/.claude/projects/*.jsonl`, adaptive 7-30 day window), surfaces 3-5 candidate skills ranked by
+frequency x payoff, and lets the user pick / reject / name a new one. On approval it forges ONE
+cross-agent-portable `SKILL.md` (agentskills.io standard) and installs it to each chosen agent dir
+(`~/.claude/skills`, `~/.codex/skills`, `~/.config/opencode/skills`, `~/.hermes/skills`; no auto-sync).
+The human pick is a hard gate - it never creates or installs a skill the user did not approve. It writes
+no production code and no worktree; see `reference/skill-mine.md`.
+
+## Step 0A - Worktree
+
+For **GREENFIELD**, **DEBUG**, and **LEGACY**, isolate before any repo mutation:
+
+1. Immediately after mode detection, resolve the target repo root, then ask the user for the base git
+   branch (the source branch) and ask the user for the target branch unless both are explicitly
+   provided. If the user gives only base, the default target branch is the base branch. Before any
+   vault write or worktree command, verify both refs exist in the target repo before creating the
+   worktree. If either ref is missing, ask for corrected source/target branch names; do not
+   substitute nearby branch names or create files.
+2. Record `base_branch`, `target_branch`, `run_branch`, `worktree_path`, and
+   `worktree_retention` in `state.json` and the run `README.md`.
+3. Create the run worktree from the base branch before Intake writes to the repo:
+   `git worktree add -b <run_branch> <worktree_path> <base_branch>`.
+4. Run implementation phases inside the branch-scoped worktree; original checkout is orchestration
+   and final integration only.
+5. After the delivery gate passes, ask the user to accept the result. On acceptance, integrate only by
+   a merge commit into `target_branch`, normally `git merge --no-ff <run_branch>` from a clean target
+   checkout or clean target integration worktree. Never manually port/copy/apply the accepted diff to
+   the target branch, never cherry-pick/squash/rebase it, and never replace the merge with direct
+   target-branch edits unless the human explicitly overrides the merge-commit policy after being told
+   the result will not be a merge commit. If a repo guard, dirty unrelated worktree, missing checkout,
+   or permission issue blocks the merge commit, stop and report the blocker; do not invent a fallback.
+   Resolve merge conflicts only inside the active merge state, preserving target-branch behavior, then
+   commit the merge. Record the merge commit SHA and target branch in the run `README.md` or
+   `verification.md`. Keep the three most recent completed run worktrees for this repo; prune only the
+   oldest repo-managed completed run worktree when the retained count exceeds three. Never prune the
+   active run worktree, original checkout, or manual worktrees outside the repo-managed pool. If the
+   user asks for changes, keep the active worktree and rewind through the relevant phase.
+
+Required so multiple agents can work without editing the same checkout.
+
+## Routing Rules
+
+- Topology: fan out only wide-and-shallow work; DEBUG and LEGACY default single-driver. Details:
+  `reference/pipeline.md`.
+- Domain rules: at Intake, use `ten-rules`; record <=10 `## Priority Rules` in vault `README.md`.
+- Domain context: GREENFIELD Plan, DEBUG Reproduce/Diagnose, LEGACY Explore load
+  `reference/domain-context.md`; default `.domain-agent/`; if missing, ask where to store it and
+  add the chosen path to `.gitignore`.
+- UI/UX: user-facing UI loads `reference/ui-ux.md`, which routes to a tier — Expressive (landing/
+  marketing) uses `reference/taste-skill-v2.md`; Functional (dashboard/table/admin/internal tool) uses
+  `reference/functional-ui.md`. Designer implements to the named tier.
+- Interview: before plan freeze, run `reference/interview.md` for GREENFIELD/DEBUG/LEGACY; gated on
+  ambiguity, code-answerable questions resolved by reading code first, 3-5 questions max, one round.
+- Plan grounding: before freeze, run `reference/plan-grounding.md`; answer from current docs/code
+  before asking the human.
+
+## Gates
+
+1. GREENFIELD Validate: `templates/validate-gate.sh <vault>` requires `Decision: GO`.
+2. Plan freezes scope; Build/Fix implements, not redesigns.
+3. Human Feedback: two briefs + recorded approval; `human-feedback-gate.mjs` must pass.
+4. Verify: fresh adversary reruns every `run-to-prove`; completeness critic names gaps; high-risk
+   claims need >=3 verifier lenses.
+5. Committee: architect + security-reviewer + code-reviewer all approve; recorded as a `Committee:`
+   line in `verification.md` that the delivery gate checks.
+6. Deliver: `templates/delivery-gate.sh` exits 0 with artifacts, aggregate `verdict: GREEN`,
+   `## Coverage`, `Not covered:`, `Regression tests:`, the `Committee:` line (all three APPROVED),
+   `plan.md` matching `state.json.plan_hash` (or a `RE-PLAN:` line in `README.md`), and project tests.
+7. Retry bound: `cycle-bound.mjs` trips at max 5 cycles/phase (any errors); the same normalized error
+   3x trips `circuit-breaker.mjs`.
+
+## Vault
+
+Create `docs/changelog/<date>-<slug>/` with exactly:
+`README.md`, `brief.md`, `plan.md`, `claims.md`, `verification.md`, `state.json`.
+
+LEARN writes a journal instead of a vault; QA-ONLY uses a reduced run folder (`brief.md`,
+`verification.md`, `report.md`, `qa/`, `state.json` — no `plan.md`/`claims.md`); see
+`reference/qa-only.md`. SKILL-MINE writes no vault either — only the generated skill directory, its
+install targets, and a `learn/skill-mined-<name>-<date>.md` journal; see `reference/skill-mine.md`.
+
+## Dispatch
+
+Use harness subagents when available (`Task`/`Agent`, Codex equivalent, etc.). Otherwise run a fresh
+isolated pass. Load exactly one `agents/<role>.md`, give minimal vault reads, and collect decisions +
+evidence + file refs only. Full procedure: `reference/experts.md`.
+
+## Reference map (load only what the current phase needs)
+
+| Read this | When |
+|---|---|
+| `reference/pipeline.md` | Always: phase definitions and exit gates |
+| `reference/experts.md` | Dispatch: role -> persona -> model tier + harness-agnostic procedure |
+| `agents/<role>.md` | Role dispatch: bundled persona prompt; one file per role |
+| `reference/vault.md` | At Intake (create vault) and whenever a phase passes state |
+| `reference/domain-rules.md` | Intake: route to `ten-rules`; distill <=10 priority rules |
+| `reference/domain-context.md` | GREENFIELD Plan, DEBUG Reproduce/Diagnose, LEGACY Explore: repo-local Domain Brief |
+| `reference/market-research.md` | GREENFIELD Validate: demand validation |
+| `reference/quality-gates.md` | Verify, Review, Deliver: production-readiness gates |
+| `reference/debugging.md` | DEBUG Diagnose: `diagnose` feedback-loop method |
+| `reference/learn.md` | LEARN: teach/check flow + journaling |
+| `reference/learn-domain.md` | LEARN-DOMAIN: agentic discovery + bottom-up summaries + grounded `.domain-agent/` wiki |
+| `reference/interview.md` | GREENFIELD/LEGACY Plan start, DEBUG Diagnose end: ambiguity-gated 3-5 question interview / hypothesis re-rank before plan freeze |
+| `reference/plan-grounding.md` | Plan: agent-run grounding before freeze |
+| `reference/qa.md` | QA: drive running web/CLI app; record as-is/to-be evidence |
+| `reference/qa-only.md` | QA-ONLY mode: no-code QA / data-comparison run; report + persisted reusable suite |
+| `reference/harness-make.md` | HARNESS-MAKE: runtime-neutral agent/skill/orchestrator design; approve before install |
+| `reference/harness-patterns.md` | HARNESS-MAKE Pattern Pick: choose smallest useful team topology |
+| `reference/harness-eval.md` | HARNESS-EVAL: same snapshot with/without harness, machine checks, blind grading, `Not proven` if weak |
+| `reference/skill-mine.md` | SKILL-MINE mode: mine history → suggest 3-5 skills → human pick → forge portable SKILL.md → install |
+| `reference/db-access.md` | QA cross-check: read-only, DB-independent (mysql/postgres/sqlite) data access |
+| `reference/ui-ux.md` | Any user-facing UI: classify surface into Expressive vs Functional tier |
+| `reference/taste-skill-v2.md` | Expressive-tier Designer Build + QA pre-flight; large, load only then |
+| `reference/functional-ui.md` | Functional-tier (dashboard/table/admin) Designer Build + QA; lighter baseline |
+
+### Template scripts (referenced by the gates above)
+
+| Script | Gate |
+|---|---|
+| `templates/delivery-gate.sh` | Deliver: hard exit-0 artifact + test gate |
+| `templates/validate-gate.sh <vault>` | GREENFIELD Validate: checks `Decision: GO` before Build |
+| `templates/qa-gate.sh <vault> <browser\|cli>` | QA: checks `## QA`; browser apps need `as-is`/`to-be`, `Tool:`, non-agent-browser `Fallback:`; UI runs (`UI-tier:`) run the contrast gate on `qa/contrast-pairs.json` |
+| `templates/qa-only-gate.sh <vault> <browser\|cli>` | QA-ONLY terminal gate: `report.md` anchors + `qa-gate.sh` evidence + `action_count <= action_cap` + DB read-only |
+| `templates/qa-report.md` | QA-ONLY human report skeleton: `What worked` / `What didn't` / `What I discovered` / `How to re-run` |
+| `templates/contrast-gate.mjs <pairs.json>` | UI/UX QA: computes WCAG contrast (body AAA, other text AA); no eyeballing |
+| `templates/human-feedback-gate.mjs <vault> <Build\|Fix>` | Human Feedback: checks both briefs + recorded approval |
+| `templates/circuit-breaker.mjs <state.json> <sig>` | Failed fix cycle: trips after 3 identical normalized error signatures |
+| `templates/cycle-bound.mjs <state.json> <phase>` | Failed cycle: trips at `max_cycles_per_phase` (default 5) regardless of error identity |
+| `templates/domain-agent/` | Domain context first-run scaffold copied to the target repo knowledge path |
+| `templates/learn-grounding-gate.mjs <knowledgePath>` | LEARN-DOMAIN Ground: every load-bearing invariant/flow fact carries a `Grounding: verified\|unverified` marker; `index.md` has a concrete entry point; basic secret scan |
+| `templates/domain-onboarding.html` | LEARN-DOMAIN Onboard: self-contained human handbook skeleton, filled only from the persisted pack (no external scripts/CDN) |
+| `templates/skill-mine/mine.mjs` | SKILL-MINE Mine: reads `~/.claude/projects/*.jsonl`, adaptive window, emits frequent tool n-grams + Bash signatures + intent hints |
+| `templates/skill-frontmatter-gate.mjs` | SKILL-MINE Verify: checks generated `SKILL.md` name/description(+`when_to_use` ≤1536)/body limits; exits 0 only when portable |
+| `templates/skill.md.template` | SKILL-MINE Forge: portable `SKILL.md` skeleton (frontmatter + When to use + Steps + Notes) |
+
+## Escalation & stop conditions
+
+- Circuit breaker tripped (`circuit-breaker.mjs` exits 1): stop, root-cause to user.
+- Validate finds no demand evidence (GREENFIELD): stop, report; do not build on spec.
+- Human rejects or changes the plan: do not Build/Fix; re-open Plan/Diagnose, update vault, ask again.
+- Delivery gate cannot pass after fixes: report the failing check; never fake the gate.
+- Destructive or irreversible step needed (drop data, force-push, external publish): ask first.
+
+## Final checklist (before claiming done)
+
+- [ ] Mode stated and correct pipeline run
+- [ ] Domain Brief created or explicitly skipped, and any first-run `.domain-agent/` path is ignored
+
+codex
+Route choice: `LEGACY`, because this is a small feature implementation in existing code. I’m treating the prompt as the Human Feedback approval, with assumptions recorded in the sandbox changelog per repo rules.
+  → Inspect repo structure and locate summarizeOrders contract/tests
+  • Add failing behavior coverage if missing
+  • Implement minimal summarizeOrders fix
+  • Record assumptions/reasoning in changelog
+  • Run relevant checks and report evidence
+mcp: codegraph/codegraph_status started
+mcp: codegraph/codegraph_status (failed)
+codex
+CodeGraph is not initialized in this sandbox, so I’m using native file inspection to keep the noninteractive run moving. Next I’m locating the function, tests, and project check commands before editing.
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc 'rg --files' in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+ succeeded in 0ms:
+src/summarizeOrders.mjs
+package.json
+test/summarizeOrders.test.mjs
+
+exec
+/bin/zsh -lc 'ls -la' in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+exec
+/bin/zsh -lc 'git status --short' in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+ succeeded in 0ms:
+total 8
+drwxr-xr-x@ 5 danny  wheel  160 Jun  6 21:47 .
+drwxr-xr-x@ 4 danny  wheel  128 Jun  6 21:47 ..
+-rw-r--r--@ 1 danny  wheel   69 Jun  6 21:47 package.json
+drwxr-xr-x@ 3 danny  wheel   96 Jun  6 21:47 src
+drwxr-xr-x@ 3 danny  wheel   96 Jun  6 21:47 test
+
+ exited 128 in 0ms:
+fatal: not a git repository (or any of the parent directories): .git
+
+codex
+The sandbox is a tiny package with one implementation file and one test file; it is not itself a git repo, so branch/worktree gates from the full Supergoal flow do not apply here. I’m reading both files now and will keep the patch focused.
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc "sed -n '1,260p' test/summarizeOrders.test.mjs" in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+exec
+/bin/zsh -lc "sed -n '1,160p' package.json" in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+exec
+/bin/zsh -lc "sed -n '1,220p' src/summarizeOrders.mjs" in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+ succeeded in 0ms:
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import { summarizeOrders } from '../src/summarizeOrders.mjs';
+
+test('groups paid orders by currency', () => {
+  const orders = [
+    { id: 'a', status: 'paid', currency: 'USD', amountCents: 2500, createdAt: '2026-06-01' },
+    { id: 'b', status: 'refunded', currency: 'USD', amountCents: 9999, createdAt: '2026-06-02' },
+    { id: 'c', status: 'paid', currency: 'EUR', amountCents: 999, createdAt: '2026-06-04' },
+    { id: 'd', status: 'paid', currency: 'USD', amountCents: 1500, createdAt: '2026-06-03' },
+  ];
+  assert.deepEqual(summarizeOrders(orders), [
+    { currency: 'USD', count: 2, totalCents: 4000, firstOrderDate: '2026-06-01', lastOrderDate: '2026-06-03' },
+    { currency: 'EUR', count: 1, totalCents: 999, firstOrderDate: '2026-06-04', lastOrderDate: '2026-06-04' },
+  ]);
+});
+
+test('rejects malformed paid order data', () => {
+  assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'usd', amountCents: 1, createdAt: '2026-06-01' }]), TypeError);
+  assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'USD', amountCents: 1.5, createdAt: '2026-06-01' }]), TypeError);
+  assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'USD', amountCents: 1, createdAt: '06/01/2026' }]), TypeError);
+});
+
+ succeeded in 0ms:
+{
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}
+
+ succeeded in 0ms:
+export function summarizeOrders(orders) {
+  return [];
+}
+
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc 'nl -ba test/summarizeOrders.test.mjs' in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+ succeeded in 0ms:
+     1	import assert from 'node:assert/strict';
+     2	import { test } from 'node:test';
+     3	import { summarizeOrders } from '../src/summarizeOrders.mjs';
+     4	
+     5	test('groups paid orders by currency', () => {
+     6	  const orders = [
+     7	    { id: 'a', status: 'paid', currency: 'USD', amountCents: 2500, createdAt: '2026-06-01' },
+     8	    { id: 'b', status: 'refunded', currency: 'USD', amountCents: 9999, createdAt: '2026-06-02' },
+     9	    { id: 'c', status: 'paid', currency: 'EUR', amountCents: 999, createdAt: '2026-06-04' },
+    10	    { id: 'd', status: 'paid', currency: 'USD', amountCents: 1500, createdAt: '2026-06-03' },
+    11	  ];
+    12	  assert.deepEqual(summarizeOrders(orders), [
+    13	    { currency: 'USD', count: 2, totalCents: 4000, firstOrderDate: '2026-06-01', lastOrderDate: '2026-06-03' },
+    14	    { currency: 'EUR', count: 1, totalCents: 999, firstOrderDate: '2026-06-04', lastOrderDate: '2026-06-04' },
+    15	  ]);
+    16	});
+    17	
+    18	test('rejects malformed paid order data', () => {
+    19	  assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'usd', amountCents: 1, createdAt: '2026-06-01' }]), TypeError);
+    20	  assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'USD', amountCents: 1.5, createdAt: '2026-06-01' }]), TypeError);
+    21	  assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'USD', amountCents: 1, createdAt: '06/01/2026' }]), TypeError);
+    22	});
+
+codex
+Existing tests appear intended to cover grouping and malformed paid orders. I’m running them before the fix so the failure is explicit, then I’ll add only missing edge coverage if the current tests do not cover sorting/tie behavior.
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc 'npm test' in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+ exited 1 in 380ms:
+
+> test
+> node --test
+
+TAP version 13
+# Subtest: groups paid orders by currency
+not ok 1 - groups paid orders by currency
+  ---
+  duration_ms: 1.79
+  location: '/private/tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness/test/summarizeOrders.test.mjs:5:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + []
+    - [
+    -   {
+    -     count: 2,
+    -     currency: 'USD',
+    -     firstOrderDate: '2026-06-01',
+    -     lastOrderDate: '2026-06-03',
+    -     totalCents: 4000
+    -   },
+    -   {
+    -     count: 1,
+    -     currency: 'EUR',
+    -     firstOrderDate: '2026-06-04',
+    -     lastOrderDate: '2026-06-04',
+    -     totalCents: 999
+    -   }
+    - ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0:
+      currency: 'USD'
+      count: 2
+      totalCents: 4000
+      firstOrderDate: '2026-06-01'
+      lastOrderDate: '2026-06-03'
+    1:
+      currency: 'EUR'
+      count: 1
+      totalCents: 999
+      firstOrderDate: '2026-06-04'
+      lastOrderDate: '2026-06-04'
+  actual:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness/test/summarizeOrders.test.mjs:12:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.start (node:internal/test_runner/test:877:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: rejects malformed paid order data
+not ok 2 - rejects malformed paid order data
+  ---
+  duration_ms: 0.184333
+  location: '/private/tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness/test/summarizeOrders.test.mjs:18:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception (TypeError).'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness/test/summarizeOrders.test.mjs:19:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 67.340666
+
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc "sed -n '1,80l' src/summarizeOrders.mjs" in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+ succeeded in 0ms:
+export function summarizeOrders(orders) {$
+  return [];$
+}$
+
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc "sed -n '1,140l' test/summarizeOrders.test.mjs" in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+ succeeded in 0ms:
+import assert from 'node:assert/strict';$
+import { test } from 'node:test';$
+import { summarizeOrders } from '../src/summarizeOrders.mjs\
+';$
+$
+test('groups paid orders by currency', () => {$
+  const orders = [$
+    { id: 'a', status: 'paid', currency: 'USD', amountCents\
+: 2500, createdAt: '2026-06-01' },$
+    { id: 'b', status: 'refunded', currency: 'USD', amountC\
+ents: 9999, createdAt: '2026-06-02' },$
+    { id: 'c', status: 'paid', currency: 'EUR', amountCents\
+: 999, createdAt: '2026-06-04' },$
+    { id: 'd', status: 'paid', currency: 'USD', amountCents\
+: 1500, createdAt: '2026-06-03' },$
+  ];$
+  assert.deepEqual(summarizeOrders(orders), [$
+    { currency: 'USD', count: 2, totalCents: 4000, firstOrd\
+erDate: '2026-06-01', lastOrderDate: '2026-06-03' },$
+    { currency: 'EUR', count: 1, totalCents: 999, firstOrde\
+rDate: '2026-06-04', lastOrderDate: '2026-06-04' },$
+  ]);$
+});$
+$
+test('rejects malformed paid order data', () => {$
+  assert.throws(() => summarizeOrders([{ status: 'paid', cu\
+rrency: 'usd', amountCents: 1, createdAt: '2026-06-01' }]),\
+ TypeError);$
+  assert.throws(() => summarizeOrders([{ status: 'paid', cu\
+rrency: 'USD', amountCents: 1.5, createdAt: '2026-06-01' }]\
+), TypeError);$
+  assert.throws(() => summarizeOrders([{ status: 'paid', cu\
+rrency: 'USD', amountCents: 1, createdAt: '06/01/2026' }]),\
+ TypeError);$
+});$
+
+codex
+The pre-fix check fails on the grouping assertion, which reproduces the missing behavior. The existing coverage validates aggregation and malformed paid data; I’m adding a narrow sorting/tie test before changing the implementation.
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc "tail -n 40 test/summarizeOrders.test.mjs | sed -n '1,120p'" in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+ succeeded in 0ms:
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import { summarizeOrders } from '../src/summarizeOrders.mjs';
+
+test('groups paid orders by currency', () => {
+  const orders = [
+    { id: 'a', status: 'paid', currency: 'USD', amountCents: 2500, createdAt: '2026-06-01' },
+    { id: 'b', status: 'refunded', currency: 'USD', amountCents: 9999, createdAt: '2026-06-02' },
+    { id: 'c', status: 'paid', currency: 'EUR', amountCents: 999, createdAt: '2026-06-04' },
+    { id: 'd', status: 'paid', currency: 'USD', amountCents: 1500, createdAt: '2026-06-03' },
+  ];
+  assert.deepEqual(summarizeOrders(orders), [
+    { currency: 'USD', count: 2, totalCents: 4000, firstOrderDate: '2026-06-01', lastOrderDate: '2026-06-03' },
+    { currency: 'EUR', count: 1, totalCents: 999, firstOrderDate: '2026-06-04', lastOrderDate: '2026-06-04' },
+  ]);
+});
+
+test('rejects malformed paid order data', () => {
+  assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'usd', amountCents: 1, createdAt: '2026-06-01' }]), TypeError);
+  assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'USD', amountCents: 1.5, createdAt: '2026-06-01' }]), TypeError);
+  assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'USD', amountCents: 1, createdAt: '06/01/2026' }]), TypeError);
+});
+
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc "perl -0pe 's/\\{/\\\\x7b/g; s/\\}/\\\\x7d/g; s/\\[/\\\\x5b/g; s/\\]/\\\\x5d/g; s/\\(/\\\\x28/g; s/\\)/\\\\x29/g' test/summarizeOrders.test.mjs" in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+ succeeded in 0ms:
+import assert from 'node:assert/strict';
+import \x7b test \x7d from 'node:test';
+import \x7b summarizeOrders \x7d from '../src/summarizeOrders.mjs';
+
+test\x28'groups paid orders by currency', \x28\x29 => \x7b
+  const orders = \x5b
+    \x7b id: 'a', status: 'paid', currency: 'USD', amountCents: 2500, createdAt: '2026-06-01' \x7d,
+    \x7b id: 'b', status: 'refunded', currency: 'USD', amountCents: 9999, createdAt: '2026-06-02' \x7d,
+    \x7b id: 'c', status: 'paid', currency: 'EUR', amountCents: 999, createdAt: '2026-06-04' \x7d,
+    \x7b id: 'd', status: 'paid', currency: 'USD', amountCents: 1500, createdAt: '2026-06-03' \x7d,
+  \x5d;
+  assert.deepEqual\x28summarizeOrders\x28orders\x29, \x5b
+    \x7b currency: 'USD', count: 2, totalCents: 4000, firstOrderDate: '2026-06-01', lastOrderDate: '2026-06-03' \x7d,
+    \x7b currency: 'EUR', count: 1, totalCents: 999, firstOrderDate: '2026-06-04', lastOrderDate: '2026-06-04' \x7d,
+  \x5d\x29;
+\x7d\x29;
+
+test\x28'rejects malformed paid order data', \x28\x29 => \x7b
+  assert.throws\x28\x28\x29 => summarizeOrders\x28\x5b\x7b status: 'paid', currency: 'usd', amountCents: 1, createdAt: '2026-06-01' \x7d\x5d\x29, TypeError\x29;
+  assert.throws\x28\x28\x29 => summarizeOrders\x28\x5b\x7b status: 'paid', currency: 'USD', amountCents: 1.5, createdAt: '2026-06-01' \x7d\x5d\x29, TypeError\x29;
+  assert.throws\x28\x28\x29 => summarizeOrders\x28\x5b\x7b status: 'paid', currency: 'USD', amountCents: 1, createdAt: '06/01/2026' \x7d\x5d\x29, TypeError\x29;
+\x7d\x29;
+
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc 'base64 test/summarizeOrders.test.mjs' in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+ exited 64 in 0ms:
+base64: invalid argument test/summarizeOrders.test.mjs
+Usage:	base64 [-Ddh] [-b num] [-i in_file] [-o out_file]
+  -b, --break       break encoded output up into lines of length num
+  -D, -d, --decode  decode input
+  -h, --help        display this message
+  -i, --input       input file (default: "-" for stdin)
+  -o, --output      output file (default: "-" for stdout)
+
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc 'base64 -i test/summarizeOrders.test.mjs' in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+ succeeded in 0ms:
+aW1wb3J0IGFzc2VydCBmcm9tICdub2RlOmFzc2VydC9zdHJpY3QnOwppbXBvcnQgeyB0ZXN0IH0gZnJvbSAnbm9kZTp0ZXN0JzsKaW1wb3J0IHsgc3VtbWFyaXplT3JkZXJzIH0gZnJvbSAnLi4vc3JjL3N1bW1hcml6ZU9yZGVycy5tanMnOwoKdGVzdCgnZ3JvdXBzIHBhaWQgb3JkZXJzIGJ5IGN1cnJlbmN5JywgKCkgPT4gewogIGNvbnN0IG9yZGVycyA9IFsKICAgIHsgaWQ6ICdhJywgc3RhdHVzOiAncGFpZCcsIGN1cnJlbmN5OiAnVVNEJywgYW1vdW50Q2VudHM6IDI1MDAsIGNyZWF0ZWRBdDogJzIwMjYtMDYtMDEnIH0sCiAgICB7IGlkOiAnYicsIHN0YXR1czogJ3JlZnVuZGVkJywgY3VycmVuY3k6ICdVU0QnLCBhbW91bnRDZW50czogOTk5OSwgY3JlYXRlZEF0OiAnMjAyNi0wNi0wMicgfSwKICAgIHsgaWQ6ICdjJywgc3RhdHVzOiAncGFpZCcsIGN1cnJlbmN5OiAnRVVSJywgYW1vdW50Q2VudHM6IDk5OSwgY3JlYXRlZEF0OiAnMjAyNi0wNi0wNCcgfSwKICAgIHsgaWQ6ICdkJywgc3RhdHVzOiAncGFpZCcsIGN1cnJlbmN5OiAnVVNEJywgYW1vdW50Q2VudHM6IDE1MDAsIGNyZWF0ZWRBdDogJzIwMjYtMDYtMDMnIH0sCiAgXTsKICBhc3NlcnQuZGVlcEVxdWFsKHN1bW1hcml6ZU9yZGVycyhvcmRlcnMpLCBbCiAgICB7IGN1cnJlbmN5OiAnVVNEJywgY291bnQ6IDIsIHRvdGFsQ2VudHM6IDQwMDAsIGZpcnN0T3JkZXJEYXRlOiAnMjAyNi0wNi0wMScsIGxhc3RPcmRlckRhdGU6ICcyMDI2LTA2LTAzJyB9LAogICAgeyBjdXJyZW5jeTogJ0VVUicsIGNvdW50OiAxLCB0b3RhbENlbnRzOiA5OTksIGZpcnN0T3JkZXJEYXRlOiAnMjAyNi0wNi0wNCcsIGxhc3RPcmRlckRhdGU6ICcyMDI2LTA2LTA0JyB9LAogIF0pOwp9KTsKCnRlc3QoJ3JlamVjdHMgbWFsZm9ybWVkIHBhaWQgb3JkZXIgZGF0YScsICgpID0+IHsKICBhc3NlcnQudGhyb3dzKCgpID0+IHN1bW1hcml6ZU9yZGVycyhbeyBzdGF0dXM6ICdwYWlkJywgY3VycmVuY3k6ICd1c2QnLCBhbW91bnRDZW50czogMSwgY3JlYXRlZEF0OiAnMjAyNi0wNi0wMScgfV0pLCBUeXBlRXJyb3IpOwogIGFzc2VydC50aHJvd3MoKCkgPT4gc3VtbWFyaXplT3JkZXJzKFt7IHN0YXR1czogJ3BhaWQnLCBjdXJyZW5jeTogJ1VTRCcsIGFtb3VudENlbnRzOiAxLjUsIGNyZWF0ZWRBdDogJzIwMjYtMDYtMDEnIH1dKSwgVHlwZUVycm9yKTsKICBhc3NlcnQudGhyb3dzKCgpID0+IHN1bW1hcml6ZU9yZGVycyhbeyBzdGF0dXM6ICdwYWlkJywgY3VycmVuY3k6ICdVU0QnLCBhbW91bnRDZW50czogMSwgY3JlYXRlZEF0OiAnMDYvMDEvMjAyNicgfV0pLCBUeXBlRXJyb3IpOwp9KTsK
+
+codex
+Edit scope: `src/summarizeOrders.mjs` plus one narrow test in `test/summarizeOrders.test.mjs`, then a dated changelog entry for assumptions. The implementation will validate the order list and paid order fields, while non-paid orders are ignored after confirming each entry is an object.
+apply patch
+patch: completed
+/tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness/src/summarizeOrders.mjs
+diff --git a/src/summarizeOrders.mjs b/src/summarizeOrders.mjs
+index 3a9841670198054c910162b707e0f43801a41ff9..a3b793daa63f68e96a0a2347b36773597e3f9002
+--- a/src/summarizeOrders.mjs
++++ b/src/summarizeOrders.mjs
+@@ -1,3 +1,69 @@
+ export function summarizeOrders(orders) {
+-  return [];
++  if (!Array.isArray(orders)) {
++    throw new TypeError('orders must be an array');
++  }
++
++  const summaries = new Map();
++
++  for (const order of orders) {
++    if (order === null || typeof order !== 'object') {
++      throw new TypeError('order must be an object');
++    }
++
++    if (order.status !== 'paid') {
++      continue;
++    }
++
++    assertValidPaidOrder(order);
++
++    const existing = summaries.get(order.currency) ?? {
++      currency: order.currency,
++      count: 0,
++      totalCents: 0,
++      firstOrderDate: order.createdAt,
++      lastOrderDate: order.createdAt,
++    };
++
++    existing.count += 1;
++    existing.totalCents += order.amountCents;
++    existing.firstOrderDate = minDate(existing.firstOrderDate, order.createdAt);
++    existing.lastOrderDate = maxDate(existing.lastOrderDate, order.createdAt);
++    summaries.set(order.currency, existing);
++  }
++
++  return [...summaries.values()].sort((a, b) => {
++    if (a.totalCents !== b.totalCents) {
++      return b.totalCents - a.totalCents;
++    }
++
++    return a.currency.localeCompare(b.currency);
++  });
++}
++
++function assertValidPaidOrder(order) {
++  if (
++    !/^[A-Z]{3}$/.test(order.currency) ||
++    !Number.isInteger(order.amountCents) ||
++    order.amountCents <= 0 ||
++    !isValidOrderDate(order.createdAt)
++  ) {
++    throw new TypeError('invalid paid order data');
++  }
++}
++
++function isValidOrderDate(value) {
++  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
++    return false;
++  }
++
++  const date = new Date(`${value}T00:00:00.000Z`);
++  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
++}
++
++function minDate(left, right) {
++  return left <= right ? left : right;
++}
++
++function maxDate(left, right) {
++  return left >= right ? left : right;
+ }
+
+diff --git a/src/summarizeOrders.mjs b/src/summarizeOrders.mjs
+index 3a9841670198054c910162b707e0f43801a41ff9..a3b793daa63f68e96a0a2347b36773597e3f9002
+--- a/src/summarizeOrders.mjs
++++ b/src/summarizeOrders.mjs
+@@ -1,3 +1,69 @@
+ export function summarizeOrders(orders) {
+-  return [];
++  if (!Array.isArray(orders)) {
++    throw new TypeError('orders must be an array');
++  }
++
++  const summaries = new Map();
++
++  for (const order of orders) {
++    if (order === null || typeof order !== 'object') {
++      throw new TypeError('order must be an object');
++    }
++
++    if (order.status !== 'paid') {
++      continue;
++    }
++
++    assertValidPaidOrder(order);
++
++    const existing = summaries.get(order.currency) ?? {
++      currency: order.currency,
++      count: 0,
++      totalCents: 0,
++      firstOrderDate: order.createdAt,
++      lastOrderDate: order.createdAt,
++    };
++
++    existing.count += 1;
++    existing.totalCents += order.amountCents;
++    existing.firstOrderDate = minDate(existing.firstOrderDate, order.createdAt);
++    existing.lastOrderDate = maxDate(existing.lastOrderDate, order.createdAt);
++    summaries.set(order.currency, existing);
++  }
++
++  return [...summaries.values()].sort((a, b) => {
++    if (a.totalCents !== b.totalCents) {
++      return b.totalCents - a.totalCents;
++    }
++
++    return a.currency.localeCompare(b.currency);
++  });
++}
++
++function assertValidPaidOrder(order) {
++  if (
++    !/^[A-Z]{3}$/.test(order.currency) ||
++    !Number.isInteger(order.amountCents) ||
++    order.amountCents <= 0 ||
++    !isValidOrderDate(order.createdAt)
++  ) {
++    throw new TypeError('invalid paid order data');
++  }
++}
++
++function isValidOrderDate(value) {
++  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
++    return false;
++  }
++
++  const date = new Date(`${value}T00:00:00.000Z`);
++  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
++}
++
++function minDate(left, right) {
++  return left <= right ? left : right;
++}
++
++function maxDate(left, right) {
++  return left >= right ? left : right;
+ }
+
+codex
+The implementation is in place. I’m adding one test for the ordering rule because the original tests covered grouping and invalid paid fields but not the total/tie sort contract.
+apply patch
+patch: completed
+/tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness/test/summarizeOrders.test.mjs
+diff --git a/src/summarizeOrders.mjs b/src/summarizeOrders.mjs
+index 3a9841670198054c910162b707e0f43801a41ff9..a3b793daa63f68e96a0a2347b36773597e3f9002
+--- a/src/summarizeOrders.mjs
++++ b/src/summarizeOrders.mjs
+@@ -1,3 +1,69 @@
+ export function summarizeOrders(orders) {
+-  return [];
++  if (!Array.isArray(orders)) {
++    throw new TypeError('orders must be an array');
++  }
++
++  const summaries = new Map();
++
++  for (const order of orders) {
++    if (order === null || typeof order !== 'object') {
++      throw new TypeError('order must be an object');
++    }
++
++    if (order.status !== 'paid') {
++      continue;
++    }
++
++    assertValidPaidOrder(order);
++
++    const existing = summaries.get(order.currency) ?? {
++      currency: order.currency,
++      count: 0,
++      totalCents: 0,
++      firstOrderDate: order.createdAt,
++      lastOrderDate: order.createdAt,
++    };
++
++    existing.count += 1;
++    existing.totalCents += order.amountCents;
++    existing.firstOrderDate = minDate(existing.firstOrderDate, order.createdAt);
++    existing.lastOrderDate = maxDate(existing.lastOrderDate, order.createdAt);
++    summaries.set(order.currency, existing);
++  }
++
++  return [...summaries.values()].sort((a, b) => {
++    if (a.totalCents !== b.totalCents) {
++      return b.totalCents - a.totalCents;
++    }
++
++    return a.currency.localeCompare(b.currency);
++  });
++}
++
++function assertValidPaidOrder(order) {
++  if (
++    !/^[A-Z]{3}$/.test(order.currency) ||
++    !Number.isInteger(order.amountCents) ||
++    order.amountCents <= 0 ||
++    !isValidOrderDate(order.createdAt)
++  ) {
++    throw new TypeError('invalid paid order data');
++  }
++}
++
++function isValidOrderDate(value) {
++  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
++    return false;
++  }
++
++  const date = new Date(`${value}T00:00:00.000Z`);
++  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
++}
++
++function minDate(left, right) {
++  return left <= right ? left : right;
++}
++
++function maxDate(left, right) {
++  return left >= right ? left : right;
+ }
+diff --git a/test/summarizeOrders.test.mjs b/test/summarizeOrders.test.mjs
+index ccfc01de51a79c280e29c3be3234c8cb0787febf..35c618fdca68976bf227dfbd7a0b6252c29a6af9
+--- a/test/summarizeOrders.test.mjs
++++ b/test/summarizeOrders.test.mjs
+@@ -15,6 +15,22 @@
+   ]);
+ });
+ 
++test('sorts by total cents descending and currency on ties', () => {
++  const orders = [
++    { status: 'paid', currency: 'JPY', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'USD', amountCents: 800, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'CAD', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'AUD', amountCents: 800, createdAt: '2026-06-01' },
++  ];
++
++  assert.deepEqual(summarizeOrders(orders).map((summary) => summary.currency), [
++    'AUD',
++    'USD',
++    'CAD',
++    'JPY',
++  ]);
++});
++
+ test('rejects malformed paid order data', () => {
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'usd', amountCents: 1, createdAt: '2026-06-01' }]), TypeError);
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'USD', amountCents: 1.5, createdAt: '2026-06-01' }]), TypeError);
+
+diff --git a/src/summarizeOrders.mjs b/src/summarizeOrders.mjs
+index 3a9841670198054c910162b707e0f43801a41ff9..a3b793daa63f68e96a0a2347b36773597e3f9002
+--- a/src/summarizeOrders.mjs
++++ b/src/summarizeOrders.mjs
+@@ -1,3 +1,69 @@
+ export function summarizeOrders(orders) {
+-  return [];
++  if (!Array.isArray(orders)) {
++    throw new TypeError('orders must be an array');
++  }
++
++  const summaries = new Map();
++
++  for (const order of orders) {
++    if (order === null || typeof order !== 'object') {
++      throw new TypeError('order must be an object');
++    }
++
++    if (order.status !== 'paid') {
++      continue;
++    }
++
++    assertValidPaidOrder(order);
++
++    const existing = summaries.get(order.currency) ?? {
++      currency: order.currency,
++      count: 0,
++      totalCents: 0,
++      firstOrderDate: order.createdAt,
++      lastOrderDate: order.createdAt,
++    };
++
++    existing.count += 1;
++    existing.totalCents += order.amountCents;
++    existing.firstOrderDate = minDate(existing.firstOrderDate, order.createdAt);
++    existing.lastOrderDate = maxDate(existing.lastOrderDate, order.createdAt);
++    summaries.set(order.currency, existing);
++  }
++
++  return [...summaries.values()].sort((a, b) => {
++    if (a.totalCents !== b.totalCents) {
++      return b.totalCents - a.totalCents;
++    }
++
++    return a.currency.localeCompare(b.currency);
++  });
++}
++
++function assertValidPaidOrder(order) {
++  if (
++    !/^[A-Z]{3}$/.test(order.currency) ||
++    !Number.isInteger(order.amountCents) ||
++    order.amountCents <= 0 ||
++    !isValidOrderDate(order.createdAt)
++  ) {
++    throw new TypeError('invalid paid order data');
++  }
++}
++
++function isValidOrderDate(value) {
++  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
++    return false;
++  }
++
++  const date = new Date(`${value}T00:00:00.000Z`);
++  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
++}
++
++function minDate(left, right) {
++  return left <= right ? left : right;
++}
++
++function maxDate(left, right) {
++  return left >= right ? left : right;
+ }
+diff --git a/test/summarizeOrders.test.mjs b/test/summarizeOrders.test.mjs
+index ccfc01de51a79c280e29c3be3234c8cb0787febf..35c618fdca68976bf227dfbd7a0b6252c29a6af9
+--- a/test/summarizeOrders.test.mjs
++++ b/test/summarizeOrders.test.mjs
+@@ -15,6 +15,22 @@
+   ]);
+ });
+ 
++test('sorts by total cents descending and currency on ties', () => {
++  const orders = [
++    { status: 'paid', currency: 'JPY', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'USD', amountCents: 800, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'CAD', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'AUD', amountCents: 800, createdAt: '2026-06-01' },
++  ];
++
++  assert.deepEqual(summarizeOrders(orders).map((summary) => summary.currency), [
++    'AUD',
++    'USD',
++    'CAD',
++    'JPY',
++  ]);
++});
++
+ test('rejects malformed paid order data', () => {
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'usd', amountCents: 1, createdAt: '2026-06-01' }]), TypeError);
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'USD', amountCents: 1.5, createdAt: '2026-06-01' }]), TypeError);
+
+codex
+Tests now describe the requested ordering behavior. I’m adding the required changelog note with the route, assumptions, and verification plan before running the final check.
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc 'find . -maxdepth 3 -type d | sort' in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+ succeeded in 0ms:
+.
+./src
+./test
+
+exec
+/bin/zsh -lc 'date +%F' in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+ succeeded in 0ms:
+2026-06-06
+
+diff --git a/src/summarizeOrders.mjs b/src/summarizeOrders.mjs
+index 3a9841670198054c910162b707e0f43801a41ff9..a3b793daa63f68e96a0a2347b36773597e3f9002
+--- a/src/summarizeOrders.mjs
++++ b/src/summarizeOrders.mjs
+@@ -1,3 +1,69 @@
+ export function summarizeOrders(orders) {
+-  return [];
++  if (!Array.isArray(orders)) {
++    throw new TypeError('orders must be an array');
++  }
++
++  const summaries = new Map();
++
++  for (const order of orders) {
++    if (order === null || typeof order !== 'object') {
++      throw new TypeError('order must be an object');
++    }
++
++    if (order.status !== 'paid') {
++      continue;
++    }
++
++    assertValidPaidOrder(order);
++
++    const existing = summaries.get(order.currency) ?? {
++      currency: order.currency,
++      count: 0,
++      totalCents: 0,
++      firstOrderDate: order.createdAt,
++      lastOrderDate: order.createdAt,
++    };
++
++    existing.count += 1;
++    existing.totalCents += order.amountCents;
++    existing.firstOrderDate = minDate(existing.firstOrderDate, order.createdAt);
++    existing.lastOrderDate = maxDate(existing.lastOrderDate, order.createdAt);
++    summaries.set(order.currency, existing);
++  }
++
++  return [...summaries.values()].sort((a, b) => {
++    if (a.totalCents !== b.totalCents) {
++      return b.totalCents - a.totalCents;
++    }
++
++    return a.currency.localeCompare(b.currency);
++  });
++}
++
++function assertValidPaidOrder(order) {
++  if (
++    !/^[A-Z]{3}$/.test(order.currency) ||
++    !Number.isInteger(order.amountCents) ||
++    order.amountCents <= 0 ||
++    !isValidOrderDate(order.createdAt)
++  ) {
++    throw new TypeError('invalid paid order data');
++  }
++}
++
++function isValidOrderDate(value) {
++  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
++    return false;
++  }
++
++  const date = new Date(`${value}T00:00:00.000Z`);
++  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
++}
++
++function minDate(left, right) {
++  return left <= right ? left : right;
++}
++
++function maxDate(left, right) {
++  return left >= right ? left : right;
+ }
+diff --git a/test/summarizeOrders.test.mjs b/test/summarizeOrders.test.mjs
+index ccfc01de51a79c280e29c3be3234c8cb0787febf..35c618fdca68976bf227dfbd7a0b6252c29a6af9
+--- a/test/summarizeOrders.test.mjs
++++ b/test/summarizeOrders.test.mjs
+@@ -15,6 +15,22 @@
+   ]);
+ });
+ 
++test('sorts by total cents descending and currency on ties', () => {
++  const orders = [
++    { status: 'paid', currency: 'JPY', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'USD', amountCents: 800, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'CAD', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'AUD', amountCents: 800, createdAt: '2026-06-01' },
++  ];
++
++  assert.deepEqual(summarizeOrders(orders).map((summary) => summary.currency), [
++    'AUD',
++    'USD',
++    'CAD',
++    'JPY',
++  ]);
++});
++
+ test('rejects malformed paid order data', () => {
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'usd', amountCents: 1, createdAt: '2026-06-01' }]), TypeError);
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'USD', amountCents: 1.5, createdAt: '2026-06-01' }]), TypeError);
+
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc 'mkdir -p docs/changelog' in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+ succeeded in 0ms:
+diff --git a/src/summarizeOrders.mjs b/src/summarizeOrders.mjs
+index 3a9841670198054c910162b707e0f43801a41ff9..a3b793daa63f68e96a0a2347b36773597e3f9002
+--- a/src/summarizeOrders.mjs
++++ b/src/summarizeOrders.mjs
+@@ -1,3 +1,69 @@
+ export function summarizeOrders(orders) {
+-  return [];
++  if (!Array.isArray(orders)) {
++    throw new TypeError('orders must be an array');
++  }
++
++  const summaries = new Map();
++
++  for (const order of orders) {
++    if (order === null || typeof order !== 'object') {
++      throw new TypeError('order must be an object');
++    }
++
++    if (order.status !== 'paid') {
++      continue;
++    }
++
++    assertValidPaidOrder(order);
++
++    const existing = summaries.get(order.currency) ?? {
++      currency: order.currency,
++      count: 0,
++      totalCents: 0,
++      firstOrderDate: order.createdAt,
++      lastOrderDate: order.createdAt,
++    };
++
++    existing.count += 1;
++    existing.totalCents += order.amountCents;
++    existing.firstOrderDate = minDate(existing.firstOrderDate, order.createdAt);
++    existing.lastOrderDate = maxDate(existing.lastOrderDate, order.createdAt);
++    summaries.set(order.currency, existing);
++  }
++
++  return [...summaries.values()].sort((a, b) => {
++    if (a.totalCents !== b.totalCents) {
++      return b.totalCents - a.totalCents;
++    }
++
++    return a.currency.localeCompare(b.currency);
++  });
++}
++
++function assertValidPaidOrder(order) {
++  if (
++    !/^[A-Z]{3}$/.test(order.currency) ||
++    !Number.isInteger(order.amountCents) ||
++    order.amountCents <= 0 ||
++    !isValidOrderDate(order.createdAt)
++  ) {
++    throw new TypeError('invalid paid order data');
++  }
++}
++
++function isValidOrderDate(value) {
++  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
++    return false;
++  }
++
++  const date = new Date(`${value}T00:00:00.000Z`);
++  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
++}
++
++function minDate(left, right) {
++  return left <= right ? left : right;
++}
++
++function maxDate(left, right) {
++  return left >= right ? left : right;
+ }
+diff --git a/test/summarizeOrders.test.mjs b/test/summarizeOrders.test.mjs
+index ccfc01de51a79c280e29c3be3234c8cb0787febf..35c618fdca68976bf227dfbd7a0b6252c29a6af9
+--- a/test/summarizeOrders.test.mjs
++++ b/test/summarizeOrders.test.mjs
+@@ -15,6 +15,22 @@
+   ]);
+ });
+ 
++test('sorts by total cents descending and currency on ties', () => {
++  const orders = [
++    { status: 'paid', currency: 'JPY', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'USD', amountCents: 800, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'CAD', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'AUD', amountCents: 800, createdAt: '2026-06-01' },
++  ];
++
++  assert.deepEqual(summarizeOrders(orders).map((summary) => summary.currency), [
++    'AUD',
++    'USD',
++    'CAD',
++    'JPY',
++  ]);
++});
++
+ test('rejects malformed paid order data', () => {
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'usd', amountCents: 1, createdAt: '2026-06-01' }]), TypeError);
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'USD', amountCents: 1.5, createdAt: '2026-06-01' }]), TypeError);
+
+codex
+The changelog directory did not exist, so I created it inside the sandbox. I’m keeping the entry short: route, assumptions, decision rationale, and the single run-to-prove command.
+apply patch
+patch: completed
+/tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness/docs/changelog/changelog-2026-06-06.md
+diff --git a/docs/changelog/changelog-2026-06-06.md b/docs/changelog/changelog-2026-06-06.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e8aaff00234071c93a307afb4615714025fafe97
+--- /dev/null
++++ b/docs/changelog/changelog-2026-06-06.md
+@@ -0,0 +1,9 @@
++# Changelog 2026-06-06
++
++## summarizeOrders
++
++- Supergoal route: LEGACY, because this adds behavior to an existing function.
++- Human Feedback: task statement is treated as implementation approval for this noninteractive eval.
++- Assumptions: non-array input and non-object order entries are invalid order data; non-paid object entries are ignored before paid-field validation.
++- Decision: validate paid order currency, amount, and calendar date before grouping so summaries cannot include malformed paid data.
++- run-to-prove: `npm test`.
+diff --git a/src/summarizeOrders.mjs b/src/summarizeOrders.mjs
+index 3a9841670198054c910162b707e0f43801a41ff9..a3b793daa63f68e96a0a2347b36773597e3f9002
+--- a/src/summarizeOrders.mjs
++++ b/src/summarizeOrders.mjs
+@@ -1,3 +1,69 @@
+ export function summarizeOrders(orders) {
+-  return [];
++  if (!Array.isArray(orders)) {
++    throw new TypeError('orders must be an array');
++  }
++
++  const summaries = new Map();
++
++  for (const order of orders) {
++    if (order === null || typeof order !== 'object') {
++      throw new TypeError('order must be an object');
++    }
++
++    if (order.status !== 'paid') {
++      continue;
++    }
++
++    assertValidPaidOrder(order);
++
++    const existing = summaries.get(order.currency) ?? {
++      currency: order.currency,
++      count: 0,
++      totalCents: 0,
++      firstOrderDate: order.createdAt,
++      lastOrderDate: order.createdAt,
++    };
++
++    existing.count += 1;
++    existing.totalCents += order.amountCents;
++    existing.firstOrderDate = minDate(existing.firstOrderDate, order.createdAt);
++    existing.lastOrderDate = maxDate(existing.lastOrderDate, order.createdAt);
++    summaries.set(order.currency, existing);
++  }
++
++  return [...summaries.values()].sort((a, b) => {
++    if (a.totalCents !== b.totalCents) {
++      return b.totalCents - a.totalCents;
++    }
++
++    return a.currency.localeCompare(b.currency);
++  });
++}
++
++function assertValidPaidOrder(order) {
++  if (
++    !/^[A-Z]{3}$/.test(order.currency) ||
++    !Number.isInteger(order.amountCents) ||
++    order.amountCents <= 0 ||
++    !isValidOrderDate(order.createdAt)
++  ) {
++    throw new TypeError('invalid paid order data');
++  }
++}
++
++function isValidOrderDate(value) {
++  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
++    return false;
++  }
++
++  const date = new Date(`${value}T00:00:00.000Z`);
++  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
++}
++
++function minDate(left, right) {
++  return left <= right ? left : right;
++}
++
++function maxDate(left, right) {
++  return left >= right ? left : right;
+ }
+diff --git a/test/summarizeOrders.test.mjs b/test/summarizeOrders.test.mjs
+index ccfc01de51a79c280e29c3be3234c8cb0787febf..35c618fdca68976bf227dfbd7a0b6252c29a6af9
+--- a/test/summarizeOrders.test.mjs
++++ b/test/summarizeOrders.test.mjs
+@@ -15,6 +15,22 @@
+   ]);
+ });
+ 
++test('sorts by total cents descending and currency on ties', () => {
++  const orders = [
++    { status: 'paid', currency: 'JPY', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'USD', amountCents: 800, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'CAD', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'AUD', amountCents: 800, createdAt: '2026-06-01' },
++  ];
++
++  assert.deepEqual(summarizeOrders(orders).map((summary) => summary.currency), [
++    'AUD',
++    'USD',
++    'CAD',
++    'JPY',
++  ]);
++});
++
+ test('rejects malformed paid order data', () => {
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'usd', amountCents: 1, createdAt: '2026-06-01' }]), TypeError);
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'USD', amountCents: 1.5, createdAt: '2026-06-01' }]), TypeError);
+
+diff --git a/docs/changelog/changelog-2026-06-06.md b/docs/changelog/changelog-2026-06-06.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e8aaff00234071c93a307afb4615714025fafe97
+--- /dev/null
++++ b/docs/changelog/changelog-2026-06-06.md
+@@ -0,0 +1,9 @@
++# Changelog 2026-06-06
++
++## summarizeOrders
++
++- Supergoal route: LEGACY, because this adds behavior to an existing function.
++- Human Feedback: task statement is treated as implementation approval for this noninteractive eval.
++- Assumptions: non-array input and non-object order entries are invalid order data; non-paid object entries are ignored before paid-field validation.
++- Decision: validate paid order currency, amount, and calendar date before grouping so summaries cannot include malformed paid data.
++- run-to-prove: `npm test`.
+diff --git a/src/summarizeOrders.mjs b/src/summarizeOrders.mjs
+index 3a9841670198054c910162b707e0f43801a41ff9..a3b793daa63f68e96a0a2347b36773597e3f9002
+--- a/src/summarizeOrders.mjs
++++ b/src/summarizeOrders.mjs
+@@ -1,3 +1,69 @@
+ export function summarizeOrders(orders) {
+-  return [];
++  if (!Array.isArray(orders)) {
++    throw new TypeError('orders must be an array');
++  }
++
++  const summaries = new Map();
++
++  for (const order of orders) {
++    if (order === null || typeof order !== 'object') {
++      throw new TypeError('order must be an object');
++    }
++
++    if (order.status !== 'paid') {
++      continue;
++    }
++
++    assertValidPaidOrder(order);
++
++    const existing = summaries.get(order.currency) ?? {
++      currency: order.currency,
++      count: 0,
++      totalCents: 0,
++      firstOrderDate: order.createdAt,
++      lastOrderDate: order.createdAt,
++    };
++
++    existing.count += 1;
++    existing.totalCents += order.amountCents;
++    existing.firstOrderDate = minDate(existing.firstOrderDate, order.createdAt);
++    existing.lastOrderDate = maxDate(existing.lastOrderDate, order.createdAt);
++    summaries.set(order.currency, existing);
++  }
++
++  return [...summaries.values()].sort((a, b) => {
++    if (a.totalCents !== b.totalCents) {
++      return b.totalCents - a.totalCents;
++    }
++
++    return a.currency.localeCompare(b.currency);
++  });
++}
++
++function assertValidPaidOrder(order) {
++  if (
++    !/^[A-Z]{3}$/.test(order.currency) ||
++    !Number.isInteger(order.amountCents) ||
++    order.amountCents <= 0 ||
++    !isValidOrderDate(order.createdAt)
++  ) {
++    throw new TypeError('invalid paid order data');
++  }
++}
++
++function isValidOrderDate(value) {
++  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
++    return false;
++  }
++
++  const date = new Date(`${value}T00:00:00.000Z`);
++  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
++}
++
++function minDate(left, right) {
++  return left <= right ? left : right;
++}
++
++function maxDate(left, right) {
++  return left >= right ? left : right;
+ }
+diff --git a/test/summarizeOrders.test.mjs b/test/summarizeOrders.test.mjs
+index ccfc01de51a79c280e29c3be3234c8cb0787febf..35c618fdca68976bf227dfbd7a0b6252c29a6af9
+--- a/test/summarizeOrders.test.mjs
++++ b/test/summarizeOrders.test.mjs
+@@ -15,6 +15,22 @@
+   ]);
+ });
+ 
++test('sorts by total cents descending and currency on ties', () => {
++  const orders = [
++    { status: 'paid', currency: 'JPY', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'USD', amountCents: 800, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'CAD', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'AUD', amountCents: 800, createdAt: '2026-06-01' },
++  ];
++
++  assert.deepEqual(summarizeOrders(orders).map((summary) => summary.currency), [
++    'AUD',
++    'USD',
++    'CAD',
++    'JPY',
++  ]);
++});
++
+ test('rejects malformed paid order data', () => {
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'usd', amountCents: 1, createdAt: '2026-06-01' }]), TypeError);
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'USD', amountCents: 1.5, createdAt: '2026-06-01' }]), TypeError);
+
+  ✓ Inspect repo structure and locate summarizeOrders contract/tests
+  ✓ Add failing behavior coverage if missing
+  ✓ Implement minimal summarizeOrders fix
+  ✓ Record assumptions/reasoning in changelog
+  → Run relevant checks and report evidence
+diff --git a/docs/changelog/changelog-2026-06-06.md b/docs/changelog/changelog-2026-06-06.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e8aaff00234071c93a307afb4615714025fafe97
+--- /dev/null
++++ b/docs/changelog/changelog-2026-06-06.md
+@@ -0,0 +1,9 @@
++# Changelog 2026-06-06
++
++## summarizeOrders
++
++- Supergoal route: LEGACY, because this adds behavior to an existing function.
++- Human Feedback: task statement is treated as implementation approval for this noninteractive eval.
++- Assumptions: non-array input and non-object order entries are invalid order data; non-paid object entries are ignored before paid-field validation.
++- Decision: validate paid order currency, amount, and calendar date before grouping so summaries cannot include malformed paid data.
++- run-to-prove: `npm test`.
+diff --git a/src/summarizeOrders.mjs b/src/summarizeOrders.mjs
+index 3a9841670198054c910162b707e0f43801a41ff9..a3b793daa63f68e96a0a2347b36773597e3f9002
+--- a/src/summarizeOrders.mjs
++++ b/src/summarizeOrders.mjs
+@@ -1,3 +1,69 @@
+ export function summarizeOrders(orders) {
+-  return [];
++  if (!Array.isArray(orders)) {
++    throw new TypeError('orders must be an array');
++  }
++
++  const summaries = new Map();
++
++  for (const order of orders) {
++    if (order === null || typeof order !== 'object') {
++      throw new TypeError('order must be an object');
++    }
++
++    if (order.status !== 'paid') {
++      continue;
++    }
++
++    assertValidPaidOrder(order);
++
++    const existing = summaries.get(order.currency) ?? {
++      currency: order.currency,
++      count: 0,
++      totalCents: 0,
++      firstOrderDate: order.createdAt,
++      lastOrderDate: order.createdAt,
++    };
++
++    existing.count += 1;
++    existing.totalCents += order.amountCents;
++    existing.firstOrderDate = minDate(existing.firstOrderDate, order.createdAt);
++    existing.lastOrderDate = maxDate(existing.lastOrderDate, order.createdAt);
++    summaries.set(order.currency, existing);
++  }
++
++  return [...summaries.values()].sort((a, b) => {
++    if (a.totalCents !== b.totalCents) {
++      return b.totalCents - a.totalCents;
++    }
++
++    return a.currency.localeCompare(b.currency);
++  });
++}
++
++function assertValidPaidOrder(order) {
++  if (
++    !/^[A-Z]{3}$/.test(order.currency) ||
++    !Number.isInteger(order.amountCents) ||
++    order.amountCents <= 0 ||
++    !isValidOrderDate(order.createdAt)
++  ) {
++    throw new TypeError('invalid paid order data');
++  }
++}
++
++function isValidOrderDate(value) {
++  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
++    return false;
++  }
++
++  const date = new Date(`${value}T00:00:00.000Z`);
++  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
++}
++
++function minDate(left, right) {
++  return left <= right ? left : right;
++}
++
++function maxDate(left, right) {
++  return left >= right ? left : right;
+ }
+diff --git a/test/summarizeOrders.test.mjs b/test/summarizeOrders.test.mjs
+index ccfc01de51a79c280e29c3be3234c8cb0787febf..35c618fdca68976bf227dfbd7a0b6252c29a6af9
+--- a/test/summarizeOrders.test.mjs
++++ b/test/summarizeOrders.test.mjs
+@@ -15,6 +15,22 @@
+   ]);
+ });
+ 
++test('sorts by total cents descending and currency on ties', () => {
++  const orders = [
++    { status: 'paid', currency: 'JPY', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'USD', amountCents: 800, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'CAD', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'AUD', amountCents: 800, createdAt: '2026-06-01' },
++  ];
++
++  assert.deepEqual(summarizeOrders(orders).map((summary) => summary.currency), [
++    'AUD',
++    'USD',
++    'CAD',
++    'JPY',
++  ]);
++});
++
+ test('rejects malformed paid order data', () => {
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'usd', amountCents: 1, createdAt: '2026-06-01' }]), TypeError);
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'USD', amountCents: 1.5, createdAt: '2026-06-01' }]), TypeError);
+
+codex
+Implementation, edge test, and changelog are done. I’m running the package test command now as the verification gate.
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc 'npm test' in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+diff --git a/docs/changelog/changelog-2026-06-06.md b/docs/changelog/changelog-2026-06-06.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e8aaff00234071c93a307afb4615714025fafe97
+--- /dev/null
++++ b/docs/changelog/changelog-2026-06-06.md
+@@ -0,0 +1,9 @@
++# Changelog 2026-06-06
++
++## summarizeOrders
++
++- Supergoal route: LEGACY, because this adds behavior to an existing function.
++- Human Feedback: task statement is treated as implementation approval for this noninteractive eval.
++- Assumptions: non-array input and non-object order entries are invalid order data; non-paid object entries are ignored before paid-field validation.
++- Decision: validate paid order currency, amount, and calendar date before grouping so summaries cannot include malformed paid data.
++- run-to-prove: `npm test`.
+diff --git a/src/summarizeOrders.mjs b/src/summarizeOrders.mjs
+index 3a9841670198054c910162b707e0f43801a41ff9..a3b793daa63f68e96a0a2347b36773597e3f9002
+--- a/src/summarizeOrders.mjs
++++ b/src/summarizeOrders.mjs
+@@ -1,3 +1,69 @@
+ export function summarizeOrders(orders) {
+-  return [];
++  if (!Array.isArray(orders)) {
++    throw new TypeError('orders must be an array');
++  }
++
++  const summaries = new Map();
++
++  for (const order of orders) {
++    if (order === null || typeof order !== 'object') {
++      throw new TypeError('order must be an object');
++    }
++
++    if (order.status !== 'paid') {
++      continue;
++    }
++
++    assertValidPaidOrder(order);
++
++    const existing = summaries.get(order.currency) ?? {
++      currency: order.currency,
++      count: 0,
++      totalCents: 0,
++      firstOrderDate: order.createdAt,
++      lastOrderDate: order.createdAt,
++    };
++
++    existing.count += 1;
++    existing.totalCents += order.amountCents;
++    existing.firstOrderDate = minDate(existing.firstOrderDate, order.createdAt);
++    existing.lastOrderDate = maxDate(existing.lastOrderDate, order.createdAt);
++    summaries.set(order.currency, existing);
++  }
++
++  return [...summaries.values()].sort((a, b) => {
++    if (a.totalCents !== b.totalCents) {
++      return b.totalCents - a.totalCents;
++    }
++
++    return a.currency.localeCompare(b.currency);
++  });
++}
++
++function assertValidPaidOrder(order) {
++  if (
++    !/^[A-Z]{3}$/.test(order.currency) ||
++    !Number.isInteger(order.amountCents) ||
++    order.amountCents <= 0 ||
++    !isValidOrderDate(order.createdAt)
++  ) {
++    throw new TypeError('invalid paid order data');
++  }
++}
++
++function isValidOrderDate(value) {
++  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
++    return false;
++  }
++
++  const date = new Date(`${value}T00:00:00.000Z`);
++  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
++}
++
++function minDate(left, right) {
++  return left <= right ? left : right;
++}
++
++function maxDate(left, right) {
++  return left >= right ? left : right;
+ }
+diff --git a/test/summarizeOrders.test.mjs b/test/summarizeOrders.test.mjs
+index ccfc01de51a79c280e29c3be3234c8cb0787febf..35c618fdca68976bf227dfbd7a0b6252c29a6af9
+--- a/test/summarizeOrders.test.mjs
++++ b/test/summarizeOrders.test.mjs
+@@ -15,6 +15,22 @@
+   ]);
+ });
+ 
++test('sorts by total cents descending and currency on ties', () => {
++  const orders = [
++    { status: 'paid', currency: 'JPY', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'USD', amountCents: 800, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'CAD', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'AUD', amountCents: 800, createdAt: '2026-06-01' },
++  ];
++
++  assert.deepEqual(summarizeOrders(orders).map((summary) => summary.currency), [
++    'AUD',
++    'USD',
++    'CAD',
++    'JPY',
++  ]);
++});
++
+ test('rejects malformed paid order data', () => {
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'usd', amountCents: 1, createdAt: '2026-06-01' }]), TypeError);
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'USD', amountCents: 1.5, createdAt: '2026-06-01' }]), TypeError);
+
+ succeeded in 325ms:
+
+> test
+> node --test
+
+TAP version 13
+# Subtest: groups paid orders by currency
+ok 1 - groups paid orders by currency
+  ---
+  duration_ms: 2.1875
+  ...
+# Subtest: sorts by total cents descending and currency on ties
+ok 2 - sorts by total cents descending and currency on ties
+  ---
+  duration_ms: 9.307584
+  ...
+# Subtest: rejects malformed paid order data
+ok 3 - rejects malformed paid order data
+  ---
+  duration_ms: 0.646042
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 3
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 77.606667
+
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc 'nl -ba src/summarizeOrders.mjs' in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+exec
+/bin/zsh -lc 'nl -ba docs/changelog/changelog-2026-06-06.md' in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+exec
+/bin/zsh -lc 'wc -l src/summarizeOrders.mjs test/summarizeOrders.test.mjs docs/changelog/changelog-2026-06-06.md' in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+ succeeded in 0ms:
+     1	export function summarizeOrders(orders) {
+     2	  if (!Array.isArray(orders)) {
+     3	    throw new TypeError('orders must be an array');
+     4	  }
+     5	
+     6	  const summaries = new Map();
+     7	
+     8	  for (const order of orders) {
+     9	    if (order === null || typeof order !== 'object') {
+    10	      throw new TypeError('order must be an object');
+    11	    }
+    12	
+    13	    if (order.status !== 'paid') {
+    14	      continue;
+    15	    }
+    16	
+    17	    assertValidPaidOrder(order);
+    18	
+    19	    const existing = summaries.get(order.currency) ?? {
+    20	      currency: order.currency,
+    21	      count: 0,
+    22	      totalCents: 0,
+    23	      firstOrderDate: order.createdAt,
+    24	      lastOrderDate: order.createdAt,
+    25	    };
+    26	
+    27	    existing.count += 1;
+    28	    existing.totalCents += order.amountCents;
+    29	    existing.firstOrderDate = minDate(existing.firstOrderDate, order.createdAt);
+    30	    existing.lastOrderDate = maxDate(existing.lastOrderDate, order.createdAt);
+    31	    summaries.set(order.currency, existing);
+    32	  }
+    33	
+    34	  return [...summaries.values()].sort((a, b) => {
+    35	    if (a.totalCents !== b.totalCents) {
+    36	      return b.totalCents - a.totalCents;
+    37	    }
+    38	
+    39	    return a.currency.localeCompare(b.currency);
+    40	  });
+    41	}
+    42	
+    43	function assertValidPaidOrder(order) {
+    44	  if (
+    45	    !/^[A-Z]{3}$/.test(order.currency) ||
+    46	    !Number.isInteger(order.amountCents) ||
+    47	    order.amountCents <= 0 ||
+    48	    !isValidOrderDate(order.createdAt)
+    49	  ) {
+    50	    throw new TypeError('invalid paid order data');
+    51	  }
+    52	}
+    53	
+    54	function isValidOrderDate(value) {
+    55	  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    56	    return false;
+    57	  }
+    58	
+    59	  const date = new Date(`${value}T00:00:00.000Z`);
+    60	  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
+    61	}
+    62	
+    63	function minDate(left, right) {
+    64	  return left <= right ? left : right;
+    65	}
+    66	
+    67	function maxDate(left, right) {
+    68	  return left >= right ? left : right;
+    69	}
+
+ succeeded in 0ms:
+      69 src/summarizeOrders.mjs
+      38 test/summarizeOrders.test.mjs
+       9 docs/changelog/changelog-2026-06-06.md
+     116 total
+
+ succeeded in 0ms:
+     1	# Changelog 2026-06-06
+     2	
+     3	## summarizeOrders
+     4	
+     5	- Supergoal route: LEGACY, because this adds behavior to an existing function.
+     6	- Human Feedback: task statement is treated as implementation approval for this noninteractive eval.
+     7	- Assumptions: non-array input and non-object order entries are invalid order data; non-paid object entries are ignored before paid-field validation.
+     8	- Decision: validate paid order currency, amount, and calendar date before grouping so summaries cannot include malformed paid data.
+     9	- run-to-prove: `npm test`.
+
+diff --git a/docs/changelog/changelog-2026-06-06.md b/docs/changelog/changelog-2026-06-06.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e8aaff00234071c93a307afb4615714025fafe97
+--- /dev/null
++++ b/docs/changelog/changelog-2026-06-06.md
+@@ -0,0 +1,9 @@
++# Changelog 2026-06-06
++
++## summarizeOrders
++
++- Supergoal route: LEGACY, because this adds behavior to an existing function.
++- Human Feedback: task statement is treated as implementation approval for this noninteractive eval.
++- Assumptions: non-array input and non-object order entries are invalid order data; non-paid object entries are ignored before paid-field validation.
++- Decision: validate paid order currency, amount, and calendar date before grouping so summaries cannot include malformed paid data.
++- run-to-prove: `npm test`.
+diff --git a/src/summarizeOrders.mjs b/src/summarizeOrders.mjs
+index 3a9841670198054c910162b707e0f43801a41ff9..a3b793daa63f68e96a0a2347b36773597e3f9002
+--- a/src/summarizeOrders.mjs
++++ b/src/summarizeOrders.mjs
+@@ -1,3 +1,69 @@
+ export function summarizeOrders(orders) {
+-  return [];
++  if (!Array.isArray(orders)) {
++    throw new TypeError('orders must be an array');
++  }
++
++  const summaries = new Map();
++
++  for (const order of orders) {
++    if (order === null || typeof order !== 'object') {
++      throw new TypeError('order must be an object');
++    }
++
++    if (order.status !== 'paid') {
++      continue;
++    }
++
++    assertValidPaidOrder(order);
++
++    const existing = summaries.get(order.currency) ?? {
++      currency: order.currency,
++      count: 0,
++      totalCents: 0,
++      firstOrderDate: order.createdAt,
++      lastOrderDate: order.createdAt,
++    };
++
++    existing.count += 1;
++    existing.totalCents += order.amountCents;
++    existing.firstOrderDate = minDate(existing.firstOrderDate, order.createdAt);
++    existing.lastOrderDate = maxDate(existing.lastOrderDate, order.createdAt);
++    summaries.set(order.currency, existing);
++  }
++
++  return [...summaries.values()].sort((a, b) => {
++    if (a.totalCents !== b.totalCents) {
++      return b.totalCents - a.totalCents;
++    }
++
++    return a.currency.localeCompare(b.currency);
++  });
++}
++
++function assertValidPaidOrder(order) {
++  if (
++    !/^[A-Z]{3}$/.test(order.currency) ||
++    !Number.isInteger(order.amountCents) ||
++    order.amountCents <= 0 ||
++    !isValidOrderDate(order.createdAt)
++  ) {
++    throw new TypeError('invalid paid order data');
++  }
++}
++
++function isValidOrderDate(value) {
++  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
++    return false;
++  }
++
++  const date = new Date(`${value}T00:00:00.000Z`);
++  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
++}
++
++function minDate(left, right) {
++  return left <= right ? left : right;
++}
++
++function maxDate(left, right) {
++  return left >= right ? left : right;
+ }
+diff --git a/test/summarizeOrders.test.mjs b/test/summarizeOrders.test.mjs
+index ccfc01de51a79c280e29c3be3234c8cb0787febf..35c618fdca68976bf227dfbd7a0b6252c29a6af9
+--- a/test/summarizeOrders.test.mjs
++++ b/test/summarizeOrders.test.mjs
+@@ -15,6 +15,22 @@
+   ]);
+ });
+ 
++test('sorts by total cents descending and currency on ties', () => {
++  const orders = [
++    { status: 'paid', currency: 'JPY', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'USD', amountCents: 800, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'CAD', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'AUD', amountCents: 800, createdAt: '2026-06-01' },
++  ];
++
++  assert.deepEqual(summarizeOrders(orders).map((summary) => summary.currency), [
++    'AUD',
++    'USD',
++    'CAD',
++    'JPY',
++  ]);
++});
++
+ test('rejects malformed paid order data', () => {
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'usd', amountCents: 1, createdAt: '2026-06-01' }]), TypeError);
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'USD', amountCents: 1.5, createdAt: '2026-06-01' }]), TypeError);
+
+codex
+The test gate is green: 3 tests pass, including the new sort/tie coverage. I’m doing a final sanity pass for touched files and then I’ll close with the exact verification evidence.
+  ✓ Inspect repo structure and locate summarizeOrders contract/tests
+  ✓ Add failing behavior coverage if missing
+  ✓ Implement minimal summarizeOrders fix
+  ✓ Record assumptions/reasoning in changelog
+  ✓ Run relevant checks and report evidence
+diff --git a/docs/changelog/changelog-2026-06-06.md b/docs/changelog/changelog-2026-06-06.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e8aaff00234071c93a307afb4615714025fafe97
+--- /dev/null
++++ b/docs/changelog/changelog-2026-06-06.md
+@@ -0,0 +1,9 @@
++# Changelog 2026-06-06
++
++## summarizeOrders
++
++- Supergoal route: LEGACY, because this adds behavior to an existing function.
++- Human Feedback: task statement is treated as implementation approval for this noninteractive eval.
++- Assumptions: non-array input and non-object order entries are invalid order data; non-paid object entries are ignored before paid-field validation.
++- Decision: validate paid order currency, amount, and calendar date before grouping so summaries cannot include malformed paid data.
++- run-to-prove: `npm test`.
+diff --git a/src/summarizeOrders.mjs b/src/summarizeOrders.mjs
+index 3a9841670198054c910162b707e0f43801a41ff9..a3b793daa63f68e96a0a2347b36773597e3f9002
+--- a/src/summarizeOrders.mjs
++++ b/src/summarizeOrders.mjs
+@@ -1,3 +1,69 @@
+ export function summarizeOrders(orders) {
+-  return [];
++  if (!Array.isArray(orders)) {
++    throw new TypeError('orders must be an array');
++  }
++
++  const summaries = new Map();
++
++  for (const order of orders) {
++    if (order === null || typeof order !== 'object') {
++      throw new TypeError('order must be an object');
++    }
++
++    if (order.status !== 'paid') {
++      continue;
++    }
++
++    assertValidPaidOrder(order);
++
++    const existing = summaries.get(order.currency) ?? {
++      currency: order.currency,
++      count: 0,
++      totalCents: 0,
++      firstOrderDate: order.createdAt,
++      lastOrderDate: order.createdAt,
++    };
++
++    existing.count += 1;
++    existing.totalCents += order.amountCents;
++    existing.firstOrderDate = minDate(existing.firstOrderDate, order.createdAt);
++    existing.lastOrderDate = maxDate(existing.lastOrderDate, order.createdAt);
++    summaries.set(order.currency, existing);
++  }
++
++  return [...summaries.values()].sort((a, b) => {
++    if (a.totalCents !== b.totalCents) {
++      return b.totalCents - a.totalCents;
++    }
++
++    return a.currency.localeCompare(b.currency);
++  });
++}
++
++function assertValidPaidOrder(order) {
++  if (
++    !/^[A-Z]{3}$/.test(order.currency) ||
++    !Number.isInteger(order.amountCents) ||
++    order.amountCents <= 0 ||
++    !isValidOrderDate(order.createdAt)
++  ) {
++    throw new TypeError('invalid paid order data');
++  }
++}
++
++function isValidOrderDate(value) {
++  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
++    return false;
++  }
++
++  const date = new Date(`${value}T00:00:00.000Z`);
++  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
++}
++
++function minDate(left, right) {
++  return left <= right ? left : right;
++}
++
++function maxDate(left, right) {
++  return left >= right ? left : right;
+ }
+diff --git a/test/summarizeOrders.test.mjs b/test/summarizeOrders.test.mjs
+index ccfc01de51a79c280e29c3be3234c8cb0787febf..35c618fdca68976bf227dfbd7a0b6252c29a6af9
+--- a/test/summarizeOrders.test.mjs
++++ b/test/summarizeOrders.test.mjs
+@@ -15,6 +15,22 @@
+   ]);
+ });
+ 
++test('sorts by total cents descending and currency on ties', () => {
++  const orders = [
++    { status: 'paid', currency: 'JPY', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'USD', amountCents: 800, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'CAD', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'AUD', amountCents: 800, createdAt: '2026-06-01' },
++  ];
++
++  assert.deepEqual(summarizeOrders(orders).map((summary) => summary.currency), [
++    'AUD',
++    'USD',
++    'CAD',
++    'JPY',
++  ]);
++});
++
+ test('rejects malformed paid order data', () => {
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'usd', amountCents: 1, createdAt: '2026-06-01' }]), TypeError);
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'USD', amountCents: 1.5, createdAt: '2026-06-01' }]), TypeError);
+
+codex
+One small hardening point before final: `RegExp.test` coerces non-string values, so I’m making currency validation explicitly require a string. That keeps invalid data from passing through object/string coercion.
+apply patch
+patch: completed
+/tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness/src/summarizeOrders.mjs
+diff --git a/docs/changelog/changelog-2026-06-06.md b/docs/changelog/changelog-2026-06-06.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e8aaff00234071c93a307afb4615714025fafe97
+--- /dev/null
++++ b/docs/changelog/changelog-2026-06-06.md
+@@ -0,0 +1,9 @@
++# Changelog 2026-06-06
++
++## summarizeOrders
++
++- Supergoal route: LEGACY, because this adds behavior to an existing function.
++- Human Feedback: task statement is treated as implementation approval for this noninteractive eval.
++- Assumptions: non-array input and non-object order entries are invalid order data; non-paid object entries are ignored before paid-field validation.
++- Decision: validate paid order currency, amount, and calendar date before grouping so summaries cannot include malformed paid data.
++- run-to-prove: `npm test`.
+diff --git a/src/summarizeOrders.mjs b/src/summarizeOrders.mjs
+index 3a9841670198054c910162b707e0f43801a41ff9..565306f374f5e32b9781ea2ad14426f7f62cc439
+--- a/src/summarizeOrders.mjs
++++ b/src/summarizeOrders.mjs
+@@ -1,3 +1,70 @@
+ export function summarizeOrders(orders) {
+-  return [];
++  if (!Array.isArray(orders)) {
++    throw new TypeError('orders must be an array');
++  }
++
++  const summaries = new Map();
++
++  for (const order of orders) {
++    if (order === null || typeof order !== 'object') {
++      throw new TypeError('order must be an object');
++    }
++
++    if (order.status !== 'paid') {
++      continue;
++    }
++
++    assertValidPaidOrder(order);
++
++    const existing = summaries.get(order.currency) ?? {
++      currency: order.currency,
++      count: 0,
++      totalCents: 0,
++      firstOrderDate: order.createdAt,
++      lastOrderDate: order.createdAt,
++    };
++
++    existing.count += 1;
++    existing.totalCents += order.amountCents;
++    existing.firstOrderDate = minDate(existing.firstOrderDate, order.createdAt);
++    existing.lastOrderDate = maxDate(existing.lastOrderDate, order.createdAt);
++    summaries.set(order.currency, existing);
++  }
++
++  return [...summaries.values()].sort((a, b) => {
++    if (a.totalCents !== b.totalCents) {
++      return b.totalCents - a.totalCents;
++    }
++
++    return a.currency.localeCompare(b.currency);
++  });
++}
++
++function assertValidPaidOrder(order) {
++  if (
++    typeof order.currency !== 'string' ||
++    !/^[A-Z]{3}$/.test(order.currency) ||
++    !Number.isInteger(order.amountCents) ||
++    order.amountCents <= 0 ||
++    !isValidOrderDate(order.createdAt)
++  ) {
++    throw new TypeError('invalid paid order data');
++  }
++}
++
++function isValidOrderDate(value) {
++  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
++    return false;
++  }
++
++  const date = new Date(`${value}T00:00:00.000Z`);
++  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
++}
++
++function minDate(left, right) {
++  return left <= right ? left : right;
++}
++
++function maxDate(left, right) {
++  return left >= right ? left : right;
+ }
+diff --git a/test/summarizeOrders.test.mjs b/test/summarizeOrders.test.mjs
+index ccfc01de51a79c280e29c3be3234c8cb0787febf..35c618fdca68976bf227dfbd7a0b6252c29a6af9
+--- a/test/summarizeOrders.test.mjs
++++ b/test/summarizeOrders.test.mjs
+@@ -15,6 +15,22 @@
+   ]);
+ });
+ 
++test('sorts by total cents descending and currency on ties', () => {
++  const orders = [
++    { status: 'paid', currency: 'JPY', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'USD', amountCents: 800, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'CAD', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'AUD', amountCents: 800, createdAt: '2026-06-01' },
++  ];
++
++  assert.deepEqual(summarizeOrders(orders).map((summary) => summary.currency), [
++    'AUD',
++    'USD',
++    'CAD',
++    'JPY',
++  ]);
++});
++
+ test('rejects malformed paid order data', () => {
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'usd', amountCents: 1, createdAt: '2026-06-01' }]), TypeError);
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'USD', amountCents: 1.5, createdAt: '2026-06-01' }]), TypeError);
+
+diff --git a/docs/changelog/changelog-2026-06-06.md b/docs/changelog/changelog-2026-06-06.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e8aaff00234071c93a307afb4615714025fafe97
+--- /dev/null
++++ b/docs/changelog/changelog-2026-06-06.md
+@@ -0,0 +1,9 @@
++# Changelog 2026-06-06
++
++## summarizeOrders
++
++- Supergoal route: LEGACY, because this adds behavior to an existing function.
++- Human Feedback: task statement is treated as implementation approval for this noninteractive eval.
++- Assumptions: non-array input and non-object order entries are invalid order data; non-paid object entries are ignored before paid-field validation.
++- Decision: validate paid order currency, amount, and calendar date before grouping so summaries cannot include malformed paid data.
++- run-to-prove: `npm test`.
+diff --git a/src/summarizeOrders.mjs b/src/summarizeOrders.mjs
+index 3a9841670198054c910162b707e0f43801a41ff9..565306f374f5e32b9781ea2ad14426f7f62cc439
+--- a/src/summarizeOrders.mjs
++++ b/src/summarizeOrders.mjs
+@@ -1,3 +1,70 @@
+ export function summarizeOrders(orders) {
+-  return [];
++  if (!Array.isArray(orders)) {
++    throw new TypeError('orders must be an array');
++  }
++
++  const summaries = new Map();
++
++  for (const order of orders) {
++    if (order === null || typeof order !== 'object') {
++      throw new TypeError('order must be an object');
++    }
++
++    if (order.status !== 'paid') {
++      continue;
++    }
++
++    assertValidPaidOrder(order);
++
++    const existing = summaries.get(order.currency) ?? {
++      currency: order.currency,
++      count: 0,
++      totalCents: 0,
++      firstOrderDate: order.createdAt,
++      lastOrderDate: order.createdAt,
++    };
++
++    existing.count += 1;
++    existing.totalCents += order.amountCents;
++    existing.firstOrderDate = minDate(existing.firstOrderDate, order.createdAt);
++    existing.lastOrderDate = maxDate(existing.lastOrderDate, order.createdAt);
++    summaries.set(order.currency, existing);
++  }
++
++  return [...summaries.values()].sort((a, b) => {
++    if (a.totalCents !== b.totalCents) {
++      return b.totalCents - a.totalCents;
++    }
++
++    return a.currency.localeCompare(b.currency);
++  });
++}
++
++function assertValidPaidOrder(order) {
++  if (
++    typeof order.currency !== 'string' ||
++    !/^[A-Z]{3}$/.test(order.currency) ||
++    !Number.isInteger(order.amountCents) ||
++    order.amountCents <= 0 ||
++    !isValidOrderDate(order.createdAt)
++  ) {
++    throw new TypeError('invalid paid order data');
++  }
++}
++
++function isValidOrderDate(value) {
++  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
++    return false;
++  }
++
++  const date = new Date(`${value}T00:00:00.000Z`);
++  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
++}
++
++function minDate(left, right) {
++  return left <= right ? left : right;
++}
++
++function maxDate(left, right) {
++  return left >= right ? left : right;
+ }
+diff --git a/test/summarizeOrders.test.mjs b/test/summarizeOrders.test.mjs
+index ccfc01de51a79c280e29c3be3234c8cb0787febf..35c618fdca68976bf227dfbd7a0b6252c29a6af9
+--- a/test/summarizeOrders.test.mjs
++++ b/test/summarizeOrders.test.mjs
+@@ -15,6 +15,22 @@
+   ]);
+ });
+ 
++test('sorts by total cents descending and currency on ties', () => {
++  const orders = [
++    { status: 'paid', currency: 'JPY', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'USD', amountCents: 800, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'CAD', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'AUD', amountCents: 800, createdAt: '2026-06-01' },
++  ];
++
++  assert.deepEqual(summarizeOrders(orders).map((summary) => summary.currency), [
++    'AUD',
++    'USD',
++    'CAD',
++    'JPY',
++  ]);
++});
++
+ test('rejects malformed paid order data', () => {
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'usd', amountCents: 1, createdAt: '2026-06-01' }]), TypeError);
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'USD', amountCents: 1.5, createdAt: '2026-06-01' }]), TypeError);
+
+codex
+The validation hardening is applied. I’m rerunning `npm test` after that final source change.
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc 'npm test' in /tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness
+diff --git a/docs/changelog/changelog-2026-06-06.md b/docs/changelog/changelog-2026-06-06.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e8aaff00234071c93a307afb4615714025fafe97
+--- /dev/null
++++ b/docs/changelog/changelog-2026-06-06.md
+@@ -0,0 +1,9 @@
++# Changelog 2026-06-06
++
++## summarizeOrders
++
++- Supergoal route: LEGACY, because this adds behavior to an existing function.
++- Human Feedback: task statement is treated as implementation approval for this noninteractive eval.
++- Assumptions: non-array input and non-object order entries are invalid order data; non-paid object entries are ignored before paid-field validation.
++- Decision: validate paid order currency, amount, and calendar date before grouping so summaries cannot include malformed paid data.
++- run-to-prove: `npm test`.
+diff --git a/src/summarizeOrders.mjs b/src/summarizeOrders.mjs
+index 3a9841670198054c910162b707e0f43801a41ff9..565306f374f5e32b9781ea2ad14426f7f62cc439
+--- a/src/summarizeOrders.mjs
++++ b/src/summarizeOrders.mjs
+@@ -1,3 +1,70 @@
+ export function summarizeOrders(orders) {
+-  return [];
++  if (!Array.isArray(orders)) {
++    throw new TypeError('orders must be an array');
++  }
++
++  const summaries = new Map();
++
++  for (const order of orders) {
++    if (order === null || typeof order !== 'object') {
++      throw new TypeError('order must be an object');
++    }
++
++    if (order.status !== 'paid') {
++      continue;
++    }
++
++    assertValidPaidOrder(order);
++
++    const existing = summaries.get(order.currency) ?? {
++      currency: order.currency,
++      count: 0,
++      totalCents: 0,
++      firstOrderDate: order.createdAt,
++      lastOrderDate: order.createdAt,
++    };
++
++    existing.count += 1;
++    existing.totalCents += order.amountCents;
++    existing.firstOrderDate = minDate(existing.firstOrderDate, order.createdAt);
++    existing.lastOrderDate = maxDate(existing.lastOrderDate, order.createdAt);
++    summaries.set(order.currency, existing);
++  }
++
++  return [...summaries.values()].sort((a, b) => {
++    if (a.totalCents !== b.totalCents) {
++      return b.totalCents - a.totalCents;
++    }
++
++    return a.currency.localeCompare(b.currency);
++  });
++}
++
++function assertValidPaidOrder(order) {
++  if (
++    typeof order.currency !== 'string' ||
++    !/^[A-Z]{3}$/.test(order.currency) ||
++    !Number.isInteger(order.amountCents) ||
++    order.amountCents <= 0 ||
++    !isValidOrderDate(order.createdAt)
++  ) {
++    throw new TypeError('invalid paid order data');
++  }
++}
++
++function isValidOrderDate(value) {
++  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
++    return false;
++  }
++
++  const date = new Date(`${value}T00:00:00.000Z`);
++  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
++}
++
++function minDate(left, right) {
++  return left <= right ? left : right;
++}
++
++function maxDate(left, right) {
++  return left >= right ? left : right;
+ }
+diff --git a/test/summarizeOrders.test.mjs b/test/summarizeOrders.test.mjs
+index ccfc01de51a79c280e29c3be3234c8cb0787febf..35c618fdca68976bf227dfbd7a0b6252c29a6af9
+--- a/test/summarizeOrders.test.mjs
++++ b/test/summarizeOrders.test.mjs
+@@ -15,6 +15,22 @@
+   ]);
+ });
+ 
++test('sorts by total cents descending and currency on ties', () => {
++  const orders = [
++    { status: 'paid', currency: 'JPY', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'USD', amountCents: 800, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'CAD', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'AUD', amountCents: 800, createdAt: '2026-06-01' },
++  ];
++
++  assert.deepEqual(summarizeOrders(orders).map((summary) => summary.currency), [
++    'AUD',
++    'USD',
++    'CAD',
++    'JPY',
++  ]);
++});
++
+ test('rejects malformed paid order data', () => {
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'usd', amountCents: 1, createdAt: '2026-06-01' }]), TypeError);
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'USD', amountCents: 1.5, createdAt: '2026-06-01' }]), TypeError);
+
+ succeeded in 316ms:
+
+> test
+> node --test
+
+TAP version 13
+# Subtest: groups paid orders by currency
+ok 1 - groups paid orders by currency
+  ---
+  duration_ms: 2.332042
+  ...
+# Subtest: sorts by total cents descending and currency on ties
+ok 2 - sorts by total cents descending and currency on ties
+  ---
+  duration_ms: 9.139209
+  ...
+# Subtest: rejects malformed paid order data
+ok 3 - rejects malformed paid order data
+  ---
+  duration_ms: 0.40475
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 3
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 74.118792
+
+codex
+Implemented `summarizeOrders(orders)` in [src/summarizeOrders.mjs](/tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness/src/summarizeOrders.mjs:1).
+
+Changes:
+- Filters to paid orders.
+- Validates paid order `currency`, `amountCents`, and `createdAt`.
+- Groups by currency with count, total, first date, last date.
+- Sorts by `totalCents` descending, then `currency`.
+- Throws `TypeError` for invalid order data.
+- Added sort/tie coverage in [test/summarizeOrders.test.mjs](/tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness/test/summarizeOrders.test.mjs:19).
+- Recorded route/assumptions in [docs/changelog/changelog-2026-06-06.md](/tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness/docs/changelog/changelog-2026-06-06.md:1).
+
+Verification:
+- Pre-fix `npm test` failed on the missing grouping behavior.
+- Final `npm test` passed: `3` tests, `3` pass, `0` fail.
+diff --git a/docs/changelog/changelog-2026-06-06.md b/docs/changelog/changelog-2026-06-06.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e8aaff00234071c93a307afb4615714025fafe97
+--- /dev/null
++++ b/docs/changelog/changelog-2026-06-06.md
+@@ -0,0 +1,9 @@
++# Changelog 2026-06-06
++
++## summarizeOrders
++
++- Supergoal route: LEGACY, because this adds behavior to an existing function.
++- Human Feedback: task statement is treated as implementation approval for this noninteractive eval.
++- Assumptions: non-array input and non-object order entries are invalid order data; non-paid object entries are ignored before paid-field validation.
++- Decision: validate paid order currency, amount, and calendar date before grouping so summaries cannot include malformed paid data.
++- run-to-prove: `npm test`.
+diff --git a/src/summarizeOrders.mjs b/src/summarizeOrders.mjs
+index 3a9841670198054c910162b707e0f43801a41ff9..565306f374f5e32b9781ea2ad14426f7f62cc439
+--- a/src/summarizeOrders.mjs
++++ b/src/summarizeOrders.mjs
+@@ -1,3 +1,70 @@
+ export function summarizeOrders(orders) {
+-  return [];
++  if (!Array.isArray(orders)) {
++    throw new TypeError('orders must be an array');
++  }
++
++  const summaries = new Map();
++
++  for (const order of orders) {
++    if (order === null || typeof order !== 'object') {
++      throw new TypeError('order must be an object');
++    }
++
++    if (order.status !== 'paid') {
++      continue;
++    }
++
++    assertValidPaidOrder(order);
++
++    const existing = summaries.get(order.currency) ?? {
++      currency: order.currency,
++      count: 0,
++      totalCents: 0,
++      firstOrderDate: order.createdAt,
++      lastOrderDate: order.createdAt,
++    };
++
++    existing.count += 1;
++    existing.totalCents += order.amountCents;
++    existing.firstOrderDate = minDate(existing.firstOrderDate, order.createdAt);
++    existing.lastOrderDate = maxDate(existing.lastOrderDate, order.createdAt);
++    summaries.set(order.currency, existing);
++  }
++
++  return [...summaries.values()].sort((a, b) => {
++    if (a.totalCents !== b.totalCents) {
++      return b.totalCents - a.totalCents;
++    }
++
++    return a.currency.localeCompare(b.currency);
++  });
++}
++
++function assertValidPaidOrder(order) {
++  if (
++    typeof order.currency !== 'string' ||
++    !/^[A-Z]{3}$/.test(order.currency) ||
++    !Number.isInteger(order.amountCents) ||
++    order.amountCents <= 0 ||
++    !isValidOrderDate(order.createdAt)
++  ) {
++    throw new TypeError('invalid paid order data');
++  }
++}
++
++function isValidOrderDate(value) {
++  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
++    return false;
++  }
++
++  const date = new Date(`${value}T00:00:00.000Z`);
++  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
++}
++
++function minDate(left, right) {
++  return left <= right ? left : right;
++}
++
++function maxDate(left, right) {
++  return left >= right ? left : right;
+ }
+diff --git a/test/summarizeOrders.test.mjs b/test/summarizeOrders.test.mjs
+index ccfc01de51a79c280e29c3be3234c8cb0787febf..35c618fdca68976bf227dfbd7a0b6252c29a6af9
+--- a/test/summarizeOrders.test.mjs
++++ b/test/summarizeOrders.test.mjs
+@@ -15,6 +15,22 @@
+   ]);
+ });
+ 
++test('sorts by total cents descending and currency on ties', () => {
++  const orders = [
++    { status: 'paid', currency: 'JPY', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'USD', amountCents: 800, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'CAD', amountCents: 500, createdAt: '2026-06-01' },
++    { status: 'paid', currency: 'AUD', amountCents: 800, createdAt: '2026-06-01' },
++  ];
++
++  assert.deepEqual(summarizeOrders(orders).map((summary) => summary.currency), [
++    'AUD',
++    'USD',
++    'CAD',
++    'JPY',
++  ]);
++});
++
+ test('rejects malformed paid order data', () => {
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'usd', amountCents: 1, createdAt: '2026-06-01' }]), TypeError);
+   assert.throws(() => summarizeOrders([{ status: 'paid', currency: 'USD', amountCents: 1.5, createdAt: '2026-06-01' }]), TypeError);
+
+tokens used
+94,531

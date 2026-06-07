@@ -1,0 +1,241 @@
+{
+  "case_id": "2026-06-06-3case-pilot",
+  "runtime_adapter": "codex-exec:gpt-5.5",
+  "same_repo_snapshot": true,
+  "isolated_worktrees": true,
+  "baseline": {
+    "condition": "without_harness",
+    "machine_checks": [
+      {
+        "name": "easy: easy-slugify",
+        "status": "pass",
+        "evidence": "3/3 checks passed; codex exit=0"
+      },
+      {
+        "name": "medium: medium-order-summary",
+        "status": "pass",
+        "evidence": "3/3 checks passed; codex exit=0"
+      },
+      {
+        "name": "hard: hard-safe-redirect",
+        "status": "pass",
+        "evidence": "3/3 checks passed; codex exit=0"
+      }
+    ],
+    "cost": {
+      "tokens": 229344,
+      "duration_ms": 772992,
+      "tool_calls": 63
+    }
+  },
+  "harness": {
+    "condition": "with_harness",
+    "machine_checks": [
+      {
+        "name": "easy: easy-slugify",
+        "status": "pass",
+        "evidence": "3/3 checks passed; codex exit=0"
+      },
+      {
+        "name": "medium: medium-order-summary",
+        "status": "pass",
+        "evidence": "3/3 checks passed; codex exit=0"
+      },
+      {
+        "name": "hard: hard-safe-redirect",
+        "status": "pass",
+        "evidence": "3/3 checks passed; codex exit=0"
+      }
+    ],
+    "cost": {
+      "tokens": 279219,
+      "duration_ms": 953596,
+      "tool_calls": 78
+    }
+  },
+  "blind_grading": true,
+  "winner": "tie",
+  "claim_status": "not_proven",
+  "cases": {
+    "easy-slugify": {
+      "baseline": {
+        "sandbox": "/tmp/supergoal-harness-eval-3case/sandboxes/easy-slugify/baseline",
+        "codex": {
+          "exit_code": 0,
+          "signal": null,
+          "cost": {
+            "tokens": 60699,
+            "duration_ms": 99853,
+            "tool_calls": 11
+          }
+        },
+        "checks": [
+          {
+            "name": "unit tests",
+            "status": "pass",
+            "evidence": "npm test -- --test-reporter=spec exit=0; ℹ cancelled 0 ℹ skipped 0 ℹ todo 0 ℹ duration_ms 65.208333"
+          },
+          {
+            "name": "source syntax",
+            "status": "pass",
+            "evidence": "node --check src/slug.mjs exit=0; no output"
+          },
+          {
+            "name": "test syntax",
+            "status": "pass",
+            "evidence": "node --check test/slug.test.mjs exit=0; no output"
+          }
+        ]
+      },
+      "harness": {
+        "sandbox": "/tmp/supergoal-harness-eval-3case/sandboxes/easy-slugify/harness",
+        "codex": {
+          "exit_code": 0,
+          "signal": null,
+          "cost": {
+            "tokens": 41573,
+            "duration_ms": 133321,
+            "tool_calls": 18
+          }
+        },
+        "checks": [
+          {
+            "name": "unit tests",
+            "status": "pass",
+            "evidence": "npm test -- --test-reporter=spec exit=0; ℹ cancelled 0 ℹ skipped 0 ℹ todo 0 ℹ duration_ms 66.067208"
+          },
+          {
+            "name": "source syntax",
+            "status": "pass",
+            "evidence": "node --check src/slug.mjs exit=0; no output"
+          },
+          {
+            "name": "test syntax",
+            "status": "pass",
+            "evidence": "node --check test/slug.test.mjs exit=0; no output"
+          }
+        ]
+      }
+    },
+    "medium-order-summary": {
+      "baseline": {
+        "sandbox": "/tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/baseline",
+        "codex": {
+          "exit_code": 0,
+          "signal": null,
+          "cost": {
+            "tokens": 95234,
+            "duration_ms": 242514,
+            "tool_calls": 23
+          }
+        },
+        "checks": [
+          {
+            "name": "unit tests",
+            "status": "pass",
+            "evidence": "npm test -- --test-reporter=spec exit=0; ℹ cancelled 0 ℹ skipped 0 ℹ todo 0 ℹ duration_ms 70.72875"
+          },
+          {
+            "name": "source syntax",
+            "status": "pass",
+            "evidence": "node --check src/summarizeOrders.mjs exit=0; no output"
+          },
+          {
+            "name": "test syntax",
+            "status": "pass",
+            "evidence": "node --check test/summarizeOrders.test.mjs exit=0; no output"
+          }
+        ]
+      },
+      "harness": {
+        "sandbox": "/tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness",
+        "codex": {
+          "exit_code": 0,
+          "signal": null,
+          "cost": {
+            "tokens": 94531,
+            "duration_ms": 245657,
+            "tool_calls": 23
+          }
+        },
+        "checks": [
+          {
+            "name": "unit tests",
+            "status": "pass",
+            "evidence": "npm test -- --test-reporter=spec exit=0; ℹ cancelled 0 ℹ skipped 0 ℹ todo 0 ℹ duration_ms 81.867208"
+          },
+          {
+            "name": "source syntax",
+            "status": "pass",
+            "evidence": "node --check src/summarizeOrders.mjs exit=0; no output"
+          },
+          {
+            "name": "test syntax",
+            "status": "pass",
+            "evidence": "node --check test/summarizeOrders.test.mjs exit=0; no output"
+          }
+        ]
+      }
+    },
+    "hard-safe-redirect": {
+      "baseline": {
+        "sandbox": "/tmp/supergoal-harness-eval-3case/sandboxes/hard-safe-redirect/baseline",
+        "codex": {
+          "exit_code": 0,
+          "signal": null,
+          "cost": {
+            "tokens": 73411,
+            "duration_ms": 430625,
+            "tool_calls": 29
+          }
+        },
+        "checks": [
+          {
+            "name": "unit tests",
+            "status": "pass",
+            "evidence": "npm test -- --test-reporter=spec exit=0; ℹ cancelled 0 ℹ skipped 0 ℹ todo 0 ℹ duration_ms 66.281375"
+          },
+          {
+            "name": "source syntax",
+            "status": "pass",
+            "evidence": "node --check src/safeRedirect.mjs exit=0; no output"
+          },
+          {
+            "name": "test syntax",
+            "status": "pass",
+            "evidence": "node --check test/safeRedirect.test.mjs exit=0; no output"
+          }
+        ]
+      },
+      "harness": {
+        "sandbox": "/tmp/supergoal-harness-eval-3case/sandboxes/hard-safe-redirect/harness",
+        "codex": {
+          "exit_code": 0,
+          "signal": null,
+          "cost": {
+            "tokens": 143115,
+            "duration_ms": 574618,
+            "tool_calls": 37
+          }
+        },
+        "checks": [
+          {
+            "name": "unit tests",
+            "status": "pass",
+            "evidence": "npm test -- --test-reporter=spec exit=0; ℹ cancelled 0 ℹ skipped 0 ℹ todo 0 ℹ duration_ms 66.667625"
+          },
+          {
+            "name": "source syntax",
+            "status": "pass",
+            "evidence": "node --check src/safeRedirect.mjs exit=0; no output"
+          },
+          {
+            "name": "test syntax",
+            "status": "pass",
+            "evidence": "node --check test/safeRedirect.test.mjs exit=0; no output"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+Implemented in the sandbox only.
+
+Changed [src/safeRedirect.mjs](/private/tmp/supergoal-harness-eval-3case/sandboxes/hard-safe-redirect/baseline/src/safeRedirect.mjs) to use normalized `URL` parsing, exact-or-subdomain host matching, userinfo/backslash/control rejection, and local/private IPv4/IPv6 blocking. Added coverage in [test/safeRedirect.test.mjs](/private/tmp/supergoal-harness-eval-3case/sandboxes/hard-safe-redirect/baseline/test/safeRedirect.test.mjs), plus the required changelog entry.
+
+Verified:
+- `npm test` passes: 4 tests, 0 failures
+- Manual smoke cases pass for empty userinfo, hex/integer private IPv4, public IPv4, and IPv4-mapped IPv6 split.

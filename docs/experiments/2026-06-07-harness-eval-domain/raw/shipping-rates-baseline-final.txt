@@ -1,0 +1,13 @@
+Implemented `computeShipping` in [`/private/tmp/sg-domain-eval/sandboxes/shipping-rates/baseline/src/shipping.mjs`]( /private/tmp/sg-domain-eval/sandboxes/shipping-rates/baseline/src/shipping.mjs) to fully match `RULES.md`:
+
+- `billableGrams = max(actualWeight, ceil(l*w*h/5))`
+- `kg = max(1, ceil(billableGrams / 1000))`
+- `base+weight = zone.base + zone.perKg * kg`
+- Oversize surcharge: `+1500` if any dimension `> 100`
+- Insurance surcharge: `+ceil(declaredValueMinor * 100 / 10000)` when `declaredValueMinor > 10000`
+- Free shipping when `declaredValueMinor >= 50000` waives only base+weight; surcharges still apply
+- returns `{ billableGrams, totalMinor }`
+
+Verification:
+- Ran `npm test`
+- Result: all visible tests pass (`3 passed`, `0 failed`)

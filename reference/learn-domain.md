@@ -127,13 +127,12 @@ Static self-review does not predict accuracy. Prove load-bearing facts by runnin
 3. When a fact genuinely cannot be executed (glue, config, narrative architecture), mark it
    `Grounding: unverified -- <reason>` and lower its `Confidence`. Never imply verification that did
    not run.
-4. Dispatch `completeness-critic` against the bounded-context list: every named context must have a
-   flow file; every load-bearing invariant must carry a `Grounding:` marker. Gaps become work or
-   explicit `unverified` entries.
+4. Self-check the bounded-context list: every named context must have a flow file; every load-bearing
+   invariant must carry a `Grounding:` marker. Gaps become work or explicit `unverified` entries.
 5. Run `node templates/learn-grounding-gate.mjs <knowledgePath>`; it must exit 0.
 
-High-stakes invariants (auth, money, data-loss, concurrency) use >=2 grounding probes / lenses, matching
-the Verify isolation rule in `reference/experts.md`.
+High-stakes invariants (auth, money, data-loss, concurrency) use >=2 grounding probes / lenses, each
+re-derived from a fresh isolated pass (re-confirm the fact from the cited source, not from prior output).
 
 ## Step 6 - Persist
 
@@ -210,13 +209,12 @@ Keep the pack fresh without re-summarizing the repo each change:
 |---|---|---|---|
 | Survey/Map | `explore` (+ `Explore` helpers) | repo, current code | `index.md`, `code-map.md` |
 | Deepen | `explore` per context; `architect` for boundaries | repo, draft map | `flows/*.md`, `glossary.md`, `invariants.md`, `test-map.md` |
-| Ground | `executor` runs probes in sandbox; `verifier` confirms | the claim + cited source only | `Grounding:` markers |
-| Completeness | `completeness-critic` | bounded-context list + code | gaps -> work or `unverified` |
+| Ground | `executor` runs probes in sandbox; a fresh pass re-confirms from clean state | the claim + cited source only | `Grounding:` markers |
+| Completeness | self-check + `learn-grounding-gate.mjs` | bounded-context list + code | gaps -> work or `unverified` |
 | Onboard | `explore` renders to the Functional tier (`reference/functional-ui.md`) | persisted pack | `onboarding.html` |
 
-Locked-prompt template and isolation rules: `reference/experts.md`. Language: write pack prose in the
-user's language; keep identifiers, signatures, commands, and `Grounding:`/`verified:` markers verbatim
-so the gate keeps matching.
+Language: write pack prose in the user's language; keep identifiers, signatures, commands, and
+`Grounding:`/`verified:` markers verbatim so the gate keeps matching.
 
 ## Stop conditions
 

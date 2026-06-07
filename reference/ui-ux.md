@@ -1,17 +1,21 @@
 # UI/UX overlay - design authority
 
-Load whenever the objective ships user-facing UI. Classify the surface into one tier, then load that
-tier's authority. Pure non-visual work (lib, API, CLI without TUI) loads neither.
+Load whenever the objective ships user-facing UI. The **Expressive/polished baseline is the default for
+ALL user-facing UI** - `reference/taste-skill-v2.md` is always the authority. There is no separate
+"Functional" tier you classify down into that ships a plainer result. Pure non-visual work (lib, API, CLI
+without TUI) loads neither.
 
-| Surface | Tier | Authority |
-|---|---|---|
-| landing, portfolio, marketing site, redesign, "make it look good/premium/on-brand", frontend look-and-feel | **Expressive** | `reference/taste-skill-v2.md` |
-| dashboard, data table, admin panel, internal tool, settings, wizard, CRUD form | **Functional** | `reference/functional-ui.md` |
+| Surface | Authority |
+|---|---|
+| ANY user-facing UI - landing, portfolio, app, tool, dashboard, form, "make X" | **Expressive baseline** - `reference/taste-skill-v2.md` (always) |
+| ...AND the surface is dense admin/dashboard/data-table | + `reference/functional-ui.md` density add-on, layered on top |
 
-Functional is the default for dense/admin UI: it still needs design system, contrast, consistent
-type/spacing/density, and complete UI states - just not marketing aesthetic. A mixed product applies
-each tier to its own surface. The rest of this file describes the Expressive tier; Functional defines
-its own (lighter) Plan/Build/QA overlay in its file.
+`reference/functional-ui.md` is NOT an alternative to Expressive and never lowers polish - it only adds
+density discipline (type/spacing/density scale) and complete UI states (loading/empty/error/disabled) on
+top of the Expressive baseline for information-dense surfaces. Marketing aesthetic (hero imagery, heavy
+motion) is dialed down for dense surfaces via the Plan dials below, not by skipping design authority. A
+mixed product still applies the Expressive baseline everywhere and adds the density layer only to its
+dense surfaces. The rest of this file describes the Expressive authority.
 
 The chosen authority overlays the normal mode; phases, gates, vault, and topology stay unchanged. UI
 scaffolding may fan out, but one surface's look-and-feel is deep-and-narrow: use one Designer driver

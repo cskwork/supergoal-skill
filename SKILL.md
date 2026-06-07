@@ -93,7 +93,7 @@ risky work in a branch or `git worktree` (optional).
 | `reference/plan-grounding.md` | Ground the approach from docs/code before committing |
 | `reference/qa.md`, `qa-only.md`, `db-access.md` | QA / no-code verify |
 | `reference/learn.md`, `learn-domain.md` | Teach a human / onboard the agent |
-| `reference/ui-ux.md`, `taste-skill-v2.md`, `functional-ui.md` | User-facing UI tier |
+| `reference/ui-ux.md`, `taste-skill-v2.md`, `functional-ui.md`, `taste-aesthetics.md` | User-facing UI tier |
 | `reference/harness-eval.md` | HARNESS-EVAL |
 | `reference/skill-mine.md` | SKILL-MINE |
 | `reference/market-research.md` | GREENFIELD: validate demand (optional) |

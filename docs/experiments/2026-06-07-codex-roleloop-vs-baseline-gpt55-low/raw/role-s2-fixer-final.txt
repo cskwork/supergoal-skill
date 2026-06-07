@@ -1,0 +1,15 @@
+Implemented the MiniLang LSP server in `src/server.mjs` and updated `NOTES.md` plus `docs/changelog/changelog-2026-06-07.md`.
+
+What changed:
+- JSON-RPC `Content-Length` framing and streaming decode.
+- Parser with comment stripping, missing-brace recovery, symbol table, call/arity diagnostics.
+- `initialize`, `shutdown`, `exit`, `didOpen`, `didChange`.
+- Completion with typed-prefix filtering and `fn name(...)` signatures.
+- Go-to-definition and hover with local scope precedence.
+- Full-text and ranged incremental updates via `didChange`.
+
+Verification:
+- `npm test` passes: 10 tests, 10 pass.
+- I did not edit any file under `test/`.
+
+Note: `git status`/`git diff` could not run because this sandbox is not a Git repository.

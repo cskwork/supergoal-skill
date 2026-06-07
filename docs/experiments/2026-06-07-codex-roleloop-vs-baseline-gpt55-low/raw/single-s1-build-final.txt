@@ -1,0 +1,14 @@
+Implemented the MiniLang LSP server in [src/server.mjs](/tmp/supergoal-codex-roleloop/sandboxes/revfactory-case-015-lsp/single-s1/src/server.mjs).
+
+What changed:
+- JSON-RPC `Content-Length` framing and streaming decode
+- Parser with comments, functions, lets, returns, calls, recovery diagnostics
+- Symbol table with document-wide functions and function-local variables
+- LSP lifecycle: `initialize`, `shutdown`, `exit`
+- `didOpen` / `didChange` diagnostics, including range edits
+- Completion, go-to-definition, and hover
+- Changelog note at [docs/changelog/changelog-2026-06-07.md](/tmp/supergoal-codex-roleloop/sandboxes/revfactory-case-015-lsp/single-s1/docs/changelog/changelog-2026-06-07.md)
+
+Verification:
+- `npm test` passed: 5/5
+- Extra smoke check passed for Unicode transport framing, full/range updates, and local-scope isolation.

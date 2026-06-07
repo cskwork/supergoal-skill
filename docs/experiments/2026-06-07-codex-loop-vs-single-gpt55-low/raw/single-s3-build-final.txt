@@ -1,0 +1,15 @@
+Implemented the MiniLang LSP server in `src/server.mjs` and added the required changelog at `docs/changelog/changelog-2026-06-07.md`.
+
+Covered:
+- JSON-RPC `Content-Length` framing and streaming decode
+- `initialize`, `shutdown`, `exit`
+- `didOpen` / `didChange`, including ranged edits
+- Parser with recoverable diagnostics
+- Function/variable/parameter symbols
+- Undefined symbol/function and arity diagnostics
+- Completion, go-to-definition, hover
+- Forward function references
+
+Verification:
+- `npm test` passes: 5/5
+- Extra smoke check passed for UTF-8 JSON-RPC framing and forward calls.

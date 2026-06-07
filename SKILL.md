@@ -1,6 +1,6 @@
 ---
 name: supergoal
-description: Baseline-first delivery for one objective - surface hidden requirements, make the smallest correct change, and verify it against the project's real tests/spec (never a generated proxy). Use for "/supergoal", "supergoal", "build X", "fix this bug", "add this feature", "QA / verify only", "learn this codebase", "make a skill", or "design/eval a harness".
+description: Baseline-first delivery for one objective - surface hidden requirements, make the smallest correct change, and verify it against the project's real tests/spec (never a generated proxy). Use for "/supergoal", "supergoal", "build X", "fix this bug", "add this feature", "QA / verify only", "learn this codebase", "make a skill", or "eval a harness".
 ---
 
 # /supergoal - baseline-first
@@ -37,7 +37,6 @@ real tests/spec. For a trivial single edit, skip this skill and edit directly.
 | explain / teach / how does X work (no code) | LEARN | `reference/learn.md` |
 | learn / onboard / map this codebase (persist a wiki) | LEARN-DOMAIN | `reference/learn-domain.md` |
 | QA / verify / 검증만 / compare data (no code) | QA-ONLY | `reference/qa-only.md` |
-| design / build / audit a harness, agent team, skill system | HARNESS-MAKE | `reference/harness-make.md`, `harness-patterns.md` |
 | test harness effectiveness / compare with vs without | HARNESS-EVAL | `reference/harness-eval.md` |
 | turn repeated work into a reusable skill | SKILL-MINE | `reference/skill-mine.md` |
 
@@ -69,8 +68,7 @@ security-reviewer).
 - **LEARN / LEARN-DOMAIN** teach a human (`reference/learn.md`) or persist a source-grounded
   `.domain-agent/` wiki for the agent (`reference/learn-domain.md`; gate
   `templates/learn-grounding-gate.mjs`).
-- **HARNESS-MAKE / HARNESS-EVAL / SKILL-MINE** design a harness (`reference/harness-make.md`,
-  `harness-patterns.md`), measure a harness with vs without on the same snapshot
+- **HARNESS-EVAL / SKILL-MINE** measure a harness with vs without on the same snapshot
   (`reference/harness-eval.md`), or forge a portable `SKILL.md` from history (`reference/skill-mine.md`).
   Each confirms with the user before installing anything.
 
@@ -87,7 +85,6 @@ security-reviewer).
 | `reference/qa.md`, `qa-only.md`, `db-access.md` | QA / no-code verify |
 | `reference/learn.md`, `learn-domain.md` | Teach a human / onboard the agent |
 | `reference/ui-ux.md`, `taste-skill-v2.md`, `functional-ui.md` | User-facing UI tier |
-| `reference/harness-make.md`, `harness-patterns.md` | HARNESS-MAKE |
 | `reference/harness-eval.md` | HARNESS-EVAL |
 | `reference/skill-mine.md` | SKILL-MINE |
 | `reference/market-research.md` | GREENFIELD: validate demand (optional) |

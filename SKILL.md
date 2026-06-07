@@ -5,23 +5,17 @@ description: Baseline-first delivery - surface hidden requirements, make the sma
 
 # /supergoal - baseline-first
 
-One objective -> the smallest correct change -> verified against ground truth.
-
-A strong model with the real spec is the bar. This skill adds only what a plain baseline cannot do for
-free: surface requirements that are not in the prompt - as FAILING tests written by an independent
-critic - then make the smallest correct change and verify it against the project's real tests/spec,
-never a generated proxy. For a trivial single edit, skip this skill and edit directly.
+One objective -> the smallest correct change -> verified against ground truth. For a trivial single edit, skip this skill and edit directly.
 
 ## Core principles
 
-- Verify against ground truth: re-run the project's REAL tests and re-read the prose spec for rules the
-  tests do not cover. Spec-derived FAILING tests may surface hidden requirements (see the loop), but
-  never let them replace ground truth and never optimize to a self-graded proxy.
-- Smallest correct change; match the surrounding code; never rewrite a whole file to change a few lines.
-  Scope-minimalism governs code surface area and feature count, NOT visual quality: for user-facing UI a
-  polished, well-designed result is part of baseline correctness, never padding to defer until asked.
-- Surface hidden requirements first, as failing tests written by an independent critic - the one place
-  a process beats a plain baseline.
+- Verify against ground truth: re-run the project's REAL tests and re-read the prose spec for rules tests
+  do not cover. Spec-derived FAILING tests surface hidden requirements, but never replace ground truth and
+  never optimize to a self-graded proxy.
+- Smallest correct change; match surrounding code; never rewrite a whole file for a few lines.
+  Scope-minimalism governs code surface area, NOT visual quality: for user-facing UI a polished result is
+  baseline correctness, not padding to defer until asked.
+- Surface hidden requirements first, as failing tests written by an independent critic.
 - Ask only when genuinely ambiguous; resolve code-answerable questions by reading the code.
 - Output language: write prose in the user's language; keep identifiers, file paths, commands, and
   machine-checked anchors in canonical English so checks keep matching.
@@ -41,20 +35,18 @@ never a generated proxy. For a trivial single edit, skip this skill and edit dir
 | test harness effectiveness / compare with vs without | HARNESS-EVAL | `reference/harness-eval.md` |
 | turn repeated work into a reusable skill | SKILL-MINE | `reference/skill-mine.md` |
 
-**UI/UX overlay (cross-cutting, any mode).** If the objective ships user-facing UI, load
-`reference/ui-ux.md` at **Frame** (not at QA) and apply the **Expressive/polished baseline** by default -
-`reference/taste-skill-v2.md` is the authority for ALL user-facing UI, carried through Build and Verify.
-There is no "Functional" path that ships a plainer result; `reference/functional-ui.md` is only an optional
-density add-on layered ON TOP of the Expressive baseline for dense admin/dashboard surfaces (more density +
-complete UI states), never a reason to lower polish. GREENFIELD frontend: always. LEGACY: only when
-introducing new UI - reuse the existing design system/components otherwise. Pure non-visual work (lib, API,
-backend, CLI without TUI) loads neither.
+**UI/UX overlay (any mode).** If the objective ships user-facing UI, load `reference/ui-ux.md` at
+**Frame** and apply the **Expressive/polished baseline** by default - `reference/taste-skill-v2.md` is the
+authority for ALL user-facing UI, carried through Build and Verify. No "Functional" path ships a plainer
+result; `reference/functional-ui.md` is only a density add-on (more density + complete UI states) on top of
+the Expressive baseline for dense admin/dashboard surfaces, never a reason to lower polish. GREENFIELD
+frontend: always. LEGACY: only for new UI - else reuse the existing design system. Non-visual work (lib,
+API, backend, CLI without TUI): skip.
 
 ## Default loop (GREENFIELD / DEBUG / LEGACY) - role-separated
 
-Run as author-independent roles (a separate agent per role when orchestrated; inline, switch role
-deliberately with a fresh re-read). Detail in `reference/role-loop.md`. For a trivial single edit, skip
-the loop and edit directly.
+Author-independent roles (separate agent per role when orchestrated; inline, switch role with a fresh
+re-read). Detail in `reference/role-loop.md`. Trivial single edit: skip the loop.
 
 1. **Frame.** Restate the goal + acceptance criteria in one line. If underspecified, ask <=3
    high-leverage questions (`reference/interview.md`); resolve code-answerable ones by reading code.
@@ -72,12 +64,11 @@ the loop and edit directly.
 4. **Fixer (no test edits).** Make the failing tests pass with the smallest change; no padding (no code
    not tied to a failing test or a listed defect); do not break passing tests.
 5. **Verify vs ground truth.** Re-run the project's REAL tests; re-read the prose spec for uncovered
-   rules; never weaken/delete a real test or optimize to a generated proxy. For user-facing UI, QA against
-   the Expressive/polished baseline loaded at Frame (`reference/ui-ux.md` -> `taste-skill-v2.md`, plus
-   `functional-ui.md` density rules if the surface is a dense admin/dashboard) (`reference/qa.md`). If schema or persisted data is load-bearing, run optional DB evidence through
-   `db-reader` and `templates/db-access/`; if `.env` is missing, ask the user to fill it or skip.
-   Loop critic->fixer only while a fresh red appears; stop on green and report what
-   was verified, with command output.
+   rules; never weaken/delete a real test or optimize to a proxy. For user-facing UI, QA against the
+   baseline from Frame (`reference/qa.md`). If schema/persisted data is load-bearing, run optional DB
+   evidence via `db-reader` + `templates/db-access/`; if `.env` is missing, ask or skip. Loop
+   critic->fixer only while a fresh red appears; stop on green and report what was verified, with command
+   output.
 
 Roles map to personas: critic=`agents/code-reviewer.md`, fixer=`agents/executor.md`,
 verify=`agents/qa-auditor.md`/`security-reviewer.md` (other personas in `agents/<role>.md`). Isolate

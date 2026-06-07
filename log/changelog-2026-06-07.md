@@ -626,3 +626,37 @@ step logs to the doc - one clause, lean), new `templates/surfaced-requirements.m
 new `tests/role-loop-contract.test.sh` (8/0, locks the behavior in). Did NOT touch `agents/code-reviewer.md`
 - its committee mandate is deliberately read-only; the write duty lives in the role-loop critic step. Full
 suite green (role-loop 8/0; harness-eval 126/0).
+
+## Feature: Expressive aesthetic families (taste-skill specialized sub-skills integrated)
+
+Per user request: the UI/UX delegation should let the Designer pick a specialized aesthetic, using
+upstream taste-skill rules merged INSIDE supergoal (not a separate repo). The two-tier UI/UX overlay
+(Expressive=taste-skill-v2, Functional=functional-ui) and Designer delegation already existed and passed
+15/15 contract checks; what was missing were upstream's specialized aesthetic sub-skills.
+
+Verified upstream first (no guessing): repo HEAD `3c7017d` (2026-05-26) equals the SHA already in
+`taste-skill-v2.md`, so the base is current. The three aesthetic skills (`skills/minimalist-skill`,
+`skills/soft-skill`, `skills/brutalist-skill`) last changed at commit `3206dd4` (2026-03-20); pulled and
+compressed their actual bodies, no invented rules.
+
+Changed:
+- NEW `reference/taste-aesthetics.md` - three compressed family profiles (`minimalist-ui`,
+  `high-end-visual-design`, `industrial-brutalist-ui`) with their own source/commit/MIT banner, a
+  vibe->family selection map, and a per-family Pre-Flight delta.
+- `reference/ui-ux.md` - Expressive Plan/Build/QA now select + carry at most ONE family; Build dispatches
+  the Designer with the family profile alongside taste-skill-v2; QA adds the family's Pre-Flight delta.
+- `agents/designer.md` - Expressive: load the named family from taste-aesthetics.md, commit to one, apply
+  its bans + delta.
+- `SKILL.md` - reference map UI tier row now lists `taste-aesthetics.md`.
+- `tests/ui-ux-contract.test.sh` - +7 checks (file exists, names all three families, one-family-only,
+  ui-ux + designer route to it).
+
+Design decision: a sibling file, NOT inlined into `taste-skill-v2.md`. That file's banner promises a 1:1
+mirror of upstream `skills/taste-skill`; inlining would break the refresh contract. Sibling mirrors the
+existing `functional-ui.md` pattern, is independently refreshable, and is loaded only when a family is
+selected (progressive disclosure, no base-context bloat). Families overlay base taste-skill-v2 (universal
+bans still hold) and override base aesthetic defaults only where they conflict (e.g. deliberate serif).
+
+Verify: `tests/ui-ux-contract.test.sh` 15 -> **22/0**; full `tests/*.test.sh` suite all 9 PASS, no
+regression. Out of scope (not done): refreshing base taste-skill-v2 (upstream unchanged), and upstream's
+non-aesthetic skills (image-to-code, redesign, gpt-taste, output, stitch, imagegen, brandkit).

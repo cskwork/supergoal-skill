@@ -1,0 +1,7 @@
+Implemented the MiniLang LSP server in [src/server.mjs](/private/tmp/supergoal-harness-eval-5cli-gpt55-low/sandboxes/revfactory-case-015-lsp/codex/src/server.mjs), covering JSON-RPC framing, message buffering, parsing/recovery, diagnostics, completion, definition, hover, document symbols, and `didOpen`/`didChange` updates.
+
+Also added reasoning to [docs/changelog/changelog-2026-06-07.md](/private/tmp/supergoal-harness-eval-5cli-gpt55-low/sandboxes/revfactory-case-015-lsp/codex/docs/changelog/changelog-2026-06-07.md).
+
+Verified:
+- `npm test` passes: 5/5
+- Extra ranged `didChange` smoke check passes.

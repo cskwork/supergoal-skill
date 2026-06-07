@@ -1,0 +1,22 @@
+Done. Implemented a full `LRUCache` in `[src/lru.mjs](/tmp/sg-underspec-live/sandboxes/underspec-lru/harness/src/lru.mjs)` with minimal, dependency-free logic using `Map` recency ordering.
+
+- `constructor(capacity)` now initializes internal cache state.
+- `get(key)` now:
+  - returns `undefined` when missing
+  - moves accessed keys to most-recently-used position.
+- `put(key, value)` now:
+  - adds/updates keys
+  - moves existing keys to MRU on update
+  - evicts oldest when capacity is exceeded.
+- Added `export default LRUCache` for compatibility (visible tests import default).
+
+Assumptions recorded (per request):  
+- Capacity is treated as non-negative; `capacity <= 0` makes cache effectively read-only/empty.
+- `get` follows the required `value | undefined` contract, so cached `undefined` and miss are indistinguishable.
+- Keys are treated as `Map` keys (supports primitives/objects directly).
+
+Also added run note/changelog at `[docs/changelog/changelog-2026-06-07.md](/tmp/sg-underspec-live/sandboxes/underspec-lru/harness/docs/changelog/changelog-2026-06-07.md)`.
+
+Verification run:
+- `cd /tmp/sg-underspec-live/sandboxes/underspec-lru/harness && npm test`
+- Result: PASS (`3 pass`, `0 fail`).

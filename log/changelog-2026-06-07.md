@@ -449,3 +449,22 @@ writes spec-derived failing tests -> fixer, no padding). Confirms supergoal's "s
 requirements" (made executable) is the one move that beats a strong baseline; refines "loops don't
 help" to "naive loops don't; critic->fixer does." Still ~4-6x a single run's tokens. n=2/1 case ->
 replicate (more seeds + a 2nd expert case) before treating as proven.
+
+## Default loop -> role-separated (SKILL.md) — applied
+
+Made the role-separated loop the DEFAULT for GREENFIELD/DEBUG/LEGACY in SKILL.md, per the role-loop
+eval result (build -> independent critic writes spec-derived FAILING tests -> fixer clears them, no
+padding -> verify vs ground truth). Added `reference/role-loop.md` (procedure + guardrails) and a
+reference-map row; mapped roles to existing personas (code-reviewer/executor/qa-auditor).
+
+Kept SKILL.md lean per user direction: it is an operational guide for a coding agent (feature/debug/
+legacy/learn/...), so NO experiment paths, eval numbers, or rationale in it - those live here in the
+changelog and under docs/experiments/. Core principle reconciled with baseline-first: the critic's
+generated tests SURFACE hidden requirements but are NOT the acceptance oracle; final verification stays
+the project's REAL tests/spec, never a self-graded proxy (this is why it is not the "generated proxy
+verifier" the skill warns against).
+
+Verified no regression: tests/harness-eval-contract.test.sh 126/0 with the edits; the other contract
+suites that fail (worktree 0/17, interview 14/12, domain-context, learn, etc.) fail IDENTICALLY at HEAD
+without these edits - confirmed by stashing SKILL.md and re-running - so they are pre-existing dead-test
+debt from the baseline-first/HARNESS-MAKE removals, not caused by this change.

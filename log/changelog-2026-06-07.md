@@ -187,3 +187,30 @@ helped (re-run the project's real tests), and drops the rest.
 gen-harness eval generated a spec-derived *verifier*, not a HARNESS-MAKE agent-team). Open follow-up:
 use HARNESS-MAKE to generate a harness-agent and A/B it vs a no-harness baseline-agent on the eval cases
 to get that direct evidence.
+
+## HARNESS-MAKE eval result (billing) - direct evidence
+
+Ran that follow-up (`docs/experiments/2026-06-07-harness-eval-harnessmake/`). A `codex exec` ran
+HARNESS-MAKE proper (read `reference/harness-make.md` + `harness-patterns.md` + the case) and designed a
+3-role pipeline to `.harness/pipeline.json`; phase 2 executed it as fresh codex roles vs a no-harness
+baseline, scored on the same hidden+visible suite.
+
+billing: baseline 80, 8/8, 1.73M tok / 139 s; **HARNESS-MAKE 80, 8/8, 3.89M tok / 395 s** (design 0.36M +
+planner 1.06M + implementer 1.24M + adversarial-reviewer 1.21M). **Exact tie - all 8 tests and all 10
+dimensions identical - at ~2.25x tokens / ~2.8x wall-clock.** `design_ok=true`: the designed pipeline
+(planner -> implementer -> adversarial-reviewer) was sound, anti-Goodhart (briefs name RULES.md + real
+tests as source of truth), crash-free, and hit 8/8 - so this is a clean direct measurement, not a degraded
+run. lsp/case-015 then **lost**: baseline 85, 9/9, 3.96M tok / 239 s; **HARNESS-MAKE 80, 7/9, 11.62M tok /
+860 s** (~2.9x tok / 3.6x wall). `design_ok=true`, a 4-role pipeline (planner -> implementer -> qa-reviewer
+-> adversarial-reviewer) with TWO review roles - and it still missed the exact same two hidden rules the
+gen-harness verifier missed (prefix-filtered completion signatures; syntax-recovery semantic diagnostics).
+The review roles caught nothing the baseline got for free reading the whole prose spec in one context;
+role decomposition fragments attention and loses holistic coverage.
+
+n=2 combined: baseline avg 82.5 / pass-frac 1.00; HARNESS-MAKE avg 80 / 0.889; ~2.7x tokens; up to 3.6x
+wall-clock; zero crashes. **HARNESS-MAKE reproduces the universal pattern - tie then loss, never a win - at
+~2.7x cost, with a clean well-designed pipeline each time (failure is structural, not execution).**
+
+Caveats: n=2 (billing + lsp); and this measures HARNESS-MAKE output as a one-shot coding harness on
+explicit-spec tasks - a subset of its stated purpose (designing *reusable* harnesses for ongoing
+workflows), which a one-shot eval cannot capture.

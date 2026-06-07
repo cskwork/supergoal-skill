@@ -1,0 +1,525 @@
+{
+  "case_id": "revfactory-case-015-lsp",
+  "runtime_adapter": "claude-baseline vs archon-workflow (model=sonnet)",
+  "same_repo_snapshot": true,
+  "isolated_worktrees": true,
+  "baseline": {
+    "condition": "without_harness",
+    "machine_checks": [
+      {
+        "name": "revfactory-case-015-lsp visible test: JSON-RPC transport frames and streams Content-Length messages",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "revfactory-case-015-lsp visible test: initialize, shutdown, and exit expose expected LSP lifecycle",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "revfactory-case-015-lsp visible test: didOpen publishes diagnostics for undefined symbols and wrong arity",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "revfactory-case-015-lsp visible test: completion includes keywords, in-scope symbols, functions, and snippets",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "revfactory-case-015-lsp visible test: definition and hover resolve function symbols",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "revfactory-case-015-lsp hidden test: didChange reparses incrementally and clears stale diagnostics",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "revfactory-case-015-lsp hidden test: completion filters by prefix and exposes function signatures",
+        "kind": "hidden",
+        "status": "fail"
+      },
+      {
+        "name": "revfactory-case-015-lsp hidden test: definition prefers local scope over same-name symbols elsewhere",
+        "kind": "hidden",
+        "status": "fail"
+      },
+      {
+        "name": "revfactory-case-015-lsp hidden test: parser recovers from syntax errors and still reports semantic diagnostics",
+        "kind": "hidden",
+        "status": "fail"
+      },
+      {
+        "name": "revfactory-case-015-lsp source syntax",
+        "status": "pass",
+        "evidence": "node --check src/server.mjs exit=0; no output"
+      },
+      {
+        "name": "revfactory-case-015-lsp visible test syntax",
+        "status": "pass",
+        "evidence": "node --check test/lsp.visible.test.mjs exit=0; no output"
+      },
+      {
+        "name": "revfactory-case-015-lsp hidden test syntax",
+        "status": "pass",
+        "evidence": "node --check test/lsp.hidden.test.mjs exit=0; no output"
+      }
+    ],
+    "cost": {
+      "tokens": 657249,
+      "duration_ms": 434491,
+      "tool_calls": null,
+      "turns_completed": 7,
+      "cost_usd": 1.12992285,
+      "source": "claude-json",
+      "crashed": false
+    }
+  },
+  "harness": {
+    "condition": "with_harness",
+    "machine_checks": [
+      {
+        "name": "revfactory-case-015-lsp visible test: JSON-RPC transport frames and streams Content-Length messages",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "revfactory-case-015-lsp visible test: initialize, shutdown, and exit expose expected LSP lifecycle",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "revfactory-case-015-lsp visible test: didOpen publishes diagnostics for undefined symbols and wrong arity",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "revfactory-case-015-lsp visible test: completion includes keywords, in-scope symbols, functions, and snippets",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "revfactory-case-015-lsp visible test: definition and hover resolve function symbols",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "revfactory-case-015-lsp hidden test: didChange reparses incrementally and clears stale diagnostics",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "revfactory-case-015-lsp hidden test: completion filters by prefix and exposes function signatures",
+        "kind": "hidden",
+        "status": "fail"
+      },
+      {
+        "name": "revfactory-case-015-lsp hidden test: definition prefers local scope over same-name symbols elsewhere",
+        "kind": "hidden",
+        "status": "fail"
+      },
+      {
+        "name": "revfactory-case-015-lsp hidden test: parser recovers from syntax errors and still reports semantic diagnostics",
+        "kind": "hidden",
+        "status": "fail"
+      },
+      {
+        "name": "revfactory-case-015-lsp source syntax",
+        "status": "pass",
+        "evidence": "node --check src/server.mjs exit=0; no output"
+      },
+      {
+        "name": "revfactory-case-015-lsp visible test syntax",
+        "status": "pass",
+        "evidence": "node --check test/lsp.visible.test.mjs exit=0; no output"
+      },
+      {
+        "name": "revfactory-case-015-lsp hidden test syntax",
+        "status": "pass",
+        "evidence": "node --check test/lsp.hidden.test.mjs exit=0; no output"
+      }
+    ],
+    "cost": {
+      "tokens": 0,
+      "duration_ms": 546305,
+      "tool_calls": null,
+      "turns_completed": 1,
+      "source": "archon-pino (adapter-measured)",
+      "crashed": false
+    }
+  },
+  "quality": {
+    "method": "v2: RevFactory-style 10 dimensions, each 0-10, total 100; uncapped (correct solution can reach >=80) with gradient correctness/feature over per-test pass fraction.",
+    "baseline": {
+      "average_total": 83,
+      "by_case": {
+        "revfactory-case-015-lsp": {
+          "total": 83,
+          "pass_fraction": 0.667,
+          "checks_passed": 6,
+          "checks_total": 9,
+          "dimensions": {
+            "feature_completeness": {
+              "score": 7,
+              "rationale": "6/9 behavior tests pass."
+            },
+            "test_coverage": {
+              "score": 10,
+              "rationale": "Agent-side tests include 26 visible assertions."
+            },
+            "code_quality": {
+              "score": 10,
+              "rationale": "334 source lines; no debug/TODO markers."
+            },
+            "error_handling": {
+              "score": 10,
+              "rationale": "Uses explicit validation or diagnostics paths."
+            },
+            "efficiency": {
+              "score": 10,
+              "rationale": "No runtime dependencies."
+            },
+            "correctness": {
+              "score": 7,
+              "rationale": "Failing 3 of 9 behavior tests."
+            },
+            "architecture": {
+              "score": 6,
+              "rationale": "Single-file LSP/parser/provider implementation."
+            },
+            "extensibility": {
+              "score": 7,
+              "rationale": "Single module is harder to extend safely."
+            },
+            "documentation": {
+              "score": 7,
+              "rationale": "Includes local comments."
+            },
+            "dev_environment": {
+              "score": 9,
+              "rationale": "Runnable npm test script is present."
+            }
+          }
+        }
+      }
+    },
+    "harness": {
+      "average_total": 82,
+      "by_case": {
+        "revfactory-case-015-lsp": {
+          "total": 82,
+          "pass_fraction": 0.667,
+          "checks_passed": 6,
+          "checks_total": 9,
+          "dimensions": {
+            "feature_completeness": {
+              "score": 7,
+              "rationale": "6/9 behavior tests pass."
+            },
+            "test_coverage": {
+              "score": 10,
+              "rationale": "Agent-side tests include 26 visible assertions."
+            },
+            "code_quality": {
+              "score": 10,
+              "rationale": "345 source lines; no debug/TODO markers."
+            },
+            "error_handling": {
+              "score": 9,
+              "rationale": "Uses explicit validation or diagnostics paths."
+            },
+            "efficiency": {
+              "score": 10,
+              "rationale": "No runtime dependencies."
+            },
+            "correctness": {
+              "score": 7,
+              "rationale": "Failing 3 of 9 behavior tests."
+            },
+            "architecture": {
+              "score": 6,
+              "rationale": "Single-file LSP/parser/provider implementation."
+            },
+            "extensibility": {
+              "score": 7,
+              "rationale": "Single module is harder to extend safely."
+            },
+            "documentation": {
+              "score": 7,
+              "rationale": "Includes local comments."
+            },
+            "dev_environment": {
+              "score": 9,
+              "rationale": "Runnable npm test script is present."
+            }
+          }
+        }
+      }
+    },
+    "winner": "baseline"
+  },
+  "blind_grading": true,
+  "winner": "not_proven",
+  "pass_winner": "tie",
+  "quality_winner": "baseline",
+  "claim_status": "not_proven",
+  "cases": {
+    "revfactory-case-015-lsp": {
+      "baseline": {
+        "cwd": "/tmp/sg-harness-eval-archon-claude/sandboxes/revfactory-case-015-lsp/baseline",
+        "agent": {
+          "arm_kind": "claude-baseline",
+          "exit_code": 0,
+          "signal": null,
+          "cost": {
+            "tokens": 657249,
+            "duration_ms": 434491,
+            "tool_calls": null,
+            "turns_completed": 7,
+            "cost_usd": 1.12992285,
+            "source": "claude-json",
+            "crashed": false
+          }
+        },
+        "checks": [
+          {
+            "name": "revfactory-case-015-lsp visible test: JSON-RPC transport frames and streams Content-Length messages",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "revfactory-case-015-lsp visible test: initialize, shutdown, and exit expose expected LSP lifecycle",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "revfactory-case-015-lsp visible test: didOpen publishes diagnostics for undefined symbols and wrong arity",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "revfactory-case-015-lsp visible test: completion includes keywords, in-scope symbols, functions, and snippets",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "revfactory-case-015-lsp visible test: definition and hover resolve function symbols",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "revfactory-case-015-lsp hidden test: didChange reparses incrementally and clears stale diagnostics",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "revfactory-case-015-lsp hidden test: completion filters by prefix and exposes function signatures",
+            "kind": "hidden",
+            "status": "fail"
+          },
+          {
+            "name": "revfactory-case-015-lsp hidden test: definition prefers local scope over same-name symbols elsewhere",
+            "kind": "hidden",
+            "status": "fail"
+          },
+          {
+            "name": "revfactory-case-015-lsp hidden test: parser recovers from syntax errors and still reports semantic diagnostics",
+            "kind": "hidden",
+            "status": "fail"
+          },
+          {
+            "name": "revfactory-case-015-lsp source syntax",
+            "status": "pass",
+            "evidence": "node --check src/server.mjs exit=0; no output"
+          },
+          {
+            "name": "revfactory-case-015-lsp visible test syntax",
+            "status": "pass",
+            "evidence": "node --check test/lsp.visible.test.mjs exit=0; no output"
+          },
+          {
+            "name": "revfactory-case-015-lsp hidden test syntax",
+            "status": "pass",
+            "evidence": "node --check test/lsp.hidden.test.mjs exit=0; no output"
+          }
+        ],
+        "quality": {
+          "total": 83,
+          "pass_fraction": 0.667,
+          "checks_passed": 6,
+          "checks_total": 9,
+          "dimensions": {
+            "feature_completeness": {
+              "score": 7,
+              "rationale": "6/9 behavior tests pass."
+            },
+            "test_coverage": {
+              "score": 10,
+              "rationale": "Agent-side tests include 26 visible assertions."
+            },
+            "code_quality": {
+              "score": 10,
+              "rationale": "334 source lines; no debug/TODO markers."
+            },
+            "error_handling": {
+              "score": 10,
+              "rationale": "Uses explicit validation or diagnostics paths."
+            },
+            "efficiency": {
+              "score": 10,
+              "rationale": "No runtime dependencies."
+            },
+            "correctness": {
+              "score": 7,
+              "rationale": "Failing 3 of 9 behavior tests."
+            },
+            "architecture": {
+              "score": 6,
+              "rationale": "Single-file LSP/parser/provider implementation."
+            },
+            "extensibility": {
+              "score": 7,
+              "rationale": "Single module is harder to extend safely."
+            },
+            "documentation": {
+              "score": 7,
+              "rationale": "Includes local comments."
+            },
+            "dev_environment": {
+              "score": 9,
+              "rationale": "Runnable npm test script is present."
+            }
+          }
+        }
+      },
+      "harness": {
+        "cwd": "/tmp/sg-harness-eval-archon-claude/sandboxes/revfactory-case-015-lsp/harness",
+        "agent": {
+          "arm_kind": "archon-workflow",
+          "exit_code": 0,
+          "signal": null,
+          "cost": {
+            "tokens": 0,
+            "duration_ms": 546305,
+            "tool_calls": null,
+            "turns_completed": 1,
+            "source": "archon-pino (adapter-measured)",
+            "crashed": false
+          }
+        },
+        "checks": [
+          {
+            "name": "revfactory-case-015-lsp visible test: JSON-RPC transport frames and streams Content-Length messages",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "revfactory-case-015-lsp visible test: initialize, shutdown, and exit expose expected LSP lifecycle",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "revfactory-case-015-lsp visible test: didOpen publishes diagnostics for undefined symbols and wrong arity",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "revfactory-case-015-lsp visible test: completion includes keywords, in-scope symbols, functions, and snippets",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "revfactory-case-015-lsp visible test: definition and hover resolve function symbols",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "revfactory-case-015-lsp hidden test: didChange reparses incrementally and clears stale diagnostics",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "revfactory-case-015-lsp hidden test: completion filters by prefix and exposes function signatures",
+            "kind": "hidden",
+            "status": "fail"
+          },
+          {
+            "name": "revfactory-case-015-lsp hidden test: definition prefers local scope over same-name symbols elsewhere",
+            "kind": "hidden",
+            "status": "fail"
+          },
+          {
+            "name": "revfactory-case-015-lsp hidden test: parser recovers from syntax errors and still reports semantic diagnostics",
+            "kind": "hidden",
+            "status": "fail"
+          },
+          {
+            "name": "revfactory-case-015-lsp source syntax",
+            "status": "pass",
+            "evidence": "node --check src/server.mjs exit=0; no output"
+          },
+          {
+            "name": "revfactory-case-015-lsp visible test syntax",
+            "status": "pass",
+            "evidence": "node --check test/lsp.visible.test.mjs exit=0; no output"
+          },
+          {
+            "name": "revfactory-case-015-lsp hidden test syntax",
+            "status": "pass",
+            "evidence": "node --check test/lsp.hidden.test.mjs exit=0; no output"
+          }
+        ],
+        "quality": {
+          "total": 82,
+          "pass_fraction": 0.667,
+          "checks_passed": 6,
+          "checks_total": 9,
+          "dimensions": {
+            "feature_completeness": {
+              "score": 7,
+              "rationale": "6/9 behavior tests pass."
+            },
+            "test_coverage": {
+              "score": 10,
+              "rationale": "Agent-side tests include 26 visible assertions."
+            },
+            "code_quality": {
+              "score": 10,
+              "rationale": "345 source lines; no debug/TODO markers."
+            },
+            "error_handling": {
+              "score": 9,
+              "rationale": "Uses explicit validation or diagnostics paths."
+            },
+            "efficiency": {
+              "score": 10,
+              "rationale": "No runtime dependencies."
+            },
+            "correctness": {
+              "score": 7,
+              "rationale": "Failing 3 of 9 behavior tests."
+            },
+            "architecture": {
+              "score": 6,
+              "rationale": "Single-file LSP/parser/provider implementation."
+            },
+            "extensibility": {
+              "score": 7,
+              "rationale": "Single module is harder to extend safely."
+            },
+            "documentation": {
+              "score": 7,
+              "rationale": "Includes local comments."
+            },
+            "dev_environment": {
+              "score": 9,
+              "rationale": "Runnable npm test script is present."
+            }
+          }
+        }
+      }
+    }
+  }
+}

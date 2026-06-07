@@ -1,0 +1,7 @@
+Implemented the fixer pass in [src/server.mjs](/private/tmp/supergoal-codex-roleloop/sandboxes/revfactory-case-015-lsp/role-s1/src/server.mjs:205): prefix-filtered completion, EOF missing-`}` recovery, and local-first go-to-definition resolution.
+
+Updated [NOTES.md](/private/tmp/supergoal-codex-roleloop/sandboxes/revfactory-case-015-lsp/role-s1/NOTES.md:1) and [changelog](/private/tmp/supergoal-codex-roleloop/sandboxes/revfactory-case-015-lsp/role-s1/docs/changelog/changelog-2026-06-07.md:1) with fixed status and reasoning.
+
+Verification:
+- `node --check src/server.mjs`
+- `npm test` passes: 10/10 tests.

@@ -1,0 +1,12 @@
+Implemented the review fixes in `src/server.mjs` and updated `docs/changelog/changelog-2026-06-07.md`.
+
+Key improvements:
+- Global function symbols are discovered before body validation, so forward function calls resolve correctly.
+- Duplicate function declarations no longer make earlier bodies use later signature metadata.
+- Nested `fn` declarations now report diagnostics without leaking into global symbols or corrupting outer scope.
+- Incremental/full `didChange` behavior remains intact.
+
+Verified:
+- Initial `npm test`: passed, 8/8.
+- Final `npm test`: passed, 8/8.
+- Added focused smoke checks for forward calls and nested-function leakage.

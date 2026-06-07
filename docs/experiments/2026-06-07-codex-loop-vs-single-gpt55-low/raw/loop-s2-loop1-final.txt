@@ -1,0 +1,8 @@
+Implemented the improvement pass in [src/server.mjs](/tmp/supergoal-codex-loop-vs-single/sandboxes/revfactory-case-015-lsp/loop-s2/src/server.mjs): complete dependency-free JSON-RPC framing, MiniLang parsing with recovery, scoped symbols, diagnostics, forward function resolution, completion, definition, hover, and range-based `didChange`.
+
+Updated [docs/changelog/changelog-2026-06-07.md](/tmp/supergoal-codex-loop-vs-single/sandboxes/revfactory-case-015-lsp/loop-s2/docs/changelog/changelog-2026-06-07.md) with the decision rationale.
+
+Verified:
+- Initial `npm test`: pass, 5/5
+- Final `npm test`: pass, 5/5
+- Manual smoke check: forward function calls and scoped completion behavior pass.

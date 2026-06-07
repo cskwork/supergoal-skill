@@ -1,0 +1,11 @@
+Implemented the `deepMerge` hardening in `src/merge.mjs`.
+
+What changed:
+- Uses property descriptors instead of direct `source[key]` access.
+- Copies enumerable accessors without running source getters during merge.
+- Defines target properties directly so inherited setters cannot intercept writes.
+- Kept existing behavior for plain-object recursion, array/class replacement, symbols, and pollution-key skipping.
+
+Also added regression tests for getter safety and inherited setter bypass, and updated `docs/changelog/changelog-2026-06-07.md`.
+
+Verification: `npm test` passes, 8/8 tests.

@@ -1,0 +1,3 @@
+Verifier pass complete. `npm test` passes: 4 tests, 4 passing.
+
+I found no remaining `src/` failure to fix. `parseCsvLine` is already exported and handles the checked CSV basics. I updated `NOTES.md` with the verifier pass and direct behavior checks.

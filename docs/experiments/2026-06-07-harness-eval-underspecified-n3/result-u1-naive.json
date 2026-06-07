@@ -1,0 +1,249 @@
+{
+  "case_id": "underspec-deepmerge",
+  "difficulty": "under-specified",
+  "runtime_adapter": "codex-exec:gpt-5.5:reasoning-low",
+  "same_repo_snapshot": true,
+  "isolated_sandboxes": true,
+  "arms": {
+    "baseline": "single bare codex pass (no skill)",
+    "harness": "supergoal role-separated loop: build(skill-ref)+critic+fixer+verifier",
+    "naive": "equal-compute control: build + 3 review-and-improve passes, no skill"
+  },
+  "claim_status": "not_proven",
+  "summary": {
+    "baseline": {
+      "arm": "baseline",
+      "seeds": 0,
+      "quality_avg": 0,
+      "quality_each": [],
+      "visible_each": [],
+      "hidden_each": [],
+      "hidden_pass_avg": 0,
+      "false_green_count": 0,
+      "crashed_count": 0,
+      "tokens_avg": 0,
+      "duration_ms_avg": 0,
+      "total_passes_avg": 0
+    },
+    "harness": {
+      "arm": "harness",
+      "seeds": 0,
+      "quality_avg": 0,
+      "quality_each": [],
+      "visible_each": [],
+      "hidden_each": [],
+      "hidden_pass_avg": 0,
+      "false_green_count": 0,
+      "crashed_count": 0,
+      "tokens_avg": 0,
+      "duration_ms_avg": 0,
+      "total_passes_avg": 0
+    },
+    "naive": {
+      "arm": "naive",
+      "seeds": 3,
+      "quality_avg": 78,
+      "quality_each": [
+        78,
+        78,
+        78
+      ],
+      "visible_each": [
+        "1/1",
+        "1/1",
+        "1/1"
+      ],
+      "hidden_each": [
+        "4/4",
+        "4/4",
+        "4/4"
+      ],
+      "hidden_pass_avg": 4,
+      "false_green_count": 0,
+      "crashed_count": 0,
+      "tokens_avg": 1209282,
+      "duration_ms_avg": 338378,
+      "total_passes_avg": 4
+    }
+  },
+  "seeds": {
+    "baseline": [],
+    "harness": [],
+    "naive": [
+      {
+        "seed": 1,
+        "cost": {
+          "tokens": 1517477,
+          "duration_ms": 402816,
+          "tool_calls": 116,
+          "passes": 4,
+          "crashed": false,
+          "per_pass": [
+            {
+              "label": "cu1-naive-s1-build",
+              "tokens": 190407,
+              "duration_ms": 54907,
+              "tool_calls": 20,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "cu1-naive-s1-improve1",
+              "tokens": 280340,
+              "duration_ms": 82566,
+              "tool_calls": 22,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "cu1-naive-s1-improve2",
+              "tokens": 591472,
+              "duration_ms": 151988,
+              "tool_calls": 44,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "cu1-naive-s1-improve3",
+              "tokens": 455258,
+              "duration_ms": 113355,
+              "tool_calls": 30,
+              "exit_code": 0,
+              "crashed": false
+            }
+          ]
+        },
+        "snap": {
+          "label": "naive-s1",
+          "visible_pass": 1,
+          "visible_total": 1,
+          "hidden_pass": 4,
+          "hidden_total": 4,
+          "hidden_fails": [],
+          "syntax_pass": 2,
+          "syntax_total": 2,
+          "quality": 78,
+          "source_files": 1,
+          "source_lines": 70,
+          "false_green": false
+        }
+      },
+      {
+        "seed": 2,
+        "cost": {
+          "tokens": 1051706,
+          "duration_ms": 306273,
+          "tool_calls": 104,
+          "passes": 4,
+          "crashed": false,
+          "per_pass": [
+            {
+              "label": "cu1-naive-s2-build",
+              "tokens": 132138,
+              "duration_ms": 36926,
+              "tool_calls": 16,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "cu1-naive-s2-improve1",
+              "tokens": 191382,
+              "duration_ms": 71294,
+              "tool_calls": 22,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "cu1-naive-s2-improve2",
+              "tokens": 320878,
+              "duration_ms": 88598,
+              "tool_calls": 30,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "cu1-naive-s2-improve3",
+              "tokens": 407308,
+              "duration_ms": 109455,
+              "tool_calls": 36,
+              "exit_code": 0,
+              "crashed": false
+            }
+          ]
+        },
+        "snap": {
+          "label": "naive-s2",
+          "visible_pass": 1,
+          "visible_total": 1,
+          "hidden_pass": 4,
+          "hidden_total": 4,
+          "hidden_fails": [],
+          "syntax_pass": 2,
+          "syntax_total": 2,
+          "quality": 78,
+          "source_files": 1,
+          "source_lines": 34,
+          "false_green": false
+        }
+      },
+      {
+        "seed": 3,
+        "cost": {
+          "tokens": 1058663,
+          "duration_ms": 306044,
+          "tool_calls": 92,
+          "passes": 4,
+          "crashed": false,
+          "per_pass": [
+            {
+              "label": "cu1-naive-s3-build",
+              "tokens": 188006,
+              "duration_ms": 49098,
+              "tool_calls": 16,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "cu1-naive-s3-improve1",
+              "tokens": 247902,
+              "duration_ms": 66801,
+              "tool_calls": 18,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "cu1-naive-s3-improve2",
+              "tokens": 288978,
+              "duration_ms": 79541,
+              "tool_calls": 26,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "cu1-naive-s3-improve3",
+              "tokens": 333777,
+              "duration_ms": 110604,
+              "tool_calls": 32,
+              "exit_code": 0,
+              "crashed": false
+            }
+          ]
+        },
+        "snap": {
+          "label": "naive-s3",
+          "visible_pass": 1,
+          "visible_total": 1,
+          "hidden_pass": 4,
+          "hidden_total": 4,
+          "hidden_fails": [],
+          "syntax_pass": 2,
+          "syntax_total": 2,
+          "quality": 78,
+          "source_files": 1,
+          "source_lines": 46,
+          "false_green": false
+        }
+      }
+    ]
+  }
+}

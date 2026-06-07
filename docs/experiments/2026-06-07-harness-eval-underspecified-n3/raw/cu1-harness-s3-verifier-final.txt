@@ -1,0 +1,5 @@
+Implemented the final fix in `src/merge.mjs`: `deepMerge` now remains a named export and is also exported as default for current test compatibility.
+
+Updated `NOTES.md` and `docs/changelog/changelog-2026-06-07.md`.
+
+Verification: `npm test` passes, 3 tests passed, 0 failed.

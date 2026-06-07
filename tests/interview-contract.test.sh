@@ -27,22 +27,8 @@ echo "=================================================================="
 echo " /supergoal interview contract   skill: $ROOT"
 echo "=================================================================="
 
-# SKILL.md wiring
-require_text "core contract requires interview before freeze" "SKILL.md" "Clarifying interview is required before plan freeze"
-require_text "core contract caps questions and gates freeze" "SKILL.md" "ask at most 3-5 high-leverage"
-require_text "core contract exempts LEARN" "SKILL.md" "LEARN skips it"
-require_text "greenfield pipeline inserts interview" "SKILL.md" "Validate** → **Interview** → Plan"
-require_text "debug pipeline inserts hypothesis re-rank" "SKILL.md" "Diagnose (+ **Interview**: hypothesis re-rank)"
-require_text "legacy pipeline inserts interview" "SKILL.md" "Explore → **Interview** → Plan"
-require_text "routing rule names interview" "SKILL.md" "Interview: before plan freeze, run"
+# SKILL.md wiring (detail lives in reference/interview.md; SKILL.md is a slim router post-baseline-first)
 require_text "reference map lists interview" "SKILL.md" "reference/interview.md"
-require_text "final checklist gates the interview" "SKILL.md" "Clarifying interview run or explicitly skipped"
-
-# pipeline.md wiring
-require_text "pipeline overlay describes interview" "reference/pipeline.md" "ambiguity-gated clarifying interview"
-require_text "greenfield header lists interview" "reference/pipeline.md" "GREENFIELD - Intake -> Validate -> Interview -> Plan"
-require_text "legacy header lists interview" "reference/pipeline.md" "LEGACY - Intake -> Explore -> Interview -> Plan"
-require_text "debug header lists hypothesis re-rank" "reference/pipeline.md" "Diagnose (+ Interview: hypothesis re-rank)"
 
 # interview.md contract
 require_text "interview gated on ambiguity" "reference/interview.md" "Gate - when to interview vs skip"

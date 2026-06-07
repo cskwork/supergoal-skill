@@ -1,0 +1,15 @@
+Implemented `deepMerge` improvements in `src/merge.mjs`.
+
+Changed behavior:
+- Recursively merges nested plain objects.
+- Preserves existing nested sibling keys.
+- Creates missing nested target branches without sharing source object references.
+- Replaces arrays, `null`, primitives, dates, and other non-plain objects.
+
+Added focused tests in `test/merge.deep.test.mjs` and documented the decision in `docs/changelog/changelog-2026-06-07.md`.
+
+Verification:
+- Initial `npm test`: passed 1/1 visible test.
+- Final `npm test`: passed 4/4 tests.
+
+Note: this sandbox is not a git repository, so `git diff/status` was unavailable.

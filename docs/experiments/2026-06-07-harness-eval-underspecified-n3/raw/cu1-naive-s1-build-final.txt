@@ -1,0 +1,7 @@
+Implemented `deepMerge` in [src/merge.mjs](/private/tmp/sg-eval-u1-naive/sandboxes/naive-s1/src/merge.mjs): recursive plain-object merge, source overrides for primitives/arrays/non-plain values, returns the mutated target.
+
+Added the required reasoning note in [docs/changelog/changelog-2026-06-07.md](/private/tmp/sg-eval-u1-naive/sandboxes/naive-s1/docs/changelog/changelog-2026-06-07.md).
+
+Verified:
+- `npm test` passes
+- Direct nested merge smoke check passes and confirms the returned value is the same target object.

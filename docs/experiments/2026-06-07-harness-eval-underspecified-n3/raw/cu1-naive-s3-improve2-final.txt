@@ -1,0 +1,14 @@
+Implemented the merge hardening in `src/merge.mjs`.
+
+Changed:
+- `deepMerge` now only treats plain objects as merge containers.
+- It now includes enumerable symbol keys, not just string keys.
+- Arrays, dates, and other built-ins are left untouched as top-level inputs.
+- Added regression tests for symbol keys and non-plain top-level inputs.
+- Updated `docs/changelog/changelog-2026-06-07.md`.
+
+Verified:
+- Initial `npm test`: 5/5 passing
+- Final `npm test`: 7/7 passing
+
+Note: this sandbox is not a git repository, so I could not provide a git diff/status.

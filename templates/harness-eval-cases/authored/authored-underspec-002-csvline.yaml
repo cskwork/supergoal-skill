@@ -1,0 +1,47 @@
+id: authored-underspec-002
+title: "parseCsvLine - under-specified, canonical (ceiling control)"
+difficulty: under-specified
+category: code-generation
+source: "authored (supergoal under-specified frontier)"
+runtime_adapter: portable
+runnable_fixture: "templates/harness-eval-cases/fixtures/underspec-002-csvline/"
+origin_experiment: "docs/experiments/2026-06-07-harness-eval-underspecified-n3/ (case u2)"
+discriminates: false
+task: |-
+  Implement parseCsvLine(line) in src/csv.mjs that parses a single CSV line into an
+  array of field strings. Export parseCsvLine. (Deliberately thin.)
+acceptance:
+  - "Splits a simple comma-separated line (the only visible behavior)."
+latent_requirements:
+  - "A quoted field may contain commas."
+  - "Doubled quotes inside a quoted field are one escaped quote."
+  - "Empty and trailing fields are preserved."
+  - "A quoted field preserves surrounding spaces."
+machine_checks:
+  - "node --test on the visible + hidden suites"
+hidden_checks:
+  - "quoted comma"
+  - "escaped doubled quote"
+  - "empty/trailing fields"
+  - "quoted spaces preserved"
+  - "single field"
+discrimination_check:
+  stub: "throws not implemented -> fails all"
+  reference_impl: "stateful quote-aware parser -> passes all"
+  lazy_impl: "line.split(',') fails quoted-comma, escaped-quote, quoted-spaces"
+finding: |-
+  n=3, gpt-5.5/low: TIE, both arms 5/5 every seed. CSV quote handling is canonical knowledge,
+  so the baseline implements it unprompted - nothing latent for the critic to surface. Kept as the
+  ceiling control: it shows that under-specification ONLY discriminates when the latent requirement
+  is easy to OVERLOOK (e.g. proto-pollution), not when it is textbook (CSV quoting).
+rubric:
+  quality_score:
+    method: "RevFactory-style 100-point; 10 dimensions, each 0-10."
+    anchors:
+      - "Failed hidden checks cap correctness at 6."
+cost_fields:
+  - wall_clock_minutes
+  - model
+  - reasoning_effort
+  - tool_calls
+  - token_estimate

@@ -1,0 +1,3 @@
+Implemented `deepMerge` in [src/merge.mjs](/private/tmp/sg-eval-u1-naive/sandboxes/naive-s2/src/merge.mjs). It recursively merges nested non-array objects, overwrites with source values otherwise, mutates `target`, and returns it.
+
+Verified with `npm test`: 1 test passed.

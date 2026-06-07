@@ -108,14 +108,20 @@ explicit-spec task a capable baseline already passes - expect a TIE at 2-3x cost
 
 - Make the baseline actually struggle: weaker model and/or higher reasoning effort, OR a genuinely
   under-specified task - not just a higher difficulty label.
-- Under-specified discriminates ONLY when the unstated requirement is LATENT-CORRECTNESS (a lazy literal
-  impl skips it, a correct impl does it anyway: proto-pollution guard, CSV quote handling, no-mutate-input)
-  AND not so public/obvious the baseline fills it unprompted. Ambiguous choices are NOT fair hidden checks
-  - test only what one reasonable reading MUST do.
+- Under-specified surfaces a gap vs a 1-PASS baseline only when the unstated requirement is
+  LATENT-CORRECTNESS a literal pass OVERLOOKS (security/robustness edge), not canonical textbook behavior:
+  deepMerge prototype-pollution showed a gap (baseline shipped the vuln 2/3 as a false-GREEN), CSV
+  quote-handling tied (canonical, baseline does it unprompted). BUT that gap was COMPUTE, not the skill -
+  an equal-compute naive loop (build+3 review, NO skill) scored 4/4 vs the role-loop's 3.3/4 at the same
+  4-pass budget (`docs/experiments/2026-06-07-harness-eval-underspecified-n3/`). Net across the entire
+  2026-06-07 sweep: NO regime where the role-loop beats an equal-compute no-skill baseline. Ambiguous
+  choices are NOT fair hidden checks - test only what one reasonable reading MUST do.
 - n >= 3 per arm even in a pilot. A +-1-test delta at n=1 is noise, not a win: case-015 read as harness
   8/9 vs baseline 7/9 one run and an exact tie the next. Report the per-seed vector, not just the mean.
-- Compute confound: a 4-pass role-loop vs a 1-pass baseline conflates skill with compute. Either add an
-  equal-compute control (naive build+N-review loop, no skill) or report the cost multiple up front.
+- Compute confound (MANDATORY control, not optional): a 4-pass role-loop vs a 1-pass baseline conflates
+  skill with compute. ALWAYS add a naive equal-compute arm (build+N-review, no skill). A multi-pass
+  harness that beats a 1-pass baseline has usually just bought compute - proven 2026-06-07: on the one
+  case the harness "won", the naive arm matched/beat it (4/4 vs 3.3/4) at equal passes.
 - Harness arm design: use the role-loop (build->critic->fixer->verifier) when testing the
   surface-hidden-requirements lever; the critic is that lever. Use single-pass skill-ref to A/B the
   SKILL text itself. State which, and keep both arms in the same runtime profile.

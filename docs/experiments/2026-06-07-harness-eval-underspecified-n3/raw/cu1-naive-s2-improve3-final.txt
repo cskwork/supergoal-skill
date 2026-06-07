@@ -1,0 +1,5 @@
+Implemented the hardening in `src/merge.mjs`: `deepMerge(target, null)` and `deepMerge(target, undefined)` now return `target` unchanged instead of throwing.
+
+Added regression coverage in `test/merge.deep.test.mjs` and documented the decision in `docs/changelog/changelog-2026-06-07.md`.
+
+Verified: `npm test` passes, 7/7 tests. Note: this sandbox is not a git repository, so I could not show a git diff/status.

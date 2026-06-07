@@ -1,0 +1,16 @@
+Added red-team tests only; `src/` was not modified.
+
+Created [test/spec.gen.test.mjs](/private/tmp/sg-eval-uspec-u2/sandboxes/harness-s3/test/spec.gen.test.mjs) with failing black-box coverage for CSV record terminators:
+
+- trailing `\r\n` after unquoted fields
+- trailing `\n` after unquoted fields
+- trailing `\r` after quoted fields
+
+Created [NOTES.md](/private/tmp/sg-eval-uspec-u2/sandboxes/harness-s3/NOTES.md) with the open defects.
+
+Visible tests currently cover only simple comma splitting, not boundary/format behavior like record terminators, quoted-field terminator handling, malformed line endings, public API edge cases, or untrusted input. I focused the new failures on the named CSV line format convention: record delimiters must not be returned as field content.
+
+Verification:
+
+- Initial `npm test`: passed, 1 visible test.
+- Final `npm test`: failed as expected due to new `spec.gen` tests.

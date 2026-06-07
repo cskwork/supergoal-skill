@@ -540,3 +540,68 @@ Changes (describe only what the skill is now):
 Verified: grep shows no residual removed-machinery terms except the intentional "Not a gate stack"
 heading; tag balance holds (article 16/16, div 69/69, pre 5/5, section 7/7, en/ko spans 63/63);
 structural counts match (8 mode cards, 5 principles, 3 proof cards, 5 route steps).
+
+## Under-specified n=3 eval + equal-compute control — the "win" was compute, not the skill
+
+Follow-up to the medium/hard/expert ties: tested the hypothesis that the harness's only correctness
+lever (critic surfaces UNSTATED requirements) needs an under-specified task. Authored 2 latent-correctness
+fixtures (`docs/experiments/2026-06-07-harness-eval-underspecified-n3/`, cases u1/u2 in run.mjs), validated
+3-way (stub fails / reference passes / lazy fails the discriminators) before running. baseline=single
+literal pass vs harness=role-loop, gpt-5.5/low, n=3 per arm.
+
+- u1 deepMerge: vs the 1-pass baseline, harness hidden 3.3/4 vs 2.3/4 - the gap is the prototype-pollution
+  guard + null-source (baseline shipped the `__proto__` vuln 2/3 as a false-GREEN). LOOKED like a skill win.
+- u2 csvLine: TIE, 5/5 both arms every seed (CSV quoting is canonical -> baseline does it unprompted).
+
+Then ran the equal-compute control (naive build+3-review, NO skill, 4 passes = same budget as the role-loop)
+on u1, n=3: naive scored 4/4 EVERY seed, 0 false-GREEN - BETTER than the skill's role-loop (3.3/4). So the
+u1 gap was COMPUTE, not the skill: plain iteration catches proto-pollution + null at least as well, and the
+role-loop's critic->fixer serialization actually left null unfixed 2/3. CORRECTED conclusion: across the
+ENTIRE 2026-06-07 sweep there is NO regime where the supergoal role-loop beats an equal-compute no-skill
+baseline. Skill value that survives: high-effort crash stability + single-pass cost reduction, not
+role-loop correctness. This is exactly why the equal-compute control is now mandatory in the skill (the
+`harness-eval-underspecified-n3` result is cited there as the worked example).
+
+## Skill update (per user request: "remember to do eval this way next time")
+
+`reference/harness-eval.md`: added two sections - "Pick a discriminating regime" (lever =
+spec-completeness x baseline strength, not difficulty tier; make the baseline struggle; latent-correctness
+vs canonical; n>=3 because a +-1-test n=1 delta is noise - case-015 read 8/9-vs-7/9 one run, exact tie the
+next; equal-compute control or stated cost multiple; role-loop vs skill-ref arm choice) and "Validate the
+fixture discriminates BEFORE spending compute" (stub fails / reference passes / lazy fails). Reconciled the
+"never invent cases" rule to sanction authored latent-correctness fixtures gated on the 3-way check. Added
+the deepMerge-vs-CSV evidence inline. Added 4 Reject bullets (n=1 +-1 "win"; unequal-compute crediting;
+unvalidated authored fixture). harness-eval-contract.test.sh still 126/0. Did NOT promote the new fixtures
+into templates/ or change SKILL.md - methodology lives in the reference + here, per the lean-SKILL rule.
+
+## LEARN prompt refresh (per user request: merge a new tutoring prompt into both LEARN prompts)
+
+User supplied a revised tutoring prompt. Net-new behaviors over the prior LEARN design:
+- **Core question** as a distinct opening hook - ask what problem the topic solves, then DO NOT wait;
+  keep teaching, the lesson answers it. A thinking hook, not a test. This replaces the old Bridge
+  "calibration question" (which the tutor waited on).
+- **Exactly two questions per opening** - the core question (top) + the recap/check question (bottom);
+  follow-up turns ask one recap question only. Stops mid-lesson question spray.
+- **Bridge shrinks to a one-line analogy** (no calibration question).
+- **Richer opening format** - top `먼저 스스로 답해볼 질문:`, a `결과:` line closing the trace, and a
+  bottom `마지막으로 확인:` recap line.
+- **Code topics**: explain existing code first, name bugs separately - never silently rewrite.
+- Dropped the internal `atom`/`원자` jargon in favor of "smallest useful pieces" / "key-terms map",
+  matching the new prompt (user-facing `원자` was already banned).
+
+Changed:
+- `docs/learn-standalone-prompt.md` (the simple/standalone prompt) - rewritten to the new design while
+  keeping the file's dense house style and the standalone invariant (no files/journal/profile/sub-agents).
+- `reference/learn.md` (the in-skill LEARN workflow) - merged the same behaviors but kept all workflow
+  infra: USER_PREFERENCE.md read/seed, read-only explore/architect sourcing, Journal-live step, goal-tool
+  boundary. Surgical edits only, so all 8 contract-pinned strings survive verbatim. Also fixed the glossary
+  separator `|---|---|` -> `|---|---|---|` (rendering bug in the block being edited).
+- `tests/learn-contract.test.sh` - the 4 assertions targeting SKILL.md were stale: the baseline-first
+  rewrite moved LEARN teaching detail out of SKILL.md into reference/learn.md, so they had been failing
+  (8/4 at baseline). Retargeted them to reference/learn.md with the new-design vocabulary
+  (`smallest useful pieces`, `process trace`, `Glossary alone is not enough`,
+  `avoid exposing the literal label 원자`). Did NOT re-add LEARN detail to SKILL.md - respecting the
+  deliberate lean-SKILL design.
+
+Verify: `tests/learn-contract.test.sh` 8/4 -> 12/0. Full suite pass 172 -> 176, fail 55 -> 51 (only
+learn-contract changed; every other mode's pass/fail count is identical to baseline - no regression).

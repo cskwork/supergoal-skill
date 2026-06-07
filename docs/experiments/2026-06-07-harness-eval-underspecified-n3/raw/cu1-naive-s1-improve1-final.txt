@@ -1,0 +1,5 @@
+Implemented `deepMerge` in [src/merge.mjs](/private/tmp/sg-eval-u1-naive/sandboxes/naive-s1/src/merge.mjs): recursive plain-object merge, source override semantics, arrays/non-plain values replaced, nested source objects copied, enumerable symbol keys supported, and prototype-pollution keys ignored.
+
+Added focused coverage in [test/merge.visible.test.mjs](/private/tmp/sg-eval-u1-naive/sandboxes/naive-s1/test/merge.visible.test.mjs) and recorded the decision in [docs/changelog/changelog-2026-06-07.md](/private/tmp/sg-eval-u1-naive/sandboxes/naive-s1/docs/changelog/changelog-2026-06-07.md).
+
+Verification: `npm test` passes, 6/6 tests.

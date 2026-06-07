@@ -1,0 +1,62 @@
+[run] case=underspec-deepmerge model=gpt-5.5 effort=low baseline_seeds=0 harness_seeds=0
+[naive] seed 1
+[naive] seed 2
+[naive] seed 3
+[done] wrote result-u1-naive.json
+{
+  "baseline": {
+    "arm": "baseline",
+    "seeds": 0,
+    "quality_avg": 0,
+    "quality_each": [],
+    "visible_each": [],
+    "hidden_each": [],
+    "hidden_pass_avg": 0,
+    "false_green_count": 0,
+    "crashed_count": 0,
+    "tokens_avg": 0,
+    "duration_ms_avg": 0,
+    "total_passes_avg": 0
+  },
+  "harness": {
+    "arm": "harness",
+    "seeds": 0,
+    "quality_avg": 0,
+    "quality_each": [],
+    "visible_each": [],
+    "hidden_each": [],
+    "hidden_pass_avg": 0,
+    "false_green_count": 0,
+    "crashed_count": 0,
+    "tokens_avg": 0,
+    "duration_ms_avg": 0,
+    "total_passes_avg": 0
+  },
+  "naive": {
+    "arm": "naive",
+    "seeds": 3,
+    "quality_avg": 78,
+    "quality_each": [
+      78,
+      78,
+      78
+    ],
+    "visible_each": [
+      "1/1",
+      "1/1",
+      "1/1"
+    ],
+    "hidden_each": [
+      "4/4",
+      "4/4",
+      "4/4"
+    ],
+    "hidden_pass_avg": 4,
+    "false_green_count": 0,
+    "crashed_count": 0,
+    "tokens_avg": 1209282,
+    "duration_ms_avg": 338378,
+    "total_passes_avg": 4
+  }
+}
+NAIVE DONE exit=0

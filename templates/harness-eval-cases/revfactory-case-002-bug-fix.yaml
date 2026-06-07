@@ -5,6 +5,8 @@ difficulty: hard
 category: bug-fix
 source: "RevFactory claude-code-harness"
 source_url: "https://github.com/revfactory/claude-code-harness/blob/main/experiments/cases/case-002-bug-fix.yaml"
+runnable_fixture: "templates/harness-eval-cases/fixtures/revfactory-case-002-async-race/"
+origin_experiment: "docs/experiments/2026-06-07-harness-eval-medium-hard-skill-vs-baseline/ (SG_EVAL_CASE=002)"
 runtime_adapter: portable
 repo_snapshot: "<git sha or immutable snapshot id>"
 task: |-

@@ -1,0 +1,5 @@
+Implemented `parseCsvLine(line)` in [src/csv.mjs](/tmp/sg-eval-uspec-u2/sandboxes/harness-s3/src/csv.mjs). It now handles simple fields, empty fields, quoted fields, escaped quotes, and malformed quote errors.
+
+Added the required decision note in [docs/changelog/changelog-2026-06-07.md](/tmp/sg-eval-uspec-u2/sandboxes/harness-s3/docs/changelog/changelog-2026-06-07.md).
+
+Verified with `npm test`: pass, 1/1 tests green.

@@ -1,0 +1,11 @@
+Implemented `deepMerge` improvements in `src/merge.mjs`.
+
+Changed behavior:
+- Merges own enumerable string and symbol keys.
+- Keeps recursive plain-object merging.
+- Replaces arrays, `null`, primitives, and non-plain objects.
+- Skips `__proto__`, `constructor`, and `prototype` to avoid prototype pollution.
+
+Added tests for symbol keys and pollution keys in `test/merge.deep.test.mjs`, and documented the reasoning in `docs/changelog/changelog-2026-06-07.md`.
+
+Verification: `npm test` passes, 6/6 tests.

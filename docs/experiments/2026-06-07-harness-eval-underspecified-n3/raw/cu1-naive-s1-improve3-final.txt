@@ -1,0 +1,14 @@
+Implemented the missing deep-merge edge behavior in `src/merge.mjs`.
+
+Changed:
+- Added cycle/shared-reference handling via `WeakMap`.
+- Preserved null-prototype nested source objects when copied.
+- Added default export alongside named `deepMerge`.
+- Added regression tests for cycles/shared references and null-prototype objects.
+- Updated `docs/changelog/changelog-2026-06-07.md`.
+
+Verification:
+- Initial `npm test`: passed 8/8.
+- Final `npm test`: passed 10/10.
+
+Note: `git diff`/`git status` could not run because this sandbox is not a Git repository.

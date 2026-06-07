@@ -30,6 +30,9 @@ const RUN_ROOT = process.env.SG_EVAL_RUN_ROOT || `/tmp/sg-eval-skill-vs-baseline
 const TIMEOUT_MS = Number(process.env.SG_EVAL_TIMEOUT_MS || 720000);
 const BASELINE_SEEDS = Number(process.env.SG_EVAL_BASELINE_SEEDS || 2);
 const HARNESS_SEEDS = Number(process.env.SG_EVAL_HARNESS_SEEDS || 2);
+const NAIVE_SEEDS = Number(process.env.SG_EVAL_NAIVE_SEEDS || 0);
+const LOOPS = Number(process.env.SG_EVAL_LOOPS || 3);
+const RESULT_SUFFIX = process.env.SG_EVAL_RESULT_SUFFIX || "";
 
 // ----------------------------------------------------------------------------
 // Cases. Each is clean-slate, runnable with `node --test`, dependency-free.
@@ -772,6 +775,31 @@ function runBaselineSeed(seed) {
   return { seed, cost: aggCost([pass]), snap };
 }
 
+// Equal-compute control: same 4 passes as the role-loop, but no skill and no role
+// separation - just build + repeated "review & improve" by the same agent. Isolates the
+// skill's critic from raw extra compute.
+function naiveImprovePrompt() {
+  return [
+    "The code in this sandbox is a previous draft solution to the task below (no harness).",
+    "- Run `npm test` to see the current state.",
+    "- Find bugs, missing behaviors, and edge cases the task implies but the draft misses. The",
+    "  visible tests are NOT a complete spec; implement the full behavior the task describes.",
+    "- Improve the implementation. Do NOT break tests that already pass.",
+    "- Keep changes minimal and dependency-free. Do not ask questions.",
+    "- Run `npm test` again before your final response.",
+    "",
+    `Task:\n${caseDef.task}`,
+  ].join("\n");
+}
+
+function runNaiveSeed(seed) {
+  const cwd = writeFixture("naive", seed);
+  const passes = [runCodexPass(cwd, baselinePrompt(), `naive-s${seed}-build`, null)];
+  for (let i = 1; i <= LOOPS; i += 1) passes.push(runCodexPass(cwd, naiveImprovePrompt(), `naive-s${seed}-improve${i}`, null));
+  const snap = scoreSnapshot(cwd, `naive-s${seed}`);
+  return { seed, cost: aggCost(passes), snap };
+}
+
 function runHarnessSeed(seed, harnessRef) {
   const cwd = writeFixture("harness", seed);
   const passes = [];
@@ -815,7 +843,12 @@ function main() {
   for (let s = 1; s <= BASELINE_SEEDS; s += 1) { console.log(`[baseline] seed ${s}`); baseline.push(runBaselineSeed(s)); }
   const harness = [];
   for (let s = 1; s <= HARNESS_SEEDS; s += 1) { console.log(`[harness] seed ${s}`); harness.push(runHarnessSeed(s, harnessRef)); }
+  const naive = [];
+  for (let s = 1; s <= NAIVE_SEEDS; s += 1) { console.log(`[naive] seed ${s}`); naive.push(runNaiveSeed(s)); }
 
+  const summary = { baseline: summarize("baseline", baseline), harness: summarize("harness", harness) };
+  const seeds = { baseline, harness };
+  if (NAIVE_SEEDS > 0) { summary.naive = summarize("naive", naive); seeds.naive = naive; }
   const result = {
     case_id: caseDef.id,
     difficulty: caseDef.difficulty,
@@ -825,13 +858,15 @@ function main() {
     arms: {
       baseline: "single bare codex pass (no skill)",
       harness: "supergoal role-separated loop: build(skill-ref)+critic+fixer+verifier",
+      naive: `equal-compute control: build + ${LOOPS} review-and-improve passes, no skill`,
     },
     claim_status: "not_proven",
-    summary: { baseline: summarize("baseline", baseline), harness: summarize("harness", harness) },
-    seeds: { baseline, harness },
+    summary,
+    seeds,
   };
-  fs.writeFileSync(path.join(EXP, `result-${CASE}.json`), json(result));
-  console.log(`[done] wrote result-${CASE}.json`);
+  const outName = `result-${CASE}${RESULT_SUFFIX}.json`;
+  fs.writeFileSync(path.join(EXP, outName), json(result));
+  console.log(`[done] wrote ${outName}`);
   console.log(json(result.summary));
 }
 

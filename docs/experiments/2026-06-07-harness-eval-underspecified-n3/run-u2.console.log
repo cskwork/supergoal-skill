@@ -5,3 +5,58 @@
 [harness] seed 1
 [harness] seed 2
 [harness] seed 3
+[done] wrote result-u2.json
+{
+  "baseline": {
+    "arm": "baseline",
+    "seeds": 3,
+    "quality_avg": 80.7,
+    "quality_each": [
+      82,
+      78,
+      82
+    ],
+    "visible_each": [
+      "1/1",
+      "1/1",
+      "1/1"
+    ],
+    "hidden_each": [
+      "5/5",
+      "5/5",
+      "5/5"
+    ],
+    "hidden_pass_avg": 5,
+    "false_green_count": 0,
+    "crashed_count": 0,
+    "tokens_avg": 179447,
+    "duration_ms_avg": 57807,
+    "total_passes_avg": 1
+  },
+  "harness": {
+    "arm": "harness",
+    "seeds": 3,
+    "quality_avg": 82,
+    "quality_each": [
+      82,
+      82,
+      82
+    ],
+    "visible_each": [
+      "1/1",
+      "1/1",
+      "1/1"
+    ],
+    "hidden_each": [
+      "5/5",
+      "5/5",
+      "5/5"
+    ],
+    "hidden_pass_avg": 5,
+    "false_green_count": 0,
+    "crashed_count": 0,
+    "tokens_avg": 1241038,
+    "duration_ms_avg": 358171,
+    "total_passes_avg": 4
+  }
+}

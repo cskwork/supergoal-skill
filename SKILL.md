@@ -39,6 +39,12 @@ never a generated proxy. For a trivial single edit, skip this skill and edit dir
 | test harness effectiveness / compare with vs without | HARNESS-EVAL | `reference/harness-eval.md` |
 | turn repeated work into a reusable skill | SKILL-MINE | `reference/skill-mine.md` |
 
+**UI/UX overlay (cross-cutting, any mode).** If the objective ships user-facing UI, load
+`reference/ui-ux.md` at **Frame** (not at QA), classify the surface into a tier (Expressive /
+Functional), and carry that authority through Build and Verify. GREENFIELD frontend: always. LEGACY:
+only when introducing new UI - reuse the existing design system/components otherwise. Pure non-visual
+work (lib, API, backend, CLI without TUI) loads neither.
+
 ## Default loop (GREENFIELD / DEBUG / LEGACY) - role-separated
 
 Run as author-independent roles (a separate agent per role when orchestrated; inline, switch role
@@ -47,6 +53,8 @@ the loop and edit directly.
 
 1. **Frame.** Restate the goal + acceptance criteria in one line. If underspecified, ask <=3
    high-leverage questions (`reference/interview.md`); resolve code-answerable ones by reading code.
+   If the work ships user-facing UI, load `reference/ui-ux.md` now and classify its tier (see the
+   UI/UX overlay above) so design drives Build, not just QA.
 2. **Build.** Smallest correct change, test-first; match surrounding style; preserve existing comments
    and structure; no whole-file rewrites; minimal diff. For a bug, reproduce with a failing test first
    (`reference/debugging.md`).
@@ -59,8 +67,8 @@ the loop and edit directly.
 4. **Fixer (no test edits).** Make the failing tests pass with the smallest change; no padding (no code
    not tied to a failing test or a listed defect); do not break passing tests.
 5. **Verify vs ground truth.** Re-run the project's REAL tests; re-read the prose spec for uncovered
-   rules; never weaken/delete a real test or optimize to a generated proxy. For user-facing UI, route
-   the tier (`reference/ui-ux.md` -> `taste-skill-v2.md` / `functional-ui.md`) and QA it
+   rules; never weaken/delete a real test or optimize to a generated proxy. For user-facing UI, QA against
+   the tier loaded at Frame (`reference/ui-ux.md` -> `taste-skill-v2.md` / `functional-ui.md`)
    (`reference/qa.md`). If schema or persisted data is load-bearing, run optional DB evidence through
    `db-reader` and `templates/db-access/`; if `.env` is missing, ask the user to fill it or skip.
    Loop critic->fixer only while a fresh red appears; stop on green and report what
@@ -104,6 +112,7 @@ risky work in a branch or `git worktree` (optional).
 ## Final checklist (before claiming done)
 
 - [ ] Mode stated; hidden requirements surfaced or explicitly none
+- [ ] If user-facing UI: `reference/ui-ux.md` loaded at Frame, tier classified, design authority applied through Build + QA (skip only for non-visual or existing-design legacy work)
 - [ ] Smallest change; surrounding style matched; no whole-file rewrite
 - [ ] Verified against the project's REAL tests + prose spec (not a generated proxy)
 - [ ] Reported what was verified, with command output - no unverified "done"

@@ -45,7 +45,6 @@ across Claude Code, Codex, agy, and other CLIs - but dispatch is optional and si
 | "explain / teach me X" (no code) | **LEARN** | Intake -> Source -> Bridge -> Teach -> Check (explain-back) |
 | "learn / map / onboard onto this codebase" | **LEARN-DOMAIN** | Survey -> Map -> Ground -> Persist a `.domain-agent/` wiki |
 | "QA only / verify / compare data - no code" | **QA-ONLY** | Exercise app + read-only DB -> evidence -> `report.md` |
-| "design / audit a harness or agent team" | **HARNESS-MAKE** | Domain audit -> pattern pick -> agent/skill map -> confirm -> generate |
 | "test harness effectiveness / with vs without" | **HARNESS-EVAL** | Cases -> baseline run -> harness run -> machine checks -> quality score -> compare |
 | "make a skill from history - no product code" | **SKILL-MINE** | Mine history -> rank -> you pick -> forge portable `SKILL.md` -> install |
 
@@ -60,13 +59,12 @@ security review; 5) stop on green and report what was verified with command outp
 /supergoal add SSO to our legacy Django monolith
 /supergoal learn this codebase and build a domain wiki
 /supergoal QA the checkout flow on staging and check the order totals match the DB (no code change)
-/supergoal design a Codex/Claude harness for our migration workflow
 /supergoal compare this migration harness with and without the harness on 3 cases
 ```
 
-QA-ONLY, LEARN/LEARN-DOMAIN, HARNESS-MAKE, HARNESS-EVAL, and SKILL-MINE are kept as separate-purpose
-utilities (no-code QA, teaching/onboarding, harness design, harness measurement, skill forging). They
-write no product code by default and confirm with you before installing anything.
+QA-ONLY, LEARN/LEARN-DOMAIN, HARNESS-EVAL, and SKILL-MINE are kept as separate-purpose utilities (no-code
+QA, teaching/onboarding, harness measurement, skill forging). They write no product code by default and
+confirm with you before installing anything.
 
 ## Install
 
@@ -93,9 +91,9 @@ contract tests under **WSL** bash.
 ```
 SKILL.md            thin spine: baseline-first loop, modes, reference map
 agents/             one persona file per role (analyst, architect, executor, debugger, explore, designer, qa-*, db-reader, code-reviewer, security-reviewer)
-reference/          domain-rules · domain-context · debugging · interview · plan-grounding · market-research · qa · qa-only · db-access · learn · learn-domain · ui-ux · taste-skill-v2 · functional-ui · harness-make · harness-patterns · harness-eval · skill-mine
+reference/          domain-rules · domain-context · debugging · interview · plan-grounding · market-research · qa · qa-only · db-access · learn · learn-domain · ui-ux · taste-skill-v2 · functional-ui · harness-eval · skill-mine
 learn/              LEARN-mode session journals + README template + USER_PREFERENCE(.template).md
-templates/          qa-gate.sh · qa-only-gate.sh · contrast-gate.mjs · learn-grounding-gate.mjs · qa-report.md · domain-agent/ · domain-onboarding.html · harness-spec.md · harness-eval-gate.mjs · harness-eval-cases/ · skill-mine/ · skill-frontmatter-gate.mjs · skill.md.template
+templates/          qa-gate.sh · qa-only-gate.sh · contrast-gate.mjs · learn-grounding-gate.mjs · qa-report.md · domain-agent/ · domain-onboarding.html · harness-eval-gate.mjs · harness-eval-cases/ · skill-mine/ · skill-frontmatter-gate.mjs · skill.md.template
 docs/               DESIGN.md · research-brief.md · experiments/ (the harness evals) · changelog/ · index.html (landing)
 examples/url-shortener/   a real service the earlier gated version built/debugged/extended (historical audit trail)
 ```

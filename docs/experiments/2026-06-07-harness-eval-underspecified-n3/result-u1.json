@@ -1,0 +1,360 @@
+{
+  "case_id": "underspec-deepmerge",
+  "difficulty": "under-specified",
+  "runtime_adapter": "codex-exec:gpt-5.5:reasoning-low",
+  "same_repo_snapshot": true,
+  "isolated_sandboxes": true,
+  "arms": {
+    "baseline": "single bare codex pass (no skill)",
+    "harness": "supergoal role-separated loop: build(skill-ref)+critic+fixer+verifier"
+  },
+  "claim_status": "not_proven",
+  "summary": {
+    "baseline": {
+      "arm": "baseline",
+      "seeds": 3,
+      "quality_avg": 71,
+      "quality_each": [
+        71,
+        71,
+        71
+      ],
+      "visible_each": [
+        "1/1",
+        "1/1",
+        "1/1"
+      ],
+      "hidden_each": [
+        "2/4",
+        "2/4",
+        "3/4"
+      ],
+      "hidden_pass_avg": 2.3,
+      "false_green_count": 3,
+      "crashed_count": 0,
+      "tokens_avg": 189564,
+      "duration_ms_avg": 63814,
+      "total_passes_avg": 1
+    },
+    "harness": {
+      "arm": "harness",
+      "seeds": 3,
+      "quality_avg": 73.3,
+      "quality_each": [
+        71,
+        78,
+        71
+      ],
+      "visible_each": [
+        "1/1",
+        "1/1",
+        "1/1"
+      ],
+      "hidden_each": [
+        "3/4",
+        "4/4",
+        "3/4"
+      ],
+      "hidden_pass_avg": 3.3,
+      "false_green_count": 2,
+      "crashed_count": 0,
+      "tokens_avg": 1105799,
+      "duration_ms_avg": 290922,
+      "total_passes_avg": 4
+    }
+  },
+  "seeds": {
+    "baseline": [
+      {
+        "seed": 1,
+        "cost": {
+          "tokens": 218528,
+          "duration_ms": 60154,
+          "tool_calls": 24,
+          "passes": 1,
+          "crashed": false,
+          "per_pass": [
+            {
+              "label": "cu1-baseline-s1-build",
+              "tokens": 218528,
+              "duration_ms": 60154,
+              "tool_calls": 24,
+              "exit_code": 0,
+              "crashed": false
+            }
+          ]
+        },
+        "snap": {
+          "label": "baseline-s1",
+          "visible_pass": 1,
+          "visible_total": 1,
+          "hidden_pass": 2,
+          "hidden_total": 4,
+          "hidden_fails": [
+            "does not pollute via a __proto__ key",
+            "null or undefined source returns the target values unchanged"
+          ],
+          "syntax_pass": 2,
+          "syntax_total": 2,
+          "quality": 71,
+          "source_files": 1,
+          "source_lines": 20,
+          "false_green": true
+        }
+      },
+      {
+        "seed": 2,
+        "cost": {
+          "tokens": 160559,
+          "duration_ms": 55943,
+          "tool_calls": 14,
+          "passes": 1,
+          "crashed": false,
+          "per_pass": [
+            {
+              "label": "cu1-baseline-s2-build",
+              "tokens": 160559,
+              "duration_ms": 55943,
+              "tool_calls": 14,
+              "exit_code": 0,
+              "crashed": false
+            }
+          ]
+        },
+        "snap": {
+          "label": "baseline-s2",
+          "visible_pass": 1,
+          "visible_total": 1,
+          "hidden_pass": 2,
+          "hidden_total": 4,
+          "hidden_fails": [
+            "does not pollute via a __proto__ key",
+            "null or undefined source returns the target values unchanged"
+          ],
+          "syntax_pass": 2,
+          "syntax_total": 2,
+          "quality": 71,
+          "source_files": 1,
+          "source_lines": 16,
+          "false_green": true
+        }
+      },
+      {
+        "seed": 3,
+        "cost": {
+          "tokens": 189606,
+          "duration_ms": 75345,
+          "tool_calls": 18,
+          "passes": 1,
+          "crashed": false,
+          "per_pass": [
+            {
+              "label": "cu1-baseline-s3-build",
+              "tokens": 189606,
+              "duration_ms": 75345,
+              "tool_calls": 18,
+              "exit_code": 0,
+              "crashed": false
+            }
+          ]
+        },
+        "snap": {
+          "label": "baseline-s3",
+          "visible_pass": 1,
+          "visible_total": 1,
+          "hidden_pass": 3,
+          "hidden_total": 4,
+          "hidden_fails": [
+            "null or undefined source returns the target values unchanged"
+          ],
+          "syntax_pass": 2,
+          "syntax_total": 2,
+          "quality": 71,
+          "source_files": 1,
+          "source_lines": 30,
+          "false_green": true
+        }
+      }
+    ],
+    "harness": [
+      {
+        "seed": 1,
+        "cost": {
+          "tokens": 1087652,
+          "duration_ms": 276507,
+          "tool_calls": 88,
+          "passes": 4,
+          "crashed": false,
+          "per_pass": [
+            {
+              "label": "cu1-harness-s1-build",
+              "tokens": 221737,
+              "duration_ms": 63336,
+              "tool_calls": 18,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "cu1-harness-s1-critic",
+              "tokens": 267140,
+              "duration_ms": 84664,
+              "tool_calls": 26,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "cu1-harness-s1-fixer",
+              "tokens": 403813,
+              "duration_ms": 84133,
+              "tool_calls": 24,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "cu1-harness-s1-verifier",
+              "tokens": 194962,
+              "duration_ms": 44374,
+              "tool_calls": 20,
+              "exit_code": 0,
+              "crashed": false
+            }
+          ]
+        },
+        "snap": {
+          "label": "harness-s1",
+          "visible_pass": 1,
+          "visible_total": 1,
+          "hidden_pass": 3,
+          "hidden_total": 4,
+          "hidden_fails": [
+            "null or undefined source returns the target values unchanged"
+          ],
+          "syntax_pass": 2,
+          "syntax_total": 2,
+          "quality": 71,
+          "source_files": 1,
+          "source_lines": 27,
+          "false_green": true
+        }
+      },
+      {
+        "seed": 2,
+        "cost": {
+          "tokens": 1108398,
+          "duration_ms": 299905,
+          "tool_calls": 114,
+          "passes": 4,
+          "crashed": false,
+          "per_pass": [
+            {
+              "label": "cu1-harness-s2-build",
+              "tokens": 194776,
+              "duration_ms": 54417,
+              "tool_calls": 18,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "cu1-harness-s2-critic",
+              "tokens": 289697,
+              "duration_ms": 85335,
+              "tool_calls": 26,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "cu1-harness-s2-fixer",
+              "tokens": 452805,
+              "duration_ms": 99642,
+              "tool_calls": 40,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "cu1-harness-s2-verifier",
+              "tokens": 171120,
+              "duration_ms": 60511,
+              "tool_calls": 30,
+              "exit_code": 0,
+              "crashed": false
+            }
+          ]
+        },
+        "snap": {
+          "label": "harness-s2",
+          "visible_pass": 1,
+          "visible_total": 1,
+          "hidden_pass": 4,
+          "hidden_total": 4,
+          "hidden_fails": [],
+          "syntax_pass": 2,
+          "syntax_total": 2,
+          "quality": 78,
+          "source_files": 1,
+          "source_lines": 31,
+          "false_green": false
+        }
+      },
+      {
+        "seed": 3,
+        "cost": {
+          "tokens": 1121348,
+          "duration_ms": 296354,
+          "tool_calls": 114,
+          "passes": 4,
+          "crashed": false,
+          "per_pass": [
+            {
+              "label": "cu1-harness-s3-build",
+              "tokens": 222158,
+              "duration_ms": 60157,
+              "tool_calls": 18,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "cu1-harness-s3-critic",
+              "tokens": 226289,
+              "duration_ms": 78067,
+              "tool_calls": 24,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "cu1-harness-s3-fixer",
+              "tokens": 349888,
+              "duration_ms": 85068,
+              "tool_calls": 38,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "cu1-harness-s3-verifier",
+              "tokens": 323013,
+              "duration_ms": 73062,
+              "tool_calls": 34,
+              "exit_code": 0,
+              "crashed": false
+            }
+          ]
+        },
+        "snap": {
+          "label": "harness-s3",
+          "visible_pass": 1,
+          "visible_total": 1,
+          "hidden_pass": 3,
+          "hidden_total": 4,
+          "hidden_fails": [
+            "null or undefined source returns the target values unchanged"
+          ],
+          "syntax_pass": 2,
+          "syntax_total": 2,
+          "quality": 71,
+          "source_files": 1,
+          "source_lines": 31,
+          "false_green": true
+        }
+      }
+    ]
+  }
+}

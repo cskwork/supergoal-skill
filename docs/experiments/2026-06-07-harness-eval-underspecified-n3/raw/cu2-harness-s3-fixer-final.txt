@@ -1,0 +1,5 @@
+Implemented `parseCsvLine(line)` terminator handling in `src/csv.mjs`: trailing `CRLF`, `LF`, and `CR` outside quotes now end the record instead of becoming field content or causing post-quote validation errors.
+
+Updated `NOTES.md` and `docs/changelog/changelog-2026-06-07.md`.
+
+Verification: `npm test` passes, 4/4 tests. `git diff` was unavailable because this sandbox is not a Git worktree.

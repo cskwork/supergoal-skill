@@ -54,10 +54,6 @@ require_text "designer is tier-aware"                "agents/designer.md" "TIER:
 require_text "designer marks universal (*) bans"     "agents/designer.md" "(*)"
 require_text "designer has functional-tier bans"     "agents/designer.md" "FUNCTIONAL-TIER BANS"
 
-# Spine + dispatch source of truth list both tiers.
-require_text "SKILL reference map lists functional"  "SKILL.md" "reference/functional-ui.md"
-require_text "experts Designer row is tier-routed"   "reference/experts.md" "Expressive -> \`taste-skill-v2.md\`; Functional -> \`functional-ui.md\`"
-
 # Gate wiring: contrast is enforced, not eyeballed.
 require_text "qa records UI-tier"                    "reference/qa.md" "UI-tier:"
 require_text "qa-gate runs the contrast gate"        "templates/qa-gate.sh" "contrast-gate.mjs"

@@ -1,0 +1,5 @@
+Implemented `deepMerge` in `src/merge.mjs` as an in-place deep merge for plain objects, returning `target`. It now skips unsafe prototype keys and replaces arrays, dates, `null`, and primitives instead of trying to merge them.
+
+Added focused regression tests in `test/merge.visible.test.mjs` and updated `docs/changelog/changelog-2026-06-07.md`.
+
+Verification: `npm test` passes, 5/5 tests.

@@ -1,0 +1,47 @@
+id: authored-underspec-001
+title: "deepMerge - under-specified, latent-correctness"
+difficulty: under-specified
+category: code-generation
+source: "authored (supergoal under-specified frontier)"
+runtime_adapter: portable
+runnable_fixture: "templates/harness-eval-cases/fixtures/underspec-001-deepmerge/"
+origin_experiment: "docs/experiments/2026-06-07-harness-eval-underspecified-n3/ (case u1)"
+discriminates: true
+task: |-
+  Implement deepMerge(target, source) in src/merge.mjs. It merges the source object
+  into the target object and returns the merged result. Export deepMerge.
+  (Deliberately thin: the contract below is implied, not stated in the prompt.)
+acceptance:
+  - "Merges two flat objects; source overrides target (the only stated/visible behavior)."
+latent_requirements:
+  - "Deep-merges nested objects instead of shallow overwrite (implied by 'deep')."
+  - "Does not pollute Object.prototype via a __proto__ key (security; the separating check)."
+  - "null/undefined source returns the target values unchanged (robustness)."
+  - "Object replaces primitive and primitive replaces object."
+machine_checks:
+  - "node --test on the visible + hidden suites"
+hidden_checks:
+  - "nested deep merge"
+  - "prototype-pollution guard on __proto__"
+  - "null and undefined source"
+  - "type replacement both directions"
+discrimination_check:
+  stub: "throws not implemented -> fails all"
+  reference_impl: "proto-safe immutable deep merge -> passes all"
+  lazy_impl: "shallow {...t,...s} fails deep; recursive-no-guard fails proto-pollution"
+finding: |-
+  n=3, gpt-5.5/low: harness (role-loop) hidden 3.3/4 vs baseline 2.3/4. Baseline shipped the
+  prototype-pollution vuln in 2/3 seeds as a false-GREEN; the critic surfaced it and the fixer
+  guarded it 3/3. The only non-noise harness correctness win in the 2026-06-07 sweep. ~6x token cost.
+rubric:
+  quality_score:
+    method: "RevFactory-style 100-point; 10 dimensions, each 0-10."
+    anchors:
+      - "Failed hidden checks cap correctness at 6."
+      - "Missing requested behavior caps feature_completeness at 7."
+cost_fields:
+  - wall_clock_minutes
+  - model
+  - reasoning_effort
+  - tool_calls
+  - token_estimate

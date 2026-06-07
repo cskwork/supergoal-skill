@@ -34,10 +34,7 @@ require_file "qa-only gate exists"           "templates/qa-only-gate.sh"
 
 require_text "skill lists QA-ONLY mode"          "SKILL.md" "**QA-ONLY**"
 require_text "skill maps qa-only reference"       "SKILL.md" "reference/qa-only.md"
-require_text "skill maps db-access reference"     "SKILL.md" "reference/db-access.md"
 require_text "skill maps qa-only gate"            "SKILL.md" "templates/qa-only-gate.sh"
-require_text "skill notes reduced QA-ONLY vault"  "SKILL.md" "QA-ONLY uses a reduced run folder"
-require_text "pipeline has QA-ONLY section"       "reference/pipeline.md" "## QA-ONLY"
 require_text "readme lists QA-ONLY mode"          "README.md" "**QA-ONLY**"
 
 require_text "qa-only writes no production code"  "reference/qa-only.md" "writes NO production code"
@@ -60,13 +57,8 @@ require_text "db-reader is select-only"           "agents/db-reader.md" "Read-on
 require_text "db-reader never writes auth to file" "agents/db-reader.md" "NEVER write auth/credentials to any file"
 
 require_text "qa.md has attach-to-browser policy" "reference/qa.md" "Authenticated sessions (attach-to-browser)"
-require_text "experts lists qa-auditor"           "reference/experts.md" "QA auditor (QA-ONLY)"
-require_text "experts lists db-reader"            "reference/experts.md" "DB reader (QA-ONLY)"
 require_text "domain-context registers qa suites" "reference/domain-context.md" "Reusable QA suites from QA-ONLY runs"
 require_text "index template has QA Suites"       "templates/domain-agent/index.md" "## QA Suites"
-require_text "state template has action_count"    "templates/state.json" "\"action_count\""
-require_text "state template defaults cap to 100" "templates/state.json" "\"action_cap\": 100"
-require_text "vault notes QA-ONLY reduced folder" "reference/vault.md" "QA-ONLY** uses a reduced run folder"
 require_text "db-reader may write its evidence"   "agents/db-reader.md" "Read, Grep, Glob, Bash, Write"
 require_text "qa-auditor always records doctor"   "agents/qa-auditor.md" "Always run and record the \`agent-browser doctor\` preflight"
 

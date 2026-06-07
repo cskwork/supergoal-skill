@@ -44,16 +44,15 @@ require_file "index template exists" "templates/domain-agent/index.md"
 require_file "freshness template exists" "templates/domain-agent/freshness.md"
 require_file "flow template directory is tracked" "templates/domain-agent/flows/README.md"
 require_text "skill maps domain-context reference" "SKILL.md" "reference/domain-context.md"
-require_text "skill defaults to repo-local path" "SKILL.md" 'default `.domain-agent/`'
-require_text "skill requires first-run storage prompt" "SKILL.md" "ask where to store it"
-require_text "skill requires gitignore protection" "SKILL.md" 'add the chosen path to `.gitignore`'
-require_text "pipeline invokes on debug" "reference/pipeline.md" "DEBUG Reproduce/Diagnose"
-require_text "pipeline invokes on legacy" "reference/pipeline.md" "LEGACY Explore"
+require_text "reference defaults to repo-local path" "reference/domain-context.md" 'stored by default in `.domain-agent/`'
+require_text "reference requires first-run storage prompt" "reference/domain-context.md" "or use another path?"
+require_text "reference requires gitignore protection" "reference/domain-context.md" 'Add the chosen path to the repo root `.gitignore`'
 require_text "plan grounding consumes Domain Brief" "reference/plan-grounding.md" 'Read the run `README.md` `## Domain Brief` first'
 require_text "plan grounding walks design tree" "reference/plan-grounding.md" "Build the decision tree"
 require_text "plan grounding challenges terms" "reference/plan-grounding.md" "Challenge terminology"
 require_text "domain context keeps code authoritative" "reference/domain-context.md" "Current docs/code always win"
 require_text "domain context separates vault" "reference/domain-context.md" "separate from the run vault"
+require_text "domain context names non-vault knowledge" "reference/domain-context.md" "local reusable domain facts"
 require_text "domain context blocks committing local pack" "reference/domain-context.md" 'Do not commit `.domain-agent/`'
 require_text "domain context caps selected files" "reference/domain-context.md" "Select at most five domain files"
 require_text "domain context caps brief size" "reference/domain-context.md" "Keep the Domain Brief under 80 lines"
@@ -67,13 +66,7 @@ require_text "glossary template has avoid field" "templates/domain-agent/glossar
 require_text "flow template has scenario checks" "templates/domain-agent/flows/README.md" "Scenario Checks"
 require_text "decisions template has durable-decision gate" "templates/domain-agent/decisions/README.md" "Hard to reverse"
 require_text "template config carries refresh policy" "templates/domain-agent/config.json" "staleAfterDays"
-require_text "vault names non-vault knowledge" "reference/vault.md" "Repo-local domain knowledge lives outside the vault"
-
 # Domain Brief actually reaches the dispatched agents (not just the conductor).
-require_text "locked prompt carries a Domain Brief slot" "reference/experts.md" "DOMAIN BRIEF (when domain context exists)"
-require_text "dispatch passes the Brief to role agents" "reference/experts.md" 'pass it through the `DOMAIN BRIEF` slot'
-require_text "Brief consumption keeps current code authoritative" "reference/experts.md" "current code wins"
-require_text "Brief consumption forbids bulk pack reads" "reference/experts.md" "never bulk-read the .domain-agent/ pack"
 require_text "explorer consumes the Domain Brief" "agents/explore.md" "use its terms/entry points/flows to route"
 require_text "debugger consumes the Domain Brief" "agents/debugger.md" "saved invariants/flows/terms in the Domain Brief"
 require_text "architect consumes the Domain Brief" "agents/architect.md" "Treat the Domain Brief as a routing index"

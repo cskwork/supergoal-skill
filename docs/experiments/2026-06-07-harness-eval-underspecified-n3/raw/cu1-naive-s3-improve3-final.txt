@@ -1,0 +1,5 @@
+Implemented a tighter `deepMerge` edge-case fix in [src/merge.mjs](/tmp/sg-eval-u1-naive/sandboxes/naive-s3/src/merge.mjs:6): source properties are now read through descriptors, so enumerable getters are ignored instead of invoked during merge.
+
+Added regression coverage in [test/merge.visible.test.mjs](/tmp/sg-eval-u1-naive/sandboxes/naive-s3/test/merge.visible.test.mjs:65) and recorded the reasoning in [docs/changelog/changelog-2026-06-07.md](/tmp/sg-eval-u1-naive/sandboxes/naive-s3/docs/changelog/changelog-2026-06-07.md:10).
+
+Verification: `npm test` passes, `8/8` tests.

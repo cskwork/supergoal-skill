@@ -1,0 +1,5 @@
+Implemented `deepMerge` in [src/merge.mjs](/tmp/sg-eval-uspec-u1/sandboxes/harness-s3/src/merge.mjs), with a small guard for unsafe prototype keys so `__proto__` input cannot pollute shared prototypes.
+
+Updated [NOTES.md](/tmp/sg-eval-uspec-u1/sandboxes/harness-s3/NOTES.md) and the required changelog entry.
+
+Verified with `npm test`: 3 passing, 0 failing.

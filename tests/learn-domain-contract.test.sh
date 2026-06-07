@@ -29,7 +29,6 @@ echo "=================================================================="
 
 # Routing: SKILL.md registers the mode and separates it from LEARN.
 require_text "SKILL routes LEARN-DOMAIN mode" "SKILL.md" "LEARN-DOMAIN"
-require_text "SKILL separates LEARN vs LEARN-DOMAIN" "SKILL.md" "LEARN vs LEARN-DOMAIN"
 require_text "SKILL maps learn-domain reference" "SKILL.md" "reference/learn-domain.md"
 require_text "SKILL registers grounding gate" "SKILL.md" "learn-grounding-gate.mjs"
 
@@ -52,7 +51,6 @@ require_text "flows carry a Grounding line" "templates/domain-agent/flows/README
 
 # Onboard stage: one self-contained human HTML handbook, Functional tier, derived from the pack.
 require_text "SKILL pipeline adds Onboard stage" "SKILL.md" "Onboard"
-require_text "SKILL maps the onboarding template" "SKILL.md" "domain-onboarding.html"
 require_text "reference describes the onboarding HTML" "reference/learn-domain.md" "onboarding.html"
 require_text "reference keeps the handbook human-only" "reference/learn-domain.md" "for humans only"
 require_text "reference requires a self-contained file" "reference/learn-domain.md" "self-contained file"

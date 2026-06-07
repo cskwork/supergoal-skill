@@ -1,6 +1,6 @@
 ---
 name: supergoal
-description: Baseline-first delivery for one objective - surface hidden requirements, make the smallest correct change, and verify it against the project's real tests/spec (never a generated proxy). Use for "/supergoal", "supergoal", "build X", "fix this bug", "add this feature", "QA / verify only", "learn this codebase", "make a skill", or "eval a harness".
+description: Baseline-first delivery - surface hidden requirements, make the smallest correct change, verify against real tests/spec. Use for "/supergoal", "supergoal", "build X", "fix this bug", "add this feature", "QA / verify only", "learn this codebase", "make a skill", or "eval a harness".
 ---
 
 # /supergoal - baseline-first

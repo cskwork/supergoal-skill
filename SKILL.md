@@ -48,6 +48,10 @@ API, backend, CLI without TUI): skip.
 Author-independent roles (separate agent per role when orchestrated; inline, switch role with a fresh
 re-read). Detail in `reference/role-loop.md`. Trivial single edit: skip the loop.
 
+**Difficulty gate.** *Very easy* (trivial edit) -> skip the loop. *Harder* -> red-green is REQUIRED
+(reproduce red -> fix green -> real suite); and if persisted data is load-bearing, DB evidence too. Both,
+not either/or - DB proves the data state, the test proves the code; neither substitutes for the other.
+
 1. **Frame.** Restate the goal + acceptance criteria in one line. If underspecified, ask <=3
    high-leverage questions (`reference/interview.md`); resolve code-answerable ones by reading code.
    If the work ships user-facing UI, load `reference/ui-ux.md` now and commit to the Expressive/polished
@@ -65,8 +69,9 @@ re-read). Detail in `reference/role-loop.md`. Trivial single edit: skip the loop
    not tied to a failing test or a listed defect); do not break passing tests.
 5. **Verify vs ground truth.** Re-run the project's REAL tests; re-read the prose spec for uncovered
    rules; never weaken/delete a real test or optimize to a proxy. For user-facing UI, QA against the
-   baseline from Frame (`reference/qa.md`). If schema/persisted data is load-bearing, run optional DB
-   evidence via `db-reader` + `templates/db-access/`; if `.env` is missing, ask or skip. Loop
+   baseline from Frame (`reference/qa.md`). If persisted data is load-bearing (and issue past *very easy*),
+   DB evidence is REQUIRED alongside the red-green test - via `db-reader` + `templates/db-access/`; if
+   `.env` is missing, ask or skip. Loop
    critic->fixer only while a fresh red appears; stop on green and report what was verified, with command
    output.
 
@@ -97,7 +102,7 @@ risky work in a branch or `git worktree` (optional).
 | `reference/debugging.md` | DEBUG: hypothesis-ledger diagnose loop |
 | `reference/interview.md` | Ambiguity-gated 3-5 question interview before the freeze |
 | `reference/plan-grounding.md` | Ground the approach from docs/code before committing |
-| `reference/db-access.md`, `templates/db-access/` | Optional read-only DB evidence for GREENFIELD / DEBUG / LEGACY / QA-ONLY |
+| `reference/db-access.md`, `templates/db-access/` | Read-only DB evidence (required past *very easy* when data load-bearing) - GREENFIELD / DEBUG / LEGACY / QA-ONLY |
 | `reference/qa.md`, `qa-only.md`, `db-access.md` | QA / no-code verify |
 | `reference/learn.md`, `learn-domain.md` | Teach a human / onboard the agent |
 | `reference/ui-ux.md`, `taste-skill-v2.md`, `functional-ui.md`, `taste-aesthetics.md` | User-facing UI tier |
@@ -111,5 +116,6 @@ risky work in a branch or `git worktree` (optional).
 - [ ] If user-facing UI: `reference/ui-ux.md` loaded at Frame, Expressive/polished baseline applied through Build + QA from the start - not a plain first draft (skip only for non-visual or existing-design legacy work)
 - [ ] Smallest change; surrounding style matched; no whole-file rewrite
 - [ ] Verified against the project's REAL tests + prose spec (not a generated proxy)
+- [ ] If past *very easy*: red-green test (red -> green) AND, if data load-bearing, DB evidence - both, not either/or
 - [ ] Reported what was verified, with command output - no unverified "done"
 - [ ] Any destructive step had explicit consent

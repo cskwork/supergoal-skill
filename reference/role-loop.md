@@ -34,9 +34,9 @@ Use for any non-trivial feature/bug/refactor. Skip for a trivial single edit - e
      regressions minimally. Stop on green; report what was verified with command output.
    - Update `docs/surfaced-requirements.md`: mark each surfaced requirement fixed, or note why it stays open.
 
-Loop critic->fixer only while a fresh red appears. The verifier pass is a regression guard - in the
-eval it equalled the fixer (no extra gain), so make it conditional / drop it when the fixer is already
-green to save ~25%.
+Loop critic->fixer only while a fresh red appears. The verifier pass is a regression guard - drop it only
+for *very easy* issues; past that, re-running the project's REAL tests is REQUIRED, plus DB evidence for
+data-backed bugs (`reference/db-access.md`) - DB proves data state but does not replace the red-green test.
 
 ## Guardrails (keep it baseline-first, not Goodhart)
 

@@ -32,7 +32,7 @@ never a generated proxy. For a trivial single edit, skip this skill and edit dir
 |---|---|---|
 | build / make / ship a new app/tool | GREENFIELD | default loop |
 | fix / broken / failing / crash / why does | DEBUG | default loop; reproduce with a failing test first (`reference/debugging.md`) |
-| add / integrate / refactor existing code | LEGACY | default loop; map the code first (`agents/explore.md`, `reference/domain-context.md`) |
+| add / integrate / refactor existing code | LEGACY | default loop; map the code first (`agents/explore.md`, `reference/domain-context.md`); optional DB evidence (`reference/db-access.md`) |
 | explain / teach / how does X work (no code) | LEARN | `reference/learn.md` |
 | learn / onboard / map this codebase (persist a wiki) | LEARN-DOMAIN | `reference/learn-domain.md` |
 | QA / verify / 검증만 / compare data (no code) | QA-ONLY | `reference/qa-only.md` |
@@ -61,7 +61,9 @@ the loop and edit directly.
 5. **Verify vs ground truth.** Re-run the project's REAL tests; re-read the prose spec for uncovered
    rules; never weaken/delete a real test or optimize to a generated proxy. For user-facing UI, route
    the tier (`reference/ui-ux.md` -> `taste-skill-v2.md` / `functional-ui.md`) and QA it
-   (`reference/qa.md`). Loop critic->fixer only while a fresh red appears; stop on green and report what
+   (`reference/qa.md`). If schema or persisted data is load-bearing, run optional DB evidence through
+   `db-reader` and `templates/db-access/`; if `.env` is missing, ask the user to fill it or skip.
+   Loop critic->fixer only while a fresh red appears; stop on green and report what
    was verified, with command output.
 
 Roles map to personas: critic=`agents/code-reviewer.md`, fixer=`agents/executor.md`,
@@ -91,6 +93,7 @@ risky work in a branch or `git worktree` (optional).
 | `reference/debugging.md` | DEBUG: hypothesis-ledger diagnose loop |
 | `reference/interview.md` | Ambiguity-gated 3-5 question interview before the freeze |
 | `reference/plan-grounding.md` | Ground the approach from docs/code before committing |
+| `reference/db-access.md`, `templates/db-access/` | Optional read-only DB evidence for GREENFIELD / DEBUG / LEGACY / QA-ONLY |
 | `reference/qa.md`, `qa-only.md`, `db-access.md` | QA / no-code verify |
 | `reference/learn.md`, `learn-domain.md` | Teach a human / onboard the agent |
 | `reference/ui-ux.md`, `taste-skill-v2.md`, `functional-ui.md`, `taste-aesthetics.md` | User-facing UI tier |

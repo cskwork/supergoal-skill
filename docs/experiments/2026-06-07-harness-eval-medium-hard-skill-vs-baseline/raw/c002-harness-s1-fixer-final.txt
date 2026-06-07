@@ -1,0 +1,5 @@
+Fixed `AsyncCache` in [src/cache.mjs](/tmp/sg-eval-svb-002/sandboxes/harness-s1/src/cache.mjs:14): concurrent same-key loads share one promise, and stale in-flight loads can no longer repopulate cache after `clear()`.
+
+Also updated [NOTES.md](/tmp/sg-eval-svb-002/sandboxes/harness-s1/NOTES.md:1) and the required changelog entry.
+
+Verification: `npm test` passes, `7/7` tests. Git diff/status was unavailable because this sandbox is not a Git repository.

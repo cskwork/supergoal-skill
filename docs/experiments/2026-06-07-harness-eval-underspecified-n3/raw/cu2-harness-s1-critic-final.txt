@@ -1,0 +1,9 @@
+Added the critic tests in [test/spec.gen.test.mjs](/tmp/sg-eval-uspec-u2/sandboxes/harness-s1/test/spec.gen.test.mjs:1), plus defect notes in [NOTES.md](/tmp/sg-eval-uspec-u2/sandboxes/harness-s1/NOTES.md:1). I also appended the required reasoning entry to [changelog-2026-06-07.md](/tmp/sg-eval-uspec-u2/sandboxes/harness-s1/docs/changelog/changelog-2026-06-07.md:1).
+
+`npm test` now fails as expected. The new failing coverage exposes that `parseCsvLine` currently accepts malformed CSV instead of rejecting:
+
+- unterminated quoted field
+- bare quote inside an unquoted field
+- non-delimiter data after a closing quote
+
+I did not modify `src/`. Git status/diff could not run because this sandbox directory is not a Git repository.

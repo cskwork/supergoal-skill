@@ -1,0 +1,7 @@
+Implemented `parseCsvLine(line)` in [src/csv.mjs](/tmp/sg-eval-uspec-u2/sandboxes/baseline-s2/src/csv.mjs:1).
+
+It now handles simple fields, quoted fields, commas inside quotes, escaped quotes via `""`, empty fields, and trailing empty fields.
+
+Verified:
+- `npm test` passed: 1/1 tests
+- Smoke check: `a,"b,c","d""e",,f,` parses as `["a","b,c","d\"e","","f",""]`

@@ -1,0 +1,5 @@
+Implemented `deepMerge` in [src/merge.mjs](/tmp/sg-eval-uspec-u1/sandboxes/harness-s2/src/merge.mjs): it now merges own enumerable string and symbol keys, recursively merges nested mergeable objects, skips unsafe prototype keys, returns `target`, and exports both named and default forms.
+
+Updated [NOTES.md](/tmp/sg-eval-uspec-u1/sandboxes/harness-s2/NOTES.md) and the changelog with the fixed symbol-key behavior.
+
+Verification: `npm test` passes, 3/3 tests.

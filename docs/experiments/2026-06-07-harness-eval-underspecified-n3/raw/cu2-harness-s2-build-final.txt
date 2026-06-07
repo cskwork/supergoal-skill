@@ -1,0 +1,10 @@
+Implemented `parseCsvLine(line)` in `src/csv.mjs` with a small dependency-free state machine for:
+
+- comma-separated fields
+- empty fields
+- quoted fields containing commas
+- doubled quotes inside quoted fields
+
+Added focused CSV behavior tests in `test/csv.visible.test.mjs` and recorded the rationale in `docs/changelog/changelog-2026-06-07.md`.
+
+Verification: `npm test` passes, 5/5 tests.

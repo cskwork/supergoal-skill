@@ -1,0 +1,8 @@
+Added red-team black-box tests in [test/spec.gen.test.mjs](/tmp/sg-eval-uspec-u1/sandboxes/harness-s1/test/spec.gen.test.mjs:1), plus defect notes in [NOTES.md](/tmp/sg-eval-uspec-u1/sandboxes/harness-s1/NOTES.md:1). I did not modify `src/`.
+
+Covered missing spec behaviors:
+- built-in object instances like `Date` should be replaced, not recursively treated as plain records
+- own enumerable symbol keys should merge
+- `__proto__` input must not mutate the target prototype
+
+Verification: `npm test` now fails as expected: original 4 visible tests pass, 3 new `spec.gen` tests fail. CodeGraph was unavailable because the sandbox has no initialized index.

@@ -1,0 +1,5 @@
+Implemented `parseCsvLine` in [src/csv.mjs](/tmp/sg-eval-uspec-u2/sandboxes/harness-s2/src/csv.mjs). It now handles quoted fields, escaped quotes, empty fields, and rejects the malformed cases listed in `NOTES.md`.
+
+Updated [NOTES.md](/tmp/sg-eval-uspec-u2/sandboxes/harness-s2/NOTES.md) and [changelog-2026-06-07.md](/tmp/sg-eval-uspec-u2/sandboxes/harness-s2/docs/changelog/changelog-2026-06-07.md).
+
+Verification: `npm test` passes, 9/9. Note: `git status`/`git diff` could not run because this sandbox path is not a Git repository.

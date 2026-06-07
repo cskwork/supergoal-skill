@@ -1,0 +1,8 @@
+Verifier pass complete. `src/csv.mjs` already satisfied the task, so I left source and tests unchanged.
+
+Updated:
+- `NOTES.md` with final verification status
+- `docs/changelog/changelog-2026-06-07.md` with verifier-pass reasoning
+
+Verification:
+- `npm test` passes: 5/5 tests.

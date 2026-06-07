@@ -1,0 +1,36 @@
+{
+  "runtime_adapter": "codex-exec:gpt-5.3-codex-spark:reasoning-high",
+  "pass_winner": "tie",
+  "quality_winner": "tie",
+  "baseline_quality": 85,
+  "harness_quality": 85,
+  "baseline_checks": [
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "fail",
+    "pass",
+    "pass",
+    "pass"
+  ],
+  "harness_checks": [
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "fail",
+    "pass",
+    "pass",
+    "pass"
+  ]
+}
+015-SPARK-HIGH DONE exit=0

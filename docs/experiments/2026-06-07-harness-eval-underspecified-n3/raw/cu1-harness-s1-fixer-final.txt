@@ -1,0 +1,11 @@
+Implemented `deepMerge` in [src/merge.mjs](/tmp/sg-eval-uspec-u1/sandboxes/harness-s1/src/merge.mjs):
+
+- Recurses only into plain objects.
+- Replaces built-in instances like `Date`.
+- Merges own enumerable symbol keys.
+- Skips `__proto__` to avoid prototype mutation.
+- Returns the original target object.
+
+Updated [NOTES.md](/tmp/sg-eval-uspec-u1/sandboxes/harness-s1/NOTES.md) and the changelog.
+
+Verification: `npm test` passes, 7 passed / 0 failed.

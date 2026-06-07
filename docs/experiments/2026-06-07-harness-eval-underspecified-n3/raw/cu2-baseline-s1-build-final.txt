@@ -1,0 +1,6 @@
+Implemented `parseCsvLine(line)` in [src/csv.mjs](/private/tmp/sg-eval-uspec-u2/sandboxes/baseline-s1/src/csv.mjs:1). It now handles simple fields, empty fields, quoted fields, quoted commas, escaped quotes, and malformed quote/newline errors.
+
+Added the required decision note in [docs/changelog/changelog-2026-06-07.md](/private/tmp/sg-eval-uspec-u2/sandboxes/baseline-s1/docs/changelog/changelog-2026-06-07.md:1).
+
+Verification:
+`npm test` passes: 1 test, 1 pass. Also ran a direct smoke check for empty input, trailing empty fields, quoted commas, and escaped quotes.

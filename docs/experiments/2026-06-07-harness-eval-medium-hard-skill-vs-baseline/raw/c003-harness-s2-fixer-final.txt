@@ -1,0 +1,9 @@
+Done. `src/order.mjs` keeps the same public API and behavior, with the discounted subtotal clarified as `taxableAmount` through tax/shipping/total helpers.
+
+Updated:
+- [src/order.mjs](/tmp/sg-eval-svb-003/sandboxes/harness-s2/src/order.mjs)
+- [NOTES.md](/tmp/sg-eval-svb-003/sandboxes/harness-s2/NOTES.md)
+- [docs/changelog/changelog-2026-06-07.md](/tmp/sg-eval-svb-003/sandboxes/harness-s2/docs/changelog/changelog-2026-06-07.md)
+
+Verification: `npm test` passes, 13/13 tests.
+

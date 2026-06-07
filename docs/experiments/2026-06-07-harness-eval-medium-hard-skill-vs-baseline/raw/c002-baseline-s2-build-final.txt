@@ -1,0 +1,12 @@
+Implemented the async race fix in `src/cache.mjs`.
+
+Changed:
+- Added per-key `inFlight` promise tracking.
+- Same-key concurrent `get()` calls now share one loader invocation.
+- Different keys still load independently.
+- Rejected loaders are removed from `inFlight`, so later calls retry.
+- `clear()` now clears cached values and pending loads.
+- Added focused tests and `docs/changelog/changelog-2026-06-07.md`.
+
+Verified:
+- `npm test` passes: 6 tests, 0 failures.

@@ -468,3 +468,75 @@ Verified no regression: tests/harness-eval-contract.test.sh 126/0 with the edits
 suites that fail (worktree 0/17, interview 14/12, domain-context, learn, etc.) fail IDENTICALLY at HEAD
 without these edits - confirmed by stashing SKILL.md and re-running - so they are pre-existing dead-test
 debt from the baseline-first/HARNESS-MAKE removals, not caused by this change.
+
+## Harness eval: skill vs baseline across medium / hard / expert
+
+User asked for an eval on 2 medium tasks with vs without the skill. Flagged the methodology tension
+(reference says only hard/expert discriminate; medium ceilings) and user chose 1 medium (003) + 1 hard
+(002). Built two NEW clean-slate runnable fixtures (corpus had only spec yamls before): case-003
+calculateInvoice spaghetti-refactor (starter passes 14/14; measures behavior preservation), case-002
+AsyncCache in-flight-dedupe race (starter 3/3 visible, 2/5 hidden; hidden tests catch over-serialization
+on a global lock + concurrent-callers-must-all-reject). Validated both starters discriminate before
+spending compute (`SG_EVAL_VALIDATE=1`). New parameterized runner
+`docs/experiments/2026-06-07-harness-eval-medium-hard-skill-vs-baseline/run.mjs`: baseline=single bare
+pass; harness=skill's default role-separated loop (build w/ stripped skill-ref -> critic -> fixer ->
+verifier). Fixed the latent skill-ref leak (prior runner copied templates/; stripped to
+SKILL.md+reference+agents so the harness arm can never read hidden tests/scorer).
+
+Results (ground-truth scoring, label-blind machine scorer):
+- 003 medium @ gpt-5.5/low: baseline 14/14, harness 14/14, q80/80. Harness 4.7x tokens, 9x wall-clock.
+- 002 hard @ gpt-5.5/low: baseline 8/8, harness 8/8, q85/83. Harness 2.1x tokens, 2.2x wall-clock.
+- Both ceiling — gpt-5.5 solves them without help; the role-loop adds only cost. No false-GREEN.
+
+User then asked for a harder task, then specifically the spark (lower-intelligence) model. Ran case-015
+LSP (expert) @ gpt-5.3-codex-spark/high, reusing the proven gpt55-low runner (single-pass baseline vs
+single-pass skill-ref) with one changed variable = effort, plus the templates/ strip:
+- 015 expert @ spark/high: baseline 11/12, harness 11/12, q85/85. Both miss the SAME hidden requirement
+  (parser error-recovery + semantic diagnostics). Harness -34% tokens / -31% time. NO crash (clean
+  110-line log vs the pre-INLINE skill's documented 191-267-line crash with leaked yaml).
+
+Decision: Not proven in every regime — the skill never beats a capable baseline on correctness/quality
+on explicit-spec tasks (consistent with baseline-first thesis). Demonstrated value is narrow: (1) the
+INLINE fix prevents the high-effort context crash (re-confirmed clean at spark/high); (2) the single-pass
+skill-ref form is ~30% cheaper for the same result on a weaker/high-effort model. The 4-pass role-loop
+buys no correctness here and costs 2-5x; reserve it for UNDER-specified tasks where the critic has hidden
+requirements to surface (the untested regime). Cost direction across rows is partly a design confound
+(low rows = 4-pass role-loop; spark row = 1-pass skill-ref), called out in results.md. Caveats: small n
+(low n=2, spark n=1); explicit-spec only. Did NOT promote the new 002/003 fixtures into templates/ or the
+skill — pending user consent. Writeups: the two experiment dirs' results.md / report.md.
+
+---
+
+## docs: align README + landing with current baseline-first skill (state-only, no before/after)
+
+User asked to update README and the landing page to the current updated supergoal skill, explicitly
+"current state of the change, no mention of how it was previous, just at its current state."
+
+SKILL.md was already the clean current spec (baseline-first, 8 modes, role-separated critic->fixer->verify
+loop). The drift was in the public-facing docs:
+
+- README.md / README.ko.md still framed the rewrite as a before/after ("why the gated machinery is gone",
+  "used to run a heavy gated pipeline", "Earlier gated runs (historical)", "predate the baseline-first
+  rewrite / describe the removed machinery"; examples/url-shortener tagged "earlier gated version").
+- docs/index.html (landing) was wholesale stale: it advertised the REMOVED machinery as the live product
+  — 7 hard gates, Human Feedback gate, Builder!=Verifier, delivery-gate.sh exit 0, circuit breaker,
+  claims.md/verification.md/state.json vault, a 9th HARNESS-MAKE mode, "Decision: GO".
+
+Changes (describe only what the skill is now):
+- README*: replaced the "(why the gated machinery is gone)" section with "What it adds over a plain
+  baseline"; rewrote the default-loop line to name the role-separated Frame->Build->Critic->Fixer->Verify
+  steps; retitled "Evidence & history" -> "Evidence" (kept the eval grounding, dropped the historical
+  pipeline archaeology); relabeled examples/url-shortener neutrally.
+- index.html: meta/OG retitled to "the smallest correct change, verified"; gatebar -> verify/ground-truth;
+  hero copy + console (LEGACY critic->fixer->verify, exit 0) + telemetry (hidden reqs surfaced / diff
+  minimal / real suite green); ticker -> baseline-first slogans; metrics 9/7/0/68 -> 8/1/0/<=3; workflow
+  claims + route-map -> the 5-step loop (Critic = red); modes 9->8 (dropped HARNESS-MAKE, repiped the rest
+  to the current loop); "gate stack" section -> "Not a gate stack. Five principles."; vault -> "Bundled
+  roles / load what the phase needs" with real file chips + a loop ascii; proof section reframed from
+  historical gated runs to "what each lane looks like" (GREENFIELD/DEBUG/LEGACY behaviors); install pills
+  literal-gates -> real tests; canvas nodes Intake..Deliver(6) -> Frame..Verify(5), red node = Critic,
+  connector lines re-indexed to avoid the now-out-of-range pts[5].
+
+Verified: grep shows no residual removed-machinery terms except the intentional "Not a gate stack"
+heading; tag balance holds (article 16/16, div 69/69, pre 5/5, section 7/7, en/ko spans 63/63);
+structural counts match (8 mode cards, 5 principles, 3 proof cards, 5 route steps).

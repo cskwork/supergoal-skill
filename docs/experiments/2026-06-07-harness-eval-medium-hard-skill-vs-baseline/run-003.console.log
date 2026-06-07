@@ -1,0 +1,54 @@
+[run] case=revfactory-case-003 model=gpt-5.5 effort=low baseline_seeds=2 harness_seeds=2
+[baseline] seed 1
+[baseline] seed 2
+[harness] seed 1
+[harness] seed 2
+[done] wrote result-003.json
+{
+  "baseline": {
+    "arm": "baseline",
+    "seeds": 2,
+    "quality_avg": 80,
+    "quality_each": [
+      80,
+      80
+    ],
+    "visible_each": [
+      "5/5",
+      "5/5"
+    ],
+    "hidden_each": [
+      "9/9",
+      "9/9"
+    ],
+    "hidden_pass_avg": 9,
+    "false_green_count": 0,
+    "crashed_count": 0,
+    "tokens_avg": 357325,
+    "duration_ms_avg": 90162,
+    "total_passes_avg": 1
+  },
+  "harness": {
+    "arm": "harness",
+    "seeds": 2,
+    "quality_avg": 80,
+    "quality_each": [
+      80,
+      80
+    ],
+    "visible_each": [
+      "5/5",
+      "5/5"
+    ],
+    "hidden_each": [
+      "9/9",
+      "9/9"
+    ],
+    "hidden_pass_avg": 9,
+    "false_green_count": 0,
+    "crashed_count": 0,
+    "tokens_avg": 1689682,
+    "duration_ms_avg": 817060,
+    "total_passes_avg": 4
+  }
+}

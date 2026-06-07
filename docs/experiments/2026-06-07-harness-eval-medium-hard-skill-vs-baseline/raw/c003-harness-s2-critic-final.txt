@@ -1,0 +1,6 @@
+Added [test/spec.gen.test.mjs](/private/tmp/sg-eval-svb-003/sandboxes/harness-s2/test/spec.gen.test.mjs) and [NOTES.md](/private/tmp/sg-eval-svb-003/sandboxes/harness-s2/NOTES.md).
+
+Result: I could not expose a spec defect from the task prose. The new black-box tests cover missing edges, but `npm test` passes: `13 pass, 0 fail`. I did not modify `src/`.
+
+One caveat: `git status` failed because this sandbox is not a git repository, so I verified by files and test output instead.
+

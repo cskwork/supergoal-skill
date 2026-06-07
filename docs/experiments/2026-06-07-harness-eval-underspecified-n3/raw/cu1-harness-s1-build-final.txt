@@ -1,0 +1,5 @@
+Implemented `deepMerge(target, source)` in [src/merge.mjs](/tmp/sg-eval-uspec-u1/sandboxes/harness-s1/src/merge.mjs). It recursively merges nested non-null object values, uses source values as overrides for arrays/primitives/null, mutates `target`, and returns `target`.
+
+Added focused behavior tests in [test/merge.visible.test.mjs](/tmp/sg-eval-uspec-u1/sandboxes/harness-s1/test/merge.visible.test.mjs) plus the required changelog note in [docs/changelog/changelog-2026-06-07.md](/tmp/sg-eval-uspec-u1/sandboxes/harness-s1/docs/changelog/changelog-2026-06-07.md).
+
+Verified: `npm test` passes, 4/4 tests.

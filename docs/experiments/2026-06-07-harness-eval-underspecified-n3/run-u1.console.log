@@ -1,0 +1,7 @@
+[run] case=underspec-deepmerge model=gpt-5.5 effort=low baseline_seeds=3 harness_seeds=3
+[baseline] seed 1
+[baseline] seed 2
+[baseline] seed 3
+[harness] seed 1
+[harness] seed 2
+[harness] seed 3

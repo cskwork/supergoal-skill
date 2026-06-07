@@ -1,0 +1,6 @@
+Refactored `src/order.mjs` into small private helpers for subtotal, discount, tax, shipping, and cent rounding while keeping `calculateInvoice(order)` as the same public API.
+
+Added edge coverage in `test/order.visible.test.mjs` for SAVE20 thresholds, VIP floor behavior, HALF non-VIP behavior, default tax, shipping tiers, express fee, and rounding. Added the required changelog note at `docs/changelog/changelog-2026-06-07.md`.
+
+Verified: `npm test` passes, 13/13 tests.
+

@@ -1,0 +1,5 @@
+Implemented the async race fix in [src/cache.mjs](/tmp/sg-eval-svb-002/sandboxes/harness-s2/src/cache.mjs): same-key concurrent `get()` calls now share one in-flight promise, rejected loads are removed so retries work, and `clear()` resets cached and in-flight state.
+
+Added focused coverage in [test/cache.visible.test.mjs](/tmp/sg-eval-svb-002/sandboxes/harness-s2/test/cache.visible.test.mjs) plus the required changelog note in [docs/changelog/changelog-2026-06-07.md](/tmp/sg-eval-svb-002/sandboxes/harness-s2/docs/changelog/changelog-2026-06-07.md).
+
+Verified with `npm test`: 6 tests passed.

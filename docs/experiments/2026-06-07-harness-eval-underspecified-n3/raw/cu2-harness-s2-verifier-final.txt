@@ -1,0 +1,10 @@
+Implemented and verified.
+
+Changed:
+- [src/csv.mjs](/tmp/sg-eval-uspec-u2/sandboxes/harness-s2/src/csv.mjs): exported `parseCsvLine` with quoted-field parsing, escaped quotes, empty fields, malformed quote rejection, and embedded newline rejection.
+- Restored broken test wrappers without weakening coverage.
+- Updated [NOTES.md](/tmp/sg-eval-uspec-u2/sandboxes/harness-s2/NOTES.md:5) and [changelog](/tmp/sg-eval-uspec-u2/sandboxes/harness-s2/docs/changelog/changelog-2026-06-07.md:6).
+
+Verified:
+- `node --check src/csv.mjs`
+- `npm test` passes: 9 tests, 9 pass.

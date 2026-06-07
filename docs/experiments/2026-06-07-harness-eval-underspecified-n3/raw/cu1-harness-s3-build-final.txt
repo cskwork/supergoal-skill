@@ -1,0 +1,11 @@
+Implemented `deepMerge(target, source)` in `src/merge.mjs`.
+
+Behavior:
+- Mutates and returns `target`
+- Recursively merges plain objects
+- Source overrides target for primitives, arrays, dates, functions, and other non-plain objects
+
+Also added the required changelog note at `docs/changelog/changelog-2026-06-07.md`.
+
+Verified:
+- `npm test` passes: 1 test, 1 pass.

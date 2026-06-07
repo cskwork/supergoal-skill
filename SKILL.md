@@ -18,6 +18,8 @@ never a generated proxy. For a trivial single edit, skip this skill and edit dir
   tests do not cover. Spec-derived FAILING tests may surface hidden requirements (see the loop), but
   never let them replace ground truth and never optimize to a self-graded proxy.
 - Smallest correct change; match the surrounding code; never rewrite a whole file to change a few lines.
+  Scope-minimalism governs code surface area and feature count, NOT visual quality: for user-facing UI a
+  polished, well-designed result is part of baseline correctness, never padding to defer until asked.
 - Surface hidden requirements first, as failing tests written by an independent critic - the one place
   a process beats a plain baseline.
 - Ask only when genuinely ambiguous; resolve code-answerable questions by reading the code.
@@ -40,10 +42,13 @@ never a generated proxy. For a trivial single edit, skip this skill and edit dir
 | turn repeated work into a reusable skill | SKILL-MINE | `reference/skill-mine.md` |
 
 **UI/UX overlay (cross-cutting, any mode).** If the objective ships user-facing UI, load
-`reference/ui-ux.md` at **Frame** (not at QA), classify the surface into a tier (Expressive /
-Functional), and carry that authority through Build and Verify. GREENFIELD frontend: always. LEGACY:
-only when introducing new UI - reuse the existing design system/components otherwise. Pure non-visual
-work (lib, API, backend, CLI without TUI) loads neither.
+`reference/ui-ux.md` at **Frame** (not at QA) and apply the **Expressive/polished baseline** by default -
+`reference/taste-skill-v2.md` is the authority for ALL user-facing UI, carried through Build and Verify.
+There is no "Functional" path that ships a plainer result; `reference/functional-ui.md` is only an optional
+density add-on layered ON TOP of the Expressive baseline for dense admin/dashboard surfaces (more density +
+complete UI states), never a reason to lower polish. GREENFIELD frontend: always. LEGACY: only when
+introducing new UI - reuse the existing design system/components otherwise. Pure non-visual work (lib, API,
+backend, CLI without TUI) loads neither.
 
 ## Default loop (GREENFIELD / DEBUG / LEGACY) - role-separated
 
@@ -53,8 +58,8 @@ the loop and edit directly.
 
 1. **Frame.** Restate the goal + acceptance criteria in one line. If underspecified, ask <=3
    high-leverage questions (`reference/interview.md`); resolve code-answerable ones by reading code.
-   If the work ships user-facing UI, load `reference/ui-ux.md` now and classify its tier (see the
-   UI/UX overlay above) so design drives Build, not just QA.
+   If the work ships user-facing UI, load `reference/ui-ux.md` now and commit to the Expressive/polished
+   baseline (see the UI/UX overlay above) so strong design drives Build from the start, not just QA.
 2. **Build.** Smallest correct change, test-first; match surrounding style; preserve existing comments
    and structure; no whole-file rewrites; minimal diff. For a bug, reproduce with a failing test first
    (`reference/debugging.md`).
@@ -68,8 +73,8 @@ the loop and edit directly.
    not tied to a failing test or a listed defect); do not break passing tests.
 5. **Verify vs ground truth.** Re-run the project's REAL tests; re-read the prose spec for uncovered
    rules; never weaken/delete a real test or optimize to a generated proxy. For user-facing UI, QA against
-   the tier loaded at Frame (`reference/ui-ux.md` -> `taste-skill-v2.md` / `functional-ui.md`)
-   (`reference/qa.md`). If schema or persisted data is load-bearing, run optional DB evidence through
+   the Expressive/polished baseline loaded at Frame (`reference/ui-ux.md` -> `taste-skill-v2.md`, plus
+   `functional-ui.md` density rules if the surface is a dense admin/dashboard) (`reference/qa.md`). If schema or persisted data is load-bearing, run optional DB evidence through
    `db-reader` and `templates/db-access/`; if `.env` is missing, ask the user to fill it or skip.
    Loop critic->fixer only while a fresh red appears; stop on green and report what
    was verified, with command output.
@@ -112,7 +117,7 @@ risky work in a branch or `git worktree` (optional).
 ## Final checklist (before claiming done)
 
 - [ ] Mode stated; hidden requirements surfaced or explicitly none
-- [ ] If user-facing UI: `reference/ui-ux.md` loaded at Frame, tier classified, design authority applied through Build + QA (skip only for non-visual or existing-design legacy work)
+- [ ] If user-facing UI: `reference/ui-ux.md` loaded at Frame, Expressive/polished baseline applied through Build + QA from the start - not a plain first draft (skip only for non-visual or existing-design legacy work)
 - [ ] Smallest change; surrounding style matched; no whole-file rewrite
 - [ ] Verified against the project's REAL tests + prose spec (not a generated proxy)
 - [ ] Reported what was verified, with command output - no unverified "done"

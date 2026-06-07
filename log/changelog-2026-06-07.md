@@ -1,3 +1,28 @@
+# 2026-06-07 (later) — UI/UX overlay: Expressive/polished is the default, Functional demoted to add-on
+
+## Why
+User feedback after a GREENFIELD to-do build: I shipped a plain "Functional" first draft and only made
+it polished after they said "좀 예쁘게". Their rule: "when I ask you to build, it should be well-designed
+by default - good function should have good design too." Root cause in the skill: the UI/UX overlay told
+the agent to *classify* a surface into Expressive vs Functional, and Functional was a downgrade path that
+shipped a plainer result. Combined with "smallest correct change", that license bled into visual quality.
+
+## What
+- `SKILL.md` core principle: added carve-out — scope-minimalism governs code surface area/feature count,
+  NOT visual quality; for user-facing UI a polished result is baseline correctness, never padding to defer.
+- `SKILL.md` UI/UX overlay + Frame + Verify + final checklist: replaced "classify into a tier
+  (Expressive/Functional)" with "apply the Expressive/polished baseline by default". `taste-skill-v2.md`
+  is now the authority for ALL user-facing UI.
+- `reference/ui-ux.md`: rewrote the tier table. Expressive is the single baseline; `functional-ui.md` is
+  demoted to an optional density add-on (density discipline + complete UI states) layered ON TOP for dense
+  admin/dashboard surfaces — never an alternative that lowers polish. Marketing aesthetic for dense
+  surfaces is dialed down via Plan dials, not by skipping design authority.
+- Kept `functional-ui.md` (not deleted): its density/state-completeness rules stay valuable; only its
+  status as a co-equal "ship plainer" tier was removed. Tradeoff vs full removal: avoids dousing dense
+  dashboards in hero imagery/heavy motion while still guaranteeing polish everywhere.
+
+---
+
 # 2026-06-07 — Eval-skill accuracy fixes + gpt-5.5-low crash/harness test
 
 Continues `changelog-2026-06-06.md` (diagnosis + INLINE fix + v2 scorer + Experiments A/B).

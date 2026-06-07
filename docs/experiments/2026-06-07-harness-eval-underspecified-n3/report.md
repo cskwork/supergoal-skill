@@ -27,7 +27,11 @@
 
 ## Decision
 
-**Reject the skill-win reading; not proven.** With an equal-compute control, the supergoal role-loop
-does not beat plain iteration on the one case it appeared to win (3.3 vs naive 4.0), and ties
-everywhere else in the 2026-06-07 sweep. Skill value that survives: high-effort crash stability and
-single-pass cost reduction — not correctness from the role-loop. Full analysis: `results.md`.
+**Conditionally adopt; value is real but it's the forced compute, not the mechanism.** Two framings:
+(1) vs the realistic one-shot default the skill WINS on u1 - it forces the verification a single pass
+skips and catches the prototype-pollution vuln the baseline ships as a false-GREEN (3.3 vs 2.3), at
+~6x tokens. Forcing useful compute is legitimate value. (2) vs an equal-compute naive loop the role
+SEPARATION adds nothing (naive 4/4 >= role-loop 3.3/4) - the active ingredient is the extra passes,
+so the structure could be leaner. Net: useful where a one-shot leaves an easy-to-miss correctness/
+security gap; pure overhead where the one-shot already solves it (002/003/015, canonical u2). Full
+analysis: `results.md`.

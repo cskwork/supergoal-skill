@@ -1,0 +1,226 @@
+{
+  "runtime_adapter": "codex-exec-orchestrated:gpt-5.3-codex-spark:reasoning-high",
+  "mode": "fan-out (fresh codex per role)",
+  "per_case": [
+    {
+      "id": "billing-tax",
+      "baseline": {
+        "score": 80,
+        "passed": 8,
+        "total": 8,
+        "crashed": false,
+        "tokens": 857791,
+        "duration_ms": 74337
+      },
+      "harness": {
+        "score": 80,
+        "passed": 8,
+        "total": 8,
+        "crashed": true,
+        "tokens": 1473169,
+        "duration_ms": 749055,
+        "roles": [
+          {
+            "label": "plan",
+            "tokens": 888611,
+            "duration_ms": 94599,
+            "crashed": false
+          },
+          {
+            "label": "build",
+            "tokens": 584558,
+            "duration_ms": 54429,
+            "crashed": false
+          },
+          {
+            "label": "verify",
+            "tokens": 0,
+            "duration_ms": 600027,
+            "crashed": true
+          }
+        ]
+      }
+    }
+  ],
+  "aggregate": {
+    "baseline_avg_score": 80,
+    "harness_avg_score": 80,
+    "baseline_avg_passfrac": 1,
+    "harness_avg_passfrac": 1,
+    "baseline_avg_tokens": 857791,
+    "harness_avg_tokens": 1473169,
+    "baseline_crashes": 0,
+    "harness_crashes": 1
+  },
+  "cases": {
+    "billing-tax": {
+      "baseline": {
+        "cost": {
+          "tokens": 857791,
+          "duration_ms": 74337,
+          "tool_calls": 76,
+          "turns_completed": 1,
+          "crashed": false,
+          "label": "run",
+          "roles": [
+            {
+              "label": "run",
+              "tokens": 857791,
+              "duration_ms": 74337,
+              "crashed": false
+            }
+          ]
+        },
+        "granular": [
+          {
+            "name": "visible: standard line totals with 20% tax",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "visible: exempt category is not taxed",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "visible: per-line percentage discount then tax",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "visible: reduced-rate line at 5%",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: tax is computed per line then summed, not on the rounded subtotal",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: rounding ties go to even (bankers), not half-up",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: order-level discount reduces subtotal only, not tax",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: shipping is added after tax and is not taxed",
+            "kind": "hidden",
+            "status": "pass"
+          }
+        ],
+        "quality": {
+          "total": 80,
+          "pass_fraction": 1,
+          "checks_passed": 8,
+          "checks_total": 8,
+          "dimensions": {
+            "feature_completeness": 10,
+            "test_coverage": 8,
+            "code_quality": 10,
+            "error_handling": 6,
+            "efficiency": 10,
+            "correctness": 10,
+            "architecture": 6,
+            "extensibility": 7,
+            "documentation": 4,
+            "dev_environment": 9
+          }
+        }
+      },
+      "harness": {
+        "cost": {
+          "tokens": 1473169,
+          "duration_ms": 749055,
+          "tool_calls": 122,
+          "turns_completed": 2,
+          "crashed": true,
+          "roles": [
+            {
+              "label": "plan",
+              "tokens": 888611,
+              "duration_ms": 94599,
+              "crashed": false
+            },
+            {
+              "label": "build",
+              "tokens": 584558,
+              "duration_ms": 54429,
+              "crashed": false
+            },
+            {
+              "label": "verify",
+              "tokens": 0,
+              "duration_ms": 600027,
+              "crashed": true
+            }
+          ]
+        },
+        "granular": [
+          {
+            "name": "visible: standard line totals with 20% tax",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "visible: exempt category is not taxed",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "visible: per-line percentage discount then tax",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "visible: reduced-rate line at 5%",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: tax is computed per line then summed, not on the rounded subtotal",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: rounding ties go to even (bankers), not half-up",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: order-level discount reduces subtotal only, not tax",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: shipping is added after tax and is not taxed",
+            "kind": "hidden",
+            "status": "pass"
+          }
+        ],
+        "quality": {
+          "total": 80,
+          "pass_fraction": 1,
+          "checks_passed": 8,
+          "checks_total": 8,
+          "dimensions": {
+            "feature_completeness": 10,
+            "test_coverage": 8,
+            "code_quality": 10,
+            "error_handling": 6,
+            "efficiency": 10,
+            "correctness": 10,
+            "architecture": 6,
+            "extensibility": 7,
+            "documentation": 4,
+            "dev_environment": 9
+          }
+        }
+      }
+    }
+  }
+}

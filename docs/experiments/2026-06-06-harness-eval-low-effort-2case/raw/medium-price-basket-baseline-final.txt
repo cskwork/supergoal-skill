@@ -1,0 +1,9 @@
+Implemented `priceBasket(items, rules)` in [src/priceBasket.mjs](/private/tmp/supergoal-harness-eval-low-effort-2case/sandboxes/medium-price-basket/baseline/src/priceBasket.mjs:1).
+
+Changes:
+- Computes subtotal, per-line rounded-down category discounts, rounded tax, shipping waiver, and total.
+- Adds input validation for items, rule objects, cents, basis points, category, quantity, and taxable flags.
+- Adds focused tests in [test/priceBasket.test.mjs](/private/tmp/supergoal-harness-eval-low-effort-2case/sandboxes/medium-price-basket/baseline/test/priceBasket.test.mjs:1).
+- Adds required changelog entry at [docs/changelog/changelog-2026-06-06.md](/private/tmp/supergoal-harness-eval-low-effort-2case/sandboxes/medium-price-basket/baseline/docs/changelog/changelog-2026-06-06.md:1).
+
+Verification: `npm test` passed, 3 tests passed.

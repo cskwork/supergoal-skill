@@ -1,0 +1,11 @@
+id: medium-price-basket
+title: "Price a basket with discounts, tax, and shipping"
+difficulty: medium
+runtime_adapter: codex-exec
+reasoning_effort: low
+task: >-
+  Implement priceBasket(items, rules). Validate input. Compute subtotalCents, discountCents, taxCents, shippingCents, and totalCents. Discounts are per-line category basis-point discounts rounded down. Tax is Math.round on discounted taxable cents times taxRateBps / 10000. Shipping is waived when discounted subtotal reaches freeShippingThresholdCents. Keep it dependency-free.
+machine_checks:
+  - medium-price-basket hidden+visible tests
+  - medium-price-basket source syntax
+  - medium-price-basket hidden syntax

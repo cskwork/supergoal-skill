@@ -1,0 +1,10 @@
+id: medium-order-summary
+title: "Summarize paid orders by currency"
+difficulty: medium
+runtime_adapter: codex-exec
+task: >-
+  Implement summarizeOrders(orders). It must keep only paid orders, validate uppercase 3-letter currency codes, positive integer amountCents, and YYYY-MM-DD dates, group by currency, return count, totalCents, firstOrderDate, and lastOrderDate, then sort by totalCents descending with currency as the tie-breaker. Throw TypeError for invalid order data.
+machine_checks:
+  - unit tests
+  - source syntax
+  - test syntax

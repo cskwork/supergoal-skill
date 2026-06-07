@@ -1,0 +1,14 @@
+Implemented `summarizeOrders(orders)` in [src/summarizeOrders.mjs](/tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness/src/summarizeOrders.mjs:1).
+
+Changes:
+- Filters to paid orders.
+- Validates paid order `currency`, `amountCents`, and `createdAt`.
+- Groups by currency with count, total, first date, last date.
+- Sorts by `totalCents` descending, then `currency`.
+- Throws `TypeError` for invalid order data.
+- Added sort/tie coverage in [test/summarizeOrders.test.mjs](/tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness/test/summarizeOrders.test.mjs:19).
+- Recorded route/assumptions in [docs/changelog/changelog-2026-06-06.md](/tmp/supergoal-harness-eval-3case/sandboxes/medium-order-summary/harness/docs/changelog/changelog-2026-06-06.md:1).
+
+Verification:
+- Pre-fix `npm test` failed on the missing grouping behavior.
+- Final `npm test` passed: `3` tests, `3` pass, `0` fail.

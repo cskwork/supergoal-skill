@@ -1,0 +1,11 @@
+id: hard-json-patch
+title: "Apply JSON Patch operations atomically"
+difficulty: hard
+runtime_adapter: codex-exec
+reasoning_effort: low
+task: >-
+  Implement applyPatch(document, operations) for add, remove, replace, test, copy, and move. Use JSON Pointer paths including ~0 and ~1 escaping and array '-' append for add. The function must return a patched deep copy, leave the input unchanged, and throw TypeError for invalid operations or failed tests. No dependencies.
+machine_checks:
+  - hard-json-patch hidden+visible tests
+  - hard-json-patch source syntax
+  - hard-json-patch hidden syntax

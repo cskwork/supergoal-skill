@@ -1,0 +1,25 @@
+구현 완료. `RULES.md`와 `test/lsp.visible.test.mjs`의 assertion을 1:1로 맞춰 `src/server.mjs`를 다음으로 완성했습니다.
+
+1. `JSON-RPC` 프레이밍
+   - `encodeMessage`에서 `Content-Length` + `\r\n\r\n` 헤더를 붙여 메시지 직렬화
+   - `MessageBuffer.push`에서 버퍼 누적·헤더 파싱·`Content-Length` 기반 분할 파싱으로 부분/연속 프레임 처리
+
+2. 라이프사이클
+   - `initialize` → `textDocumentSync: 2`, completion/definition/hover capabilities 반환
+   - `shutdown` → `{ result: null }` 응답
+   - `exit` → `null` 반환(알림 동작)
+
+3. 문서 기능
+   - `didOpen`/`didChange`에서 문서를 파싱해 진단 갱신 및 `textDocument/publishDiagnostics` 알림 큐잉
+   - `didChange`는 기존 진단을 교체(초기화)하여 stale diagnostics 제거
+   - `parseMiniLang`에서 스코프(전역/함수), 심볼(함수/변수), 호출 인자 수, 미정의 심볼 진단을 계산
+   - `completion`은 키워드+인스코프 심볼(지역 변수 포함) 반환
+   - `definition`은 토큰 위치 기준 최근접 스코프 심볼 위치 반환
+   - `hover`는 함수면 `fn <name>(...)` 형식 정보 반환
+
+검증/기록:
+- `npm test` 실행 결과: 5/5 통과
+- 리뷰/검증 노트 기록: [`/tmp/sg-harnessmake-eval/sandboxes/lsp/harness/.harness/notes.md`](/tmp/sg-harnessmake-eval/sandboxes/lsp/harness/.harness/notes.md)
+
+변경 파일:
+- [`src/server.mjs`](/tmp/sg-harnessmake-eval/sandboxes/lsp/harness/src/server.mjs)

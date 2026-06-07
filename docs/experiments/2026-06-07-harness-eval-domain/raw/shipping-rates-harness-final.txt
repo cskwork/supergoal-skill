@@ -1,0 +1,17 @@
+Implemented. Used the **Inline/DEBUG** supergoal flow (no subagents, no intermediate human gates) and completed `computeShipping` against the full RULES.md spec in [src/shipping.mjs](/private/tmp/sg-domain-eval/sandboxes/shipping-rates/harness/src/shipping.mjs:1).
+
+What was fixed to satisfy rules:
+- Added volumetric weight: `ceil(l * w * h / 5)` and billable grams = `max(actual, volumetric)`.
+- Kept kg billing as `max(1, ceil(billableGrams / 1000))` (e.g., 1001g -> 2kg).
+- Applied zone pricing (`A/B/C` base + per-kg rates).
+- Added oversize surcharge when any dimension > 100cm (+1500).
+- Added insurance surcharge for `declaredValueMinor > 10000` using `ceil(declaredValueMinor * 100 / 10000)`.
+- Applied free-shipping rule for `declaredValueMinor >= 50000`: only base+weight waived, surcharges still added.
+- Returned `{ billableGrams, totalMinor }` in all branches.
+
+Also added changelog entry per repo instruction: [docs/changelog/changelog-2026-06-07.md](/private/tmp/sg-domain-eval/sandboxes/shipping-rates/harness/docs/changelog/changelog-2026-06-07.md:1).
+
+Verification run:
+- `npm test` (from repo root) -> PASS (3 passed, 0 failed).
+- `node --check src/shipping.mjs` -> pass.
+- Manual rule-coverage smoke checks for volumetric, kg rounding-up, oversize, insurance, and free-shipping+surcharge behavior were executed and matched expected formulas.

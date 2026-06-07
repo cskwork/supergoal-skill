@@ -1,0 +1,35 @@
+{
+  "runtime_adapter": "codex-exec:gpt-5.5:reasoning-high",
+  "pass_winner": "tie",
+  "quality_winner": "tie",
+  "baseline_quality": 79,
+  "harness_quality": 79,
+  "baseline_checks": [
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "fail",
+    "fail",
+    "fail",
+    "pass",
+    "pass",
+    "pass"
+  ],
+  "harness_checks": [
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "fail",
+    "fail",
+    "fail",
+    "pass",
+    "pass",
+    "pass"
+  ]
+}

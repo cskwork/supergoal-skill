@@ -1,0 +1,14 @@
+Implemented. `isSafeRedirect` now validates parsed HTTP/HTTPS URLs against exact or label-bound allowed hosts, while rejecting userinfo, raw backslashes/control chars, localhost, private IPv4 normalized forms, IPv6 loopback/unique-local, and IPv4-mapped private IPv6 addresses.
+
+Changed:
+- [src/safeRedirect.mjs](/private/tmp/supergoal-harness-eval-3case/sandboxes/hard-safe-redirect/harness/src/safeRedirect.mjs:6)
+- [test/safeRedirect.test.mjs](/private/tmp/supergoal-harness-eval-3case/sandboxes/hard-safe-redirect/harness/test/safeRedirect.test.mjs:6)
+- [docs/changelog/changelog-2026-06-06.md](/private/tmp/supergoal-harness-eval-3case/sandboxes/hard-safe-redirect/harness/docs/changelog/changelog-2026-06-06.md:1)
+
+Verification:
+- Reproduced pre-fix failure with `npm test`.
+- `node --check src/safeRedirect.mjs`: passed.
+- Direct smoke matrix: `smoke ok`.
+- Final `npm test`: 5 tests passed, 0 failed.
+
+Routed through Supergoal `DEBUG`. Assumptions and the CodeGraph limitation are recorded in the changelog; the harness reference directory was not edited.

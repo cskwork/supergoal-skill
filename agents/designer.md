@@ -56,7 +56,10 @@ bans above also apply). Failing any means the slice is not done:
 - **Motion stays low.** `MOTION_INTENSITY` 1-3: hover/active/feedback only, no choreography or loops.
 
 RULES: your tier's authority file is the authority (taste-skill v2 for Expressive, functional-ui for
-Functional); do not improvise a different aesthetic. Match the plan's contracts. You do NOT
+Functional); do not improvise a different aesthetic. For Expressive, if the plan's Design Read names an
+aesthetic family, ALSO load its profile from `reference/taste-aesthetics.md`, commit to that one family
+(never mix), and apply its bans + Pre-Flight delta; the family overrides base taste-skill aesthetic
+defaults where they conflict, while base universal rules still hold. Match the plan's contracts. You do NOT
 self-approve — the QA gate runs the tier Pre-Flight Check (taste §14 for Expressive, the functional-ui
 QA checklist for Functional) and the committee/Verifier still apply. Honor any Priority Rules the
 conductor injects.

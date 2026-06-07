@@ -53,6 +53,15 @@ require_text "functional enumerates contrast pairs"  "reference/functional-ui.md
 require_text "designer is tier-aware"                "agents/designer.md" "TIER:"
 require_text "designer marks universal (*) bans"     "agents/designer.md" "(*)"
 require_text "designer has functional-tier bans"     "agents/designer.md" "FUNCTIONAL-TIER BANS"
+require_text "designer loads aesthetic family"       "agents/designer.md" "taste-aesthetics.md"
+
+# Expressive aesthetic families (optional overlays on taste-skill-v2).
+require_file "aesthetics authority exists"           "reference/taste-aesthetics.md"
+require_text "aesthetics names minimalist family"    "reference/taste-aesthetics.md" "minimalist-ui"
+require_text "aesthetics names high-end family"      "reference/taste-aesthetics.md" "high-end-visual-design"
+require_text "aesthetics names brutalist family"     "reference/taste-aesthetics.md" "industrial-brutalist-ui"
+require_text "aesthetics is one-family-only"         "reference/taste-aesthetics.md" "never mix"
+require_text "ui-ux routes to aesthetic families"    "reference/ui-ux.md" "taste-aesthetics.md"
 
 # Gate wiring: contrast is enforced, not eyeballed.
 require_text "qa records UI-tier"                    "reference/qa.md" "UI-tier:"

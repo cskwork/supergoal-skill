@@ -1,0 +1,45 @@
+Implemented. I replaced `src/server.mjs` with a full MiniLang LSP implementation matching the requested API surface and behavior, keeping the changes local to this workspace.
+
+### What was implemented
+
+- `encodeMessage(message)`  
+  - Returns JSON-RPC framed bytes with `Content-Length` header and `\r\n\r\n` separator.
+
+- `class MessageBuffer`
+  - Supports `push(chunk)` with stream-aware decoding.
+  - Handles partial chunks, multiple concatenated frames, and buffers until complete messages are available.
+
+- `parseMiniLang(text)`
+  - Parses MiniLang syntax:
+    - `fn` declarations
+    - `let` declarations
+    - `return`
+    - function calls
+    - `#` comments
+  - Builds symbols for:
+    - functions (with params, scope, and definition range)
+    - variables (with scope)
+  - Produces diagnostics with recovery (undefined names, arity mismatch, return-scope misuse, etc.).
+  - Keeps a symbol table usable for completion/hover/definition resolution.
+
+- `class MiniLangServer`
+  - Exposes required handlers with lifecycle:
+    - `initialize`, `shutdown`, `exit`
+  - Maintains documents and diagnostics.
+  - Implements incremental text updates for `textDocument/didOpen` and `textDocument/didChange`:
+    - full replace updates
+    - range-based incremental updates
+  - Implements language features:
+    - `textDocument/completion`
+    - `textDocument/definition`
+    - `textDocument/hover`
+  - Queues and returns notifications via `takeNotifications()`.
+  - Exposes `getDiagnostics(uri)`.
+
+Updated file:
+- [src/server.mjs](/tmp/sg-eval-015-spark-high/sandboxes/revfactory-case-015-lsp/baseline/src/server.mjs)
+
+### Verification
+
+- Ran and passed visible suite:
+  - `npm test` ✅

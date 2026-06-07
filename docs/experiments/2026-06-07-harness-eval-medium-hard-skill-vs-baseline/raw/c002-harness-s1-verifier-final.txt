@@ -1,0 +1,5 @@
+Verifier pass complete.
+
+`src/cache.mjs` already satisfies the required behavior, so I made no source or test changes. I updated `NOTES.md` with the final verification note.
+
+Verified with `npm test`: 7 tests passing, including same-key in-flight sharing, different-key concurrency, rejection retry, resolved caching, `has()`, and `clear()`.

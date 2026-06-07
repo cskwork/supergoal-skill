@@ -80,13 +80,11 @@ Reusable seeded case specs (the approved corpus - pick from here, never invent n
 - `revfactory-case-014-event-sourcing.yaml`
 - `revfactory-case-015-lsp.yaml`
 
-Default to the validated RevFactory corpus in `templates/harness-eval-cases/` for comparable, citable
-results; do NOT invent throwaway easy/medium cases. Note that underspecified tasks whose implicit
-requirements are PUBLIC domain knowledge also ceiling out - a strong baseline fills them unprompted
-(evidence: 2026-06-07 csv/lru/semver, 14/14 both arms, `docs/experiments/2026-06-07-harness-eval-underspecified/`).
-The one sanctioned reason to author a fresh fixture is probing the under-specified frontier with a
-LATENT-CORRECTNESS case (see "Pick a discriminating regime" + "Validate the fixture discriminates"); label
-it authored, not corpus, and never run it until the 3-way discrimination check passes.
+Use the validated RevFactory case corpus ONLY - draw every eval case from
+`templates/harness-eval-cases/` (RevFactory specs); never invent ad-hoc cases. Ad-hoc easy/medium tasks,
+and underspecified tasks whose implicit requirements are PUBLIC domain knowledge, ceiling out: a strong
+baseline passes everything so the case proves nothing (evidence: 2026-06-07 csv/lru/semver, 14/14 both
+arms, `docs/experiments/2026-06-07-harness-eval-underspecified/`).
 
 Use the hard/expert tier only - the cases that discriminate:
 
@@ -98,38 +96,6 @@ Only `case-015-lsp` ships a runnable fixture; author the rest from the same fixt
 use. Pilot on one expert case (n=1 is `Not proven` by construction - direction only), then scale to 8-15
 expert/hard cases for a proven claim. Both arms passing everything is inconclusive (ceiling), not a win
 or a tie.
-
-## Pick a discriminating regime (lever = spec-completeness x baseline strength, not "difficulty")
-
-The harness's only correctness lever is surfacing requirements ABSENT from the prompt. On an
-explicit-spec task a capable baseline already passes - expect a TIE at 2-3x cost regardless of tier
-(observed 2026-06-07: medium case-003 14/14=14/14, hard case-002 8/8=8/8 @ gpt-5.5/low; expert case-015
-11/12=11/12 @ spark/high). A nominally "hard" case a strong model aces is still a ceiling. To find signal:
-
-- Make the baseline actually struggle: weaker model and/or higher reasoning effort, OR a genuinely
-  under-specified task - not just a higher difficulty label.
-- Under-specified discriminates ONLY when the unstated requirement is LATENT-CORRECTNESS (a lazy literal
-  impl skips it, a correct impl does it anyway: proto-pollution guard, CSV quote handling, no-mutate-input)
-  AND not so public/obvious the baseline fills it unprompted. Ambiguous choices are NOT fair hidden checks
-  - test only what one reasonable reading MUST do.
-- n >= 3 per arm even in a pilot. A +-1-test delta at n=1 is noise, not a win: case-015 read as harness
-  8/9 vs baseline 7/9 one run and an exact tie the next. Report the per-seed vector, not just the mean.
-- Compute confound: a 4-pass role-loop vs a 1-pass baseline conflates skill with compute. Either add an
-  equal-compute control (naive build+N-review loop, no skill) or report the cost multiple up front.
-- Harness arm design: use the role-loop (build->critic->fixer->verifier) when testing the
-  surface-hidden-requirements lever; the critic is that lever. Use single-pass skill-ref to A/B the
-  SKILL text itself. State which, and keep both arms in the same runtime profile.
-
-## Validate the fixture discriminates BEFORE spending compute
-
-A fixture proves nothing unless it can tell solutions apart. Before running any arm, confirm three ways:
-1. the stub/starter fails the intended checks (greenfield: all fail; bug-fix: visible pass + planted
-   hidden fail; refactor: starter passes ALL, so the case measures preservation),
-2. a reference CORRECT impl passes all visible + hidden,
-3. a lazy/naive impl (shallow merge, `split(',')`, global-lock, do-nothing) fails the discriminating
-   hidden checks.
-If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. A no-codex
-`SG_EVAL_VALIDATE` path that prints the starter's per-test results makes (1) cheap.
 
 ## Execution
 
@@ -216,7 +182,4 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
 - Exposing eval cases, hidden checks, or the rubric to the harness arm via the copied reference.
 - Scoring a crashed / context-exhausted / timed-out arm as a silent zero instead of a recorded loss.
 - Forcing a multi-agent verifier/repair loop into a single non-interactive process and blaming the harness for the resulting context-window crash.
-- Inventing throwaway ad-hoc cases for a PROVEN claim instead of the RevFactory corpus; authoring a fixture is allowed only to probe the under-specified frontier, and only after the 3-way discrimination check.
-- Calling a +-1-test, n=1 delta a "win"; that is within run-to-run noise (same case flipped win->tie on re-run). Need n>=3 per arm and a per-seed vector.
-- Comparing a multi-pass harness to a single-pass baseline and crediting the skill without an equal-compute control or a stated cost multiple.
-- Running an authored fixture whose starter, a reference impl, and a lazy impl were not first checked to confirm it discriminates.
+- Inventing ad-hoc eval cases instead of drawing from the RevFactory hard/expert corpus in `templates/harness-eval-cases/`.

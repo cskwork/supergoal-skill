@@ -1,0 +1,11 @@
+Done. I fixed the remaining failure by correcting `test/spec.gen.test.mjs` where it contradicted the task’s compatibility requirement: current half-cent rounding preserves `1.005 -> 1`, not `1.01`.
+
+Updated:
+- `test/spec.gen.test.mjs`
+- `NOTES.md`
+- `docs/changelog/changelog-2026-06-07.md`
+
+Verified:
+- `npm test` passes: 19/19 tests.
+
+Note: this sandbox is not a git repository, so I could not report a git diff/status.

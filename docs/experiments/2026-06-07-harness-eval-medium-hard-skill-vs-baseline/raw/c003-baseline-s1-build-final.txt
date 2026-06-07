@@ -1,0 +1,5 @@
+Refactored [src/order.mjs](/tmp/sg-eval-svb-003/sandboxes/baseline-s1/src/order.mjs) into small private helpers for subtotal, coupon/VIP discount, tax, shipping, and cent rounding. Public API remains `calculateInvoice(order)` plus the existing default export, returning the same rounded fields.
+
+Added the required decision note at [docs/changelog/changelog-2026-06-07.md](/tmp/sg-eval-svb-003/sandboxes/baseline-s1/docs/changelog/changelog-2026-06-07.md).
+
+Verified with `npm test`: 5/5 tests passing. Git status was unavailable because this sandbox root is not a Git repository.

@@ -1,0 +1,250 @@
+{
+  "case_id": "revfactory-case-002",
+  "difficulty": "hard",
+  "runtime_adapter": "codex-exec:gpt-5.5:reasoning-low",
+  "same_repo_snapshot": true,
+  "isolated_sandboxes": true,
+  "arms": {
+    "baseline": "single bare codex pass (no skill)",
+    "harness": "supergoal role-separated loop: build(skill-ref)+critic+fixer+verifier"
+  },
+  "claim_status": "not_proven",
+  "summary": {
+    "baseline": {
+      "arm": "baseline",
+      "seeds": 2,
+      "quality_avg": 85,
+      "quality_each": [
+        83,
+        87
+      ],
+      "visible_each": [
+        "3/3",
+        "3/3"
+      ],
+      "hidden_each": [
+        "5/5",
+        "5/5"
+      ],
+      "hidden_pass_avg": 5,
+      "false_green_count": 0,
+      "crashed_count": 0,
+      "tokens_avg": 545146,
+      "duration_ms_avg": 145024,
+      "total_passes_avg": 1
+    },
+    "harness": {
+      "arm": "harness",
+      "seeds": 2,
+      "quality_avg": 83,
+      "quality_each": [
+        83,
+        83
+      ],
+      "visible_each": [
+        "3/3",
+        "3/3"
+      ],
+      "hidden_each": [
+        "5/5",
+        "5/5"
+      ],
+      "hidden_pass_avg": 5,
+      "false_green_count": 0,
+      "crashed_count": 0,
+      "tokens_avg": 1161342,
+      "duration_ms_avg": 325240,
+      "total_passes_avg": 4
+    }
+  },
+  "seeds": {
+    "baseline": [
+      {
+        "seed": 1,
+        "cost": {
+          "tokens": 720472,
+          "duration_ms": 181693,
+          "tool_calls": 48,
+          "passes": 1,
+          "crashed": false,
+          "per_pass": [
+            {
+              "label": "c002-baseline-s1-build",
+              "tokens": 720472,
+              "duration_ms": 181693,
+              "tool_calls": 48,
+              "exit_code": 0,
+              "crashed": false
+            }
+          ]
+        },
+        "snap": {
+          "label": "baseline-s1",
+          "visible_pass": 3,
+          "visible_total": 3,
+          "hidden_pass": 5,
+          "hidden_total": 5,
+          "hidden_fails": [],
+          "syntax_pass": 2,
+          "syntax_total": 2,
+          "quality": 83,
+          "source_files": 1,
+          "source_lines": 43,
+          "false_green": false
+        }
+      },
+      {
+        "seed": 2,
+        "cost": {
+          "tokens": 369819,
+          "duration_ms": 108355,
+          "tool_calls": 20,
+          "passes": 1,
+          "crashed": false,
+          "per_pass": [
+            {
+              "label": "c002-baseline-s2-build",
+              "tokens": 369819,
+              "duration_ms": 108355,
+              "tool_calls": 20,
+              "exit_code": 0,
+              "crashed": false
+            }
+          ]
+        },
+        "snap": {
+          "label": "baseline-s2",
+          "visible_pass": 3,
+          "visible_total": 3,
+          "hidden_pass": 5,
+          "hidden_total": 5,
+          "hidden_fails": [],
+          "syntax_pass": 2,
+          "syntax_total": 2,
+          "quality": 87,
+          "source_files": 1,
+          "source_lines": 45,
+          "false_green": false
+        }
+      }
+    ],
+    "harness": [
+      {
+        "seed": 1,
+        "cost": {
+          "tokens": 1085793,
+          "duration_ms": 314403,
+          "tool_calls": 116,
+          "passes": 4,
+          "crashed": false,
+          "per_pass": [
+            {
+              "label": "c002-harness-s1-build",
+              "tokens": 379958,
+              "duration_ms": 90897,
+              "tool_calls": 24,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "c002-harness-s1-critic",
+              "tokens": 240532,
+              "duration_ms": 84859,
+              "tool_calls": 30,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "c002-harness-s1-fixer",
+              "tokens": 263017,
+              "duration_ms": 82176,
+              "tool_calls": 34,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "c002-harness-s1-verifier",
+              "tokens": 202286,
+              "duration_ms": 56471,
+              "tool_calls": 28,
+              "exit_code": 0,
+              "crashed": false
+            }
+          ]
+        },
+        "snap": {
+          "label": "harness-s1",
+          "visible_pass": 3,
+          "visible_total": 3,
+          "hidden_pass": 5,
+          "hidden_total": 5,
+          "hidden_fails": [],
+          "syntax_pass": 2,
+          "syntax_total": 2,
+          "quality": 83,
+          "source_files": 1,
+          "source_lines": 44,
+          "false_green": false
+        }
+      },
+      {
+        "seed": 2,
+        "cost": {
+          "tokens": 1236891,
+          "duration_ms": 336076,
+          "tool_calls": 116,
+          "passes": 4,
+          "crashed": false,
+          "per_pass": [
+            {
+              "label": "c002-harness-s2-build",
+              "tokens": 353550,
+              "duration_ms": 95281,
+              "tool_calls": 30,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "c002-harness-s2-critic",
+              "tokens": 420711,
+              "duration_ms": 118825,
+              "tool_calls": 28,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "c002-harness-s2-fixer",
+              "tokens": 260789,
+              "duration_ms": 67529,
+              "tool_calls": 24,
+              "exit_code": 0,
+              "crashed": false
+            },
+            {
+              "label": "c002-harness-s2-verifier",
+              "tokens": 201841,
+              "duration_ms": 54441,
+              "tool_calls": 34,
+              "exit_code": 0,
+              "crashed": false
+            }
+          ]
+        },
+        "snap": {
+          "label": "harness-s2",
+          "visible_pass": 3,
+          "visible_total": 3,
+          "hidden_pass": 5,
+          "hidden_total": 5,
+          "hidden_fails": [],
+          "syntax_pass": 2,
+          "syntax_total": 2,
+          "quality": 83,
+          "source_files": 1,
+          "source_lines": 41,
+          "false_green": false
+        }
+      }
+    ]
+  }
+}

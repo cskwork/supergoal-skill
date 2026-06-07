@@ -1,0 +1,5 @@
+Implemented the async race fix in [src/cache.mjs](/tmp/sg-eval-svb-002/sandboxes/baseline-s1/src/cache.mjs): same-key concurrent `get()` calls now share a per-key in-flight promise, while different keys still load independently. Rejected loads are not cached and can be retried.
+
+Added focused coverage in [test/cache.race.test.mjs](/tmp/sg-eval-svb-002/sandboxes/baseline-s1/test/cache.race.test.mjs) and recorded the decision in [docs/changelog/changelog-2026-06-07.md](/tmp/sg-eval-svb-002/sandboxes/baseline-s1/docs/changelog/changelog-2026-06-07.md).
+
+Verified with `npm test`: 7 tests passed.

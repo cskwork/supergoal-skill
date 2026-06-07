@@ -1,0 +1,7 @@
+Implemented `parseCsvLine(line)` in [src/csv.mjs](/tmp/sg-eval-uspec-u2/sandboxes/harness-s1/src/csv.mjs). It now preserves valid CSV behavior and rejects malformed quoted fields with `SyntaxError`.
+
+Updated:
+- [NOTES.md](/tmp/sg-eval-uspec-u2/sandboxes/harness-s1/NOTES.md): all listed defects marked fixed.
+- [changelog-2026-06-07.md](/tmp/sg-eval-uspec-u2/sandboxes/harness-s1/docs/changelog/changelog-2026-06-07.md): recorded the decision and reason.
+
+Verification: `npm test` passes, `5/5` tests.

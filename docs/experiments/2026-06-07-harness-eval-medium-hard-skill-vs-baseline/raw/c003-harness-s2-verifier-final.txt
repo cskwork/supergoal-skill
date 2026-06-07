@@ -1,0 +1,11 @@
+Final verifier pass complete. `src/order.mjs` already matched the task requirements, so I made no source changes.
+
+Updated:
+- `NOTES.md` with final verifier status and coverage checked.
+- `docs/changelog/changelog-2026-06-07.md` with the decision not to touch green source code.
+
+Verified:
+- `npm test` passes: 13 tests, 13 passing.
+
+CodeGraph was not initialized in this sandbox, so verification used direct file inspection plus the real test suite.
+

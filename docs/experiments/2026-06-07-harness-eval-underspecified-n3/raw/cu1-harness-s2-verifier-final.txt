@@ -1,0 +1,8 @@
+Done. `src/merge.mjs` already satisfied the remaining task behavior, so I left implementation unchanged and added visible coverage for nested deep merge plus return identity.
+
+Updated:
+- `test/merge.visible.test.mjs`
+- `NOTES.md`
+- `docs/changelog/changelog-2026-06-07.md`
+
+Verified: `npm test` passes, 4/4 tests.

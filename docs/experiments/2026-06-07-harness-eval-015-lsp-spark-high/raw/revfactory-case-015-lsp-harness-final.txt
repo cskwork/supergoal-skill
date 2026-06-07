@@ -1,0 +1,31 @@
+Implemented.
+
+### What was done
+- Rebuilt `src/server.mjs` with the required exported APIs:
+  - `encodeMessage(message)`
+  - `class MessageBuffer` with `push(chunk)` returning decoded JSON-RPC messages
+  - `parseMiniLang(text)`
+  - `class MiniLangServer` with `handle(message)`, `takeNotifications()`, `getDiagnostics(uri)`
+- Implemented complete LSP-style behavior for MiniLang:
+  - JSON-RPC `Content-Length` framing/parsing
+  - lifecycle handling: `initialize`, `shutdown`, `exit`
+  - incremental document updates for `textDocument/didOpen` and `textDocument/didChange`
+  - parsing + symbol table construction
+  - diagnostics publishing (`textDocument/publishDiagnostics`)
+  - completion, go-to-definition, and hover
+  - parser error recovery for malformed declarations/braces while still producing usable symbols/diagnostics
+- Added decisions log in [`docs/changelog/changelog-2026-06-07.md`](/tmp/sg-eval-015-spark-high/sandboxes/revfactory-case-015-lsp/harness/docs/changelog/changelog-2026-06-07.md).
+
+### Assumptions recorded (no pauses for HF)
+- MiniLang functions use brace-delimited blocks with `{ ... }`; body tracking is line/brace based.
+- Incremental changes follow standard LSP shape (`contentChanges` with optional ranges, otherwise full-text replacement fallback).
+- `parseMiniLang` should return a symbol-rich diagnostic structure (used by server handlers), not just raw token stream.
+
+### Verification
+- `npm test` passed in this sandbox.
+  - 5 tests run, 5 passed, 0 failed.
+- Code parses cleanly with `node --check src/server.mjs`.
+
+Files changed:
+- [`src/server.mjs`](/tmp/sg-eval-015-spark-high/sandboxes/revfactory-case-015-lsp/harness/src/server.mjs)
+- [`docs/changelog/changelog-2026-06-07.md`](/tmp/sg-eval-015-spark-high/sandboxes/revfactory-case-015-lsp/harness/docs/changelog/changelog-2026-06-07.md)

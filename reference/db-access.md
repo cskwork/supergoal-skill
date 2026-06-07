@@ -1,60 +1,46 @@
-# DB access - read-only, DB-independent QA data
+# DB access - optional read-only evidence
 
-QA-ONLY (and any QA cross-check) reads a database to fetch test auth, verify UI values against the
-source of truth, and diff datasets/environments. This is a read-only, dialect-independent contract:
-the same QA logic works over MySQL, PostgreSQL, or SQLite.
+Use this when a GREENFIELD, DEBUG, LEGACY, or QA-ONLY task depends on database truth:
+schema shape, persisted state, source-of-truth UI values, test auth, or dataset/env diffs.
+DB-independent abstraction: the same contract covers PostgreSQL, MySQL, and SQLite.
+Skip the DB phase when the user does not want an agent DB connection.
+
+## Connection
+
+- Default to the cross-platform Node runner: `node templates/db-access/db-access.mjs <operation>`.
+- Windows may use `templates\db-access\db-access.cmd`; macOS/Linux may use the `.sh` wrappers.
+- The runner works without any external skill; it shells out to native database clients only.
+- Supported clients: `psql` for PostgreSQL, `mysql` for MySQL, `sqlite3` for SQLite.
+- Use `templates/db-access/.env.example` as the template.
+- Default secret path: `.domain-agent/db/.env`, or `DB_ENV_FILE=<path>` for another gitignored path.
+- If the `.env` file does not exist, ask the user to fill it, provide a path, or skip the DB phase.
+- Never hardcode host, user, password, DSN, token, or PII in tracked files, prompts, reports, or tests.
+- External helpers such as `postgres-intelligence` are optional only; do not require them.
 
 ## Read-only (hard rule)
 
-- Issue ONLY `SELECT`/`SHOW`/`DESCRIBE`/`EXPLAIN`. NEVER any write: DML (`INSERT`/`UPDATE`/`DELETE`/
-  `MERGE`/`REPLACE`), DDL (`CREATE`/`ALTER`/`DROP`/`TRUNCATE`), DCL (`GRANT`/`REVOKE`), or a writing
-  stored procedure (`CALL`).
-- Prefer a read-only DB account; if only a write-capable account exists, still issue read-only
-  statements only. For SQLite, open read-only (`sqlite3 -readonly <file>` or a `file:...?mode=ro` URI).
-- The QA gate scans recorded DB commands and fails on any write verb. Do not work around it.
+- Issue ONLY `SELECT`/`WITH`/`SHOW`/`DESCRIBE`/`EXPLAIN`.
+- NEVER issue write or admin SQL: `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `REPLACE`, `CREATE`,
+  `ALTER`, `DROP`, `TRUNCATE`, `GRANT`, `REVOKE`, `CALL`, `COPY`, `VACUUM`, `ANALYZE`,
+  `ATTACH`, `DETACH`, or write pragmas.
+- Prefer a read-only DB account. If only a write-capable account exists, still issue read-only SQL only.
+- For SQLite, open the database read-only (`sqlite3 -readonly <file>`).
+- Do not weaken the guard or edit gate/scripts to pass a non-compliant DB run.
 
-## DB-independent abstraction
+## Operations
 
-Define what QA needs as operations, then bind to whatever the repo/host provides:
+| Operation | Purpose | Output |
+| --- | --- | --- |
+| `check-connection` | prove the configured DB opens read-only | dialect/client + pass/fail |
+| `schema-summary` | inspect table/column shape | compact metadata, no row data |
+| `read-only-query` | fetch named expected values or diffs | small named values/diff only |
 
-| QA operation | What it returns |
-|---|---|
-| get-auth | a test user's credentials / session / token to sign into the app |
-| get-expected | the source-of-truth value(s) a screen should display |
-| diff | the same query run against two datasets/environments, compared |
-
-Bind in this order:
-
-1. A DB-intelligence skill if installed (it understands schema and is safer than raw SQL):
-   MySQL -> `https://github.com/cskwork/aidt-mysql-cli`; PostgreSQL -> `https://github.com/cskwork/postgres-intelligence`.
-   Discover others via the skill tools / ToolSearch.
-2. Else the raw CLI client: `mysql`, `psql`, or `sqlite3`.
-3. SQLite is a plain local file — open it read-only (`sqlite3 -readonly <file>`) with the same
-   SELECT-class statements.
-
-Keep the QA scenario written against the operations above, not a specific dialect, so a suite re-runs
-on a different DB by swapping only the binding.
-
-## Connection details (never hardcode)
-
-- Read connection info from env vars or a config file (`.domain-agent/qa.config`, repo config, or a
-  user-provided path). Ask the user once if none is found.
-- NEVER hardcode host/user/password/DSN in any file. NEVER log or persist credentials, tokens, or PII.
-- Connection config lives in a gitignored path; the saved suite references the query by name, never
-  the secret.
-
-## Keep it out of conductor context
-
-Run DB reads inside the dedicated `db-reader` subagent (`agents/db-reader.md`), separate from the
-browser `qa-auditor`. Return pass/fail and a SMALL diff (expected vs actual, the differing keys), never
-raw row dumps. Large result sets and any PII stay in the subagent and are summarized, not pasted, so the
-conductor context stays small and clean. For UI-value integrity, `db-reader` writes the small expected
-values to a sanitized `qa/expected.md` handoff table; the conductor reads it and passes the values to
-`qa-auditor` to diff against the screen — the DB raw access never enters the browser agent. Auth/
-credentials are returned for transient handoff only and are never written to a file.
+Run DB reads inside the dedicated `db-reader` subagent (`agents/db-reader.md`), separate from browser `qa-auditor`.
+Return pass/fail and a small diff; never paste raw row dumps, secrets, credentials, tokens, or PII.
+`db-reader` may write sanitized expected values to `qa/expected.md`; auth stays transient only.
 
 ## Record
 
-In `verification.md` `## QA`, add a `DB:` line naming the dialect and that it was read-only, e.g.
-`DB: postgres (read-only via postgres-intelligence)`. List the checks by name with pass/fail and the
-small diff. No credentials, no raw rows, no PII.
+In `verification.md` `## QA`, add a `DB:` line naming dialect/client and read-only status, e.g.
+`DB: postgres (read-only via supergoal db-access)`.
+List checks by name with pass/fail and small diff. No credentials, no raw rows, no PII.

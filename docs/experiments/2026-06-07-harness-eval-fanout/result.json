@@ -1,0 +1,236 @@
+{
+  "runtime_adapter": "codex-exec-orchestrated:gpt-5.3-codex-spark:reasoning-high",
+  "mode": "fan-out (fresh codex per role)",
+  "per_case": [
+    {
+      "id": "lsp",
+      "baseline": {
+        "score": 85,
+        "passed": 9,
+        "total": 9,
+        "crashed": false,
+        "tokens": 4114108,
+        "duration_ms": 249592
+      },
+      "harness": {
+        "score": 81,
+        "passed": 9,
+        "total": 9,
+        "crashed": true,
+        "tokens": 4642601,
+        "duration_ms": 1015062,
+        "roles": [
+          {
+            "label": "plan",
+            "tokens": 886385,
+            "duration_ms": 71515,
+            "crashed": false
+          },
+          {
+            "label": "build",
+            "tokens": 3756216,
+            "duration_ms": 223524,
+            "crashed": false
+          },
+          {
+            "label": "verify",
+            "tokens": 0,
+            "duration_ms": 720023,
+            "crashed": true
+          }
+        ]
+      }
+    }
+  ],
+  "aggregate": {
+    "baseline_avg_score": 85,
+    "harness_avg_score": 81,
+    "baseline_avg_passfrac": 1,
+    "harness_avg_passfrac": 1,
+    "baseline_avg_tokens": 4114108,
+    "harness_avg_tokens": 4642601,
+    "baseline_crashes": 0,
+    "harness_crashes": 1
+  },
+  "cases": {
+    "lsp": {
+      "baseline": {
+        "cost": {
+          "tokens": 4114108,
+          "duration_ms": 249592,
+          "tool_calls": 138,
+          "turns_completed": 1,
+          "crashed": false,
+          "label": "run",
+          "roles": [
+            {
+              "label": "run",
+              "tokens": 4114108,
+              "duration_ms": 249592,
+              "crashed": false
+            }
+          ]
+        },
+        "granular": [
+          {
+            "name": "visible: JSON-RPC transport frames and streams Content-Length messages",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "visible: initialize, shutdown, and exit expose expected LSP lifecycle",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "visible: didOpen publishes diagnostics for undefined symbols and wrong arity",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "visible: completion includes keywords, in-scope symbols, functions, and snippets",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "visible: definition and hover resolve function symbols",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: didChange reparses incrementally and clears stale diagnostics",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: completion filters by prefix and exposes function signatures",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: definition prefers local scope over same-name symbols elsewhere",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: parser recovers from syntax errors and still reports semantic diagnostics",
+            "kind": "hidden",
+            "status": "pass"
+          }
+        ],
+        "quality": {
+          "total": 85,
+          "pass_fraction": 1,
+          "checks_passed": 9,
+          "checks_total": 9,
+          "dimensions": {
+            "feature_completeness": 10,
+            "test_coverage": 10,
+            "code_quality": 9,
+            "error_handling": 10,
+            "efficiency": 10,
+            "correctness": 10,
+            "architecture": 6,
+            "extensibility": 7,
+            "documentation": 4,
+            "dev_environment": 9
+          }
+        }
+      },
+      "harness": {
+        "cost": {
+          "tokens": 4642601,
+          "duration_ms": 1015062,
+          "tool_calls": 238,
+          "turns_completed": 2,
+          "crashed": true,
+          "roles": [
+            {
+              "label": "plan",
+              "tokens": 886385,
+              "duration_ms": 71515,
+              "crashed": false
+            },
+            {
+              "label": "build",
+              "tokens": 3756216,
+              "duration_ms": 223524,
+              "crashed": false
+            },
+            {
+              "label": "verify",
+              "tokens": 0,
+              "duration_ms": 720023,
+              "crashed": true
+            }
+          ]
+        },
+        "granular": [
+          {
+            "name": "visible: JSON-RPC transport frames and streams Content-Length messages",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "visible: initialize, shutdown, and exit expose expected LSP lifecycle",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "visible: didOpen publishes diagnostics for undefined symbols and wrong arity",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "visible: completion includes keywords, in-scope symbols, functions, and snippets",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "visible: definition and hover resolve function symbols",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: didChange reparses incrementally and clears stale diagnostics",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: completion filters by prefix and exposes function signatures",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: definition prefers local scope over same-name symbols elsewhere",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "hidden: parser recovers from syntax errors and still reports semantic diagnostics",
+            "kind": "hidden",
+            "status": "pass"
+          }
+        ],
+        "quality": {
+          "total": 81,
+          "pass_fraction": 1,
+          "checks_passed": 9,
+          "checks_total": 9,
+          "dimensions": {
+            "feature_completeness": 10,
+            "test_coverage": 10,
+            "code_quality": 9,
+            "error_handling": 6,
+            "efficiency": 10,
+            "correctness": 10,
+            "architecture": 6,
+            "extensibility": 7,
+            "documentation": 4,
+            "dev_environment": 9
+          }
+        }
+      }
+    }
+  }
+}

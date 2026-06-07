@@ -1,0 +1,13 @@
+Decision: no code changes required in `src/server.mjs`; the current implementation already satisfies the visible contract and requested manual checks.
+
+What I ran:
+- `npm test` → 5 passing, 0 failed.
+- Manual transport check: chunked framing via `MessageBuffer.push` returns complete messages in order across split payload writes.
+- Manual lifecycle/diagnostics check:
+  - `textDocument/didOpen` publishes diagnostics for a URI.
+  - subsequent `textDocument/didChange` for the same URI publishes refreshed diagnostics for that URI (stale entries removed/cleared as expected).
+  - `initialize` returns lifecycle capabilities; `shutdown`/`exit` behavior matches LSP expectation (`exit` sets `0` after shutdown, otherwise `1`).
+
+Recorded findings:
+- No failures to fix, so `src/server.mjs` was left unchanged.
+- Recorded verification results in [`.harness/notes.md`](/tmp/sg-harnessmake-eval/sandboxes/lsp/harness/.harness/notes.md).

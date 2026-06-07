@@ -1,0 +1,10 @@
+id: easy-slugify
+title: "Normalize text into URL slugs"
+difficulty: easy
+runtime_adapter: codex-exec
+task: >-
+  Fix slugify(input) so it lowercases, trims, converts each run of non-alphanumeric characters to one hyphen, and removes leading/trailing hyphens. Preserve an empty string for inputs with no alphanumeric text. Keep the implementation dependency-free and run the tests.
+machine_checks:
+  - unit tests
+  - source syntax
+  - test syntax

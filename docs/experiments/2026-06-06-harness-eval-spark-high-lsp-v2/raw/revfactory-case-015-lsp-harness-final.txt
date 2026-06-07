@@ -1,0 +1,18 @@
+Done. I implemented a full MiniLang LSP implementation in the sandbox (`src/server.mjs`) with content-length framed JSON-RPC, lifecycle handling, parser+diagnostics, symbol construction, completion, definition, hover, and incremental `didOpen`/`didChange` handling, then verified with `npm test`.
+
+What changed:
+- [src/server.mjs](/tmp/supergoal-harness-eval-spark-high-lsp-v2/sandboxes/revfactory-case-015-lsp/harness/src/server.mjs): implemented and exported:
+  - `encodeMessage(message)`
+  - `class MessageBuffer` with `push(chunk)` decoding frame(s)
+  - `parseMiniLang(text)` with recovery-oriented parsing, diagnostics, and symbol table/scopes
+  - `class MiniLangServer` with `handle`, `takeNotifications`, `getDiagnostics`
+  - request handling for `initialize`, `shutdown`, `exit`, `didOpen`, `didChange`, `completion`, `definition`, `hover`
+  - incremental change application for `textDocument/didChange`
+  - diagnostics publication notifications and storage
+- [docs/changelog/changelog-2026-06-06.md](/tmp/supergoal-harness-eval-spark-high-lsp-v2/sandboxes/revfactory-case-015-lsp/harness/docs/changelog/changelog-2026-06-06.md): recorded implementation assumptions and scope assumptions per repo guidance.
+
+Verification:
+- Ran `npm test` and all visible tests pass: `5 passed`.
+- No edit was made outside the sandbox directory.
+
+Next step (if you want): I can add a small README-like note in the repo with MiniLang grammar examples and LSP behavior expectations for future maintainers.

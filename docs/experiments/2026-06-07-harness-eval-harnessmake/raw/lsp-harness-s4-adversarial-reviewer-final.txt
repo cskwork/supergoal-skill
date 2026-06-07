@@ -1,0 +1,22 @@
+Implemented and hardened `src/server.mjs` for the adversarial edge cases, then re-ran the test suite to completion.
+
+- Hardened lifecycle behavior in [src/server.mjs](/private/tmp/sg-harnessmake-eval/sandboxes/lsp/harness/src/server.mjs):
+  - Keeps explicit server state (`created` → `initialized` → `shutdown` → `exited`).
+  - `initialize` remains valid (duplicate initialize is safely idempotent).
+  - `shutdown` returns expected RPC success and flips shutdown state.
+  - `exit` now returns `null` (per visible test contract), and sets `exitCode` from prior shutdown state.
+  - Any request after `shutdown` (or after exit) is dropped with no response.
+  - Unknown methods return no response (passthrough/no-response shape).
+
+- Addressed ambiguity/symbol-scope behavior:
+  - `completion` now preserves innermost symbol precedence and avoids outer-scope overwrite of inner-scope same-name entries.
+
+- Kept and preserved visible behavior:
+  - `encodeMessage`, `MessageBuffer.push`, diagnostics publish/refresh, completion, definition, hover continue to work under existing tests.
+
+- Recorded findings/changes:
+  - [docs/changelog/changelog-2026-06-07.md](/private/tmp/sg-harnessmake-eval/sandboxes/lsp/harness/docs/changelog/changelog-2026-06-07.md)
+  - [/.harness/notes.md](/private/tmp/sg-harnessmake-eval/sandboxes/lsp/harness/.harness/notes.md)
+
+Verification:
+- Ran `npm test` after changes: `5 passed, 0 failed`.

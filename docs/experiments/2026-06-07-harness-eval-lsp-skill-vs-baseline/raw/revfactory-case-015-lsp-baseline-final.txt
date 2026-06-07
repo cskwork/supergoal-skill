@@ -1,0 +1,23 @@
+Implemented `src/server.mjs` with the required LSP and MiniLang core behavior in-place, dependency-free, and kept to this sandbox.
+
+### What changed
+- [src/server.mjs](/tmp/sg-lsp-skillvsbaseline-live/sandboxes/revfactory-case-015-lsp/baseline/src/server.mjs):  
+  - Implemented `encodeMessage(message)` using proper JSON-RPC framing (`Content-Length: N\r\n\r\n`).
+  - Implemented `MessageBuffer` with `push(chunk)` that reconstructs one or more complete JSON-RPC messages from streamed chunks.
+  - Replaced `parseMiniLang(text)` with a real parser that:
+    - handles function declarations, variable declarations, returns, function calls, comments (`#`)
+    - recovers from malformed lines and continues parsing
+    - builds symbol tables for globals, functions, locals, and params
+    - emits diagnostics for undefined symbols and call arity mismatches
+  - Implemented `MiniLangServer` with async `handle(message)` lifecycle + language features:
+    - `initialize`, `shutdown`, `exit`
+    - `textDocument/didOpen`, `textDocument/didChange` (including incremental/range and full-text updates)
+    - `textDocument/completion`
+    - `textDocument/definition`
+    - `textDocument/hover`
+    - notification queue via `takeNotifications()`
+    - diagnostics retrieval via `getDiagnostics(uri)`
+
+### Verification
+- Ran required tests: `npm test`  
+- Result: all visible tests pass (`pass 5`, `fail 0`).

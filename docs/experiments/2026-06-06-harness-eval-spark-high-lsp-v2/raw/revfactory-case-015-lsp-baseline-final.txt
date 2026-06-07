@@ -1,0 +1,23 @@
+Implemented. `src/server.mjs` now contains a full, dependency-free MiniLang LSP implementation in the sandbox.
+
+What I changed in [src/server.mjs](/tmp/supergoal-harness-eval-spark-high-lsp-v2/sandboxes/revfactory-case-015-lsp/baseline/src/server.mjs):
+- `encodeMessage(message)` now builds RFC-style JSON-RPC framing with `Content-Length`.
+- Added `MessageBuffer` with `push(chunk)` supporting stream-safe framing and decoding multiple/chunked messages.
+- Added complete parser `parseMiniLang(text)` with:
+  - comment stripping (`# ...`)
+  - incremental parse with recovery
+  - symbol table construction (functions, variables, params)
+  - function call/argument extraction
+  - diagnostics for syntax issues + unresolved symbols + arity mismatch
+- Added `MiniLangServer` with:
+  - lifecycle (`initialize`, `shutdown`, `exit`)
+  - `textDocument/didOpen` + `textDocument/didChange` incremental updates
+  - diagnostics publishing queue via notifications + `getDiagnostics(uri)`
+  - `textDocument/completion` (keywords + in-scope symbols + function snippet suggestions)
+  - `textDocument/definition`
+  - `textDocument/hover`
+  - `takeNotifications()` queue drain behavior
+
+Verification:
+- Ran `npm test`
+- Result: all tests passed (`5/5` visible tests).

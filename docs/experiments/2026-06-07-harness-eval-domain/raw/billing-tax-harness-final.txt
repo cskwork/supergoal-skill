@@ -1,0 +1,20 @@
+Implemented. I rewrote `src/billing.mjs` to satisfy the RULES.md spec and avoid the stub’s cross-line category/discount bugs.
+
+What changed in code:
+- Calculated each line net as `qty * unitPriceMinor` minus rounded line discount (`Math.round(gross * lineDiscountBps / 10000)`).
+- Built subtotal from all line nets.
+- Applied order discount to subtotal with floor-at-zero before tax.
+- Calculated tax using each line’s category rate (`standard: 2000`, `reduced: 500`, `exempt: 0`), after distributing the discounted subtotal proportionally across line nets.
+- Kept shipping untouched in output and added to final charge after tax.
+- Final total uses `max(0, taxableSubtotal + totalTax + shippingMinor)`.
+
+Verification:
+- Ran `npm test` (with_harness-style local check): all visible tests pass (`# pass 4`).
+
+Touched file:
+- [src/billing.mjs](/tmp/sg-domain-eval/sandboxes/billing-tax/harness/src/billing.mjs:1)
+
+Referenced spec:
+- [RULES.md](/tmp/sg-domain-eval/sandboxes/billing-tax/harness/RULES.md:1)
+
+Supergoal mode used: `INLINE` (single pass implementation+verify, no human-interactive gates).

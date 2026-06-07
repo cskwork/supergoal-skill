@@ -1,0 +1,19 @@
+Implemented the MiniLang LSP server in `src/server.mjs`.
+
+Included:
+- JSON-RPC `Content-Length` framing and streaming decode
+- `initialize`, `initialized`, `shutdown`, `exit`
+- permissive MiniLang parsing with comments and error recovery
+- symbols for functions, params, variables
+- diagnostics for parse issues, duplicate functions, undefined symbols/functions, wrong arity
+- completion, go-to-definition, hover
+- `didOpen` and incremental `didChange`
+- changelog entry at `docs/changelog/changelog-2026-06-07.md`
+
+Verified with:
+
+```bash
+npm test
+```
+
+Result: 5 tests passed, 0 failed. Note: this sandbox does not expose a usable `.git`, so I could not provide a normal git diff/status.

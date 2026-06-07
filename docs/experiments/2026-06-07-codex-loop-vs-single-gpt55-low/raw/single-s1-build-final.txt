@@ -1,0 +1,6 @@
+Implemented the MiniLang LSP server in [src/server.mjs](/private/tmp/supergoal-codex-loop-vs-single/sandboxes/revfactory-case-015-lsp/single-s1/src/server.mjs): JSON-RPC framing, byte-safe message buffering, lifecycle handling, parser with recovery, diagnostics, completions, definition, hover, and didOpen/didChange document updates.
+
+Added the required rationale note in [docs/changelog/changelog-2026-06-07.md](/private/tmp/supergoal-codex-loop-vs-single/sandboxes/revfactory-case-015-lsp/single-s1/docs/changelog/changelog-2026-06-07.md).
+
+Verified:
+`npm test` passes, 5/5 tests. Also ran a direct smoke check for Unicode `Content-Length` framing and range-based incremental change behavior.

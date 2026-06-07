@@ -332,3 +332,120 @@ wall-clock/fewest tool calls. Added rule/skill scaffolding adds cost without lif
 coding-rules AGENTS.md is net-negative for this task class at low effort. The real lever for the
 unshipped hidden behaviors is reasoning effort, not the harness. Corroborates the existing
 baseline-first finding across a broader, cross-CLI configuration. n=1 ⇒ directional, not proven.
+
+## Looped self-improvement vs single run (bare codex, gpt-5.5 @ low) — new
+
+`docs/experiments/2026-06-07-codex-loop-vs-single-gpt55-low/` (run.mjs, results.md, report.md,
+result.json, raw/).
+
+### What / why
+User: on ONE task (case-015 LSP), compare bare codex run once vs bare codex + 3 fresh-context
+review/verify/improve loops over the same code. Same model/effort/fixture/scorer as the 5-CLI eval.
+
+### Decisions / reasoning
+- loop = build pass + 3 improve passes; each improve pass is a fresh `codex exec` reading the current
+  files (no shared context), told to review vs task + visible tests and fix gaps; npm test each time.
+  single = build pass only. Build prompt identical across arms (loop == single + extra passes).
+- Score snapshotted after EVERY pass to capture the improvement trajectory, on a throwaway COPY so the
+  loop never sees hidden tests.
+- YARDSTICK FIX: an initial run produced "10/9" because an improve pass added its own tests to the
+  visible suite, inflating the denominator. Fixed scoreSnapshot to restore the CANONICAL visible+hidden
+  tests on the scoring copy, so a loop cannot change the yardstick (test_coverage becomes a neutral
+  constant). Re-ran after the fix.
+- n = 3 single seeds + 2 loop seeds (loop is 4 passes/run, token-heavy).
+
+### Result (directional)
+single: 6-7/9 (mean 6.67), ~493k tok, ~181s. loop final: 7/9 both seeds, ~3.24M tok (6.6x), ~991s
+(5.5x). Trajectory: s1 6->7->7->7, s2 7->7->7->7. Looping never exceeded the single-run ceiling (7/9);
+only the first loop helped, and only by rescuing a below-median draft (6->7); loops 2-3 added source
+lines but no score. No pass ever cleared `completion prefix+signatures` (the gpt-5.5-low ceiling); loop
+finals also still miss `parser recovery`.
+
+### Recommendation
+3-loop self-improvement not worth it for spec-complete tasks at low effort: same 7/9 as one run at
+5-7x cost. Its only benefit (variance reduction, rescuing a bad draft) is cheaper via re-rolling a
+single run. To break above 7/9, raise reasoning effort, not loop count - re-running the same model at
+the same effort plateaus at its ceiling. Same lesson as 5-CLI: spend budget on effort, not added
+iteration/machinery. Corroborates baseline-first.
+
+## Archon workflow vs plain Claude — case-015 LSP (claude-vs-claude, n=1) — new
+
+Dir: `docs/experiments/2026-06-07-harness-eval-archon-workflow-vs-baseline/`.
+
+### What / why
+Tested whether driving an agent through an **Archon** workflow (coleam00/Archon v0.4.1, the
+agentic-coding CLI that runs workflows in git worktrees) beats a plain agent on a hard task. The
+harness under test is the Archon workflow itself (not the supergoal skill).
+
+### Codex was structurally infeasible — pivoted to claude-vs-claude
+Original plan was codex `gpt-5.3-codex-spark` (to match the pi cross-agent matrix). Proven impossible
+on ChatGPT-subscription auth: codex then offers only the **spark** family, and Archon's bundled
+`@openai/codex-sdk` always attaches an `image_generation` tool that spark rejects (**HTTP 400**).
+Plain `codex exec` is unaffected (never attaches it). Not fixable by Archon version (v0.3.10==v0.4.1),
+codex binary swap (0.42 -> 401; 0.137 -> 400), or `~/.codex/config.toml [tools] image_generation=false`;
+non-spark models are "not supported with a ChatGPT account"; no API key per constraint. The **claude**
+provider runs end-to-end locally (global auth, SQLite, no Docker/Supabase/key), so the question was
+tested claude-vs-claude with model held constant = `sonnet`.
+
+### Setup
+baseline = plain `claude -p` (no Archon). harness = same sonnet model via a single-node Archon workflow
+calling the bundled `archon-implement` command, `--no-worktree` in a git-init'd sandbox. Forked the
+existing supergoal harness runner; only the two arm executors + cost parsing changed. Codex auth recipe
+discovered (now moot): Archon needs `CODEX_*` stripped from `~/.archon/.env` so codex self-auths, plus
+`CODEX_BIN_PATH` at an OAuth-capable binary. First baseline attempt was rate-limited ("session limit");
+re-ran clean after reset (both arms crashed=false).
+
+### Result (this run)
+Identical machine-check vector: both 6/9 behavior + 3/3 syntax = 9/12. Quality 83 (baseline) vs 82
+(harness) — one point on `error_handling`, scorer noise. Both miss the SAME 3 hidden rules (completion
+prefix+signatures, local-scope definition, syntax-recovery diagnostics). Wall-clock: baseline 434 s vs
+harness **546 s (+26%)**. Harness tokens not surfaced by Archon's CLI log (unmeasured, not zero); baseline
+657k tok exact.
+
+### Decision
+**Not proven — no harness benefit observed.** The Archon workflow caught nothing the plain baseline
+missed, tied on the test vector, was a point lower on quality, and cost more wall-clock. Confound noted:
+baseline (claude CLI) loads the user's global CLAUDE.md while the Archon SDK path does not — a mild edge
+to the baseline, not the harness. Consistent with baseline-first: workflow ceremony costs more without
+beating a strong baseline on an explicit-spec task. (Notably the supergoal skill harness on this same
+case once caught the prefix-completion rule; the Archon workflow did not.)
+
+## Role-separated loop beats the ceiling (bare codex, gpt-5.5 @ low) — new
+
+`docs/experiments/2026-06-07-codex-roleloop-vs-baseline-gpt55-low/` (run.mjs, results.md, report.md,
+result.json, raw/).
+
+### What / why
+Follow-up to "naive loop = no lift". User picked option A: a role-separated loop that stays at low
+effort but gives the loop an independent signal. role_loop = build + critic -> fixer -> verifier
+(fresh context each): critic writes spec-derived FAILING tests (no src edits), fixer makes them pass
+(no test edits, no padding), verifier guards regressions. Compared to single + the prior naive band on
+the same case-015/gpt-5.5/low.
+
+### Decisions / reasoning
+- Yardstick fixed: score on a copy whose test/ dir is reset to canonical visible+hidden, so the
+  critic's generated tests can't move the denominator or test_coverage, and Goodhart (fixer optimizing
+  to wrong critic tests) would show as a canonical DROP. None observed (visible stayed 5/5).
+- Lean run after a proxy stall: an initial 14-pass run hung when the headroom proxy degraded ("failed
+  to refresh available models"), a pass sat ~19 min at 0% CPU. Killed it, smoke-confirmed proxy
+  recovery, set per-pass timeout to 8 min, reran single x1 + role x2 (naive reused from sibling run).
+
+### Result (directional, n=2 role)
+role_loop 8-9/9 (mean 8.5, q82-85), tokens ~2.91M, ~811s. Trajectory s1 6->6->8->8, s2 8->8->9->9.
+First config in the whole series to exceed 7/9 from a loop AND to hit a perfect 9/9. Beats naive_loop
+(7/7, ~3.24M tok, ~991s) on BOTH outcome and cost. critic never moves the score (no src edits); fixer
+carries the jump; verifier == fixer both seeds (redundant -> droppable, ~25% cheaper).
+
+### Headline finding (refines prior conclusion)
+`completion prefix+signatures` was missed by EVERY arm in every prior experiment (5-CLI, single,
+naive) -> earlier called a "gpt-5.5-low capability/effort ceiling, raise effort." WRONG: role_loop s2
+cleared it at the same low effort. It was a SIGNAL ceiling - no arm had a failing test for it (the
+visible completion test only probes an empty prefix). The critic turned the prose requirement into a
+failing test; the fixer cleared it. So the missing lever was independent signal, not effort.
+
+### Recommendation
+To beat the single-run ceiling without raising effort: role-separated loop (author-independent critic
+writes spec-derived failing tests -> fixer, no padding). Confirms supergoal's "surface hidden
+requirements" (made executable) is the one move that beats a strong baseline; refines "loops don't
+help" to "naive loops don't; critic->fixer does." Still ~4-6x a single run's tokens. n=2/1 case ->
+replicate (more seeds + a 2nd expert case) before treating as proven.

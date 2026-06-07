@@ -1,0 +1,17 @@
+{
+  "runtime_adapter": "claude-baseline vs archon-workflow (model=sonnet)",
+  "pass_winner": "tie",
+  "quality_winner": "baseline",
+  "baseline_quality": 83,
+  "harness_quality": 82,
+  "baseline_checks": [
+    "pass", "pass", "pass", "pass", "pass", "pass",
+    "fail", "fail", "fail",
+    "pass", "pass", "pass"
+  ],
+  "harness_checks": [
+    "pass", "pass", "pass", "pass", "pass", "pass",
+    "fail", "fail", "fail",
+    "pass", "pass", "pass"
+  ]
+}

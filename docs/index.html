@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>/supergoal - ship agent work with proof</title>
-<meta name="description" content="/supergoal is a proof-first agent workflow skill: gated subagents, human approval, adversarial verification, harness design, harness evaluation, and machine-checkable delivery. English and Korean." />
-<meta property="og:title" content="/supergoal - ship agent work with proof" />
-<meta property="og:description" content="A gated agent workflow for full objectives, QA-only runs, harness design, and harness effectiveness testing. Claims stay untrusted until checks pass." />
+<title>/supergoal - the smallest correct change, verified</title>
+<meta name="description" content="/supergoal is a baseline-first delivery skill: surface the requirements your prompt left out as failing tests from an independent critic, make the smallest correct change, and verify it against your project's real tests and spec - never a generated proxy. English and Korean." />
+<meta property="og:title" content="/supergoal - the smallest correct change, verified" />
+<meta property="og:description" content="One objective in, a verified result out. Baseline-first: surface hidden requirements, make the smallest correct change, verify against your real tests. English and Korean." />
 <meta property="og:type" content="website" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%2305070a'/%3E%3Cpath d='M15 34 27 46 49 18' fill='none' stroke='%235cff9a' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
 <style>
@@ -583,7 +583,6 @@
   .mode-card.learn::after { background: var(--red); }
   .mode-card.learn-domain::after { background: var(--violet); }
   .mode-card.qa-only::after { background: var(--pink); }
-  .mode-card.harness-make::after { background: var(--green); }
   .mode-card.harness-eval::after { background: var(--amber); }
   .mode-card.skill-mine::after { background: var(--blue); }
   .mode-label {
@@ -603,7 +602,7 @@
 
   .gate-grid {
     display: grid;
-    grid-template-columns: repeat(7, minmax(180px, 1fr));
+    grid-template-columns: repeat(5, minmax(180px, 1fr));
     gap: 12px;
     overflow-x: auto;
     padding-bottom: 8px;
@@ -878,10 +877,10 @@
 <nav class="gatebar" aria-label="Page controls">
   <div class="wrap">
     <span class="status-led" aria-hidden="true"></span>
-    <span class="mono">delivery-gate.sh</span>
-    <span class="label en">claims untrusted until Verify reruns proof</span>
-    <span class="label ko">Verify가 증명을 재실행하기 전까지 주장은 신뢰하지 않음</span>
-    <span class="pass">GATE PASS</span>
+    <span class="mono">verify - ground-truth</span>
+    <span class="label en">the real test suite is the oracle, never a generated proxy</span>
+    <span class="label ko">실제 테스트 스위트가 기준입니다. 생성된 proxy가 아니라</span>
+    <span class="pass">GREEN</span>
     <span class="spacer"></span>
     <span class="gatebar-controls" role="group" aria-label="Text size">
       <button type="button" data-fs="dec" aria-label="Decrease text size">A-</button>
@@ -900,49 +899,47 @@
   <div class="wrap hero-grid">
     <div>
       <div class="brandline">
-        <span class="en">Proof-first agent workflow</span>
-        <span class="ko">증거 우선 에이전트 워크플로</span>
+        <span class="en">Baseline-first delivery skill</span>
+        <span class="ko">베이스라인 우선 전달 스킬</span>
       </div>
       <h1><span>/</span>supergoal</h1>
-      <p class="hero-sub en">Ship agent work with proof, not vibes.</p>
-      <p class="hero-sub ko">감이 아니라 증거로 출시합니다.</p>
-      <p class="hero-copy en">Give one objective to a gated conductor. It validates demand, pauses for Human Feedback, separates Builder from Verifier, and delivers only after scripts pass.</p>
-      <p class="hero-copy ko">목표 하나를 게이트가 있는 지휘자에게 맡기세요. 수요를 검증하고, Human Feedback에서 멈추고, 구현자와 검증자를 분리한 뒤, 스크립트가 통과해야만 전달합니다.</p>
+      <p class="hero-sub en">The smallest correct change, verified.</p>
+      <p class="hero-sub ko">가장 작은 올바른 변경을, 검증해서.</p>
+      <p class="hero-copy en">Hand `/supergoal` one objective. It surfaces the requirements your prompt left out - as failing tests from an independent critic - makes the smallest correct change, and verifies it against your project's real tests and spec. Then it stops.</p>
+      <p class="hero-copy ko">`/supergoal`에 목표 하나를 맡기세요. 프롬프트에 없던 요구사항을 독립 critic의 실패 테스트로 드러내고, 가장 작은 올바른 변경을 만든 뒤, 프로젝트의 실제 테스트와 스펙으로 검증합니다. 그리고 멈춥니다.</p>
       <div class="cta-row">
         <a class="btn primary" href="#install"><span class="en">Install</span><span class="ko">설치</span></a>
-        <a class="btn" href="#proof"><span class="en">Proof ledger</span><span class="ko">증거 보기</span></a>
-        <a class="btn" href="#gates"><span class="en">Gate stack</span><span class="ko">게이트</span></a>
+        <a class="btn" href="#workflow"><span class="en">The loop</span><span class="ko">루프</span></a>
+        <a class="btn" href="#modes"><span class="en">Modes</span><span class="ko">모드</span></a>
         <a class="btn" href="https://github.com/cskwork/supergoal-skill"><span class="en">Source</span><span class="ko">소스</span></a>
       </div>
     </div>
 
-    <div class="proof-panel" aria-label="Animated proof workflow">
+    <div class="proof-panel" aria-label="Animated baseline-first loop">
       <div class="stamp-card">
         <h3>Final state</h3>
         <div class="stamp">GREEN</div>
       </div>
       <div class="console-card">
-        <div class="console-top"><i></i><i></i><i></i><span>verify.clean.worktree</span></div>
-<pre class="en"><span class="c-cyan">/supergoal</span> build and ship
-<span class="c-soft">mode</span> GREENFIELD
-<span class="c-green">validate</span> Decision: GO
-<span class="c-amber">human feedback</span> approved
-<span class="c-red">verify</span> RED: hidden SSRF
-<span class="c-green">build</span> patch accepted
-<span class="c-green">deliver</span> exit 0</pre>
-<pre class="ko"><span class="c-cyan">/supergoal</span> 만들고 출시
-<span class="c-soft">mode</span> GREENFIELD
-<span class="c-green">validate</span> Decision: GO
-<span class="c-amber">human feedback</span> 승인
-<span class="c-red">verify</span> RED: 숨은 SSRF
-<span class="c-green">build</span> 패치 승인
-<span class="c-green">deliver</span> exit 0</pre>
+        <div class="console-top"><i></i><i></i><i></i><span>verify.real.suite</span></div>
+<pre class="en"><span class="c-cyan">/supergoal</span> add SSO to legacy app
+<span class="c-soft">mode</span> LEGACY
+<span class="c-red">critic</span> RED: 2 spec rules
+<span class="c-green">fixer</span> minimal patch
+<span class="c-green">verify</span> real suite green
+<span class="c-green">done</span> exit 0</pre>
+<pre class="ko"><span class="c-cyan">/supergoal</span> 레거시 앱에 SSO 추가
+<span class="c-soft">mode</span> LEGACY
+<span class="c-red">critic</span> RED: 스펙 규칙 2개
+<span class="c-green">fixer</span> 최소 패치
+<span class="c-green">verify</span> 실제 스위트 green
+<span class="c-green">done</span> exit 0</pre>
       </div>
       <div class="signal-card">
         <h3>Run telemetry</h3>
-        <div class="signal-row"><span>claims</span><div class="track"><span></span></div><b>checked</b></div>
-        <div class="signal-row"><span>review</span><div class="track"><span></span></div><b>clean</b></div>
-        <div class="signal-row"><span>suite</span><div class="track"><span></span></div><b>green</b></div>
+        <div class="signal-row"><span>hidden reqs</span><div class="track"><span></span></div><b>surfaced</b></div>
+        <div class="signal-row"><span>diff</span><div class="track"><span></span></div><b>minimal</b></div>
+        <div class="signal-row"><span>real suite</span><div class="track"><span></span></div><b>green</b></div>
       </div>
     </div>
   </div>
@@ -950,18 +947,18 @@
 
 <div class="ticker" aria-hidden="true">
   <div class="ticker-track">
-    <span><b>Builder != Verifier</b></span>
-    <span>Human Feedback before implementation</span>
-    <span>claims.md stays untrusted</span>
-    <span>delivery-gate.sh must exit 0</span>
-    <span>bounded retry, circuit breaker</span>
-    <span>harness eval reports Not proven when evidence is weak</span>
-    <span><b>Builder != Verifier</b></span>
-    <span>Human Feedback before implementation</span>
-    <span>claims.md stays untrusted</span>
-    <span>delivery-gate.sh must exit 0</span>
-    <span>bounded retry, circuit breaker</span>
-    <span>harness eval reports Not proven when evidence is weak</span>
+    <span><b>smallest correct change</b></span>
+    <span>verify against ground truth</span>
+    <span>hidden requirements as failing tests</span>
+    <span>never optimize to a generated proxy</span>
+    <span>the real test suite is the oracle</span>
+    <span>stop on green, report with output</span>
+    <span><b>smallest correct change</b></span>
+    <span>verify against ground truth</span>
+    <span>hidden requirements as failing tests</span>
+    <span>never optimize to a generated proxy</span>
+    <span>the real test suite is the oracle</span>
+    <span>stop on green, report with output</span>
   </div>
 </div>
 
@@ -969,15 +966,15 @@
   <section id="why">
     <div class="wrap">
       <div class="section-head reveal">
-        <h2><span class="en">A conductor for serious agent runs.</span><span class="ko">진지한 에이전트 실행을 위한 지휘자.</span></h2>
-        <p class="lead en">Big single-agent runs drift. `/supergoal` keeps the work phased, reviewable, and gated by evidence.</p>
-        <p class="lead ko">큰 단일 에이전트 실행은 쉽게 흔들립니다. `/supergoal`은 작업을 단계화하고, 검토 가능하게 만들고, 증거로 게이트를 겁니다.</p>
+        <h2><span class="en">A baseline-first skill, not a ceremony.</span><span class="ko">의식이 아니라, 베이스라인 우선 스킬.</span></h2>
+        <p class="lead en">A strong model with the real spec is the bar. `/supergoal` adds only what a plain baseline cannot do for free.</p>
+        <p class="lead ko">실제 스펙을 가진 강한 모델이 기준입니다. `/supergoal`은 plain baseline이 공짜로 못 하는 것만 더합니다.</p>
       </div>
       <div class="metric-grid">
-        <div class="metric reveal"><strong>9</strong><span class="en">modes, including harness design and harness effectiveness testing.</span><span class="ko">하네스 설계와 효과 검증을 포함한 9개 모드.</span></div>
-        <div class="metric reveal"><strong>7</strong><span class="en">hard gates that cannot be weakened to pass.</span><span class="ko">약화해서 통과시킬 수 없는 하드 게이트.</span></div>
-        <div class="metric reveal"><strong>0</strong><span class="en">self-approval. The coder never grades the code.</span><span class="ko">자가 승인 없음. 작성자가 자기 코드를 채점하지 않습니다.</span></div>
-        <div class="metric reveal"><strong>68</strong><span class="en">service tests in the public proof run.</span><span class="ko">공개 증명 실행에 사용된 서비스 테스트.</span></div>
+        <div class="metric reveal"><strong>8</strong><span class="en">modes; the objective picks the lane.</span><span class="ko">모드. 목표가 레인을 고릅니다.</span></div>
+        <div class="metric reveal"><strong>1</strong><span class="en">independent critic writes the failing tests, not the builder.</span><span class="ko">독립 critic이 실패 테스트를 씁니다. 구현자가 아니라.</span></div>
+        <div class="metric reveal"><strong>0</strong><span class="en">generated-proxy verifiers; only your real tests grade the work.</span><span class="ko">생성된 proxy verifier 없음. 실제 테스트만 채점합니다.</span></div>
+        <div class="metric reveal"><strong>&le;3</strong><span class="en">questions, asked only when genuinely ambiguous.</span><span class="ko">질문은 진짜 모호할 때만, 최대 3개.</span></div>
       </div>
     </div>
   </section>
@@ -986,29 +983,27 @@
     <div class="wrap split">
       <div class="copy-stack">
         <div class="claim reveal">
-          <h3><span class="en">It validates before it builds.</span><span class="ko">구현 전에 검증합니다.</span></h3>
-          <p class="en">New products need a `Decision: GO`. Bug work needs reproduction. Legacy work needs a map of what changes.</p>
-          <p class="ko">새 제품은 `Decision: GO`가 필요합니다. 버그 작업은 재현이 필요합니다. 레거시 작업은 영향 범위 지도가 필요합니다.</p>
+          <h3><span class="en">It surfaces what the prompt left out.</span><span class="ko">프롬프트에 없던 것을 드러냅니다.</span></h3>
+          <p class="en">An independent critic re-reads the spec and repo rules, then writes a failing test for each required behavior your existing tests don't exercise.</p>
+          <p class="ko">독립 critic이 스펙과 레포 규칙을 다시 읽고, 기존 테스트가 안 건드리는 필수 동작마다 실패 테스트를 씁니다.</p>
         </div>
         <div class="claim reveal">
-          <h3><span class="en">It pauses before writes.</span><span class="ko">쓰기 전에 멈춥니다.</span></h3>
-          <p class="en">Human Feedback sees a plain-language brief and a technical brief before Build or Fix opens.</p>
-          <p class="ko">Build나 Fix가 열리기 전에 Human Feedback에서 쉬운 설명과 기술 브리프를 확인합니다.</p>
+          <h3><span class="en">It keeps the change minimal.</span><span class="ko">변경을 최소로 유지합니다.</span></h3>
+          <p class="en">The smallest correct change that makes those tests pass - matching the surrounding code, with no whole-file rewrites.</p>
+          <p class="ko">그 테스트들을 통과시키는 가장 작은 올바른 변경 - 주변 코드에 맞추고, 파일 전체 재작성은 없습니다.</p>
         </div>
         <div class="claim reveal">
-          <h3><span class="en">It proves claims from a clean state.</span><span class="ko">깨끗한 상태에서 주장을 증명합니다.</span></h3>
-          <p class="en">A fresh adversarial Verifier reruns every `run-to-prove`. Builder reports are useful, never trusted.</p>
-          <p class="ko">새 적대적 Verifier가 모든 `run-to-prove`를 재실행합니다. Builder 보고서는 유용하지만 신뢰하지 않습니다.</p>
+          <h3><span class="en">It verifies against ground truth.</span><span class="ko">Ground truth로 검증합니다.</span></h3>
+          <p class="en">It re-runs your real test suite and re-reads the prose spec. It never grades the work against a checklist it generated itself.</p>
+          <p class="ko">실제 테스트 스위트를 재실행하고 prose 스펙을 다시 읽습니다. 스스로 만든 체크리스트로 채점하지 않습니다.</p>
         </div>
       </div>
-      <div class="route-map reveal" aria-label="Supergoal route map">
-        <div class="route-step pass"><b>01 Intake</b><span>scope captured</span></div>
-        <div class="route-step pass"><b>02 Plan</b><span>frozen</span></div>
-        <div class="route-step pass"><b>03 Human Feedback</b><span>approved</span></div>
-        <div class="route-step"><b>04 Build</b><span>claims written</span></div>
-        <div class="route-step red"><b>05 Verify</b><span>tries to disprove</span></div>
-        <div class="route-step"><b>06 QA</b><span>black-box pass</span></div>
-        <div class="route-step pass"><b>07 Deliver</b><span>script exits 0</span></div>
+      <div class="route-map reveal" aria-label="Supergoal loop">
+        <div class="route-step pass"><b>01 Frame</b><span>goal + criteria</span></div>
+        <div class="route-step pass"><b>02 Build</b><span>smallest change</span></div>
+        <div class="route-step red"><b>03 Critic</b><span>failing tests</span></div>
+        <div class="route-step pass"><b>04 Fixer</b><span>minimal patch</span></div>
+        <div class="route-step pass"><b>05 Verify</b><span>real suite green</span></div>
       </div>
     </div>
   </section>
@@ -1016,73 +1011,66 @@
   <section id="modes">
     <div class="wrap">
       <div class="section-head reveal">
-        <h2><span class="en">One command. Nine lanes.</span><span class="ko">명령 하나. 아홉 가지 레인.</span></h2>
-        <p class="lead en">The objective picks the lane. Broad work can fan out. Deep bug work stays with a single driver. Harness work gets designed and tested separately.</p>
-        <p class="lead ko">목표가 레인을 고릅니다. 넓은 작업은 펼치고, 깊은 버그는 단일 드라이버가 맡습니다. 하네스 작업은 설계와 효과 검증을 분리합니다.</p>
+        <h2><span class="en">One command. Eight lanes.</span><span class="ko">명령 하나. 여덟 가지 레인.</span></h2>
+        <p class="lead en">The objective picks the lane. Build, debug, and legacy share one role-separated loop. Learn, QA, harness-eval, and skill-mine are separate-purpose utilities.</p>
+        <p class="lead ko">목표가 레인을 고릅니다. build·debug·legacy는 하나의 역할 분리 루프를 공유합니다. learn·QA·harness-eval·skill-mine은 별개 용도의 유틸리티입니다.</p>
       </div>
       <div class="mode-grid">
         <article class="mode-card reveal">
           <span class="mode-label">GREENFIELD</span>
           <h3><span class="en">Build and ship a new thing.</span><span class="ko">새 제품을 만들고 출시.</span></h3>
-          <p class="en">Demand validation before the first build.</p>
-          <p class="ko">첫 구현 전에 수요를 검증합니다.</p>
-          <div class="mode-pipe">Intake -> <b>Validate</b> -> Plan -> Build -> Verify -> QA -> Deliver</div>
+          <p class="en">Smallest correct change, test-first, verified against the real suite.</p>
+          <p class="ko">가장 작은 올바른 변경, test-first, 실제 스위트로 검증.</p>
+          <div class="mode-pipe">Frame -> Build -> <b>Critic</b> -> Fixer -> Verify</div>
         </article>
         <article class="mode-card debug reveal">
           <span class="mode-label">DEBUG</span>
           <h3><span class="en">Fix a hard failure.</span><span class="ko">까다로운 실패 수정.</span></h3>
-          <p class="en">Reproduce first. Diagnose with evidence. Fix only after approval.</p>
-          <p class="ko">먼저 재현합니다. 증거로 진단합니다. 승인 뒤에만 수정합니다.</p>
-          <div class="mode-pipe">Intake -> <b>Reproduce</b> -> Diagnose -> Fix -> Verify -> Deliver</div>
+          <p class="en">Reproduce with a failing test first, then make it pass with the smallest change.</p>
+          <p class="ko">먼저 실패 테스트로 재현하고, 가장 작은 변경으로 통과시킵니다.</p>
+          <div class="mode-pipe">Frame -> <b>Reproduce</b> -> Critic -> Fixer -> Verify</div>
         </article>
         <article class="mode-card legacy reveal">
           <span class="mode-label">LEGACY</span>
           <h3><span class="en">Add to existing code.</span><span class="ko">기존 코드에 추가.</span></h3>
           <p class="en">Map the touched area, then make the smallest accurate edit.</p>
           <p class="ko">영향 범위를 파악한 뒤 가장 작은 정확한 수정을 합니다.</p>
-          <div class="mode-pipe">Intake -> <b>Explore</b> -> Plan -> Build -> Verify -> QA -> Deliver</div>
+          <div class="mode-pipe">Frame -> <b>Map</b> -> Build -> Critic -> Verify</div>
         </article>
         <article class="mode-card learn reveal">
           <span class="mode-label">LEARN</span>
           <h3><span class="en">Understand, no code.</span><span class="ko">이해하기, 코드 없음.</span></h3>
           <p class="en">Source facts, teach, then check that you can explain it back.</p>
           <p class="ko">사실을 모으고 가르친 뒤, 사용자가 다시 설명할 수 있는지 확인합니다.</p>
-          <div class="mode-pipe">Intake -> Source -> Bridge -> Teach -> <b>Check</b> -> Journal</div>
+          <div class="mode-pipe">Intake -> Source -> Bridge -> Teach -> <b>Check</b></div>
         </article>
         <article class="mode-card learn-domain reveal">
           <span class="mode-label">LEARN-DOMAIN</span>
           <h3><span class="en">Map a codebase, no code.</span><span class="ko">코드베이스 파악, 코드 없음.</span></h3>
-          <p class="en">Learn the repo for the agent; persist a grounded wiki and a human handbook.</p>
-          <p class="ko">에이전트를 위해 레포를 학습해, 검증된 위키와 사람용 핸드북을 남깁니다.</p>
-          <div class="mode-pipe">Intake -> Survey -> Map -> Deepen -> <b>Ground</b> -> Persist -> Onboard</div>
+          <p class="en">Learn the repo for the agent; persist a grounded `.domain-agent/` wiki.</p>
+          <p class="ko">에이전트를 위해 레포를 학습해, 검증된 `.domain-agent/` 위키를 남깁니다.</p>
+          <div class="mode-pipe">Survey -> Map -> Deepen -> <b>Ground</b> -> Persist</div>
         </article>
         <article class="mode-card qa-only reveal">
           <span class="mode-label">QA-ONLY</span>
           <h3><span class="en">QA or compare data, no code.</span><span class="ko">QA·데이터 비교, 코드 없음.</span></h3>
           <p class="en">Drive a running app and a read-only DB; report what worked, what didn't, what it found.</p>
           <p class="ko">실행 중인 앱과 읽기전용 DB를 구동해, 된 것·안 된 것·발견을 리포트합니다.</p>
-          <div class="mode-pipe">Intake -> Target -> Scenario -> Exercise -> Cross-check -> <b>Report</b> -> Persist</div>
-        </article>
-        <article class="mode-card harness-make reveal">
-          <span class="mode-label">HARNESS-MAKE</span>
-          <h3><span class="en">Design an agent harness.</span><span class="ko">에이전트 하네스 설계.</span></h3>
-          <p class="en">Map roles, skills, and orchestration; install only after Human Feedback.</p>
-          <p class="ko">역할, 스킬, 오케스트레이션을 설계하고 Human Feedback 뒤에만 설치합니다.</p>
-          <div class="mode-pipe">Audit -> Pattern -> Map -> Draft -> <b>Approve</b> -> Generate -> Verify</div>
+          <div class="mode-pipe">Target -> Scenario -> Exercise -> Cross-check -> <b>Report</b></div>
         </article>
         <article class="mode-card harness-eval reveal">
           <span class="mode-label">HARNESS-EVAL</span>
-          <h3><span class="en">Test whether the harness helps.</span><span class="ko">하네스가 실제로 돕는지 검증.</span></h3>
+          <h3><span class="en">Test whether a harness helps.</span><span class="ko">하네스가 실제로 돕는지 검증.</span></h3>
           <p class="en">Compare the same task with and without it; weak evidence says Not proven.</p>
           <p class="ko">같은 작업을 하네스 유무로 비교합니다. 증거가 약하면 Not proven입니다.</p>
-          <div class="mode-pipe">Cases -> Baseline -> Harness -> Checks -> <b>Blind grade</b> -> Report</div>
+          <div class="mode-pipe">Cases -> Baseline -> Harness -> Checks -> <b>Compare</b></div>
         </article>
         <article class="mode-card skill-mine reveal">
           <span class="mode-label">SKILL-MINE</span>
           <h3><span class="en">Turn repeated work into a skill.</span><span class="ko">반복 작업을 스킬로.</span></h3>
           <p class="en">Mine your session history, suggest 3-5 skills, forge the one you pick into a portable SKILL.md.</p>
           <p class="ko">세션 히스토리를 채굴해 3-5개를 제안하고, 고른 하나를 이식 가능한 SKILL.md로 만듭니다.</p>
-          <div class="mode-pipe">Mine -> Rank -> Suggest -> <b>Pick</b> -> Forge -> Verify -> Install</div>
+          <div class="mode-pipe">Mine -> Rank -> <b>Pick</b> -> Forge -> Install</div>
         </article>
       </div>
     </div>
@@ -1091,18 +1079,16 @@
   <section id="gates">
     <div class="wrap">
       <div class="section-head reveal">
-        <h2><span class="en">The gate stack is the product.</span><span class="ko">게이트 스택 자체가 제품입니다.</span></h2>
-        <p class="lead en">The skill is not a pretty prompt. It is a contract: each phase opens only after the current proof passes.</p>
-        <p class="lead ko">이 스킬은 예쁜 프롬프트가 아닙니다. 계약입니다. 현재 증명이 통과해야 다음 단계가 열립니다.</p>
+        <h2><span class="en">Not a gate stack. Five principles.</span><span class="ko">게이트 스택이 아니라, 다섯 가지 원칙.</span></h2>
+        <p class="lead en">The skill is a short contract applied every run, not ceremony you have to satisfy.</p>
+        <p class="lead ko">이 스킬은 매 실행에 적용되는 짧은 계약입니다. 통과시켜야 할 의식이 아닙니다.</p>
       </div>
       <div class="gate-grid">
-        <article class="gate-item reveal"><span class="gate-no">1</span><h3><span class="en">Validate before build</span><span class="ko">구현 전 검증</span></h3><p class="en">GREENFIELD must show demand and `Decision: GO`.</p><p class="ko">GREENFIELD는 수요와 `Decision: GO`를 보여야 합니다.</p></article>
-        <article class="gate-item reveal"><span class="gate-no">2</span><h3><span class="en">Frozen plan</span><span class="ko">고정된 계획</span></h3><p class="en">Build implements the plan. It does not quietly redesign.</p><p class="ko">Build는 계획을 구현합니다. 조용히 재설계하지 않습니다.</p></article>
-        <article class="gate-item reveal"><span class="gate-no">3</span><h3><span class="en">Human Feedback</span><span class="ko">Human Feedback</span></h3><p class="en">Plain brief first, technical brief below, explicit approval.</p><p class="ko">먼저 쉬운 설명, 아래에 기술 브리프, 명시적 승인.</p></article>
-        <article class="gate-item reveal"><span class="gate-no">4</span><h3><span class="en">Builder != Verifier</span><span class="ko">구현자 != 검증자</span></h3><p class="en">A fresh adversary reruns claims from a clean worktree.</p><p class="ko">새 적대자가 깨끗한 워크트리에서 주장을 재실행합니다.</p></article>
-        <article class="gate-item reveal"><span class="gate-no">5</span><h3><span class="en">Expert review</span><span class="ko">전문가 리뷰</span></h3><p class="en">Architecture, security, and code review must approve.</p><p class="ko">아키텍처, 보안, 코드 리뷰가 승인해야 합니다.</p></article>
-        <article class="gate-item reveal"><span class="gate-no">6</span><h3><span class="en">Literal delivery gate</span><span class="ko">리터럴 딜리버리 게이트</span></h3><p class="en">`delivery-gate.sh` exits 0, or it is not done.</p><p class="ko">`delivery-gate.sh`가 exit 0이어야 완료입니다.</p></article>
-        <article class="gate-item reveal"><span class="gate-no">7</span><h3><span class="en">Bounded retry</span><span class="ko">제한된 재시도</span></h3><p class="en">Same error 3 times trips the circuit breaker.</p><p class="ko">같은 오류 3번이면 circuit breaker가 멈춥니다.</p></article>
+        <article class="gate-item reveal"><span class="gate-no">1</span><h3><span class="en">Verify against ground truth</span><span class="ko">Ground truth로 검증</span></h3><p class="en">Re-run the real tests; re-read the prose spec for rules they miss. Never optimize to a generated proxy.</p><p class="ko">실제 테스트를 재실행하고, 안 덮는 규칙은 prose 스펙을 다시 읽음. 생성된 proxy에 맞추지 않음.</p></article>
+        <article class="gate-item reveal"><span class="gate-no">2</span><h3><span class="en">Smallest correct change</span><span class="ko">가장 작은 올바른 변경</span></h3><p class="en">Match the surrounding code. No whole-file rewrite to change a few lines.</p><p class="ko">주변 코드에 맞춤. 몇 줄 바꾸려 파일 전체를 재작성하지 않음.</p></article>
+        <article class="gate-item reveal"><span class="gate-no">3</span><h3><span class="en">Surface hidden requirements</span><span class="ko">숨은 요구사항 표면화</span></h3><p class="en">An independent critic writes them as failing tests - the one place a process beats a plain baseline.</p><p class="ko">독립 critic이 실패 테스트로 작성 - 프로세스가 plain baseline을 이기는 유일한 지점.</p></article>
+        <article class="gate-item reveal"><span class="gate-no">4</span><h3><span class="en">Ask only when ambiguous</span><span class="ko">모호할 때만 질문</span></h3><p class="en">Resolve code-answerable questions by reading the code. Interrupt only for genuine forks.</p><p class="ko">코드로 답할 수 있는 건 코드를 읽어 해결. 진짜 갈림길에서만 멈춤.</p></article>
+        <article class="gate-item reveal"><span class="gate-no">5</span><h3><span class="en">Hard stops</span><span class="ko">하드 스톱</span></h3><p class="en">Destructive or irreversible steps need consent. If the real tests can't pass, report it - never fake a pass.</p><p class="ko">파괴적/되돌릴 수 없는 단계는 동의 필요. 실제 테스트가 통과 못 하면 보고 - 통과를 위장하지 않음.</p></article>
       </div>
     </div>
   </section>
@@ -1110,54 +1096,54 @@
   <section id="vault">
     <div class="wrap vault">
       <div class="reveal">
-        <h2><span class="en">One vault. Fresh contexts.</span><span class="ko">하나의 볼트. 새로운 컨텍스트.</span></h2>
-        <p class="lead en">Subagents do not rely on chat memory. They hand off through `docs/changelog/&lt;date-slug&gt;/`, the durable audit trail for the run.</p>
-        <p class="lead ko">서브에이전트는 채팅 메모리에 기대지 않습니다. `docs/changelog/&lt;date-slug&gt;/`로 인계하고, 그 폴더가 실행의 영구 감사 기록이 됩니다.</p>
+        <h2><span class="en">Bundled roles. Load what the phase needs.</span><span class="ko">번들 역할. 단계에 필요한 것만 로드.</span></h2>
+        <p class="lead en">Every role is a file in `agents/`, so dispatch works the same across Claude Code, Codex, and other CLIs - and it's optional, single-driver by default. The reference map pulls in only the guide the current phase needs.</p>
+        <p class="lead ko">모든 역할은 `agents/`의 파일이라 Claude Code·Codex 등에서 dispatch가 동일합니다 - 선택이고, 기본은 단일 드라이버. 레퍼런스 맵은 현재 단계에 필요한 가이드만 불러옵니다.</p>
         <div class="file-list">
-          <div class="file-chip"><code>README.md</code><span class="en">narrative, choices, escalations</span><span class="ko">서사, 선택, 에스컬레이션</span></div>
-          <div class="file-chip"><code>brief.md</code><span class="en">goal, criteria, validation</span><span class="ko">목표, 기준, 검증</span></div>
-          <div class="file-chip"><code>plan.md</code><span class="en">frozen plan and briefs</span><span class="ko">고정 계획과 브리프</span></div>
-          <div class="file-chip"><code>claims.md</code><span class="en">builder claims, untrusted</span><span class="ko">구현자 주장, 신뢰 안 함</span></div>
-          <div class="file-chip"><code>verification.md</code><span class="en">verdicts, coverage, QA</span><span class="ko">판정, 커버리지, QA</span></div>
-          <div class="file-chip"><code>state.json</code><span class="en">mode, phase, approval</span><span class="ko">모드, 단계, 승인</span></div>
+          <div class="file-chip"><code>SKILL.md</code><span class="en">baseline-first loop, modes, map</span><span class="ko">baseline-first 루프, 모드, 맵</span></div>
+          <div class="file-chip"><code>agents/&lt;role&gt;.md</code><span class="en">one persona per role</span><span class="ko">역할당 페르소나 하나</span></div>
+          <div class="file-chip"><code>reference/role-loop.md</code><span class="en">critic -> fixer -> verify</span><span class="ko">critic -> fixer -> verify</span></div>
+          <div class="file-chip"><code>reference/domain-context.md</code><span class="en">surface hidden requirements</span><span class="ko">숨은 요구사항 표면화</span></div>
+          <div class="file-chip"><code>reference/debugging.md</code><span class="en">reproduce-first diagnose loop</span><span class="ko">재현 우선 진단 루프</span></div>
+          <div class="file-chip"><code>.domain-agent/</code><span class="en">persisted wiki / QA suite</span><span class="ko">영구 위키 / QA 스위트</span></div>
         </div>
       </div>
-<pre class="vault-ascii reveal">vault/
-  brief.md        demand or symptom
-  plan.md         frozen scope
-  claims.md       useful, not trusted
-  verification.md verifier owns GREEN
-  state.json      resume and gates
+<pre class="vault-ascii reveal">loop/
+  frame    goal + criteria
+  build    smallest change, test-first
+  critic   failing tests, independent
+  fixer    minimal patch
+  verify   real suite is the oracle
 
-Only evidence moves forward.</pre>
+Stop on green. Report with output.</pre>
     </div>
   </section>
 
   <section id="proof">
     <div class="wrap">
       <div class="section-head reveal">
-        <h2><span class="en">It caught bugs real tests missed.</span><span class="ko">진짜 테스트가 놓친 버그를 잡았습니다.</span></h2>
-        <p class="lead en">Public proof runs used one zero-dependency URL shortener service with 68 tests. Adversarial verification found real defects in 2 of 3 code-writing modes.</p>
-        <p class="lead ko">공개 증명 실행은 테스트 68개짜리 무의존성 URL 단축기 서비스로 진행했습니다. 적대적 검증은 코드 작성 모드 3개 중 2개에서 진짜 결함을 찾았습니다.</p>
+        <h2><span class="en">What each lane looks like.</span><span class="ko">각 레인은 이렇게 동작합니다.</span></h2>
+        <p class="lead en">The same loop, shaped by the objective. Three of the eight lanes:</p>
+        <p class="lead ko">같은 루프가 목표에 따라 형태를 바꿉니다. 여덟 레인 중 셋:</p>
       </div>
       <div class="proof-grid">
         <article class="proof-item reveal">
           <span class="tag">GREENFIELD</span>
-          <h3><span class="en">SSRF escaped the builder.</span><span class="ko">SSRF가 구현자를 통과했습니다.</span></h3>
-          <p class="en">The verifier caught 2 real SSRF bypasses and an unauthenticated 500 after the builder reported 43 green tests.</p>
-          <p class="ko">구현자가 테스트 43개 green을 보고한 뒤, 검증자가 진짜 SSRF 우회 2건과 인증 없는 500 오류를 잡았습니다.</p>
+          <h3><span class="en">Requirements the prompt skipped.</span><span class="ko">프롬프트가 건너뛴 요구사항.</span></h3>
+          <p class="en">The critic re-reads the spec and writes failing tests for the behaviors a prompt leaves implicit - auth, input validation, error paths - before the change is accepted.</p>
+          <p class="ko">critic이 스펙을 다시 읽고, 프롬프트가 암묵에 남긴 동작(인증, 입력 검증, 에러 경로)마다 실패 테스트를 쓴 뒤 변경을 받아들입니다.</p>
         </article>
         <article class="proof-item debug reveal">
           <span class="tag">DEBUG</span>
-          <h3><span class="en">Race reproduced from a symptom.</span><span class="ko">증상만으로 레이스 재현.</span></h3>
-          <p class="en">Given only undercounted hits, it reproduced a 200-request lost-update race, fixed it, and rechecked repeated zero-loss runs.</p>
-          <p class="ko">조회수 과소 집계 증상만으로 200요청 lost-update 레이스를 재현하고, 수정하고, 반복 무손실 실행을 재검증했습니다.</p>
+          <h3><span class="en">Reproduce before you fix.</span><span class="ko">고치기 전에 재현.</span></h3>
+          <p class="en">A symptom becomes a failing test that reproduces the bug. The fix counts only when that test and the real suite both go green.</p>
+          <p class="ko">증상이 버그를 재현하는 실패 테스트가 됩니다. 그 테스트와 실제 스위트가 둘 다 green일 때만 수정으로 인정됩니다.</p>
         </article>
         <article class="proof-item legacy reveal">
           <span class="tag">LEGACY</span>
-          <h3><span class="en">TTL added without regressions.</span><span class="ko">회귀 없이 TTL 추가.</span></h3>
-          <p class="en">Legacy link-expiry shipped backward-compatible with records that predate the new field.</p>
-          <p class="ko">새 필드보다 오래된 레코드와 하위 호환되게 링크 만료 기능을 출시했습니다.</p>
+          <h3><span class="en">Minimal, backward-compatible.</span><span class="ko">최소, 하위 호환.</span></h3>
+          <p class="en">Map the touched area, make the smallest accurate edit, and confirm existing records and callers still pass.</p>
+          <p class="ko">영향 범위를 파악하고, 가장 작은 정확한 수정을 한 뒤, 기존 레코드와 호출부가 여전히 통과하는지 확인합니다.</p>
         </article>
       </div>
     </div>
@@ -1191,8 +1177,8 @@ ln -s "$(pwd)/supergoal-skill" ~/.claude/skills/supergoal
         <div class="pill-row">
           <span class="pill">Claude Code</span>
           <span class="pill">Node 18+</span>
-          <span class="pill">git worktree</span>
-          <span class="pill">literal gates</span>
+          <span class="pill">git worktree (optional)</span>
+          <span class="pill">real tests</span>
         </div>
       </div>
     </div>
@@ -1276,12 +1262,11 @@ ln -s "$(pwd)/supergoal-skill" ~/.claude/skills/supergoal
     var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     var nodes = [
-      { x: .12, y: .28, label: "Intake" },
-      { x: .30, y: .18, label: "Plan" },
-      { x: .48, y: .36, label: "Human" },
-      { x: .63, y: .22, label: "Build" },
-      { x: .78, y: .42, label: "Verify" },
-      { x: .90, y: .27, label: "Deliver" }
+      { x: .12, y: .28, label: "Frame" },
+      { x: .31, y: .19, label: "Build" },
+      { x: .50, y: .37, label: "Critic" },
+      { x: .69, y: .22, label: "Fixer" },
+      { x: .88, y: .33, label: "Verify" }
     ];
 
     function resize() {
@@ -1341,8 +1326,8 @@ ln -s "$(pwd)/supergoal-skill" ~/.claude/skills/supergoal
       for (var i = 0; i < pts.length - 1; i += 1) {
         line(pts[i], pts[i + 1], "rgba(100,216,255,.28)", 1.2);
       }
-      line(pts[1], pts[4], "rgba(92,255,154,.18)", 1);
-      line(pts[2], pts[5], "rgba(255,191,71,.17)", 1);
+      line(pts[0], pts[3], "rgba(92,255,154,.18)", 1);
+      line(pts[1], pts[4], "rgba(255,191,71,.17)", 1);
 
       var phase = reduce ? .52 : ((t / 2400) % 1);
       for (var j = 0; j < pts.length - 1; j += 1) {
@@ -1353,7 +1338,7 @@ ln -s "$(pwd)/supergoal-skill" ~/.claude/skills/supergoal
         var py = a.y + (b.y - a.y) * offset;
         ctx.beginPath();
         ctx.arc(px, py, 4.2, 0, Math.PI * 2);
-        ctx.fillStyle = j === 3 ? "rgba(255,111,111,.88)" : "rgba(92,255,154,.9)";
+        ctx.fillStyle = j === 2 ? "rgba(255,111,111,.88)" : "rgba(92,255,154,.9)";
         ctx.shadowColor = ctx.fillStyle;
         ctx.shadowBlur = 18;
         ctx.fill();
@@ -1363,8 +1348,8 @@ ln -s "$(pwd)/supergoal-skill" ~/.claude/skills/supergoal
       pts.forEach(function (p, index) {
         ctx.beginPath();
         ctx.arc(p.x, p.y, 18, 0, Math.PI * 2);
-        ctx.fillStyle = index === 4 ? "rgba(255,111,111,.18)" : "rgba(5,7,10,.72)";
-        ctx.strokeStyle = index === 4 ? "rgba(255,111,111,.7)" : "rgba(92,255,154,.72)";
+        ctx.fillStyle = index === 2 ? "rgba(255,111,111,.18)" : "rgba(5,7,10,.72)";
+        ctx.strokeStyle = index === 2 ? "rgba(255,111,111,.7)" : "rgba(92,255,154,.72)";
         ctx.lineWidth = 1.5;
         ctx.fill();
         ctx.stroke();

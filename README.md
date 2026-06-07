@@ -9,19 +9,15 @@ Landing page: **[cskwork.github.io/supergoal-skill](https://cskwork.github.io/su
 A Claude Code skill that takes a single objective, surfaces the requirements that are not in the prompt,
 makes the smallest correct change, and verifies it against the project's own tests and spec - then stops.
 
-## Baseline-first (why the gated machinery is gone)
+## What it adds over a plain baseline
 
-`/supergoal` used to run a heavy gated multi-agent pipeline (validate gate, Human Feedback gate,
-adversarial verifier, multi-expert committee, circuit breaker, literal delivery gate). Seven head-to-head
-evals (`log/changelog-2026-06-07.md`, `docs/experiments/2026-06-07-harness-eval-*`) showed that on tasks
-with an explicit spec, that machinery costs **2-3x the tokens and never beats a strong baseline** - and a
-**generated proxy verifier can make it worse** (Goodhart: the solver overfits the generated checklist and
-stops below a baseline that read the real spec).
+A strong model with the real spec is the bar. `/supergoal` adds only what a plain baseline cannot do for
+free: it surfaces the requirements that are **not in the prompt** - as FAILING tests written by an
+independent critic - then makes the smallest correct change and verifies it against the project's real
+tests and spec, never a generated proxy. For a trivial single edit, skip the skill and edit directly.
 
-So the skill is now **baseline-first**. It adds only what a plain baseline cannot do for free: surface
-requirements that are not in the prompt, and keep the change minimal and verified against the real
-tests/spec. Each role persona is still a bundled file in `agents/`, so dispatch stays harness-agnostic
-across Claude Code, Codex, agy, and other CLIs - but dispatch is optional and single-driver by default.
+Each role is a bundled file in `agents/`, so dispatch stays harness-agnostic across Claude Code, Codex,
+and other CLIs - but dispatch is optional and single-driver by default.
 
 ## Principles
 
@@ -48,10 +44,11 @@ across Claude Code, Codex, agy, and other CLIs - but dispatch is optional and si
 | "test harness effectiveness / with vs without" | **HARNESS-EVAL** | Cases -> baseline run -> harness run -> machine checks -> quality score -> compare |
 | "make a skill from history - no product code" | **SKILL-MINE** | Mine history -> rank -> you pick -> forge portable `SKILL.md` -> install |
 
-**Default loop (GREENFIELD / DEBUG / LEGACY):** 1) frame goal + acceptance criteria; 2) surface hidden
-requirements (rules in the repo/data, not the prompt); 3) smallest correct change, test-first (bug ->
-failing test first); 4) verify vs the real tests + re-read the spec for uncovered rules; optional code/
-security review; 5) stop on green and report what was verified with command output.
+**Default loop (GREENFIELD / DEBUG / LEGACY), role-separated:** 1) **Frame** the goal + acceptance
+criteria; 2) **Build** the smallest correct change, test-first (bug -> failing test first); 3) an
+independent **Critic** re-reads the spec and writes a FAILING test for each required behavior the existing
+tests miss; 4) a **Fixer** makes those pass with the smallest change; 5) **Verify** against the real tests
+and re-read the spec for uncovered rules - stop on green and report what was verified with command output.
 
 ```text
 /supergoal build a habit-tracker app and ship it
@@ -95,18 +92,16 @@ reference/          domain-rules · domain-context · debugging · interview · 
 learn/              LEARN-mode session journals + README template + USER_PREFERENCE(.template).md
 templates/          qa-gate.sh · qa-only-gate.sh · contrast-gate.mjs · learn-grounding-gate.mjs · qa-report.md · domain-agent/ · domain-onboarding.html · harness-eval-gate.mjs · harness-eval-cases/ · skill-mine/ · skill-frontmatter-gate.mjs · skill.md.template
 docs/               DESIGN.md · research-brief.md · experiments/ (the harness evals) · changelog/ · index.html (landing)
-examples/url-shortener/   a real service the earlier gated version built/debugged/extended (historical audit trail)
+examples/url-shortener/   a worked example service exercised across the build / debug / extend modes
 ```
 
-## Evidence & history
+## Evidence
 
-- **Why baseline-first.** `docs/experiments/2026-06-07-harness-eval-*` and `log/changelog-2026-06-07.md`
-  record seven evals (3 cases, 2 models, 4 harness forms) showing the harness matched but never beat a
-  strong baseline, cost 2-3x, and could lose via Goodhart on a generated verifier.
-- **Earlier gated runs (historical).** The pre-strip pipeline was dogfooded on a zero-dependency URL
-  shortener (`examples/url-shortener/`, audit trail in its `docs/changelog/`) and a private-codebase
-  benchmark (`docs/experiments/2026-05-30-private-codebase-comparison/`). These predate the baseline-first
-  rewrite and describe the removed machinery.
+The design is grounded in head-to-head evals - `docs/experiments/2026-06-07-harness-eval-*` and
+`log/changelog-2026-06-07.md` (3 cases, 2 models, 4 harness forms). The result that shapes the skill: on
+tasks with an explicit spec, a strong baseline that reads the real spec is the bar to beat, and optimizing
+to a generated-proxy verifier can score worse via Goodhart. `examples/url-shortener/` is a worked example
+service exercised across the build, debug, and extend modes.
 
 ## Harness Eval Reference
 

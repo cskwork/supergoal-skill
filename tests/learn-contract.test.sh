@@ -26,10 +26,10 @@ echo "=================================================================="
 echo " /supergoal LEARN contract   skill: $ROOT"
 echo "=================================================================="
 
-require_text "top-level requires atom map" "SKILL.md" "atom map"
-require_text "top-level requires process trace" "SKILL.md" "process trace"
-require_text "top-level blocks glossary-only teaching" "SKILL.md" "A glossary alone is not enough"
-require_text "top-level blocks literal Korean atom labels" "SKILL.md" 'Korean should say `핵심 용어`/`구성 요소`, not literal `원자`'
+require_text "learn reference requires decomposition" "reference/learn.md" "smallest useful pieces"
+require_text "learn reference requires process trace" "reference/learn.md" "process trace"
+require_text "learn reference blocks glossary-only teaching" "reference/learn.md" "Glossary alone is not enough"
+require_text "learn reference blocks literal Korean atom labels" "reference/learn.md" 'avoid exposing the literal label `원자`'
 require_text "learn reference requires visible order" "reference/learn.md" "Mandatory visible order"
 require_text "learn reference requires process gate" "reference/learn.md" "Process explanation gate"
 require_text "learn template uses natural Korean term label" "reference/learn.md" "| 핵심 용어 | 쉬운 뜻 | 흐름에서 하는 일 |"

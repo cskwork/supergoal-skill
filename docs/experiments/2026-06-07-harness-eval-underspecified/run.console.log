@@ -1,0 +1,46 @@
+[underspec-csv/baseline] visible 3/3 hidden 5/5 quality 82 tokens 334691 crashed false
+[underspec-csv/harness] visible 3/3 hidden 5/5 quality 82 tokens 686552 crashed false
+[underspec-lru/baseline] visible 3/3 hidden 4/4 quality 85 tokens 228597 crashed false
+[underspec-lru/harness] visible 3/3 hidden 4/4 quality 82 tokens 586790 crashed false
+[underspec-semver/baseline] visible 3/3 hidden 5/5 quality 85 tokens 623561 crashed false
+[underspec-semver/harness] visible 3/3 hidden 5/5 quality 85 tokens 1010284 crashed false
+{
+  "per_case": {
+    "underspec-csv": {
+      "baseline": "h5/5 q82 334691tok",
+      "harness": "h5/5 q82 686552tok",
+      "hidden_winner": "tie"
+    },
+    "underspec-lru": {
+      "baseline": "h4/4 q85 228597tok",
+      "harness": "h4/4 q82 586790tok",
+      "hidden_winner": "tie"
+    },
+    "underspec-semver": {
+      "baseline": "h5/5 q85 623561tok",
+      "harness": "h5/5 q85 1010284tok",
+      "hidden_winner": "tie"
+    }
+  },
+  "aggregate": {
+    "baseline": {
+      "hidden_pass": 14,
+      "hidden_total": 14,
+      "quality": 252,
+      "tokens": 1186849,
+      "ms": 136386,
+      "crashed": 0
+    },
+    "harness": {
+      "hidden_pass": 14,
+      "hidden_total": 14,
+      "quality": 249,
+      "tokens": 2283626,
+      "ms": 235349,
+      "crashed": 0
+    },
+    "hidden_winner": "tie",
+    "quality_winner": "baseline",
+    "token_ratio": 1.92
+  }
+}

@@ -10,12 +10,14 @@ Quality winner:
 Overall winner:
 Claim status:
 
-## Adversarial Verification Loop
+## Verification (harness-native + ground truth)
 
-| Case | Harness verifier run? | Verifier-authored tests/checks | REDs found | REDs fixed | Visible tests only false-GREEN? |
+| Case | Harness verified natively? | Native verifier checks (if any) | Hidden-check REDs | REDs fixed | Visible-only false-GREEN? |
 |---|---|---:|---:|---:|---|
 
-Notes: for hard cases, `None` or `visible tests only` means `Not proven`.
+Notes: ground truth for BOTH arms is Machine Checks + hidden tests below; the eval does not impose a
+verifier/repair loop. For hard cases, `None`/`visible tests only` self-verification still requires the arm
+to pass the hidden checks - otherwise `Not proven`.
 
 ## Machine Checks
 

@@ -1,0 +1,596 @@
+{
+  "runtime_adapter": "codex-exec:gpt-5.3-codex-spark:reasoning-high",
+  "mode": "UNDERSPECIFIED greenfield: thin prompt, implicit requirements in hidden tests",
+  "regime": "no RULES.md; baseline can pass visible (happy-path) and still miss implicit behavior",
+  "n_cases": 3,
+  "cases": {
+    "underspec-csv": {
+      "baseline": {
+        "condition": "baseline",
+        "named": [
+          {
+            "name": "csv visible: simple rows",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "csv visible: single row",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "csv visible: empty fields",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "csv hidden: quoted field containing comma",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "csv hidden: escaped double quotes",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "csv hidden: newline inside quoted field",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "csv hidden: CRLF row terminator",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "csv hidden: trailing newline ignored",
+            "kind": "hidden",
+            "status": "pass"
+          }
+        ],
+        "syntax": [
+          {
+            "name": "src/csv.mjs syntax",
+            "kind": "syntax",
+            "status": "pass"
+          },
+          {
+            "name": "test/csv.visible.test.mjs syntax",
+            "kind": "syntax",
+            "status": "pass"
+          },
+          {
+            "name": "test/csv.hidden.test.mjs syntax",
+            "kind": "syntax",
+            "status": "pass"
+          }
+        ],
+        "summary": {
+          "visible_pass": 3,
+          "visible_total": 3,
+          "hidden_pass": 5,
+          "hidden_total": 5
+        },
+        "quality": {
+          "total": 82,
+          "dimensions": {
+            "feature_completeness": 10,
+            "test_coverage": 10,
+            "code_quality": 8,
+            "error_handling": 6,
+            "efficiency": 9,
+            "correctness": 10,
+            "architecture": 8,
+            "extensibility": 8,
+            "documentation": 4,
+            "dev_environment": 9
+          },
+          "checks_passed": 8,
+          "checks_total": 8,
+          "pass_fraction": 1
+        },
+        "cost": {
+          "tokens": 334691,
+          "duration_ms": 38447,
+          "tool_calls": 28,
+          "turns_completed": 1,
+          "crashed": false
+        },
+        "exit_code": 0
+      },
+      "harness": {
+        "condition": "harness",
+        "named": [
+          {
+            "name": "csv visible: simple rows",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "csv visible: single row",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "csv visible: empty fields",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "csv hidden: quoted field containing comma",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "csv hidden: escaped double quotes",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "csv hidden: newline inside quoted field",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "csv hidden: CRLF row terminator",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "csv hidden: trailing newline ignored",
+            "kind": "hidden",
+            "status": "pass"
+          }
+        ],
+        "syntax": [
+          {
+            "name": "src/csv.mjs syntax",
+            "kind": "syntax",
+            "status": "pass"
+          },
+          {
+            "name": "test/csv.visible.test.mjs syntax",
+            "kind": "syntax",
+            "status": "pass"
+          },
+          {
+            "name": "test/csv.hidden.test.mjs syntax",
+            "kind": "syntax",
+            "status": "pass"
+          }
+        ],
+        "summary": {
+          "visible_pass": 3,
+          "visible_total": 3,
+          "hidden_pass": 5,
+          "hidden_total": 5
+        },
+        "quality": {
+          "total": 82,
+          "dimensions": {
+            "feature_completeness": 10,
+            "test_coverage": 10,
+            "code_quality": 8,
+            "error_handling": 6,
+            "efficiency": 9,
+            "correctness": 10,
+            "architecture": 8,
+            "extensibility": 8,
+            "documentation": 4,
+            "dev_environment": 9
+          },
+          "checks_passed": 8,
+          "checks_total": 8,
+          "pass_fraction": 1
+        },
+        "cost": {
+          "tokens": 686552,
+          "duration_ms": 81869,
+          "tool_calls": 42,
+          "turns_completed": 1,
+          "crashed": false
+        },
+        "exit_code": 0
+      },
+      "hidden_winner": "tie",
+      "quality_winner": "tie"
+    },
+    "underspec-lru": {
+      "baseline": {
+        "condition": "baseline",
+        "named": [
+          {
+            "name": "lru visible: put then get",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "lru visible: missing key undefined",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "lru visible: within capacity retains",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "lru hidden: evicts least recently used",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "lru hidden: get refreshes recency",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "lru hidden: update existing refreshes and keeps size",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "lru hidden: capacity one",
+            "kind": "hidden",
+            "status": "pass"
+          }
+        ],
+        "syntax": [
+          {
+            "name": "src/lru.mjs syntax",
+            "kind": "syntax",
+            "status": "pass"
+          },
+          {
+            "name": "test/lru.visible.test.mjs syntax",
+            "kind": "syntax",
+            "status": "pass"
+          },
+          {
+            "name": "test/lru.hidden.test.mjs syntax",
+            "kind": "syntax",
+            "status": "pass"
+          }
+        ],
+        "summary": {
+          "visible_pass": 3,
+          "visible_total": 3,
+          "hidden_pass": 4,
+          "hidden_total": 4
+        },
+        "quality": {
+          "total": 85,
+          "dimensions": {
+            "feature_completeness": 10,
+            "test_coverage": 10,
+            "code_quality": 8,
+            "error_handling": 9,
+            "efficiency": 9,
+            "correctness": 10,
+            "architecture": 8,
+            "extensibility": 8,
+            "documentation": 4,
+            "dev_environment": 9
+          },
+          "checks_passed": 7,
+          "checks_total": 7,
+          "pass_fraction": 1
+        },
+        "cost": {
+          "tokens": 228597,
+          "duration_ms": 32653,
+          "tool_calls": 18,
+          "turns_completed": 1,
+          "crashed": false
+        },
+        "exit_code": 0
+      },
+      "harness": {
+        "condition": "harness",
+        "named": [
+          {
+            "name": "lru visible: put then get",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "lru visible: missing key undefined",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "lru visible: within capacity retains",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "lru hidden: evicts least recently used",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "lru hidden: get refreshes recency",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "lru hidden: update existing refreshes and keeps size",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "lru hidden: capacity one",
+            "kind": "hidden",
+            "status": "pass"
+          }
+        ],
+        "syntax": [
+          {
+            "name": "src/lru.mjs syntax",
+            "kind": "syntax",
+            "status": "pass"
+          },
+          {
+            "name": "test/lru.visible.test.mjs syntax",
+            "kind": "syntax",
+            "status": "pass"
+          },
+          {
+            "name": "test/lru.hidden.test.mjs syntax",
+            "kind": "syntax",
+            "status": "pass"
+          }
+        ],
+        "summary": {
+          "visible_pass": 3,
+          "visible_total": 3,
+          "hidden_pass": 4,
+          "hidden_total": 4
+        },
+        "quality": {
+          "total": 82,
+          "dimensions": {
+            "feature_completeness": 10,
+            "test_coverage": 10,
+            "code_quality": 8,
+            "error_handling": 6,
+            "efficiency": 9,
+            "correctness": 10,
+            "architecture": 8,
+            "extensibility": 8,
+            "documentation": 4,
+            "dev_environment": 9
+          },
+          "checks_passed": 7,
+          "checks_total": 7,
+          "pass_fraction": 1
+        },
+        "cost": {
+          "tokens": 586790,
+          "duration_ms": 56866,
+          "tool_calls": 48,
+          "turns_completed": 1,
+          "crashed": false
+        },
+        "exit_code": 0
+      },
+      "hidden_winner": "tie",
+      "quality_winner": "baseline"
+    },
+    "underspec-semver": {
+      "baseline": {
+        "condition": "baseline",
+        "named": [
+          {
+            "name": "semver visible: patch ordering",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "semver visible: minor ordering",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "semver visible: equal",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "semver hidden: prerelease lower than release",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "semver hidden: alpha before beta",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "semver hidden: numeric prerelease identifiers compared numerically",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "semver hidden: fewer prerelease identifiers lower",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "semver hidden: build metadata ignored",
+            "kind": "hidden",
+            "status": "pass"
+          }
+        ],
+        "syntax": [
+          {
+            "name": "src/semver.mjs syntax",
+            "kind": "syntax",
+            "status": "pass"
+          },
+          {
+            "name": "test/semver.visible.test.mjs syntax",
+            "kind": "syntax",
+            "status": "pass"
+          },
+          {
+            "name": "test/semver.hidden.test.mjs syntax",
+            "kind": "syntax",
+            "status": "pass"
+          }
+        ],
+        "summary": {
+          "visible_pass": 3,
+          "visible_total": 3,
+          "hidden_pass": 5,
+          "hidden_total": 5
+        },
+        "quality": {
+          "total": 85,
+          "dimensions": {
+            "feature_completeness": 10,
+            "test_coverage": 10,
+            "code_quality": 8,
+            "error_handling": 9,
+            "efficiency": 9,
+            "correctness": 10,
+            "architecture": 8,
+            "extensibility": 8,
+            "documentation": 4,
+            "dev_environment": 9
+          },
+          "checks_passed": 8,
+          "checks_total": 8,
+          "pass_fraction": 1
+        },
+        "cost": {
+          "tokens": 623561,
+          "duration_ms": 65286,
+          "tool_calls": 38,
+          "turns_completed": 1,
+          "crashed": false
+        },
+        "exit_code": 0
+      },
+      "harness": {
+        "condition": "harness",
+        "named": [
+          {
+            "name": "semver visible: patch ordering",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "semver visible: minor ordering",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "semver visible: equal",
+            "kind": "visible",
+            "status": "pass"
+          },
+          {
+            "name": "semver hidden: prerelease lower than release",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "semver hidden: alpha before beta",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "semver hidden: numeric prerelease identifiers compared numerically",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "semver hidden: fewer prerelease identifiers lower",
+            "kind": "hidden",
+            "status": "pass"
+          },
+          {
+            "name": "semver hidden: build metadata ignored",
+            "kind": "hidden",
+            "status": "pass"
+          }
+        ],
+        "syntax": [
+          {
+            "name": "src/semver.mjs syntax",
+            "kind": "syntax",
+            "status": "pass"
+          },
+          {
+            "name": "test/semver.visible.test.mjs syntax",
+            "kind": "syntax",
+            "status": "pass"
+          },
+          {
+            "name": "test/semver.hidden.test.mjs syntax",
+            "kind": "syntax",
+            "status": "pass"
+          }
+        ],
+        "summary": {
+          "visible_pass": 3,
+          "visible_total": 3,
+          "hidden_pass": 5,
+          "hidden_total": 5
+        },
+        "quality": {
+          "total": 85,
+          "dimensions": {
+            "feature_completeness": 10,
+            "test_coverage": 10,
+            "code_quality": 8,
+            "error_handling": 9,
+            "efficiency": 9,
+            "correctness": 10,
+            "architecture": 8,
+            "extensibility": 8,
+            "documentation": 4,
+            "dev_environment": 9
+          },
+          "checks_passed": 8,
+          "checks_total": 8,
+          "pass_fraction": 1
+        },
+        "cost": {
+          "tokens": 1010284,
+          "duration_ms": 96614,
+          "tool_calls": 62,
+          "turns_completed": 1,
+          "crashed": false
+        },
+        "exit_code": 0
+      },
+      "hidden_winner": "tie",
+      "quality_winner": "tie"
+    }
+  },
+  "aggregate": {
+    "baseline": {
+      "hidden_pass": 14,
+      "hidden_total": 14,
+      "quality": 252,
+      "tokens": 1186849,
+      "ms": 136386,
+      "crashed": 0
+    },
+    "harness": {
+      "hidden_pass": 14,
+      "hidden_total": 14,
+      "quality": 249,
+      "tokens": 2283626,
+      "ms": 235349,
+      "crashed": 0
+    },
+    "hidden_winner": "tie",
+    "quality_winner": "baseline",
+    "token_ratio": 1.92
+  },
+  "claim_status": "not_proven"
+}

@@ -1,0 +1,27 @@
+Implemented in `[src/server.mjs](/tmp/sg-lsp-skillvsbaseline-live/sandboxes/revfactory-case-015-lsp/harness/src/server.mjs)` with the requested API set and LSP flow:
+
+- Implemented `encodeMessage(message)` with `Content-Length` framing.
+- Implemented `MessageBuffer.push(chunk)` with buffering + frame decoding for multi-frame / partial-chunk streams.
+- Implemented `parseMiniLang(text)` with:
+  - `fn`/`let` parsing
+  - incremental diagnostics with recovery (syntax, missing symbols, arity mismatches)
+  - symbol table construction (functions, variables, calls)
+  - comment stripping for `#`
+- Implemented `MiniLangServer`:
+  - `initialize`/`shutdown` lifecycle responses
+  - `textDocument/didOpen` + `textDocument/didChange` parsing/reparse updates
+  - `textDocument/completion`
+  - `textDocument/definition`
+  - `textDocument/hover`
+  - `takeNotifications()`
+  - `getDiagnostics(uri)`
+  - diagnostic publish notifications on parse updates
+
+Assumptions applied (recorded in implementation):
+- `Completion` includes `fn`, `let`, and `return` keyword snippets.
+- Function parameters are treated as in-scope symbols within that function body for undefined-checking.
+- Function call arity checks are based on declared function declarations, with forward references resolved across the full document.
+
+Verification:
+- Ran `npm test` in the harness root.
+- Result: `PASS` (5/5 visible tests).

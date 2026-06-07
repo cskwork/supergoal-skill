@@ -1,21 +1,17 @@
 #!/usr/bin/env bash
-# /supergoal — runnable gate scenario suite.
-# Converts the prose Tier A matrix in docs/e2e-test-plan.md into an executable, self-verifying
-# harness. Every case asserts BOTH the gate's exit code AND a substring of its output, so a
-# pass requires two independent signals (guards against silently-wrong gates and fabricated output).
+# /supergoal - runnable gate scenario suite for the gates that survive baseline-first:
+# qa-gate.sh, contrast-gate.mjs, and learn-grounding-gate.mjs. Every case asserts BOTH the gate's
+# exit code AND a substring of its output, so a pass requires two independent signals (guards
+# against silently-wrong gates and fabricated output).
 #
-# Usage: bash tests/gate-scenarios.test.sh
-# Exit 0 only if all cases pass. Run from the repo root.
+# Removed-gate scenarios (validate-gate, delivery-gate, human-feedback-gate, circuit-breaker,
+# cycle-bound) were deleted when baseline-first removed those gates; see log/changelog-2026-06-07.md.
+#
+# Usage: bash tests/gate-scenarios.test.sh   (exit 0 only if all cases pass; run from repo root)
 
 SKILL_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 T="$(mktemp -d)"
 trap 'rm -rf "$T"' EXIT
-
-VALIDATE="$SKILL_DIR/templates/validate-gate.sh"
-DELIVERY="$SKILL_DIR/templates/delivery-gate.sh"
-HFGATE="$SKILL_DIR/templates/human-feedback-gate.mjs"
-BREAKER="$SKILL_DIR/templates/circuit-breaker.mjs"
-EX="$SKILL_DIR/examples/url-shortener"
 
 PASS=0; FAIL=0; CASES=""
 
@@ -37,217 +33,10 @@ run_case() {
 
 mkvault() { local d="$T/$1"; rm -rf "$d"; mkdir -p "$d"; echo "$d"; }
 
-# Valid Human Feedback plan.md body (plain above technical, >=20/>=30 words, real Terms def).
-write_valid_plan() {
-  cat > "$1/plan.md" <<'EOF'
-# Plan
-
-## Human Feedback
-
-### Plain-language brief
-We will add a click cap so each short link can be limited to a maximum number of redirects,
-after which the link stops working and returns a clear error to the visitor instead.
-
-### Technical brief
-Add an optional maxRedirects integer column to each stored link record; the redirect handler
-increments and compares the hit counter atomically inside the existing mutex and returns HTTP
-410 Gone once the cap is reached, leaving all current endpoints and the error envelope unchanged.
-
-### Terms
-- click cap: the maximum number of times a short link may be followed before it expires
-- 410 Gone: the HTTP status returned when a capped link is exhausted
-
-### Approval request
-Approve to proceed to Build, or request changes to scope before any code is written.
-EOF
-}
-
-write_state() { printf '{ "approval": %s }\n' "$2" > "$1/state.json"; }
-
-# sha256 over CR-stripped plan.md, matching delivery-gate.sh's hash_file_lf (CRLF/LF safe).
-plan_hash_of() {
-  if command -v sha256sum >/dev/null 2>&1; then tr -d '\r' < "$1" | sha256sum   | awk '{print $1}'
-  else                                          tr -d '\r' < "$1" | shasum -a 256 | awk '{print $1}'; fi
-}
-# Freeze a vault: record its plan.md hash so the delivery-gate plan-freeze check passes.
-write_frozen_state() { printf '{ "plan_hash": "%s" }\n' "$(plan_hash_of "$1/plan.md")" > "$1/state.json"; }
-
-# A contract-complete verification.md: GREEN + coverage map + named gaps + high-risk marker + regression line + committee.
-write_complete_verif() {
-  cat > "$1/verification.md" <<'EOF'
-claim s1: GREEN — re-ran from clean state
-verdict: GREEN
-
-## Coverage
-- AC1 (endpoints + error paths): claim s1 GREEN
-- SSRF checklist (trailing-dot FQDN, IPv6-mapped, octal/hex IP, NAT64): probed GREEN
-Not covered: none — all acceptance criteria + domain checklist items mapped
-High-risk fixed RED: none
-Regression tests: none (verify-only fixture)
-Committee: architect APPROVED, security APPROVED, code-review APPROVED
-EOF
-}
-
 echo "=================================================================="
 echo " /supergoal gate scenarios   skill: $SKILL_DIR"
 echo " node $(node --version)   bash ${BASH_VERSION%%(*}"
 echo "=================================================================="
-
-# ----------------------------------------------------------------------
-echo; echo "SCENARIO 1 — validate-gate.sh : adversarial Decision parsing"
-# ----------------------------------------------------------------------
-v=$(mkvault s1); printf 'b\nDecision: GO\n' > "$v/brief.md"
-run_case "1.1 Decision: GO -> PASS"                 0 "VALIDATE GATE PASS" bash "$VALIDATE" "$v"
-printf 'b\nDecision: NO-GO\n' > "$v/brief.md"
-run_case "1.2 Decision: NO-GO -> blocked"           1 "decision is NO-GO"  bash "$VALIDATE" "$v"
-printf 'b\nDecision: NOGO\n' > "$v/brief.md"
-run_case "1.3 Decision: NOGO (no hyphen) -> blocked" 1 "decision is NO-GO" bash "$VALIDATE" "$v"
-printf 'b\n## Decision: GO\n' > "$v/brief.md"
-run_case "1.4 '## Decision: GO' heading -> PASS"    0 "VALIDATE GATE PASS" bash "$VALIDATE" "$v"
-printf 'The NO-GO criteria are listed here.\nDecision: GO\n' > "$v/brief.md"
-run_case "1.5 prose mentions NO-GO + Decision GO"   0 "VALIDATE GATE PASS" bash "$VALIDATE" "$v"
-v2=$(mkvault s1b)
-run_case "1.6 missing brief.md -> blocked"          1 "missing/empty"      bash "$VALIDATE" "$v2"
-: > "$v2/brief.md"
-run_case "1.7 empty brief.md -> blocked"            1 "missing/empty"      bash "$VALIDATE" "$v2"
-printf 'just a brief, no decision line\n' > "$v2/brief.md"
-run_case "1.8 no Decision line -> blocked"          1 "no 'Decision: GO'"  bash "$VALIDATE" "$v2"
-printf 'decision: go\n' > "$v2/brief.md"
-run_case "1.9 lowercase decision: go -> PASS"       0 "VALIDATE GATE PASS" bash "$VALIDATE" "$v2"
-printf 'Decision: GO\nlater changed\nDecision: NO-GO\n' > "$v2/brief.md"
-run_case "1.10 GO then NO-GO -> fail-safe blocked"  1 "decision is NO-GO"  bash "$VALIDATE" "$v2"
-
-# ----------------------------------------------------------------------
-echo; echo "SCENARIO 2 — delivery-gate.sh : artifacts + verdict + completeness + test suite"
-# ----------------------------------------------------------------------
-v=$(mkvault s2)
-run_case "2.1 empty vault -> brief missing"         1 "brief.md missing"     bash "$DELIVERY" "$v" true
-printf 'b\n' > "$v/brief.md"
-run_case "2.2 brief only -> plan missing"           1 "plan.md missing"      bash "$DELIVERY" "$v" true
-printf 'p\n' > "$v/plan.md"
-run_case "2.3 no verification -> missing"           1 "verification.md missing" bash "$DELIVERY" "$v" true
-printf 'no verdict here\n' > "$v/verification.md"
-run_case "2.4 no 'verdict: GREEN'"                  1 "no 'verdict: GREEN'"  bash "$DELIVERY" "$v" true
-# A5 case (was 'test manually'): GREEN then a later line-start RED fails before completeness.
-printf 'verdict: GREEN\n... later ...\nverdict: RED\n' > "$v/verification.md"
-run_case "2.5 GREEN then later RED -> RED remains"  1 "verdict: RED"         bash "$DELIVERY" "$v" true
-# Completeness contract: GREEN but missing each required section in turn (the false-GREEN guard).
-printf 'verdict: GREEN\n' > "$v/verification.md"
-run_case "2.5b GREEN, no ## Coverage -> blocked"    1 "no '## Coverage'"     bash "$DELIVERY" "$v" true
-printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\n' > "$v/verification.md"
-run_case "2.5c Coverage, no Not-covered -> blocked" 1 "no 'Not covered:'"    bash "$DELIVERY" "$v" true
-printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\n' > "$v/verification.md"
-run_case "2.5d no High-risk fixed RED line -> blocked" 1 "no 'High-risk fixed RED:'" bash "$DELIVERY" "$v" true
-printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nHigh-risk fixed RED: none\n' > "$v/verification.md"
-run_case "2.5e no Regression line -> blocked"       1 "no 'Regression tests:'" bash "$DELIVERY" "$v" true
-# Contract-complete verification for the PASS / downstream-check paths.
-write_complete_verif "$v"
-write_frozen_state "$v"
-printf 'b\nThe NO-GO bar is high.\nDecision: GO\n' > "$v/brief.md"
-run_case "2.6 complete + Decision GO + prose NO-GO" 0 "GATE PASS"            bash "$DELIVERY" "$v" true
-printf 'b\nDecision: NO-GO\n' > "$v/brief.md"
-run_case "2.7 Decision NO-GO -> blocked"            1 "decision is NO-GO"    bash "$DELIVERY" "$v" true
-printf 'b\nno decision line (debug/legacy)\n' > "$v/brief.md"
-run_case "2.8 no Decision line -> PASS"             0 "GATE PASS"            bash "$DELIVERY" "$v" true
-run_case "2.9 valid + test-cmd false -> fail"       1 "test suite did not pass" bash "$DELIVERY" "$v" false
-run_case "2.10 valid + test-cmd true -> PASS"       0 "GATE PASS"            bash "$DELIVERY" "$v" true
-# 2.11: no test-cmd, run from a clean dir with no detectable runner.
-v_clean=$(mkvault s2clean)
-cp "$v/brief.md" "$v/plan.md" "$v/verification.md" "$v/state.json" "$v_clean/" 2>/dev/null
-run_case "2.11 no test-cmd, no runner -> blocked"   1 "no test command"     \
-  bash -c "cd '$v_clean' && bash '$DELIVERY' . "
-# 2.12-2.13: QA backstop — a qa/ dir makes delivery enforce the browser QA gate too.
-v_qa=$(mkvault s2qa)
-printf 'b\n' > "$v_qa/brief.md"; printf 'p\n' > "$v_qa/plan.md"
-write_complete_verif "$v_qa"; write_frozen_state "$v_qa"
-mkdir -p "$v_qa/qa"; : > "$v_qa/qa/as-is-1040.png"; : > "$v_qa/qa/to-be-1040.png"
-run_case "2.12 qa/ dir, QA non-compliant -> blocked" 1 "QA gate fails"      bash "$DELIVERY" "$v_qa" true
-printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nHigh-risk fixed RED: none\nRegression tests: none\nCommittee: architect APPROVED, security APPROVED, code-review APPROVED\n## QA\nagent-browser doctor: pass\nTool: agent-browser\n' > "$v_qa/verification.md"
-run_case "2.13 qa/ dir + compliant QA -> PASS"       0 "GATE PASS"          bash "$DELIVERY" "$v_qa" true
-
-# ----------------------------------------------------------------------
-echo; echo "SCENARIO 3 — human-feedback-gate.mjs : briefs, ordering, approval"
-# ----------------------------------------------------------------------
-v=$(mkvault s3)
-write_state "$v" '{"phase":"Build","status":"APPROVED"}'
-run_case "3.1 no plan.md -> cannot read"            1 "cannot read"         node "$HFGATE" "$v" Build
-write_valid_plan "$v"
-run_case "3.6 full valid, target Build -> PASS"     0 "HUMAN FEEDBACK GATE PASS" node "$HFGATE" "$v" Build
-run_case "3.5 approved Build, target Fix -> mismatch" 1 "expected 'Fix'"    node "$HFGATE" "$v" Fix
-write_state "$v" 'null'
-run_case "3.4 approval null -> not APPROVED"        1 "not APPROVED"        node "$HFGATE" "$v" Build
-write_state "$v" '{"phase":"Build","status":"APPROVED"}'
-# Swap order: technical above plain.
-write_valid_plan "$v"
-node -e 'const f=process.argv[1];let s=require("fs").readFileSync(f,"utf8");
-const p=s.match(/### Plain-language brief[\s\S]*?(?=### Technical)/)[0];
-const t=s.match(/### Technical brief[\s\S]*?(?=### Terms)/)[0];
-s=s.replace(p,"@@P@@").replace(t,"@@T@@").replace("@@P@@",t).replace("@@T@@",p);
-require("fs").writeFileSync(f,s);' "$v/plan.md"
-run_case "3.3 plain below technical -> ordering"    1 "must appear above"   node "$HFGATE" "$v" Build
-# Empty Human Feedback section -> gate treats empty == missing section.
-printf '# Plan\n\n## Human Feedback\n\n## Other\nstuff\n' > "$v/plan.md"
-run_case "3.7a empty HF section == missing"         1 "missing 'Human Feedback'" node "$HFGATE" "$v" Build
-# HF section has prose but no required ### subsections -> first missing subsection reported.
-printf '# Plan\n\n## Human Feedback\nSome intro prose but no subsections.\n\n## Other\nx\n' > "$v/plan.md"
-run_case "3.7b HF present, no subsections"          1 "Plain-language brief" node "$HFGATE" "$v" Build
-# No Human Feedback section at all.
-printf '# Plan\n\n## Scope\nstuff\n' > "$v/plan.md"
-run_case "3.2 no Human Feedback section"            1 "missing 'Human Feedback'" node "$HFGATE" "$v" Build
-# Thin plain brief (<20 words).
-write_valid_plan "$v"
-node -e 'const f=process.argv[1];let s=require("fs").readFileSync(f,"utf8");
-s=s.replace(/### Plain-language brief\n[\s\S]*?\n\n### Technical/,"### Plain-language brief\nToo short to review.\n\n### Technical");
-require("fs").writeFileSync(f,s);' "$v/plan.md"
-run_case "3.8 thin plain brief -> too thin"         1 "too thin"            node "$HFGATE" "$v" Build
-# Terms with no 'term: definition'.
-write_valid_plan "$v"
-node -e 'const f=process.argv[1];let s=require("fs").readFileSync(f,"utf8");
-s=s.replace(/### Terms\n[\s\S]*?\n\n### Approval/,"### Terms\n- just a bullet with no colon\n\n### Approval");
-require("fs").writeFileSync(f,s);' "$v/plan.md"
-run_case "3.9 Terms without definition -> fail"     1 "must define at least one term" node "$HFGATE" "$v" Build
-run_case "3.10 bad usage (missing phase) -> exit 2" 2 "usage"               node "$HFGATE" "$v"
-
-# ----------------------------------------------------------------------
-echo; echo "SCENARIO 4 — circuit-breaker.mjs : trip, threshold, persistence"
-# ----------------------------------------------------------------------
-v=$(mkvault s4)
-printf '{ "circuit_breaker_threshold": 3, "error_signatures": {} }\n' > "$v/state.json"
-run_case "4.1 sig X #1 -> below (0)"                0 "1/3"   node "$BREAKER" "$v/state.json" "assert-eq foo.js:10"
-run_case "4.2 sig X #2 -> below (0)"                0 "2/3"   node "$BREAKER" "$v/state.json" "assert-eq foo.js:10"
-run_case "4.3 sig X #3 -> TRIP (1)"                 1 "TRIP"  node "$BREAKER" "$v/state.json" "assert-eq foo.js:10"
-run_case "4.4 state persisted count == 3"           0 "count=3" node -e 'const c=JSON.parse(require("fs").readFileSync(process.argv[1])).error_signatures["assert-eq foo.js:10"];console.log("count="+c);process.exit(c===3?0:1)' "$v/state.json"
-run_case "4.5 different sig Y -> independent (0)"   0 "1/3"   node "$BREAKER" "$v/state.json" "type-error bar.js:9"
-# Custom threshold = 2.
-printf '{ "circuit_breaker_threshold": 2, "error_signatures": {} }\n' > "$v/state2.json"
-run_case "4.6a thr=2 sig #1 -> below"               0 "1/2"   node "$BREAKER" "$v/state2.json" "boom"
-run_case "4.6b thr=2 sig #2 -> TRIP"                1 "TRIP"  node "$BREAKER" "$v/state2.json" "boom"
-run_case "4.7 missing state file -> exit 2"         2 "cannot read/parse"   node "$BREAKER" "$v/nope.json" "x"
-run_case "4.8 missing signature arg -> exit 2"      2 "usage"               node "$BREAKER" "$v/state.json"
-# Defensive normalization: whitespace/case drift collapses to one key, so the breaker still trips.
-printf '{ "circuit_breaker_threshold": 3, "error_signatures": {} }\n' > "$v/state3.json"
-node "$BREAKER" "$v/state3.json" "Err" >/dev/null 2>&1
-node "$BREAKER" "$v/state3.json" "err" >/dev/null 2>&1
-run_case "4.9 whitespace/case drift still trips"     1 "TRIP" node "$BREAKER" "$v/state3.json" "err  "
-run_case "4.10 whitespace-only signature -> exit 2"  2 "empty after normalization" node "$BREAKER" "$v/state3.json" "   "
-
-# ----------------------------------------------------------------------
-echo; echo "SCENARIO 5 — end-to-end against the REAL committed example vaults"
-# ----------------------------------------------------------------------
-if [ -d "$EX" ]; then
-  run_case "5.1 example suite runs green (node --test)" 0 "pass" \
-    bash -c "cd '$EX' && node --test 2>&1"
-  run_case "5.2 delivery gate on REAL url-shortener vault" 0 "GATE PASS" \
-    bash -c "cd '$EX' && bash '$DELIVERY' docs/changelog/url-shortener-service 'node --test'"
-  run_case "5.3 delivery gate on REAL legacy vault (no Decision)" 0 "GATE PASS" \
-    bash -c "cd '$EX' && bash '$DELIVERY' docs/changelog/legacy-link-expiry 'node --test'"
-  run_case "5.4 delivery gate on REAL debug vault (no Decision)" 0 "GATE PASS" \
-    bash -c "cd '$EX' && bash '$DELIVERY' docs/changelog/debug-hit-undercount 'node --test'"
-  run_case "5.5 validate gate on REAL url-shortener brief" 0 "VALIDATE GATE PASS" \
-    bash "$VALIDATE" "$EX/docs/changelog/url-shortener-service"
-else
-  echo "  SKIP  example project not found at $EX"
-fi
 
 # ----------------------------------------------------------------------
 echo; echo "SCENARIO 6 — qa-gate.sh : agent-browser usage + as-is/to-be evidence enforcement"
@@ -303,42 +92,6 @@ printf '[{"el":"dot","fg":"#3f3b35","bg":"#221e17","size":"decorative"}]\n' > "$
 run_case "7.8 decorative pair -> PASS"              0 "CONTRAST GATE PASS" node "$CONTRAST" "$v/decor.json"
 
 # ----------------------------------------------------------------------
-echo; echo "SCENARIO 8 — delivery-gate.sh : committee approval + plan freeze"
-# ----------------------------------------------------------------------
-v=$(mkvault s8)
-printf 'b\nDecision: GO\n' > "$v/brief.md"
-printf 'the approved plan body\n' > "$v/plan.md"
-write_complete_verif "$v"; write_frozen_state "$v"
-run_case "8.1 complete + committee + frozen hash -> PASS" 0 "GATE PASS"     bash "$DELIVERY" "$v" true
-# Committee line missing entirely.
-printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nHigh-risk fixed RED: none\nRegression tests: none\n' > "$v/verification.md"
-run_case "8.2 no Committee line -> blocked"          1 "no 'Committee:' line" bash "$DELIVERY" "$v" true
-# Committee shows a non-approval verdict.
-printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nHigh-risk fixed RED: none\nRegression tests: none\nCommittee: architect APPROVED, security REJECT, code-review APPROVED\n' > "$v/verification.md"
-run_case "8.3 committee shows reject -> blocked"     1 "non-approval"        bash "$DELIVERY" "$v" true
-# Committee missing a reviewer.
-printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nHigh-risk fixed RED: none\nRegression tests: none\nCommittee: architect APPROVED, security APPROVED\n' > "$v/verification.md"
-run_case "8.4 committee missing code-review -> blocked" 1 "does not name the 'code'" bash "$DELIVERY" "$v" true
-printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nHigh-risk fixed RED: security SSRF\nRegression tests: none\nCommittee: architect APPROVED, security APPROVED, code-review APPROVED\n' > "$v/verification.md"
-run_case "8.4a high-risk fixed RED no regression -> blocked" 1 "high-risk fixed RED" bash "$DELIVERY" "$v" true
-
-printf 'verdict: GREEN\n## Coverage\n- AC1: GREEN\nNot covered: none\nHigh-risk fixed RED: security SSRF\nRegression tests: none\nRegression exception: external provider sandbox cannot reproduce callback signature; covered by contract test in upstream suite\nCommittee: architect APPROVED, security APPROVED, code-review APPROVED\n' > "$v/verification.md"
-run_case "8.4b high-risk fixed RED exception -> PASS" 0 "GATE PASS" bash "$DELIVERY" "$v" true
-
-# Restore good committee; now exercise plan freeze.
-write_complete_verif "$v"
-printf 'plan body CHANGED after freeze\n' > "$v/plan.md"
-run_case "8.5 plan.md changed -> hash mismatch blocked" 1 "does not match state.json.plan_hash" bash "$DELIVERY" "$v" true
-# RE-PLAN escape waives the freeze.
-printf 'RE-PLAN: scope expanded with re-approval\n' > "$v/README.md"
-run_case "8.6 RE-PLAN escape -> PASS"                0 "GATE PASS"           bash "$DELIVERY" "$v" true
-rm -f "$v/README.md"
-# Null plan_hash with no escape.
-printf 'the approved plan body\n' > "$v/plan.md"
-printf '{ "plan_hash": null }\n' > "$v/state.json"
-run_case "8.7 plan_hash null, no RE-PLAN -> blocked" 1 "no 64-hex 'plan_hash'" bash "$DELIVERY" "$v" true
-
-# ----------------------------------------------------------------------
 echo; echo "SCENARIO 9 — qa-gate.sh : contrast gate is wired in for UI runs"
 # ----------------------------------------------------------------------
 QAGATE="$SKILL_DIR/templates/qa-gate.sh"
@@ -353,20 +106,6 @@ run_case "9.3 UI-tier + passing palette -> PASS"     0 "QA GATE PASS"         ba
 rm -f "$v/qa/contrast-pairs.json"
 printf 'verdict: GREEN\n## QA\nagent-browser doctor: pass\nTool: agent-browser\n- as-is/to-be captured\n' > "$v/verification.md"
 run_case "9.4 no UI-tier, no pairs -> PASS (unaffected)" 0 "QA GATE PASS"     bash "$QAGATE" "$v" browser
-
-# ----------------------------------------------------------------------
-echo; echo "SCENARIO 10 — cycle-bound.mjs : bounds same-phase retries by count"
-# ----------------------------------------------------------------------
-CYCLE="$SKILL_DIR/templates/cycle-bound.mjs"
-v=$(mkvault s10)
-printf '{ "max_cycles_per_phase": 3, "cycles": { "build": 0, "fix": 0 } }\n' > "$v/state.json"
-run_case "10.1 build cycle #1 -> below"             0 "1/3"  node "$CYCLE" "$v/state.json" build
-run_case "10.2 build cycle #2 -> below"             0 "2/3"  node "$CYCLE" "$v/state.json" build
-run_case "10.3 build cycle #3 -> TRIP"              1 "CYCLE-BOUND TRIP" node "$CYCLE" "$v/state.json" build
-run_case "10.4 different phase is independent"      0 "1/3"  node "$CYCLE" "$v/state.json" fix
-run_case "10.5 unknown phase -> exit 2"             2 "unknown phase"   node "$CYCLE" "$v/state.json" deploy
-run_case "10.6 missing phase arg -> exit 2"         2 "usage"           node "$CYCLE" "$v/state.json"
-run_case "10.7 missing state file -> exit 2"        2 "cannot read/parse" node "$CYCLE" "$v/nope.json" build
 
 # ----------------------------------------------------------------------
 echo; echo "SCENARIO 11 — learn-grounding-gate.mjs : LEARN-DOMAIN wiki must be execution-grounded"

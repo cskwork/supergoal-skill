@@ -1,0 +1,14 @@
+Implemented.
+
+`parseCsv(text)` in [`src/csv.mjs`](/tmp/sg-underspec-live/sandboxes/underspec-csv/baseline/src/csv.mjs:1) now parses full CSV rows (dependency-free), including:
+
+- unquoted fields separated by commas/newlines
+- quoted fields
+- escaped quotes (`""` -> `"`)
+- quoted fields containing commas or newlines
+- CRLF and CR/LF line endings
+- empty/trailing fields behavior
+
+Verification:
+- `node --check src/csv.mjs` (passes)
+- `npm test` (passes: 3/3)

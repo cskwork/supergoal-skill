@@ -214,3 +214,121 @@ wall-clock; zero crashes. **HARNESS-MAKE reproduces the universal pattern - tie 
 Caveats: n=2 (billing + lsp); and this measures HARNESS-MAKE output as a one-shot coding harness on
 explicit-spec tasks - a subset of its stated purpose (designing *reusable* harnesses for ongoing
 workflows), which a one-shot eval cannot capture.
+
+## Live re-run: new baseline-first skill vs plain codex (case-015 LSP) - `docs/experiments/2026-06-07-harness-eval-lsp-skill-vs-baseline/`
+
+First INLINE run of the post-rewrite baseline-first `SKILL.md` against a no-skill baseline on the hard LSP
+case (spark-high, fresh sandboxes, hidden tests injected after each arm; harness arm confirmed to read
+`harness-ref/SKILL.md` 3x and route via the skill).
+
+| arm | quality | real tests | false-GREEN | tokens | wall | crashed |
+|---|---:|---|---:|---:|---:|---|
+| baseline | 81 | 7/9 | 2 | 1.49M | 174 s | no |
+| harness | 82 | 8/9 | 1 | 2.56M | 190 s | no |
+
+**Harness narrowly WON this single run** (pass-count + quality + one fewer false-GREEN) at 1.72x tokens.
+The win is the hidden `completion prefix + signatures` rule, which baseline shipped broken and the harness
+caught after recording explicit assumptions (the skill's surface/verify discipline). Both arms still miss
+the hardest hidden rule (syntax recovery + semantic diagnostics).
+
+**Still `Not proven`, and within noise.** Same model/effort/case INLINE run in Exp B was baseline 81/7/9 vs
+**harness 82/6/9** - the harness arm there *lost* the test vector. Across runs of the same config the harness
+arm swung 6/9 -> 8/9, so a +1-test/+1-point delta is variance, not a proven lift. Robust cross-run facts
+hold: baseline extracts the explicit spec cheaply (this baseline 7/9 at 1.49M tok is the cheapest yet), the
+harness always costs more, and the hardest hidden rule defeats both. What this run uniquely adds: the first
+INLINE data point where the skill's verify discipline beat the baseline on the vector rather than tying/
+losing - directionally the mechanism the skill claims, but n=1.
+
+## Experiment #1: underspecified greenfield (n=3) - `docs/experiments/2026-06-07-harness-eval-underspecified/`
+
+Tested the hypothesis that thin prompts (no RULES.md) create headroom for the skill's requirement-surfacing
+step. 3 cases (csv RFC4180, lru recency, semver prerelease/build), visible=happy-path only, hidden=implicit
+standard behavior injected after each arm. Pre-flight proved stubs fail visible and reference impls pass all.
+
+| case | baseline hidden | harness hidden | b/h quality | b/h tokens |
+|---|---|---|---|---|
+| csv | 5/5 | 5/5 | 82/82 | 335k/687k |
+| lru | 4/4 | 4/4 | 85/82 | 229k/587k |
+| semver | 5/5 | 5/5 | 85/85 | 624k/1010k |
+| agg | 14/14 | 14/14 | 252/249 | 1.19M/2.28M (1.92x) |
+
+**Hypothesis REFUTED - all three are ceiling effects** (both arms 14/14). Reason: the implicit requirements
+were PUBLIC domain standards already in the strong model's training, so a thin prompt doesn't hide them; the
+baseline implements them perfectly unaided. The skill added zero correctness, slightly lower coarse quality,
+at 1.92x tokens. Confirms the skill's own "skip for trivial tasks" guidance.
+
+Sharpened conclusion (now n=4 fresh cases today): the only harness win all day was lsp prefix-completion -
+a requirement UNDER-SPECIFIED by the visible test. Headroom exists only where the requirement is genuinely
+unknown to the model. Per "update skill if proven more effective": **bar not met, no effectiveness edit made.**
+Next real test = repo-local / proprietary implicit rules (LEGACY regime), where the requirement is not public
+knowledge and not in the model's head.
+
+## harness-eval corpus fixed to validated RevFactory hard/expert cases only
+
+Per user direction, `reference/harness-eval.md` now mandates drawing every eval case from the validated
+RevFactory specs in `templates/harness-eval-cases/` (the 15 seeded cases) - never inventing ad-hoc cases.
+Use the discriminating tier only: expert 007-015 (interpreter, microservice, sql-engine, crdt, raft-kv,
+spreadsheet, bytecode-vm, event-sourcing, lsp) + hard 002/005. Rationale: today's csv/lru/semver ad-hoc
+cases all ceiling-out (14/14 both arms) and prove nothing; the RevFactory expert cases are upstream-validated
+discriminators. Added a matching Reject bullet ("Inventing ad-hoc eval cases ..."). Only case-015-lsp has a
+runnable fixture; the rest are specs needing fixtures authored from the case-015 fixture+scorer shape.
+
+## Verifier-loop reconciliation (DONE)
+
+Demoted the adversarial-verifier + repair loop from a PRESCRIBED eval stage to RECORD-ONLY, consistent with
+baseline-first: `reference/harness-eval.md` (pipeline line 54 drops "Adversarial Verify -> Repair Loop";
+step 4 reframed "the eval does NOT impose a verifier/repair loop - record whatever the harness ran
+natively"), report template (`## Adversarial Verification Loop` -> `## Verification (harness-native + ground
+truth)`), and contract test (repointed the SKILL.md pipeline assertion to the new verifier-loop-free pipeline
+in harness-eval.md). Ground-truth verification (machine + hidden checks, applied equally to both arms) is
+preserved. `tests/harness-eval-contract.test.sh` now **126 passed, 0 failed** (was 125/1).
+
+Separate PRE-EXISTING dead-test debt (NOT from this session - confirmed by stashing these edits and
+re-running): the baseline-first + HARNESS-MAKE removals left tests for deleted features failing -
+`tests/harness-make-contract.test.sh` (0/14, removed HARNESS-MAKE), `tests/harness-contract.test.sh` (0/16,
+removed HARNESS-MAKE references reference/harness-make.md etc.), `tests/gate-scenarios.test.sh` (34/69,
+exit 127 = removed validate/delivery gate scripts). These assert removed code; they should be deleted or
+reconciled in a dedicated cleanup.
+
+## 5-CLI cross-harness eval (gpt-5.5 @ low) — new
+
+`docs/experiments/2026-06-07-harness-eval-5cli-gpt55-low/` (run.mjs, orchestrate.sh, results.md,
+report.md, result.json, raw/).
+
+### What / why
+User asked: same gpt-5.5 at low reasoning across five wrappers — oh-my-pi (omp), hermes, bare codex,
+codex+AGENTS.md rules, codex+supergoal — on a hard RevFactory task; accurate scoring, recommend best.
+Extends the 2-arm case-015 scorer to 5 arms. Same fixture/hidden-tests/9-checks/v2 scorer; the ONLY
+variable is the wrapper. All five reach the SAME gpt-5.5 via the local headroom proxy (codex `/v1`,
+hermes `/backend-api/codex`, omp `openai-codex/gpt-5.5`), so it is a clean A/B/C/D/E on the harness.
+
+### Decisions / reasoning
+- Reused the proven case-015 fixture+scorer verbatim; only arm-runners + per-adapter cost parsing +
+  5-way reporting are new. Reuse over reinvention; keeps results comparable to prior runs.
+- Arm isolation: bare/supergoal suppress global `~/.codex/AGENTS.md` via `project_doc_max_bytes=0`;
+  agents arm loads it (= the user's Ten Commandments). Verified clean from transcripts (signature
+  text `Ten Commandments`/`CodeGraph`/`baseline-first` present only where intended; the "supergoal"
+  hits in the bare log were the sandbox PATH, not skill use).
+- hermes reasoning isn't a CLI flag — orchestrate.sh backs up `~/.hermes/config.yaml`, sets
+  `reasoning_effort: low`, runs, and restores on EXIT trap (verified restored to xhigh; no permanent
+  mutation). codex uses `-c model_reasoning_effort=low`; omp uses `--thinking low`.
+- omp `--mode json` re-emits the full accumulated message per token delta (O(n^2); 64–106 MB). The
+  first run hit node's `spawnSync` maxBuffer and killed omp mid-implementation (a HARNESS bug, not an
+  omp failure) — reran omp streaming stdout to a file fd and parsing only the final `agent_end` line,
+  then trimming the log. The corrected omp run finished cleanly at 7/9.
+- Tokens are NOT cross-CLI comparable (codex=final cumulative; omp=summed-per-turn, inflated;
+  hermes=not exposed in -Q). Ranked on wall-clock + tool-calls + result instead.
+
+### Result (n=1, directional)
+4-way tie at 7/9 / quality 81: bare codex, codex+supergoal, ohmypi, hermes. codex+AGENTS.md is the sole
+loser (6/9, q79) AND costliest (1.52x bare tokens, longest wall-clock, most tool calls). Every arm
+shipped false-GREEN (visible 5/5, 2–3 hidden behaviors broken); `completion prefix+signatures` missed
+by all five (a model/effort ceiling — prior high-effort run got it). Treatments only reshuffle WHICH
+hidden test passes, never raise the count above bare.
+
+### Recommendation
+Best overall = bare codex (top result, lowest codex cost, simplest); hermes matches it with the lowest
+wall-clock/fewest tool calls. Added rule/skill scaffolding adds cost without lifting the score; the
+coding-rules AGENTS.md is net-negative for this task class at low effort. The real lever for the
+unshipped hidden behaviors is reasoning effort, not the harness. Corroborates the existing
+baseline-first finding across a broader, cross-CLI configuration. n=1 ⇒ directional, not proven.

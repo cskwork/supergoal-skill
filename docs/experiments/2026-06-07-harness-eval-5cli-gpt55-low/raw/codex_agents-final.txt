@@ -1,0 +1,7 @@
+Implemented [src/server.mjs](/private/tmp/supergoal-harness-eval-5cli-gpt55-low/sandboxes/revfactory-case-015-lsp/codex_agents/src/server.mjs): JSON-RPC framing, message buffering, MiniLang parsing/recovery, symbol table, diagnostics, completion, definition, hover, and `didOpen`/`didChange` document tracking.
+
+Added [docs/changelog/changelog-2026-06-07.md](/private/tmp/supergoal-harness-eval-5cli-gpt55-low/sandboxes/revfactory-case-015-lsp/codex_agents/docs/changelog/changelog-2026-06-07.md) with the implementation rationale per repo rules.
+
+Verified:
+`npm test` passes: 5 tests, 0 failures.
+

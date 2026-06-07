@@ -1,0 +1,35 @@
+{
+  "runtime_adapter": "codex-exec:gpt-5.3-codex-spark:reasoning-high",
+  "pass_winner": "harness",
+  "quality_winner": "harness",
+  "baseline_quality": 81,
+  "harness_quality": 82,
+  "baseline_checks": [
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "fail",
+    "pass",
+    "fail",
+    "pass",
+    "pass",
+    "pass"
+  ],
+  "harness_checks": [
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "pass",
+    "fail",
+    "pass",
+    "pass",
+    "pass"
+  ]
+}

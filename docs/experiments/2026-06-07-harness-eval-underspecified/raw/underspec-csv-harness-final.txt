@@ -1,0 +1,11 @@
+Implemented. `src/csv.mjs` now contains a full CSV parser that returns rows as arrays of string fields and supports quoted fields (including escaped quotes and embedded commas/newlines), comma separators, and CR/LF line endings. It also exports as both named and default for compatibility.
+
+- [src/csv.mjs](/tmp/sg-underspec-live/sandboxes/underspec-csv/harness/src/csv.mjs)
+
+Verification run:
+- `npm test` ✅ (3/3 visible tests passing)
+
+Assumptions applied:
+- `parseCsv("")` returns `[]` (no rows for empty input).
+- Non-string input is coerced via `String(...)`.
+- Unterminated trailing quote is handled leniently by returning collected content (no hard failure path added).

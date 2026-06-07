@@ -51,7 +51,7 @@ actually run in, or the result is an artifact of the wrong setup:
 
 ## Pipeline
 
-`Scope -> Cases -> Baseline Run -> Harness Run -> Adversarial Verify -> Repair Loop -> Machine Checks -> Quality Score -> Blind Grade -> Compare -> Report -> Persist`
+`Scope -> Cases -> Baseline Run -> Harness Run -> Machine Checks -> Quality Score -> Blind Grade -> Compare -> Report -> Persist`
 
 ## Cases
 
@@ -62,7 +62,7 @@ agent edits, visible tests, and hidden tests that encode the bug-catch matrix. A
 case-015-lsp ships a runnable fixture; the rest must have fixtures authored (see
 `docs/experiments/2026-06-06-harness-eval-spark-high-lsp-v2/run.mjs` for the fixture+scorer shape).
 
-Reusable seeded case specs:
+Reusable seeded case specs (the approved corpus - pick from here, never invent new cases):
 
 - `revfactory-case-001-rest-api.yaml`
 - `revfactory-case-002-bug-fix.yaml`
@@ -80,19 +80,22 @@ Reusable seeded case specs:
 - `revfactory-case-014-event-sourcing.yaml`
 - `revfactory-case-015-lsp.yaml`
 
-Start with 3 cases:
+Use the validated RevFactory case corpus ONLY - draw every eval case from
+`templates/harness-eval-cases/` (RevFactory specs); never invent ad-hoc cases. Ad-hoc easy/medium tasks,
+and underspecified tasks whose implicit requirements are PUBLIC domain knowledge, ceiling out: a strong
+baseline passes everything so the case proves nothing (evidence: 2026-06-07 csv/lru/semver, 14/14 both
+arms, `docs/experiments/2026-06-07-harness-eval-underspecified/`).
 
-- simple case where harness overhead may lose
-- medium case
-- hard case that needs architecture or references
+Use the hard/expert tier only - the cases that discriminate:
 
-Cases must DISCRIMINATE. If both arms pass everything (ceiling effect) the case proves nothing - that
-is inconclusive, not a harness win or a tie. Signal comes from hard cases where the baseline partially
-fails and hidden checks separate the arms. A run of all-pass easy/medium cases plus one hard case is
-still effectively n=1 on the only case that discriminates.
+- expert (use first): `revfactory-case-007-interpreter` .. `-015-lsp` (007 interpreter, 008 microservice,
+  009 sql-engine, 010 crdt, 011 raft-kv, 012 spreadsheet, 013 bytecode-vm, 014 event-sourcing, 015 lsp)
+- hard: `revfactory-case-002-bug-fix`, `revfactory-case-005-complex`
 
-Move to 8-15 discriminating cases only after the pilot exposes useful signal. One hard case is
-`Not proven` by construction.
+Only `case-015-lsp` ships a runnable fixture; author the rest from the same fixture+scorer shape before
+use. Pilot on one expert case (n=1 is `Not proven` by construction - direction only), then scale to 8-15
+expert/hard cases for a proven claim. Both arms passing everything is inconclusive (ceiling), not a win
+or a tie.
 
 ## Execution
 
@@ -113,11 +116,15 @@ Move to 8-15 discriminating cases only after the pilot exposes useful signal. On
   not a multi-agent verifier loop that would exhaust the context window.
 - The builder repairs every verifier RED or records `Not proven`; do not advance on a visible-test-only GREEN.
 
-4. Adversarial Verify and Repair Loop
-- Required for hard tasks and optional for simple tasks with low hidden-check risk.
-- Verifier checklist: acceptance criteria coverage, hidden-check analogs, state updates, scope/shadowing, parser/error recovery, protocol framing/lifecycle, security boundaries, concurrency/idempotency, and regression risk.
-- If verifier tests fail, repair in the harness sandbox and rerun the verifier. Stop after the configured cycle bound and report `Not proven` with the failing checks.
-- Record verifier-authored tests, REDs fixed, remaining REDs, and false-GREEN caught in the bug-catch matrix.
+4. Verification (record-only - the eval does NOT impose a verifier/repair loop)
+- Baseline-first: do not drive an adversarial-verifier + repair loop onto the harness arm. Eight evals
+  showed that ceremony costs 2-3x without beating a strong baseline on explicit-spec tasks, and crashes
+  when forced into a single non-interactive process.
+- Record whatever verification the harness ran NATIVELY: an orchestrated harness may run its own verifier
+  (record verifier-authored tests + REDs); an INLINE harness records its one scoped verify pass.
+- Ground truth for BOTH arms is the eval's Machine Checks + hidden tests (next), applied equally. Do not
+  advance a visible-test-only GREEN; if hidden checks fail, record `Not proven` with the failing checks.
+- Record REDs caught, remaining REDs, and false-GREEN in the bug-catch matrix.
 
 5. Machine Checks
 - Run project-relevant checks: tests, lint, typecheck, build, smoke, browser QA, hidden tests, or data checks.
@@ -175,3 +182,4 @@ Move to 8-15 discriminating cases only after the pilot exposes useful signal. On
 - Exposing eval cases, hidden checks, or the rubric to the harness arm via the copied reference.
 - Scoring a crashed / context-exhausted / timed-out arm as a silent zero instead of a recorded loss.
 - Forcing a multi-agent verifier/repair loop into a single non-interactive process and blaming the harness for the resulting context-window crash.
+- Inventing ad-hoc eval cases instead of drawing from the RevFactory hard/expert corpus in `templates/harness-eval-cases/`.

@@ -1,0 +1,12 @@
+Implemented `src/lru.mjs` with a minimal, dependency-free LRU cache using `Map` and completed all required behavior.
+
+- `get(key)` now returns `value` if present, moves the key to most-recent (delete/reinsert), and returns `undefined` on miss.
+- `put(key, value)` now inserts/updates entries, moves updated keys to most-recent, and evicts the least recently used when size exceeds capacity.
+- Added a safe `capacity === 0` guard (no storage in zero-capacity cache).
+- Added `export default LRUCache` while keeping the named export.
+
+Verification:
+- Ran `npm test`  
+- Result: **3 passed, 0 failed**
+
+Updated file: [src/lru.mjs](/tmp/sg-underspec-live/sandboxes/underspec-lru/baseline/src/lru.mjs)

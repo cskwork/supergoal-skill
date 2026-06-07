@@ -1,0 +1,210 @@
+  ┊ review diff
+a/src/server.mjs → b/src/server.mjs
+@@ -1,5 +1,6 @@
+ export function encodeMessage(message) {
+-  return JSON.stringify(message);
++  const body = JSON.stringify(message);
++  return `Content-Length: ${Buffer.byteLength(body, 'utf8')}\r\n\r\n${body}`;
+ }
+ 
+ export class MessageBuffer {
+@@ -8,29 +9,196 @@
+   }
+ 
+   push(chunk) {
+-    this.buffer += chunk;
+-    return [];
+-  }
++    this.buffer += Buffer.isBuffer(chunk) ? chunk.toString('utf8') : String(chunk);
++    const messages = [];
++    while (true) {
++      const headerEnd = this.buffer.indexOf('\r\n\r\n');
++      if (headerEnd < 0) break;
++      const header = this.buffer.slice(0, headerEnd);
++      const match = /(?:^|\r\n)Content-Length:\s*(\d+)/i.exec(header);
++      if (!match) {
++        this.buffer = this.buffer.slice(headerEnd + 4);
++        continue;
++      }
++      const length = Number(match[1]);
++      const bodyStart = headerEnd + 4;
++      if (Buffer.byteLength(this.buffer.slice(bodyStart), 'utf8') < length) break;
++      const body = this.buffer.slice(bodyStart, bodyStart + length);
++      this.buffer = this.buffer.slice(bodyStart + length);
++      messages.push(JSON.parse(body));
++    }
++    return messages;
++  }
++}
++
++const KEYWORDS = new Set(['fn', 'let', 'return']);
++const BUILTINS = new Set(['true', 'false']);
++
++function mkRange(line, start, end = start + 1) {
++  return { start: { line, character: Math.max(0, start) }, end: { line, character: Math.max(0, end) } };
++}
++
++function stripComment(line) {
++  const i = line.indexOf('#');
++  return i < 0 ? line : line.slice(0, i);
++}
++
++function wordAt(text, position) {
++  const line = text.split('\n')[position.line] ?? '';
++  let start = Math.min(position.character, line.length);
++  let end = start;
++  while (start > 0 && /[A-Za-z0-9_]/.test(line[start - 1])) start--;
++  while (end < line.length && /[A-Za-z0-9_]/.test(line[end])) end++;
++  const word = line.slice(start, end);
++  return { word, range: mkRange(position.line, start, end) };
++}
++
++function posInRange(pos, range) {
++  if (pos.line < range.start.line || pos.line > range.end.line) return false;
++  if (pos.line === range.start.line && pos.character < range.start.character) return false;
++  if (pos.line === range.end.line && pos.character > range.end.character) return false;
++  return true;
++}
++
++function identifiers(expr) {
++  const out = [];
++  const re = /\b[A-Za-z_]\w*\b/g;
++  let m;
++  while ((m = re.exec(expr))) {
++    const name = m[0];
++    if (!KEYWORDS.has(name) && !BUILTINS.has(name)) out.push({ name, index: m.index });
++  }
++  return out;
++}
++
++function calls(expr) {
++  const out = [];
+… omitted 187 diff line(s) across 1 additional file(s)/section(s)
+  ┊ review diff
+a//private/tmp/supergoal-harness-eval-5cli-gpt55-low/sandboxes/revfactory-case-015-lsp/hermes/src/server.mjs → b//private/tmp/supergoal-harness-eval-5cli-gpt55-low/sandboxes/revfactory-case-015-lsp/hermes/src/server.mjs
+@@ -5,26 +5,28 @@
+ 
+ export class MessageBuffer {
+   constructor() {
+-    this.buffer = '';
++    this.buffer = Buffer.alloc(0);
+   }
+ 
+   push(chunk) {
+-    this.buffer += Buffer.isBuffer(chunk) ? chunk.toString('utf8') : String(chunk);
++    const incoming = Buffer.isBuffer(chunk) ? chunk : Buffer.from(String(chunk), 'utf8');
++    this.buffer = Buffer.concat([this.buffer, incoming]);
+     const messages = [];
+     while (true) {
+       const headerEnd = this.buffer.indexOf('\r\n\r\n');
+       if (headerEnd < 0) break;
+-      const header = this.buffer.slice(0, headerEnd);
++      const header = this.buffer.subarray(0, headerEnd).toString('ascii');
+       const match = /(?:^|\r\n)Content-Length:\s*(\d+)/i.exec(header);
+       if (!match) {
+-        this.buffer = this.buffer.slice(headerEnd + 4);
++        this.buffer = this.buffer.subarray(headerEnd + 4);
+         continue;
+       }
+       const length = Number(match[1]);
+       const bodyStart = headerEnd + 4;
+-      if (Buffer.byteLength(this.buffer.slice(bodyStart), 'utf8') < length) break;
+-      const body = this.buffer.slice(bodyStart, bodyStart + length);
+-      this.buffer = this.buffer.slice(bodyStart + length);
++      const end = bodyStart + length;
++      if (this.buffer.length < end) break;
++      const body = this.buffer.subarray(bodyStart, end).toString('utf8');
++      this.buffer = this.buffer.subarray(end);
+       messages.push(JSON.parse(body));
+     }
+     return messages;
+  ┊ review diff
+a//private/tmp/supergoal-harness-eval-5cli-gpt55-low/sandboxes/revfactory-case-015-lsp/hermes/src/server.mjs → b//private/tmp/supergoal-harness-eval-5cli-gpt55-low/sandboxes/revfactory-case-015-lsp/hermes/src/server.mjs
+@@ -199,7 +199,13 @@
+ 
+   applyChange(uri, changes) {
+     let text = this.documents.get(uri) ?? '';
+-    for (const change of changes) text = change.text;
++    for (const change of changes) {
++      if (!change.range) {
++        text = change.text;
++        continue;
++      }
++      text = replaceRange(text, change.range, change.text);
++    }
+     this.updateDocument(uri, text);
+   }
+ 
+  ┊ review diff
+a//private/tmp/supergoal-harness-eval-5cli-gpt55-low/sandboxes/revfactory-case-015-lsp/hermes/src/server.mjs → b//private/tmp/supergoal-harness-eval-5cli-gpt55-low/sandboxes/revfactory-case-015-lsp/hermes/src/server.mjs
+@@ -60,6 +60,19 @@
+   if (pos.line === range.start.line && pos.character < range.start.character) return false;
+   if (pos.line === range.end.line && pos.character > range.end.character) return false;
+   return true;
++}
++
++function offsetAt(text, position) {
++  const lines = text.split('\n');
++  let offset = 0;
++  for (let i = 0; i < Math.min(position.line, lines.length); i++) offset += lines[i].length + 1;
++  return offset + Math.min(position.character, lines[position.line]?.length ?? 0);
++}
++
++function replaceRange(text, range, replacement) {
++  const start = offsetAt(text, range.start);
++  const end = offsetAt(text, range.end);
++  return text.slice(0, start) + replacement + text.slice(end);
+ }
+ 
+ function identifiers(expr) {
+구현 완료했습니다.
+
+변경 파일:
+src/server.mjs
+
+구현한 내용:
+- JSON-RPC `Content-Length` 프레이밍
+  - `encodeMessage(message)`
+  - UTF-8 바이트 길이 기준 `MessageBuffer`
+  - 분할 chunk / 연속 메시지 스트리밍 처리
+- MiniLang 파서
+  - `fn name(params) { ... }`
+  - `let name = expression`
+  - `return expression`
+  - `name(args)` 함수 호출
+  - `#` 주석 처리
+  - 닫히지 않은 함수에 대한 기본 오류 복구
+- 심볼 테이블
+  - 함수
+  - 파라미터
+  - 지역 변수
+- 진단
+  - undefined symbol
+  - undefined function
+  - 함수 호출 arity mismatch
+  - unclosed function
+- LSP lifecycle
+  - `initialize`
+  - `shutdown`
+  - `exit`
+- LSP 기능
+  - `textDocument/didOpen`
+  - `textDocument/didChange`
+    - 전체 문서 변경
+    - range 기반 incremental 변경
+  - `textDocument/completion`
+  - `textDocument/definition`
+  - `textDocument/hover`
+- 서버 API
+  - `MiniLangServer.handle(message)`
+  - `takeNotifications()`
+  - `getDiagnostics(uri)`
+
+검증:
+`npm test` 실행 완료했고 모든 visible test가 통과했습니다.
+
+결과:
+5개 테스트 통과
+0개 실패
+
+session_id: 20260607_144450_39f2b0

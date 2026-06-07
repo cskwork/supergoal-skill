@@ -1,0 +1,13 @@
+Implemented the MiniLang LSP server in `src/server.mjs` and added the required reasoning note in `docs/changelog/changelog-2026-06-07.md`.
+
+What changed:
+- JSON-RPC `Content-Length` framing and streaming decode
+- `initialize`, `shutdown`, `exit`
+- `didOpen` / `didChange` document updates with diagnostics publishing
+- MiniLang parser with comments, recovery, symbols, references, arity checks
+- completion, definition, hover
+- ranged and full-document incremental changes
+
+Verification:
+- Ran `npm test`
+- Result: 5 tests passed, 0 failed.

@@ -1,0 +1,13 @@
+Implemented: `src/semver.mjs` now fully compares semantic versions per SemVer precedence, returning `-1/0/1` for `<`, `=`, `>`.
+
+- Updated comparator logic in [src/semver.mjs](/tmp/sg-underspec-live/sandboxes/underspec-semver/baseline/src/semver.mjs) to:
+  - compare `major`, `minor`, `patch` numerically
+  - ignore build metadata (`+...`) for precedence
+  - compare prerelease identifiers correctly (numeric vs numeric, numeric vs alphanumeric, lexical for strings, shorter prerelease set wins when all shared identifiers match)
+  - treat versions without prerelease as higher than the same core version with prerelease
+- Added parsing validation in the same file for valid SemVer shape and invalid numeric forms (including leading-zero numeric identifiers).
+- Added decision record in [docs/changelog/changelog-2026-06-07.md](/tmp/sg-underspec-live/sandboxes/underspec-semver/baseline/docs/changelog/changelog-2026-06-07.md).
+
+Verification:
+- Ran `npm test`
+- Result: `# tests 3 # pass 3` (no failures).

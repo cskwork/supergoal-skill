@@ -1,0 +1,20 @@
+Implemented using the smallest applicable **supergoal mode** (LEGACY/default loop): fail → minimal fix → verify with repo tests, no extra scope.
+
+### Result
+- `compareVersions(a, b)` now implements SemVer precedence in `src/semver.mjs`:
+  - compares `major.minor.patch` numerically
+  - ignores build metadata (`+build`)
+  - handles prerelease ordering (`-alpha`, `-alpha.1`, etc.) per SemVer rules
+  - returns `-1/0/1` only
+- Added both named and default export compatibility.
+- Recorded assumptions in changelog: valid SemVer inputs are expected (`X.Y.Z` core with optional `-prerelease` and optional `+build`).
+
+### Files changed
+- [src/semver.mjs](/tmp/sg-underspec-live/sandboxes/underspec-semver/harness/src/semver.mjs)
+- [docs/changelog/changelog-2026-06-07.md](/tmp/sg-underspec-live/sandboxes/underspec-semver/harness/docs/changelog/changelog-2026-06-07.md)
+
+### Verification
+- Ran `npm test`  
+- Result: `# tests 3 # pass 3 # fail 0`
+
+No changes were made outside this sandbox.

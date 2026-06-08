@@ -6,7 +6,7 @@
 No extra install: clone the repo, symlink it into your skills directory, then `/supergoal <objective>`.
 Landing page: **[cskwork.github.io/supergoal-skill](https://cskwork.github.io/supergoal-skill/)**.
 
-A Claude Code skill that takes a single objective, surfaces the requirements that are not in the prompt,
+An agent skill that takes a single objective, surfaces the requirements that are not in the prompt,
 makes the smallest correct change, and verifies it against the project's own tests and spec - then stops.
 
 ## What it adds over a plain baseline
@@ -17,7 +17,7 @@ independent critic - then makes the smallest correct change and verifies it agai
 tests and spec, never a generated proxy. For a trivial single edit, skip the skill and edit directly.
 
 Each role is a bundled file in `agents/`, so dispatch stays harness-agnostic across Claude Code, Codex,
-and other CLIs - but dispatch is optional and single-driver by default.
+agy, and other agent CLIs - but dispatch is optional and single-driver by default.
 
 ## Principles
 
@@ -65,16 +65,16 @@ confirm with you before installing anything.
 
 ## Install
 
-This repo **is** the skill. Put it where Claude Code finds skills:
+This repo **is** the skill. Put it where your agent CLI finds skills:
 
 ```bash
 git clone https://github.com/cskwork/supergoal-skill.git
-# then either symlink or copy it into your global skills dir:
-ln -s "$(pwd)/supergoal-skill" ~/.claude/skills/supergoal
-# or: cp -R supergoal-skill ~/.claude/skills/supergoal
+# then either symlink or copy it into the skills dir your agent uses:
+ln -s "$(pwd)/supergoal-skill" <your-agent-skills-dir>/supergoal
+# examples: ~/.claude/skills/supergoal, ~/.codex/skills/supergoal, ~/.agents/skills/supergoal
 ```
 
-Then in Claude Code: `/supergoal <your objective>`.
+Then in your agent CLI: `/supergoal <your objective>`.
 
 ### Windows
 
@@ -111,7 +111,7 @@ https://github.com/revfactory/claude-code-harness/
 ## Credit
 
 Concept and workflow adapted from **oh-my-symphony** by cskwork
-(https://github.com/cskwork/oh-my-symphony). Built for Claude Code.
+(https://github.com/cskwork/oh-my-symphony). Built as a portable agent skill.
 
 ## License
 

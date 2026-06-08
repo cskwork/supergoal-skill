@@ -6,7 +6,7 @@
 새 도구를 따로 배울 필요는 없습니다. 저장소를 클론하고 스킬 디렉터리에 연결한 뒤 `/supergoal <목표>`.
 랜딩 페이지: **[cskwork.github.io/supergoal-skill](https://cskwork.github.io/supergoal-skill/)**.
 
-`/supergoal`은 Claude Code가 한 가지 목표에 집중하도록 돕는 스킬입니다. 프롬프트에 빠진 요구사항을
+`/supergoal`은 여러 agent CLI가 한 가지 목표에 집중하도록 돕는 스킬입니다. 프롬프트에 빠진 요구사항을
 먼저 찾아내고, 필요한 만큼만 고친 뒤, 프로젝트의 실제 테스트와 스펙으로 맞는지 확인하고 멈춥니다.
 
 ## 일반 실행보다 더해지는 것
@@ -16,8 +16,8 @@
 먼저 드러냅니다. 그다음 가장 작은 변경으로 통과시키고, 생성된 proxy가 아니라 프로젝트의 실제 테스트와
 스펙으로 다시 확인합니다. 단순 문구 수정처럼 아주 작은 작업이면 스킬 없이 바로 고치는 편이 낫습니다.
 
-각 역할은 `agents/`에 파일로 들어 있습니다. 그래서 Claude Code, Codex 같은 여러 CLI에서 특정 harness에
-묶이지 않고 dispatch할 수 있습니다. 다만 dispatch는 선택 사항이며, 기본은 한 에이전트가 끝까지 진행하는
+각 역할은 `agents/`에 파일로 들어 있습니다. 그래서 Claude Code, Codex, agy 같은 여러 agent CLI에서 특정
+harness에 묶이지 않고 dispatch할 수 있습니다. 다만 dispatch는 선택 사항이며, 기본은 한 에이전트가 끝까지 진행하는
 단일 드라이버 방식입니다.
 
 ## 원칙
@@ -69,16 +69,16 @@ QA-ONLY, LEARN/LEARN-DOMAIN, HARNESS-EVAL, SKILL-MINE은 각각 다른 목적의
 
 ## 설치
 
-이 저장소가 곧 스킬입니다. Claude Code가 스킬을 찾는 위치에 연결하세요:
+이 저장소가 곧 스킬입니다. 사용하는 agent CLI가 스킬을 찾는 위치에 연결하세요:
 
 ```bash
 git clone https://github.com/cskwork/supergoal-skill.git
-# 전역 스킬 디렉터리에 심링크하거나 복사:
-ln -s "$(pwd)/supergoal-skill" ~/.claude/skills/supergoal
-# 또는: cp -R supergoal-skill ~/.claude/skills/supergoal
+# 사용하는 에이전트의 스킬 디렉터리에 심링크하거나 복사:
+ln -s "$(pwd)/supergoal-skill" <your-agent-skills-dir>/supergoal
+# 예: ~/.claude/skills/supergoal, ~/.codex/skills/supergoal, ~/.agents/skills/supergoal
 ```
 
-이후 Claude Code에서 `/supergoal <목표>`를 실행하면 됩니다.
+이후 사용하는 agent CLI에서 `/supergoal <목표>`를 실행하면 됩니다.
 
 ### Windows
 
@@ -115,7 +115,7 @@ https://github.com/revfactory/claude-code-harness/
 ## 크레딧
 
 컨셉과 워크플로는 cskwork의 **oh-my-symphony**에서 차용했습니다
-(https://github.com/cskwork/oh-my-symphony). Claude Code용으로 제작했습니다.
+(https://github.com/cskwork/oh-my-symphony). 여러 agent CLI에서 쓸 수 있게 구성했습니다.
 
 ## 라이선스
 

@@ -23,3 +23,9 @@
 - Updated the landing metric from `<=3` questions to `<=5` so it matches the current interview contract.
 - Reason: the landing page should explain the skill naturally in Korean without drifting from the
   current README and `SKILL.md` behavior.
+
+## Agent-Neutral Product Wording
+
+- Replaced Claude Code-only wording in `README.md`, `README.ko.md`, and `docs/index.html` with
+  agent-neutral language that names Claude Code, Codex, and agy as supported agent CLIs.
+- Reason: `/supergoal` is a portable skill used by multiple agents, not a Claude Code-only workflow.

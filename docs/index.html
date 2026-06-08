@@ -1097,8 +1097,8 @@
     <div class="wrap vault">
       <div class="reveal">
         <h2><span class="en">Bundled roles. Load what the phase needs.</span><span class="ko">역할은 번들되어 있고, 단계에 필요한 것만 불러옵니다.</span></h2>
-        <p class="lead en">Every role is a file in `agents/`, so dispatch works the same across Claude Code, Codex, and other CLIs - and it's optional, single-driver by default. The reference map pulls in only the guide the current phase needs.</p>
-        <p class="lead ko">모든 역할은 `agents/`에 파일로 들어 있습니다. 그래서 Claude Code, Codex 같은 CLI에서 같은 방식으로 dispatch할 수 있습니다. dispatch는 선택이며, 기본은 한 에이전트가 끝까지 진행하는 단일 드라이버 방식입니다.</p>
+        <p class="lead en">Every role is a file in `agents/`, so dispatch works the same across Claude Code, Codex, agy, and other agent CLIs - and it's optional, single-driver by default. The reference map pulls in only the guide the current phase needs.</p>
+        <p class="lead ko">모든 역할은 `agents/`에 파일로 들어 있습니다. 그래서 Claude Code, Codex, agy 같은 agent CLI에서 같은 방식으로 dispatch할 수 있습니다. dispatch는 선택이며, 기본은 한 에이전트가 끝까지 진행하는 단일 드라이버 방식입니다.</p>
         <div class="file-list">
           <div class="file-chip"><code>SKILL.md</code><span class="en">baseline-first loop, modes, map</span><span class="ko">핵심 루프, 모드, 레퍼런스 맵</span></div>
           <div class="file-chip"><code>agents/&lt;role&gt;.md</code><span class="en">one persona per role</span><span class="ko">역할별 지침 파일</span></div>
@@ -1157,17 +1157,17 @@ Stop on green. Report with output.</pre>
 git clone https://github.com/cskwork/supergoal-skill.git
 
 <span class="c-soft"># symlink keeps updates simple</span>
-ln -s "$(pwd)/supergoal-skill" ~/.claude/skills/supergoal
+ln -s "$(pwd)/supergoal-skill" &lt;your-agent-skills-dir&gt;/supergoal
 
-<span class="c-soft"># then, in Claude Code</span>
+<span class="c-soft"># then, in your agent CLI</span>
 <span class="c-cyan">/supergoal</span> build a CLI todo app and ship it</pre>
 <pre class="ko"><span class="c-soft"># 스킬 클론</span>
 git clone https://github.com/cskwork/supergoal-skill.git
 
 <span class="c-soft"># 심링크하면 업데이트가 쉽습니다</span>
-ln -s "$(pwd)/supergoal-skill" ~/.claude/skills/supergoal
+ln -s "$(pwd)/supergoal-skill" &lt;your-agent-skills-dir&gt;/supergoal
 
-<span class="c-soft"># 그다음 Claude Code에서</span>
+<span class="c-soft"># 그다음 사용하는 agent CLI에서</span>
 <span class="c-cyan">/supergoal</span> CLI 할 일 앱을 만들고 출시해줘</pre>
       </div>
       <div class="install-card reveal">
@@ -1175,7 +1175,7 @@ ln -s "$(pwd)/supergoal-skill" ~/.claude/skills/supergoal
         <p class="en">This repo is the skill. Clone it, link it, and hand one objective to `/supergoal`.</p>
         <p class="ko">이 저장소가 곧 스킬입니다. 클론하고 스킬 디렉터리에 연결한 뒤, `/supergoal`에 목표 하나를 맡기세요.</p>
         <div class="pill-row">
-          <span class="pill">Claude Code</span>
+          <span class="pill">Agent CLI</span>
           <span class="pill">Node 18+</span>
           <span class="pill">git worktree (optional)</span>
           <span class="pill">real tests</span>

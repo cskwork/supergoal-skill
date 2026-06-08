@@ -60,8 +60,8 @@ scope + constraints + environment.
 
 ## Question selection
 
-- **Cap at 3-5 questions, one clarification round.** A small balanced set beats too-few, too-many, or
-  templated questioning.
+- **Cap at <=5 questions, one clarification round.** Ask only as many as the ambiguity requires; one
+  or two questions are enough when they settle the load-bearing choice.
 - **Maximize information gain.** Prefer the question that most narrows the space of viable plans -
   one that eliminates a whole branch of work. Reason about which plans survive each answer, not about
   the questions in isolation.

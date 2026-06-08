@@ -6,3 +6,20 @@
 - Reason: the contract should allow fewer than five high-leverage questions while preventing unbounded
   or minimum-three interviews.
 - Updated the interview contract test to assert the new wording.
+
+## Korean README Copy Polish
+
+- Refined `README.ko.md` so the opening, principles, mode table, default loop, install notes, layout, and
+  evidence sections read more naturally in Korean while preserving the existing product claims.
+- Reason: the Korean README should be approachable to non-developers who need the value proposition and
+  precise enough for developers who need the execution and verification model.
+
+## Korean Landing Page Copy Polish
+
+- Refined Korean copy in `docs/index.html` across the hero, proof cards, metrics, workflow claims, mode
+  cards, principles, bundled-role section, examples, install copy, and footer.
+- Added Korean labels to previously English-only visible proof/footer text while preserving balanced
+  English/Korean language-toggle blocks.
+- Updated the landing metric from `<=3` questions to `<=5` so it matches the current interview contract.
+- Reason: the landing page should explain the skill naturally in Korean without drifting from the
+  current README and `SKILL.md` behavior.

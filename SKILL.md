@@ -52,7 +52,7 @@ re-read). Detail in `reference/role-loop.md`. Trivial single edit: skip the loop
 (reproduce red -> fix green -> real suite); and if persisted data is load-bearing, DB evidence too. Both,
 not either/or - DB proves the data state, the test proves the code; neither substitutes for the other.
 
-1. **Frame.** Restate the goal + acceptance criteria in one line. If underspecified, ask <=3
+1. **Frame.** Restate the goal + acceptance criteria in one line. If underspecified, ask <=5
    high-leverage questions (`reference/interview.md`); resolve code-answerable ones by reading code.
    If the work ships user-facing UI, load `reference/ui-ux.md` now and commit to the Expressive/polished
    baseline (see the UI/UX overlay above) so strong design drives Build from the start, not just QA.
@@ -100,7 +100,7 @@ risky work in a branch or `git worktree` (optional).
 | `reference/domain-rules.md` | Frame: distill <=10 priority rules |
 | `reference/domain-context.md` | Surface requirements: repo-local Domain Brief |
 | `reference/debugging.md` | DEBUG: hypothesis-ledger diagnose loop |
-| `reference/interview.md` | Ambiguity-gated 3-5 question interview before the freeze |
+| `reference/interview.md` | Ambiguity-gated <=5 question interview before the freeze |
 | `reference/plan-grounding.md` | Ground the approach from docs/code before committing |
 | `reference/db-access.md`, `templates/db-access/` | Read-only DB evidence (required past *very easy* when data load-bearing) - GREENFIELD / DEBUG / LEGACY / QA-ONLY |
 | `reference/qa.md`, `qa-only.md`, `db-access.md` | QA / no-code verify |

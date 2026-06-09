@@ -65,7 +65,7 @@ lost in an unbounded crawl.
 
 ## Vault (reduced run folder)
 
-`docs/changelog/<date>-qa-<slug>/` with: `brief.md`, `verification.md` (machine `## QA` evidence),
+`docs/changelog/<YYYY-MM>/<DD-qa-topic>/` with: `brief.md`, `verification.md` (machine `## QA` evidence),
 `report.md` (human), `qa/` (evidence files), `state.json`. No `plan.md`/`claims.md` — nothing is
 planned-to-ship or claimed-as-built. The per-run report stays here; the reusable suite goes to the
 domain pack (below).

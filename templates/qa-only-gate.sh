@@ -8,7 +8,7 @@
 # NEVER edit this script to make a non-compliant QA-ONLY run pass — re-run QA properly instead.
 #
 # Usage: qa-only-gate.sh <vault-dir> <browser|cli>
-#   <vault-dir>  the run's changelog folder, e.g. docs/changelog/2026-06-05-qa-checkout
+#   <vault-dir>  the run's changelog folder, e.g. docs/changelog/2026-06/05-qa-checkout
 #   browser|cli  app type exercised: a browser app or a CLI/library
 
 set -euo pipefail

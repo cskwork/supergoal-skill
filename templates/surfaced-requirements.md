@@ -1,11 +1,12 @@
 # Surfaced requirements
 
 Implicit requirements the prompt never stated, surfaced by the role-loop critic and turned into failing
-tests. The critic appends one dated section per task (status: open); the verifier marks each fixed.
-This is the human-readable trail of what the prompt left implicit - the tests are the machine-checkable
-form, this file is the why.
+tests. Lives in the run vault (`docs/changelog/<YYYY-MM>/<DD-topic>/surfaced-requirements.md`), one file
+per run alongside the run's other evidence. The critic writes this run's requirements (status: open); the
+verifier marks each fixed. This is the human-readable trail of what the prompt left implicit - the tests
+are the machine-checkable form, this file is the why.
 
-<!-- One section per task. Keep entries terse: requirement / why implied / covering test / status. -->
+<!-- One dated heading for this run. Keep entries terse: requirement / why implied / covering test / status. -->
 
 ## YYYY-MM-DD - <task one-liner>
 

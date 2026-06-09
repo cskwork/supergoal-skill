@@ -42,6 +42,7 @@ harness에 묶이지 않고 dispatch할 수 있습니다. 다만 dispatch는 선
 | "X를 설명/가르쳐줘" (코드 변경 없음) | **LEARN** | Intake -> Source -> Bridge -> Teach -> Check |
 | "이 코드베이스를 학습/온보딩해줘" | **LEARN-DOMAIN** | Survey -> Map -> Ground -> `.domain-agent/` 위키 |
 | "QA만/검증/데이터 비교" (코드 변경 없음) | **QA-ONLY** | 앱 + 읽기 전용 DB 확인 -> 증거 -> `report.md` |
+| "코드/diff/PR 리뷰만" (수정 없음) | **REVIEW-ONLY** | 독립 리뷰어 2명 -> 검증된 findings -> `report.md` |
 | "harness 효과 테스트 / 유무 비교" | **HARNESS-EVAL** | 케이스 -> baseline -> harness -> 머신 체크 -> 품질 점수 -> 비교 |
 | "히스토리에서 스킬 생성" (제품 코드 변경 없음) | **SKILL-MINE** | 히스토리 마이닝 -> 랭크 -> 선택 -> 포터블 `SKILL.md` 생성 -> 설치 |
 
@@ -63,9 +64,9 @@ harness에 묶이지 않고 dispatch할 수 있습니다. 다만 dispatch는 선
 /supergoal 이 마이그레이션 harness를 3개 케이스에서 유무 비교해줘
 ```
 
-QA-ONLY, LEARN/LEARN-DOMAIN, HARNESS-EVAL, SKILL-MINE은 각각 다른 목적의 유틸리티입니다. 코드 없는 QA,
-교육/온보딩, harness 측정, 스킬 생성처럼 제품 코드를 바로 고치지 않는 작업을 다룹니다. 기본적으로 제품
-코드는 쓰지 않고, 무언가 설치하기 전에는 사용자에게 먼저 확인합니다.
+QA-ONLY, REVIEW-ONLY, LEARN/LEARN-DOMAIN, HARNESS-EVAL, SKILL-MINE은 각각 다른 목적의 유틸리티입니다.
+코드 없는 QA, 수정 없는 리뷰, 교육/온보딩, harness 측정, 스킬 생성처럼 제품 코드를 바로 고치지 않는
+작업을 다룹니다. 기본적으로 제품 코드는 쓰지 않고, 무언가 설치하기 전에는 사용자에게 먼저 확인합니다.
 
 ## 설치
 

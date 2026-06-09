@@ -56,4 +56,4 @@ cost_fields:
   - reasoning_effort
   - tool_calls
   - token_estimate
-persist_path: "docs/changelog/<date>-harness-eval/cases/revfactory-case-005-complex.yaml"
+persist_path: "docs/changelog/<YYYY-MM>/<DD-harness-eval>/cases/revfactory-case-005-complex.yaml"

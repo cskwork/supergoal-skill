@@ -62,7 +62,8 @@ not either/or - DB proves the data state, the test proves the code; neither subs
 3. **Critic (independent; no src edits).** Re-read the prose spec + repo/data rules
    (`reference/domain-context.md`, `domain-rules.md`; legacy `reference/learn-domain.md`). For each
    required behavior the existing tests do NOT exercise, write a FAILING test (black-box/property,
-   derived strictly from the spec) and log it in `docs/surfaced-requirements.md` (what the spec implies,
+   derived strictly from the spec) and log it in the run vault's `surfaced-requirements.md`
+   (`docs/changelog/<YYYY-MM>/<DD-topic>/`) (what the spec implies,
    why, covering test); do not weaken or delete existing tests. These SURFACE hidden requirements - a
    signal, not the acceptance oracle.
 4. **Fixer (no test edits).** Make the failing tests pass with the smallest change; no padding (no code

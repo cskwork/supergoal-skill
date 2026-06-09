@@ -7,7 +7,7 @@
 # NEVER edit this script to make a non-compliant QA pass — re-run QA properly instead.
 #
 # Usage: qa-gate.sh <vault-dir> <browser|cli>
-#   <vault-dir>  the run's changelog folder, e.g. docs/changelog/2026-05-30-my-objective
+#   <vault-dir>  the run's changelog folder, e.g. docs/changelog/2026-06/10-my-objective
 #   browser|cli  app type under test: a browser app (drives a real browser) or a CLI/library
 #
 # Exit 0 only if:

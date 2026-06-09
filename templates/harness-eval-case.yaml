@@ -37,4 +37,4 @@ cost_fields:
   - reasoning_effort
   - tool_calls
   - token_estimate
-persist_path: "docs/changelog/<date>-harness-eval/cases/<id>.yaml or .domain-agent/qa/harness-eval/<id>.yaml"
+persist_path: "docs/changelog/<YYYY-MM>/<DD-harness-eval>/cases/<id>.yaml or .domain-agent/qa/harness-eval/<id>.yaml"

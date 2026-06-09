@@ -45,8 +45,9 @@ API, backend, CLI without TUI): skip.
 
 ## Default loop (GREENFIELD / DEBUG / LEGACY) - role-separated
 
-Author-independent roles (separate agent per role when orchestrated; inline, switch role with a fresh
-re-read). Detail in `reference/role-loop.md`. Trivial single edit: skip the loop.
+Author-independent roles (separate agent per role when orchestrated - the dispatching agent is the
+"conductor" named in role files; inline, switch role with a fresh re-read). Detail in
+`reference/role-loop.md`. Trivial single edit: skip the loop.
 
 **Difficulty gate.** *Very easy* (trivial edit) -> skip the loop. *Harder* -> red-green is REQUIRED
 (reproduce red -> fix green -> real suite); and if persisted data is load-bearing, DB evidence too. Both,

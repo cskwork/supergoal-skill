@@ -1,9 +1,8 @@
 # Clarifying interview - before plan freeze
 
 After context-gathering and before the plan freezes, run a conditional clarifying interview so the
-plan targets the user's real intent. The interview crystallizes requirements; the later Human Feedback
-gate still approves the frozen plan. The two are distinct: this resolves *what to build/fix*, Human
-Feedback approves *the plan to do it*.
+plan targets the user's real intent. The interview resolves *what to build/fix*; *how* is settled by
+grounding the plan in docs/code afterwards (`reference/plan-grounding.md`).
 
 Applies to GREENFIELD, DEBUG, and LEGACY only. LEARN and LEARN-DOMAIN skip it (LEARN already asks one
 scope question; see `reference/learn.md`).
@@ -14,8 +13,8 @@ This file is the standalone contract.
 
 | Mode | Insertion point | Context already gathered |
 |---|---|---|
-| GREENFIELD | Start of Plan, before plan-grounding/freeze | `brief.md`, `## Validation`, Domain Brief |
-| LEGACY | Start of Plan, before plan-grounding/freeze | Explore affected-code map, Domain Brief |
+| GREENFIELD | End of Frame, before plan-grounding/freeze | `brief.md`, `## Validation`, Domain Brief |
+| LEGACY | End of Frame, before plan-grounding/freeze | Explore affected-code map, Domain Brief |
 | DEBUG | End of Diagnose, after ranked hypotheses, before Confirm + fix plan | hypothesis ledger, current code |
 
 ## Gate - when to interview vs skip
@@ -97,4 +96,4 @@ safe to skip.
 ## Exit
 
 Requirements are crystallized. GREENFIELD/LEGACY proceed to plan-grounding and freeze; DEBUG proceeds
-to Confirm and the fix plan. The frozen plan then goes to Human Feedback.
+to Confirm and the fix plan. Build starts only after the plan is grounded and frozen.

@@ -33,8 +33,8 @@ The technique choices below are deliberate, not defaults. One-clause rationale e
 
 `Intake -> Survey -> Scope checkpoint -> Map -> Deepen -> Ground -> Persist -> Onboard -> Freshness loop`
 
-Read-only except the knowledge pack and sandbox probes. No production source changes. No Human Feedback
-implementation gate (nothing ships), but the Scope checkpoint pauses for the user before deep fan-out.
+Read-only except the knowledge pack and sandbox probes. No production source changes. No
+implementation gates (nothing ships), but the Scope checkpoint pauses for the user before deep fan-out.
 
 | Phase | Goal | Writes | Exit gate |
 |---|---|---|---|
@@ -186,8 +186,8 @@ Constraints:
 - Committing exposes internal architecture: keep it in the gitignored knowledge path; ask before moving
   it outside, exactly like publishing the pack.
 
-LEARN-DOMAIN runs no implementation gates, so the Onboard render does not pull the product Designer's
-`claims.md` / QA contrast gate / committee apparatus; the agent self-applies the functional-ui baseline.
+LEARN-DOMAIN runs no implementation gates, so the Onboard render does not pull the product Designer
+dispatch or QA contrast-gate apparatus; the agent self-applies the functional-ui baseline.
 On a later Freshness run, regenerate the handbook from the refreshed pack so it never drifts from it.
 
 ## Freshness loop (incremental, not full re-learn)

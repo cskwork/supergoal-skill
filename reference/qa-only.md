@@ -6,7 +6,7 @@ Use when the user wants QA, data verification, or a data comparison and explicit
 QA-ONLY drives an already-running app (and a read-only DB) like a user, records what worked / what
 didn't / what it discovered in a human report, and persists a reusable, indexed QA suite so the same
 check re-runs fast later. It writes NO production code, runs NO build, creates NO worktree, and runs
-none of the implementation gates (Validate/Human Feedback/Committee/Deliver). It is read-only except
+none of the default-loop phases (no Build/Critic/Fixer). It is read-only except
 the run folder and the `.domain-agent/qa/` suite.
 
 If the request actually needs a fix or feature, this is the wrong mode — route to DEBUG/LEGACY and use
@@ -66,8 +66,8 @@ lost in an unbounded crawl.
 ## Vault (reduced run folder)
 
 `docs/changelog/<YYYY-MM>/<DD-qa-topic>/` with: `brief.md`, `verification.md` (machine `## QA` evidence),
-`report.md` (human), `qa/` (evidence files), `state.json`. No `plan.md`/`claims.md` — nothing is
-planned-to-ship or claimed-as-built. The per-run report stays here; the reusable suite goes to the
+`report.md` (human), `qa/` (evidence files), `state.json`. No `plan.md` — nothing is
+planned-to-ship. The per-run report stays here; the reusable suite goes to the
 domain pack (below).
 
 ## Report (the one human-facing deliverable)

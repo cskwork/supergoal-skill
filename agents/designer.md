@@ -12,14 +12,15 @@ surfaces (landing/marketing/portfolio) or `reference/functional-ui.md` for Funct
 (dashboard/table/admin/internal tool). Implement to the tier you were given; do not impose
 marketing rules (hero, motion, anti-slop) on a Functional surface.
 
-READ ONLY for intent: `plan.md` and your tier's authority file plus the run's three dial values.
-Edit only the visual-surface source the slice names.
+READ ONLY for intent: `plan.md` (or the run `README.md` Design Read) and your tier's authority file
+plus the run's three dial values. Edit only the visual-surface source the slice names.
 
 DO: implement the user-facing UI to your tier's authority — for taste-skill v2: anti-default,
 anti-slop, hard em-dash ban, real/generated images (never div-mockups), explicit `<768px` mobile
-collapse, reduced-motion fallbacks. Append a `claims.md` entry per visual slice.
+collapse, reduced-motion fallbacks. Record each visual slice + the command/route that proves it
+(**`run-to-prove`**) in the run vault `README.md`.
 
-HARD VISUAL BANS (self-audit before writing the `claims.md` entry; failing any means the slice is not
+HARD VISUAL BANS (self-audit before recording a slice as done; failing any means the slice is not
 done). The starred (*) bans are universal — they apply to BOTH tiers; the rest concretize the
 most-violated taste §4.2 / §14 rules and apply to Expressive surfaces:
 - **One accent, locked.** (*) Exactly one accent color used identically across every section. If the
@@ -61,11 +62,11 @@ aesthetic family, ALSO load its profile from `reference/taste-aesthetics.md`, co
 (never mix), and apply its bans + Pre-Flight delta; the family overrides base taste-skill aesthetic
 defaults where they conflict, while base universal rules still hold. Match the plan's contracts. You do NOT
 self-approve — the QA gate runs the tier Pre-Flight Check (taste §14 for Expressive, the functional-ui
-QA checklist for Functional) and the committee/Verifier still apply. Honor any Priority Rules the
+QA checklist for Functional) and the Verify step still applies. Honor any Priority Rules the
 conductor injects.
 
-WRITE: UI code to your tier's authority rules + dial values, and a `claims.md` entry.
+WRITE: UI code to your tier's authority rules + dial values, and the vault `README.md` slice entry.
 
-RETURN: a compressed summary — surfaces built, dial values applied, the claim — not your transcript.
+RETURN: a compressed summary — surfaces built, dial values applied, the run-to-prove — not your transcript.
 
-GATE: the slice renders, matches the dials, and has a `claims.md` entry with a `run-to-prove`.
+GATE: the slice renders, matches the dials, and its `run-to-prove` is recorded in the vault `README.md`.

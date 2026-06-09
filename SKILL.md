@@ -1,6 +1,6 @@
 ---
 name: supergoal
-description: Baseline-first delivery - surface hidden requirements, make the smallest correct change, verify against real tests/spec. Use for "/supergoal", "supergoal", "build X", "fix this bug", "add this feature", "QA / verify only", "learn this codebase", "make a skill", or "eval a harness".
+description: Baseline-first delivery - surface hidden requirements, make the smallest correct change, verify against real tests/spec. Use for "/supergoal", "supergoal", "build X", "fix this bug", "add this feature", "QA / verify only", "review this code/PR", "learn this codebase", "make a skill", or "eval a harness".
 ---
 
 # /supergoal - baseline-first
@@ -32,6 +32,7 @@ One objective -> the smallest correct change -> verified against ground truth. F
 | explain / teach / how does X work (no code) | LEARN | `reference/learn.md` |
 | learn / onboard / map this codebase (persist a wiki) | LEARN-DOMAIN | `reference/learn-domain.md` |
 | QA / verify / 검증만 / compare data (no code) | QA-ONLY | `reference/qa-only.md` |
+| review / audit this code/diff/PR (no fixes) | REVIEW-ONLY | `reference/review-only.md` |
 | test harness effectiveness / compare with vs without | HARNESS-EVAL | `reference/harness-eval.md` |
 | turn repeated work into a reusable skill | SKILL-MINE | `reference/skill-mine.md` |
 
@@ -86,6 +87,8 @@ risky work in a branch or `git worktree` (optional).
 - **QA-ONLY** drives an already-running app (and a read-only DB), records as-is/to-be evidence, produces a
   human `report.md`, and persists a reusable suite under `.domain-agent/qa/`. No code change.
   `reference/qa-only.md`, `db-access.md`; terminal gate `templates/qa-only-gate.sh`.
+- **REVIEW-ONLY** reviews a diff/PR/module and delivers an evidence-backed findings `report.md` -
+  findings, not fixes; no source or test edits (`reference/review-only.md`).
 - **LEARN / LEARN-DOMAIN** teach a human (`reference/learn.md`) or persist a source-grounded
   `.domain-agent/` wiki for the agent (`reference/learn-domain.md`; gate
   `templates/learn-grounding-gate.mjs`).
@@ -106,6 +109,7 @@ risky work in a branch or `git worktree` (optional).
 | `reference/plan-grounding.md` | Ground the approach from docs/code before committing |
 | `reference/db-access.md`, `templates/db-access/` | Read-only DB evidence (required past *very easy* when data load-bearing) - GREENFIELD / DEBUG / LEGACY / QA-ONLY |
 | `reference/qa.md`, `qa-only.md`, `db-access.md` | QA / no-code verify |
+| `reference/review-only.md` | REVIEW-ONLY: findings report, no fixes |
 | `reference/learn.md`, `learn-domain.md` | Teach a human / onboard the agent |
 | `reference/ui-ux.md`, `taste-skill-v2.md`, `functional-ui.md`, `taste-aesthetics.md` | User-facing UI tier |
 | `reference/harness-eval.md` | HARNESS-EVAL |

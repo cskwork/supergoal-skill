@@ -92,3 +92,39 @@ never beat a strong baseline; nothing gated was added back - DEBUG even got *les
   in `gate-scenarios.test.sh`, harness-eval's "do NOT force the committee ceremony" warning, and
   "marketing claims").
 - Historical records (`docs/experiments/*`, `docs/changelog/*`, `docs/DESIGN.md`) left untouched.
+
+## Feature: REVIEW-ONLY mode + domain-context compression
+
+### REVIEW-ONLY - findings, not fixes
+"review/audit this code/diff/PR" was an unrouted intent: QA-ONLY drives a running app (not a diff)
+and the default loop starts building. Added a ninth mode with zero new machinery - it dispatches the
+two existing reviewer personas in parallel:
+
+- NEW `reference/review-only.md` (~45 lines): read-only except the run folder; code-reviewer in
+  findings-only stance (names the missing test per untested behavior instead of writing test files,
+  keeping the repo untouched) + security-reviewer; every CRITICAL/HIGH finding re-checked against the
+  cited code before reporting (anti-hallucination guard); severity-ordered `report.md` with
+  `Untested behaviors:` and `Not covered:` anchors; fixes route to DEBUG/LEGACY as a new objective.
+- NEW `tests/review-only-contract.test.sh` (15 checks) pinning the findings-only boundary, both
+  personas, finding verification, report anchors, and the route-out.
+- SKILL.md: mode-table row, no-code-modes bullet, reference-map row, "review this code/PR" trigger in
+  the description. README.md / README.ko.md mode tables + utilities line; docs/index.html landing:
+  REVIEW-ONLY mode card (green accent), metric 8 -> 9 modes, utilities lead line.
+- No gate script: the mode is read-only, so the risk a hard gate would backstop does not exist;
+  adding one would be ceremony.
+
+### domain-context.md 255 -> 142 lines (-44%)
+Longest live reference, loaded during Frame on most coding runs. Compressed without dropping
+contract: per-file sections folded into a one-line-per-file contract list, the duplicated
+"Every run" steps merged into the Retrieval loop, refresh policies folded into three bullets,
+saving-loop prose tightened. All 14 strings pinned by domain-context/qa-only contract tests
+preserved verbatim; Domain Brief format block unchanged (plan-grounding consumes it).
+
+Also caught here: "the only allowed pre-Human-Feedback repo write" had survived the ceremony purge
+because the hyphenated form dodged the "Human Feedback" grep -> now "the only allowed repo write
+before Build"; "At Deliver, save..." -> "At the end of a run". Repo-wide `human.feedback` sweep now
+returns only the intentional removed-gate comment in gate-scenarios.test.sh.
+
+### Verification
+11/11 contract suites, 363 assertions PASS, 0 FAIL. Landing: 9 mode cards counted,
+article open/close tags balanced (17/17), no stale "8 modes" text.

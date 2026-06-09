@@ -41,6 +41,7 @@ agy, and other agent CLIs - but dispatch is optional and single-driver by defaul
 | "explain / teach me X" (no code) | **LEARN** | Intake -> Source -> Bridge -> Teach -> Check (explain-back) |
 | "learn / map / onboard onto this codebase" | **LEARN-DOMAIN** | Survey -> Map -> Ground -> Persist a `.domain-agent/` wiki |
 | "QA only / verify / compare data - no code" | **QA-ONLY** | Exercise app + read-only DB -> evidence -> `report.md` |
+| "review / audit this code/diff/PR - no fixes" | **REVIEW-ONLY** | Two independent reviewers -> verified findings -> `report.md` |
 | "test harness effectiveness / with vs without" | **HARNESS-EVAL** | Cases -> baseline run -> harness run -> machine checks -> quality score -> compare |
 | "make a skill from history - no product code" | **SKILL-MINE** | Mine history -> rank -> you pick -> forge portable `SKILL.md` -> install |
 
@@ -59,9 +60,9 @@ and re-read the spec for uncovered rules - stop on green and report what was ver
 /supergoal compare this migration harness with and without the harness on 3 cases
 ```
 
-QA-ONLY, LEARN/LEARN-DOMAIN, HARNESS-EVAL, and SKILL-MINE are kept as separate-purpose utilities (no-code
-QA, teaching/onboarding, harness measurement, skill forging). They write no product code by default and
-confirm with you before installing anything.
+QA-ONLY, REVIEW-ONLY, LEARN/LEARN-DOMAIN, HARNESS-EVAL, and SKILL-MINE are kept as separate-purpose
+utilities (no-code QA, findings-only review, teaching/onboarding, harness measurement, skill forging).
+They write no product code by default and confirm with you before installing anything.
 
 ## Install
 

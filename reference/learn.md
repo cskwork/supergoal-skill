@@ -65,13 +65,55 @@ fallback/stop before the takeaway.
    - First turn uses the Output format below.
    - Every turn matches saved difficulty.
    - Define terms first, then why it matters, flow, example, takeaway.
-   - Ask exactly one recap/check question per turn; the opening adds the core-question hook on top.
+   - End each turn with an interview-style check (see "Interview check"): a short, difficulty-scaled
+     set of questions that probe the just-taught piece from different angles, not one flat recap. The
+     opening adds the core-question hook on top.
    - Explain existing code first; name bugs separately, after - never silently rewrite it.
    - Fill gaps and re-ask. Park edge cases under "later."
    - End every teaching turn with the difficulty menu.
 4. **Check gate.** User restates each key term and the whole idea unaided. Gaps return to Teach loop.
 5. **Journal live.** Append to `learn/<topic>-YYYY-MM-DD.md` with the question, bridge, terms, user
    explanation, and open questions. Create `learn/` if missing; follow `learn/README.md`.
+
+## Interview check
+
+Replace the single recap question with a short interview that makes the user actively retrieve and
+apply, not just nod along. End every teaching turn - and the opening - with a small set of
+questions drawn from different angles, then the difficulty menu. Keep it bite-sized: ask the fewest
+questions that force real recall at the current level, never a wall.
+
+**MUST: ask via the choice tool, not plain prose.** Deliver the interview through `AskUserQuestion`
+(one tool call, one `header` per angle, 2-4 options each) - never as a bare numbered list the user
+has to type answers to. Each question's options are concrete answers to pick from (one correct, the
+rest plausible distractors), scaled to the current level. The difficulty menu is the final question
+in the same call (`header: 난이도`, options: 더 쉽게 / 적당함 / 더 어렵게). Fall back to prose
+questions only if the choice tool is unavailable.
+
+**MUST: randomize the correct option's position.** Do not always place the right answer first. Vary
+which slot holds the correct option across questions and across turns so the user reads every choice
+instead of pattern-matching on position. Distractors must be real misconceptions, not obvious filler.
+
+Draw from these angles; mix types rather than asking the same kind twice:
+
+- **Recall:** define one key term in your own words.
+- **Why:** why does this piece/step exist - what breaks without it?
+- **Process:** what happens next, or in what order?
+- **Apply/transfer:** a fresh one-line scenario (use a saved interest) - what happens?
+- **Edge/failure:** what if it fails, or hits the boundary case?
+- **Connect:** how do term X and term Y relate?
+
+How many, by difficulty:
+
+- **1-2:** one gentle recall question.
+- **3-4:** one or two questions (recall + why).
+- **5 (default):** two or three questions across different angles.
+- **6-7:** three questions including one apply/transfer.
+- **8-10:** three or four, including an edge/failure and a transfer question.
+
+Stay Socratic and conversational: invite the user to answer in any order and as far as they can; do
+not require every answer. Respond to whichever they take, fill the gap, and re-ask only what they
+missed. This is an interview to induce learning, not an exam - never punish a miss, just re-teach
+that piece.
 
 ## Opening output format
 
@@ -112,13 +154,14 @@ and a process role before the full explanation.
 이것만 기억하면 된다: [한 문장 핵심]
 
 (지금은 건너뛰는 것: [지금 배우면 헷갈리는 내용])
-
-마지막으로 확인:
-[사용자가 자기 말로 recap 하게 만드는 한 문장 질문]
-
----
-난이도 (지금 5/10): 1 더 쉽게 · 2 적당함(기본) · 3 더 어렵게
 ```
+
+그런 다음 인터뷰 체크와 난이도 메뉴는 **본문 텍스트가 아니라 `AskUserQuestion` 한 번의 호출**로
+내보낸다 (난이도에 따라 1~3개 각도 질문 + 마지막에 난이도 질문). 각 질문은 2~4개의 선택지를 주고,
+정답 위치는 매번 무작위로 섞는다:
+- recall: [핵심 용어 하나의 뜻을 고르게 하는 질문] - 선택지에 정답 1 + 그럴듯한 오답들
+- why/process/apply: [각도를 바꾼 질문 하나 이상]
+- 난이도(`header: 난이도`): 더 쉽게 / 적당함 / 더 어렵게
 
 Rules:
 
@@ -132,8 +175,8 @@ Rules:
 - For coding/codebase topics, include one short "사람 생각 -> 기계 단계" bridge before any code.
 - Never replace the process trace with a summary sentence when the topic is code, algorithm, system
   behavior, data flow, or a business workflow.
-- An opening has exactly two questions - the core question (top, not waited on) and the recap
-  question (bottom); end with the recap question, then the difficulty menu.
+- An opening leads with the core question (top, not waited on) and ends with the interview check -
+  a short, difficulty-scaled question set per "Interview check" - then the difficulty menu.
 
 ## Human-to-Code bridge
 
@@ -216,7 +259,8 @@ Read it at step 0. Do not re-ask each session. Use the profile without lecturing
 8. Park confusing depth as "later."
 9. Short sentences in the user's language.
 10. Always include one realistic example and one takeaway.
-11. After the opening, drive with one question at a time.
+11. Drive every turn, opening included, with an interview-style check - a short, difficulty-scaled
+    set of questions across different angles - then respond to whichever ones the user answers.
 12. An atom is known only when the user can define its role and place in the process plainly.
 13. For coding/codebase lessons, never jump straight from concept to code; translate the human move
     into explicit state and flow first.

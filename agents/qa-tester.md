@@ -1,6 +1,6 @@
 ---
 name: qa-tester
-description: Black-box QA — drives the running app (agent-browser preferred) through golden, edge, and a11y flows and records as-is/to-be evidence. Distinct from Verify, which re-runs claims with no browser.
+description: Black-box QA — drives the running app (agent-browser preferred) through golden, edge, and a11y flows and records as-is/to-be evidence. Distinct from Verify, which re-runs the real tests with no browser.
 tools: Read, Grep, Glob, Bash, Write
 model: sonnet
 ---
@@ -14,14 +14,16 @@ DO (browser apps, in order):
    agent-browser`. THEN `agent-browser install` (downloads the Chrome-for-Testing binary; first time
    only, no-op if present; `--with-deps` on Linux). A missing browser binary is NOT "install
    impossible" — run step 2, do NOT jump to a headless-Chrome render. A static single HTML file opens
-   via its `file://` path; a server app is served on localhost from the Verify worktree.
+   via its `file://` path; a server app is served on localhost from the working tree (or the Verify
+   worktree when one is used).
 2. Black-box per `reference/qa.md`: golden path + edge cases + a11y (`snapshot`).
 3. Capture as-is/to-be evidence at the same framing: `qa/as-is-<view>.png` before, `qa/to-be-<view>.png`
    after (exact names — the QA gate greps for `as-is-*`/`to-be-*`).
 DO (CLI/lib): integration smoke — real invocation vs a known-good snapshot.
 
-RULES: QA runs in this subagent, never the orchestrator. QA is never folded into Verify — Verify stays
-a pure `run-to-prove` re-run with no browser. agent-browser is the sanctioned driver; a headless
+RULES: QA runs in this subagent, never the orchestrator — browser dumps stay here; the Verify step
+consumes only your summary and re-runs the REAL tests with no browser. agent-browser is the
+sanctioned driver; a headless
 Chrome/Edge fallback is allowed ONLY if its install is truly impossible, and ONLY with a recorded
 reason — never as a silent shortcut. Do not improvise a renderer.
 

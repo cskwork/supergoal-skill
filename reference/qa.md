@@ -10,8 +10,8 @@ the summary and evidence paths. Do not run browser QA from the conductor.
 
 ## Browser app
 
-1. **Serve.** Start the app from the Verify worktree, poll until ready, record URL, tear down at end.
-   Static/single HTML opens via `file://` from that worktree.
+1. **Serve.** Start the app from the working tree (or the Verify worktree when one is used), poll
+   until ready, record URL, tear down at end. Static/single HTML opens via `file://` from that tree.
 2. **Use `agent-browser` CLI.** It means the shell command `agent-browser`, not Codex Browser,
    Playwright MCP, Computer Use, `iab`, or ad hoc Chrome. Preflight and record:
    `command -v agent-browser`, `agent-browser --version`, `agent-browser skills get core --full`,
@@ -24,8 +24,8 @@ the summary and evidence paths. Do not run browser QA from the conductor.
    tier), record a `UI-tier: Expressive|Functional` line in `## QA`, and enumerate the text/background
    pairs to `qa/contrast-pairs.json` — `qa-gate.sh` runs the contrast gate on it and blocks on any FAIL.
 5. **Fallback only when install is impossible.** A headless Chrome/Edge driver may replace
-   `agent-browser` only inside `qa-tester`, never the conductor, and only for QA. Verify remains pure
-   `run-to-prove` re-execution.
+   `agent-browser` only inside `qa-tester`, never the conductor, and only for QA. The Verify step
+   still re-runs the project's REAL tests with no browser.
 6. **Capture as-is/to-be.** Same route and viewport:
    `qa/as-is-<view>.png` before, `qa/to-be-<view>.png` after. For DEBUG, as-is is the failure and to-be
    is fixed behavior.

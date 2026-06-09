@@ -3,7 +3,8 @@
 Use for "explain/understand/teach me" on codebase areas or concepts. Do not write production code.
 Done means the user can define key terms and explain the idea back unaided.
 
-LEARN skips Validate/Build/Verify/QA/Deliver and all implementation gates. It uses this lightweight flow:
+LEARN skips the default loop (no Build/Critic/Fixer/Verify) and all implementation gates. It uses this
+lightweight flow:
 
 `Intake -> Preference -> Core question -> Source -> Bridge -> Teach loop -> Check -> Journal`
 

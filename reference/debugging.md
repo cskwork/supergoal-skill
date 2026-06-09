@@ -3,14 +3,15 @@
 DEBUG is deep-and-narrow work. Use one driving `debugger`/`tracer` so the causal model stays coherent.
 Spawn helpers only for independent probes, and put their summaries in the vault.
 
-Use the `diagnose` skill for Reproduce + Diagnose. Its "build a feedback loop" phase is the Reproduce
-exit gate: no trusted loop, no fix. For web/UI bugs, drive the loop through `qa-tester` and
+Reproduce's exit gate is a trusted feedback loop: a deterministic repro you can re-run cheaply after
+every probe. No trusted loop, no fix. For web/UI bugs, drive the loop through `qa-tester` and
 `reference/qa.md` so browser dumps stay out of the conductor context.
 
-## Read-only until approval
+## Read-only until the cause is confirmed
 
-Through Reproduce, Diagnose, and Human Feedback, analyze only. No speculative edits. They corrupt the
-repro state. First source-tree write waits for approved Human Feedback.
+Through Reproduce and Diagnose, analyze only. No speculative edits - they corrupt the repro state.
+The first source-tree write waits until one root cause is confirmed by direct evidence and the fix
+plan is written.
 
 ## Single-driver default, escalate on breadth
 
@@ -56,8 +57,9 @@ When the failure spans DB, API, network, or message-queue boundaries, map before
 4. **Confirm.** Before locking the cause, present the 3-5 ranked hypotheses to the user for re-ranking
    (cheap checkpoint, non-blocking — proceed on your own ranking if the user is AFK; see
    `reference/interview.md`). Then back one hypothesis with direct evidence at the boundary, advancing
-   a user-preferred hypothesis only when evidence still supports it. Write the fix plan and ask for
-   Human Feedback.
+   a user-preferred hypothesis only when evidence still supports it. Write the fix plan in `README.md`;
+   stop and ask the user only on SKILL.md hard stops (destructive/irreversible fix, or the cause stays
+   genuinely ambiguous) - otherwise proceed.
 5. **Fix root cause (minimal diff, checkpoint per step).** Smallest change that addresses cause, not
    symptom. No silencing, fake success, broad refactor, or unrelated cleanup. Checkpoint after each
    plan step so every change traces to one observed outcome; do not free-form edit until green.

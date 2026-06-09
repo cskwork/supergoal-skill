@@ -33,8 +33,8 @@ echo "=================================================================="
 echo " /supergoal ROLE-LOOP contract   skill: $ROOT"
 echo "=================================================================="
 
-# Critic records surfaced requirements to a durable markdown doc.
-require_text "critic records surfaced requirements as markdown" "reference/role-loop.md" "docs/surfaced-requirements.md"
+# Critic records surfaced requirements to a durable markdown doc in the run vault.
+require_text "critic records surfaced requirements as markdown" "reference/role-loop.md" 'docs/changelog/<YYYY-MM>/<DD-topic>/surfaced-requirements.md'
 require_text "record explains why a requirement is implied" "reference/role-loop.md" "why it is required though the prompt never stated it"
 require_text "record links the covering failing test" "reference/role-loop.md" "the failing test that now covers it"
 require_text "record entries start open" "reference/role-loop.md" "status: open"
@@ -43,7 +43,7 @@ require_text "record entries start open" "reference/role-loop.md" "status: open"
 require_text "verifier marks surfaced requirements fixed" "reference/role-loop.md" "mark each surfaced requirement fixed"
 
 # SKILL.md surfaces the behavior in the default loop.
-require_text "SKILL critic step logs surfaced requirements" "SKILL.md" "docs/surfaced-requirements.md"
+require_text "SKILL critic step logs surfaced requirements" "SKILL.md" 'run vault'\''s `surfaced-requirements.md`'
 
 # Template exists and carries the expected fields.
 require_file "surfaced-requirements template exists" "templates/surfaced-requirements.md"

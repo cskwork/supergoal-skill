@@ -30,3 +30,65 @@ any order, as far as you can, re-ask only the misses. Not an exam.
   and process-trace requirements, not question count).
 - grep confirms no leftover "exactly one recap" / "one question at a time" / "exactly two questions"
   in live `reference/` or the standalone prompt.
+
+## Coherence pass: purge removed-ceremony vocabulary from reference/ + agents/
+
+### What
+The baseline-first rewrite removed the gated ceremony (Validate -> Plan freeze -> Human Feedback ->
+Build -> Verify -> Committee -> QA -> Deliver, `delivery-gate.sh`, `human-feedback-gate.mjs`,
+`claims.md`, `ten-rules`), but half the reference/agent files still spoke that vocabulary. An agent
+following SKILL.md's lean loop (Frame -> Build -> Critic -> Fixer -> Verify) would hit instructions
+referencing gates, phases, roles, and artifacts that no longer exist. Aligned every live file to the
+current loop:
+
+- `tests/role-loop-contract.test.sh` - was failing at baseline (2/8): commit 8680d18 moved the vault
+  to `docs/changelog/<YYYY-MM>/<DD-topic>/` but the test still pinned `docs/surfaced-requirements.md`.
+  Retargeted both assertions to the new vault path. 8/0.
+- `reference/domain-rules.md` - rewrote: dropped `ten-rules` and `delivery-gate.sh` (neither exists),
+  Step 0/Intake -> Frame, Architect/Builder/Committee/Verifier -> Build/Critic/Fixer/Verify, folded
+  the orphaned `verification.md ## Coverage` checklist into the Verify role bullet.
+- `reference/interview.md`, `plan-grounding.md` - "Human Feedback gate" / "hashed" removed; gating now
+  cites SKILL.md hard stops (genuine ambiguity blocks the freeze); insertion point "Start of Plan" ->
+  "End of Frame". Exit lines now hand off to Build.
+- `reference/debugging.md` - dropped the external `diagnose`-skill dependency (inlined the trusted
+  feedback-loop exit gate); "read-only until approved Human Feedback" -> read-only until the cause is
+  confirmed by direct evidence + fix plan written; user blocks only on SKILL.md hard stops. This also
+  resolves the internal contradiction with interview.md's non-blocking DEBUG re-rank.
+- `reference/qa-only.md`, `learn.md`, `learn-domain.md` - gate lists
+  (Validate/Human Feedback/Committee/Deliver) -> current-loop phrasing; `claims.md` mentions removed.
+- `reference/ui-ux.md`, `functional-ui.md` - Plan overlay row -> Frame; "committee gates Deliver" ->
+  "Verify gates delivery"; Design Read/dials may land in the run `README.md` when no `plan.md` exists.
+- `reference/qa.md`, `agents/qa-tester.md` - worktree optional ("working tree, or Verify worktree when
+  one is used"); "Verify = pure run-to-prove/claims re-run" -> Verify re-runs the project's REAL tests.
+- `agents/code-reviewer.md` - REWRITTEN as the Critic persona. SKILL.md maps critic=code-reviewer, but
+  the persona was the old read-only committee reviewer ("WRITE: none required") with no Write tool, so
+  it literally could not perform role-loop step 3 (write failing tests + record surfaced
+  requirements). This overrides the 2026-06-07 "deliberately read-only" note - that decision predates
+  the committee's removal; with the committee gone the persona's only caller is the critic role.
+  Review duties (findings with file:line + fix) are kept inside the critic mandate.
+- `agents/executor.md` - now Builder/Fixer: adds the fixer constraints role-loop requires (never edit
+  test files, no padding, don't break passing tests); `claims.md` -> run-to-prove line in the vault
+  `README.md` (nothing consumed claims.md anymore; the re-runnable proof command is the surviving
+  contract).
+- `agents/designer.md` - same claims.md -> vault README swap; committee/Verifier -> Verify step.
+- `agents/architect.md`, `debugger.md` - "two Human-Feedback briefs" -> one short plain-language plan
+  summary; debugger no longer cites the `diagnose` skill.
+- `agents/analyst.md` - Intake/Validate -> Frame brief / optional GREENFIELD Validate.
+- `agents/security-reviewer.md` - committee -> Verify-phase reviewer.
+- `SKILL.md` - one clause defining the "conductor" (the dispatching agent), since every persona names
+  it but nothing defined it.
+
+### Why
+Dangling references are not cosmetic: they make agents ask "where is the Human Feedback gate?",
+produce `claims.md` files nothing reads, or stall waiting for a Committee that never runs. Alignment
+keeps the lean loop lean without reintroducing the ceremony (the 8-eval result stands: gated ceremony
+never beat a strong baseline; nothing gated was added back - DEBUG even got *less* blocking).
+
+### Verification
+- Full contract suite: 10/10 test files pass, 348 assertions PASS, 0 FAIL (baseline was 9/10 - the
+  role-loop suite failed 2 of 8 before this pass).
+- `grep -rE "Human Feedback|[Cc]ommittee|claims\.md|delivery-gate|ten-rules"` over SKILL.md,
+  reference/, agents/, templates/, tests/ returns only intentional mentions (the removed-gate comment
+  in `gate-scenarios.test.sh`, harness-eval's "do NOT force the committee ceremony" warning, and
+  "marketing claims").
+- Historical records (`docs/experiments/*`, `docs/changelog/*`, `docs/DESIGN.md`) left untouched.

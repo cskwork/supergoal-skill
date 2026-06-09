@@ -25,10 +25,11 @@ gates, vault, topology unchanged. One Designer driver per surface.
 - **Theme declared.** Set `color-scheme`; ship both light/dark tokens or a justified single-mode lock.
 - **No empty decoration.** Every element carries data or a labeled control. No placeholder panels.
 
-## Plan overlay
+## Frame overlay
 
 Add a one-line **Design Read** (surface kind + chosen design system) and the three dials
-(`DESIGN_VARIANCE` low/symmetric, `MOTION_INTENSITY` 1-3, `VISUAL_DENSITY` 7-10) to `plan.md`.
+(`DESIGN_VARIANCE` low/symmetric, `MOTION_INTENSITY` 1-3, `VISUAL_DENSITY` 7-10) to `plan.md`
+(or the run `README.md` when no plan file exists).
 
 ## Build overlay
 
@@ -41,4 +42,4 @@ Run beside normal QA: a11y (keyboard focus, labels), reduced motion, all UI stat
 matches dials, `color-scheme` declared. Record `UI-tier: Functional` in `verification.md` `## QA` and
 enumerate every text/bg pair to `<vault>/qa/contrast-pairs.json`; `qa-gate.sh` runs
 `node templates/contrast-gate.mjs` on it (completeness critic audits the pair list). Any fail rewinds
-to Build, blocks Deliver.
+to Build and blocks delivery.

@@ -3,7 +3,9 @@
 Domain context is a durable, searchable knowledge pack at the target repo root. It is separate from
 the run vault and separate from model memory.
 
-- Vault: per-run evidence and decisions, tracked in `docs/changelog/<date>-<slug>/`.
+- Vault: per-run evidence and decisions, tracked in `docs/changelog/<YYYY-MM>/<DD-topic>/` (month
+  folder, then day-of-month + a kebab topic, e.g. `docs/changelog/2026-06/10-add-auth/`). One folder per
+  run; it holds the run's `README.md`, `surfaced-requirements.md`, and verification evidence.
 - Domain context: local reusable domain facts, stored by default in `.domain-agent/`.
 - Model memory: optional reminders only; never the source of truth for a fix.
 

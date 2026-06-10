@@ -90,6 +90,12 @@ rest plausible distractors), scaled to the current level. The difficulty menu is
 in the same call (`header: 난이도`, options: 더 쉽게 / 적당함 / 더 어렵게). Fall back to prose
 questions only if the choice tool is unavailable.
 
+**Exception - bite-sized mode.** During **Prerequisite scaffolding** turns, and at saved
+difficulty 1-2, ask **one single inline prose question** instead of the choice tool, and skip the
+difficulty menu inside that turn. The conversational micro-step feel ("미니 퀴즈 - 한 개만") beats
+multiple-choice when the atom is small enough that any plausible distractor would just confuse.
+Resume the choice-tool interview when the main lesson resumes.
+
 **MUST: randomize the correct option's position.** Do not always place the right answer first. Vary
 which slot holds the correct option across questions and across turns so the user reads every choice
 instead of pattern-matching on position. Distractors must be real misconceptions, not obvious filler.
@@ -199,6 +205,72 @@ table.
 At levels 1-4, use only one or two steps. At level 5, use three to five steps. At levels 6-10, add
 precise names and edge cases, but keep the same bridge order.
 
+## Prerequisite scaffolding
+
+Before introducing any term in the key-terms map, check whether its building blocks are realistic
+for the saved difficulty. If the next atom would force a leap (a term defined by other unknown
+terms, syntax the user has not seen, a data structure the user has not used), **pause the main
+lesson and offer to teach the prerequisite first**. Never push through a leap.
+
+### Triggers - when to scaffold
+
+Scaffold when **any** of these fire:
+
+- The user says "모르겠어 / 잘 모르겠어 / I don't know / no idea / 막혀" to any check question.
+- A check answer reveals a missing building block, not just a wrong guess (e.g. answers a different
+  layer of question than was asked).
+- The next step would assume a term, syntax, or concept the user has not heard in this session.
+- Saved difficulty is 1-4 and the topic uses any specialized vocabulary.
+
+A miss is a signal that a piece **below** the current atom is missing. **Do not just rephrase the
+same explanation at the same level** - back up one level, not sideways.
+
+### Offer the prerequisite (do not just dive in)
+
+Say plainly what is missing and ask once whether to cover it now. One short prose offer is enough -
+do not use the choice tool here, the question is binary and conversational:
+
+> 이 다음을 이해하려면 `<누락된 개념>` 부터 짚는 게 좋겠다. 잠깐 그것부터 짧게 보고 갈까,
+> 아니면 그냥 이어서 갈까?
+
+If the user says yes (or stays silent on the dive-in path), open a numbered prerequisite mini
+lesson: `사전지식 ① - <이름>`, `사전지식 ② - ...`. **One piece per turn.** When all listed
+prerequisites are covered, **return to the main lesson at the exact atom that blocked**, not to the
+top.
+
+### Prerequisite turn shape (level 1-4)
+
+Each prerequisite turn is shorter than the standard opening - target ~150 words, no key-terms
+table, no human-to-code bridge inside the prerequisite, no difficulty menu inside the prerequisite:
+
+```markdown
+# 사전지식 ① - [이름]
+
+[한 줄 정의 - 전문용어 없이]
+
+[가장 작은 코드/그림/예시 한 개]
+
+[비유 한 줄 - 사용자 관심사에서]
+
+## 미니 퀴즈 (한 개만)
+
+[정답 한 가지로 답할 수 있는 가장 쉬운 질문]
+```
+
+Ask the mini quiz as **one inline prose question**, per the bite-sized exception in
+`## Interview check`.
+
+### Recursive back-off
+
+A prerequisite can itself trigger another prerequisite. If the user misses the prerequisite's mini
+quiz, apply the same trigger rule and back up again - there is no maximum depth, only a stopping
+rule: keep backing up until the user can answer one tiny check unaided. Then climb back the same
+path, one rung at a time, all the way to the original blocked atom.
+
+If a prerequisite would itself need three or more layers of back-off, that is a signal the saved
+difficulty is wrong - drop one level via the difficulty menu when the main lesson resumes, and say
+why briefly.
+
 ## Difficulty ladder
 
 Same structure at every level; only altitude and bite size change. By level:
@@ -265,3 +337,5 @@ Read it at step 0. Do not re-ask each session. Use the profile without lecturing
 12. An atom is known only when the user can define its role and place in the process plainly.
 13. For coding/codebase lessons, never jump straight from concept to code; translate the human move
     into explicit state and flow first.
+14. Treat "모르겠어 / I don't know" or a check miss as a signal that a piece below the current atom
+    is missing - back up via **Prerequisite scaffolding**, do not rephrase at the same level.

@@ -27,7 +27,7 @@ One objective -> the smallest correct change -> verified against ground truth. F
 | Signal in the objective | Mode | Approach |
 |---|---|---|
 | build / make / ship a new app/tool | GREENFIELD | default loop |
-| fix / broken / failing / crash / why does | DEBUG | default loop; reproduce with a failing test first (`reference/debugging.md`) |
+| fix / broken / failing / crash / why does | DEBUG | default loop; runtime-symptom bugs -> observe the live flow at the symptom's boundary BEFORE code/git, report the broken boundary early; then reproduce with a failing test (`reference/debugging.md` Observe-first triage) |
 | add / integrate / refactor existing code | LEGACY | default loop; map the code first (`agents/explore.md`, `reference/domain-context.md`); optional DB evidence (`reference/db-access.md`) |
 | explain / teach / how does X work (no code) | LEARN | `reference/learn.md` |
 | learn / onboard / map this codebase (persist a wiki) | LEARN-DOMAIN | `reference/learn-domain.md` |

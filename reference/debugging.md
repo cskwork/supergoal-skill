@@ -13,6 +13,27 @@ Through Reproduce and Diagnose, analyze only. No speculative edits - they corrup
 The first source-tree write waits until one root cause is confirmed by direct evidence and the fix
 plan is written.
 
+## Observe-first triage - live evidence before code
+
+For any bug that manifests in a RUNNING system (wrong UI behavior, bad API response, data stopped
+flowing, auth failures, perf regressions), do NOT start with code reading or git archaeology.
+History (deploys, diffs) narrows WHEN it broke; only live observation narrows WHERE. Do WHERE
+first, then use WHEN to pick the responsible diff.
+
+1. **Observe the failing flow at the symptom's boundary.** Reproduce it in the real environment
+   and capture actual artifacts: devtools Network tab / Playwright HAR (call ORDER + payloads),
+   API responses, logs, DB/queue records. Diff actual vs expected at that boundary - a missing
+   field, an out-of-order dependency call, or an unexpected status often ends the search in
+   minutes.
+2. **Bisect by boundaries, not by code.** Walk the chain the data/behavior crosses (UI -> API ->
+   queue -> store -> batch -> external) checking the actual artifact at each hop; for
+   "stopped accumulating" symptoms compare each hop's last-seen timestamp against the incident
+   start. The first boundary where actual != expected is the locus - only then open the code that
+   owns it.
+3. **Early report checkpoint.** Once the broken boundary + one piece of direct evidence is in
+   hand (e.g., "payload missing field X since deploy D"), REPORT to the user before deep
+   root-causing. Continue into the deeper why only if the user asks or the fix requires it.
+
 ## Single-driver default, escalate on breadth
 
 DEBUG defaults to one driver, and a simple Reproduce -> Localize -> Fix -> Verify loop beats sprawl on

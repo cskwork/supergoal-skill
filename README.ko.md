@@ -39,10 +39,12 @@ harness에 묶이지 않고 dispatch할 수 있습니다. 다만 dispatch는 선
 | "새 앱/도구를 만든다/출시한다" | **GREENFIELD** | 기본 루프 |
 | "고장/실패/크래시/왜 이러지" | **DEBUG** | 기본 루프; 실패 테스트부터 재현 |
 | "기존/레거시 코드에 X를 추가한다" | **LEGACY** | 기본 루프; 코드 구조부터 파악 |
+| "스펙 문서부터 구조화해줘" | **SPEC** | 핵심 결정은 한 번에 한 질문씩 grill -> requirements/design/tasks가 `docs/spec/`에 굳어짐 -> 그 문서가 기본 루프를 이끎 |
 | "X를 설명/가르쳐줘" (코드 변경 없음) | **LEARN** | Intake -> Source -> Bridge -> Teach -> Check |
 | "이 코드베이스를 학습/온보딩해줘" | **LEARN-DOMAIN** | Survey -> Map -> Ground -> `.domain-agent/` 위키 |
 | "QA만/검증/데이터 비교" (코드 변경 없음) | **QA-ONLY** | 앱 + 읽기 전용 DB 확인 -> 증거 -> `report.md` |
 | "코드/diff/PR 리뷰만" (수정 없음) | **REVIEW-ONLY** | 독립 리뷰어 2명 -> 검증된 findings -> `report.md` |
+| "구조 개선 / 리팩터링 후보 찾아줘" | **ARCH** | 마찰 조사 -> 후보 `report.md` -> 고른 후보 grill -> 리팩터링은 LEGACY/SPEC으로 |
 | "harness 효과 테스트 / 유무 비교" | **HARNESS-EVAL** | 케이스 -> baseline -> harness -> 머신 체크 -> 품질 점수 -> 비교 |
 | "히스토리에서 스킬 생성" (제품 코드 변경 없음) | **SKILL-MINE** | 히스토리 마이닝 -> 랭크 -> 선택 -> 포터블 `SKILL.md` 생성 -> 설치 |
 
@@ -64,7 +66,7 @@ harness에 묶이지 않고 dispatch할 수 있습니다. 다만 dispatch는 선
 /supergoal 이 마이그레이션 harness를 3개 케이스에서 유무 비교해줘
 ```
 
-QA-ONLY, REVIEW-ONLY, LEARN/LEARN-DOMAIN, HARNESS-EVAL, SKILL-MINE은 각각 다른 목적의 유틸리티입니다.
+QA-ONLY, REVIEW-ONLY, ARCH, LEARN/LEARN-DOMAIN, HARNESS-EVAL, SKILL-MINE은 각각 다른 목적의 유틸리티입니다.
 코드 없는 QA, 수정 없는 리뷰, 교육/온보딩, harness 측정, 스킬 생성처럼 제품 코드를 바로 고치지 않는
 작업을 다룹니다. 기본적으로 제품 코드는 쓰지 않고, 무언가 설치하기 전에는 사용자에게 먼저 확인합니다.
 

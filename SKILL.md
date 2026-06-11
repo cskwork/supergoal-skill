@@ -1,6 +1,6 @@
 ---
 name: supergoal
-description: Baseline-first delivery - surface hidden requirements, make the smallest correct change, verify against real tests/spec. Use for "/supergoal", "supergoal", "build X", "fix this bug", "add this feature", "QA / verify only", "review this code/PR", "learn this codebase", "make a skill", or "eval a harness".
+description: Baseline-first delivery - surface hidden requirements, make the smallest correct change, verify against real tests/spec. Use for "/supergoal", "supergoal", "build X", "fix this bug", "add this feature", "spec this feature", "QA / verify only", "review this code/PR", "improve the architecture", "learn this codebase", "make a skill", or "eval a harness".
 ---
 
 # /supergoal - baseline-first
@@ -29,10 +29,12 @@ One objective -> the smallest correct change -> verified against ground truth. F
 | build / make / ship a new app/tool | GREENFIELD | default loop |
 | fix / broken / failing / crash / why does | DEBUG | default loop; runtime-symptom bugs -> observe the live flow at the symptom's boundary BEFORE code/git, report the broken boundary early; then reproduce with a failing test (`reference/debugging.md` Observe-first triage) |
 | add / integrate / refactor existing code | LEGACY | default loop; map the code first (`agents/explore.md`, `reference/domain-context.md`); optional DB evidence (`reference/db-access.md`) |
+| spec / requirements first / 스펙 문서로 구조화 | SPEC | spec-first prefix to the default loop: grill load-bearing decisions one question at a time, crystallize requirements -> design -> tasks under `docs/spec/<feature-slug>/`, then tasks.md drives Build and EARS criteria feed the critic (`reference/spec.md`) |
 | explain / teach / how does X work (no code) | LEARN | `reference/learn.md` |
 | learn / onboard / map this codebase (persist a wiki) | LEARN-DOMAIN | `reference/learn-domain.md` |
 | QA / verify / 검증만 / compare data (no code) | QA-ONLY | `reference/qa-only.md` |
 | review / audit this code/diff/PR (no fixes) | REVIEW-ONLY | `reference/review-only.md` |
+| improve the architecture / find refactoring opportunities / 구조 개선 | ARCH | survey-first, no fixes: depth/seam friction report in the run vault, grill the picked candidate, route the refactor to LEGACY/SPEC (`reference/arch.md`) |
 | test harness effectiveness / compare with vs without | HARNESS-EVAL | `reference/harness-eval.md` |
 | turn repeated work into a reusable skill | SKILL-MINE | `reference/skill-mine.md` |
 
@@ -89,6 +91,9 @@ risky work in a branch or `git worktree` (optional).
   `reference/qa-only.md`, `db-access.md`; terminal gate `templates/qa-only-gate.sh`.
 - **REVIEW-ONLY** reviews a diff/PR/module and delivers an evidence-backed findings `report.md` -
   findings, not fixes; no source or test edits (`reference/review-only.md`).
+- **ARCH** surveys the codebase for architectural friction (shallow modules, missing seams), delivers
+  a candidates `report.md` with recommendation strengths, grills the picked candidate, and routes the
+  refactor to LEGACY/SPEC - no source edits (`reference/arch.md`).
 - **LEARN / LEARN-DOMAIN** teach a human (`reference/learn.md`) or persist a source-grounded
   `.domain-agent/` wiki for the agent (`reference/learn-domain.md`; gate
   `templates/learn-grounding-gate.mjs`).
@@ -106,10 +111,12 @@ risky work in a branch or `git worktree` (optional).
 | `reference/domain-context.md` | Surface requirements: repo-local Domain Brief |
 | `reference/debugging.md` | DEBUG: hypothesis-ledger diagnose loop |
 | `reference/interview.md` | Ambiguity-gated <=5 question interview before the freeze |
+| `reference/spec.md`, `templates/spec/` | SPEC: requirements -> design -> tasks under `docs/spec/` before Build |
 | `reference/plan-grounding.md` | Ground the approach from docs/code before committing |
 | `reference/db-access.md`, `templates/db-access/` | Read-only DB evidence (required past *very easy* when data load-bearing) - GREENFIELD / DEBUG / LEGACY / QA-ONLY |
 | `reference/qa.md`, `qa-only.md`, `db-access.md` | QA / no-code verify |
 | `reference/review-only.md` | REVIEW-ONLY: findings report, no fixes |
+| `reference/arch.md` | ARCH: friction survey -> candidates report -> grill the pick -> route out |
 | `reference/learn.md`, `learn-domain.md` | Teach a human / onboard the agent |
 | `reference/ui-ux.md`, `taste-skill-v2.md`, `functional-ui.md`, `taste-aesthetics.md` | User-facing UI tier |
 | `reference/harness-eval.md` | HARNESS-EVAL |

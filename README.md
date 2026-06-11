@@ -38,10 +38,12 @@ agy, and other agent CLIs - but dispatch is optional and single-driver by defaul
 | "build / ship a new app/tool" | **GREENFIELD** | default loop |
 | "fix / broken / failing / why does" | **DEBUG** | default loop; reproduce with a failing test first |
 | "add X to our existing/legacy code" | **LEGACY** | default loop; map the code first |
+| "spec this first - requirements/design/tasks docs" | **SPEC** | grill load-bearing decisions one question at a time; requirements -> design -> tasks crystallize under `docs/spec/`, then the default loop runs against them |
 | "explain / teach me X" (no code) | **LEARN** | Intake -> Source -> Bridge -> Teach -> Check (explain-back) |
 | "learn / map / onboard onto this codebase" | **LEARN-DOMAIN** | Survey -> Map -> Ground -> Persist a `.domain-agent/` wiki |
 | "QA only / verify / compare data - no code" | **QA-ONLY** | Exercise app + read-only DB -> evidence -> `report.md` |
 | "review / audit this code/diff/PR - no fixes" | **REVIEW-ONLY** | Two independent reviewers -> verified findings -> `report.md` |
+| "improve the architecture / find refactoring opportunities" | **ARCH** | Friction survey -> candidates `report.md` -> grill the pick -> refactor routes to LEGACY/SPEC |
 | "test harness effectiveness / with vs without" | **HARNESS-EVAL** | Cases -> baseline run -> harness run -> machine checks -> quality score -> compare |
 | "make a skill from history - no product code" | **SKILL-MINE** | Mine history -> rank -> you pick -> forge portable `SKILL.md` -> install |
 
@@ -60,7 +62,7 @@ and re-read the spec for uncovered rules - stop on green and report what was ver
 /supergoal compare this migration harness with and without the harness on 3 cases
 ```
 
-QA-ONLY, REVIEW-ONLY, LEARN/LEARN-DOMAIN, HARNESS-EVAL, and SKILL-MINE are kept as separate-purpose
+QA-ONLY, REVIEW-ONLY, ARCH, LEARN/LEARN-DOMAIN, HARNESS-EVAL, and SKILL-MINE are kept as separate-purpose
 utilities (no-code QA, findings-only review, teaching/onboarding, harness measurement, skill forging).
 They write no product code by default and confirm with you before installing anything.
 

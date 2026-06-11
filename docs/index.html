@@ -580,10 +580,12 @@
   }
   .mode-card.debug::after { background: var(--amber); }
   .mode-card.legacy::after { background: var(--cyan); }
+  .mode-card.spec::after { background: var(--blue); }
   .mode-card.learn::after { background: var(--red); }
   .mode-card.learn-domain::after { background: var(--violet); }
   .mode-card.qa-only::after { background: var(--pink); }
   .mode-card.review-only::after { background: var(--green); }
+  .mode-card.arch::after { background: var(--cyan); }
   .mode-card.harness-eval::after { background: var(--amber); }
   .mode-card.skill-mine::after { background: var(--blue); }
   .mode-label {
@@ -972,7 +974,7 @@
         <p class="lead ko">강한 모델이 실제 스펙을 읽고 작업하는 것이 기준입니다. `/supergoal`은 일반 실행이 놓치기 쉬운 부분만 보강합니다.</p>
       </div>
       <div class="metric-grid">
-        <div class="metric reveal"><strong>9</strong><span class="en">modes; the objective picks the lane.</span><span class="ko">가지 모드. 목표에 맞춰 작업 경로를 고릅니다.</span></div>
+        <div class="metric reveal"><strong>11</strong><span class="en">modes; the objective picks the lane.</span><span class="ko">가지 모드. 목표에 맞춰 작업 경로를 고릅니다.</span></div>
         <div class="metric reveal"><strong>1</strong><span class="en">independent critic writes the failing tests, not the builder.</span><span class="ko">독립 검토자(Critic)가 실패 테스트를 씁니다. 구현자가 직접 쓰지 않습니다.</span></div>
         <div class="metric reveal"><strong>0</strong><span class="en">generated-proxy verifiers; only your real tests grade the work.</span><span class="ko">생성된 proxy verifier 없음. 실제 테스트만 결과를 판단합니다.</span></div>
         <div class="metric reveal"><strong>&le;5</strong><span class="en">questions, asked only when genuinely ambiguous.</span><span class="ko">질문은 진짜 모호할 때만, 최대 5개.</span></div>
@@ -1038,6 +1040,13 @@
           <p class="ko">영향 범위를 파악한 뒤 가장 작은 정확한 수정을 합니다.</p>
           <div class="mode-pipe">Frame -> <b>Map</b> -> Build -> Critic -> Verify</div>
         </article>
+        <article class="mode-card spec reveal">
+          <span class="mode-label">SPEC</span>
+          <h3><span class="en">Spec first, then build.</span><span class="ko">스펙 문서부터 만들고 구현합니다.</span></h3>
+          <p class="en">Load-bearing decisions grilled one question at a time; requirements (EARS), design, and tasks crystallize under docs/spec/ and drive the loop.</p>
+          <p class="ko">핵심 결정을 한 번에 한 질문씩 따져 묻고, requirements(EARS)/design/tasks가 docs/spec/에 굳어져 루프를 이끕니다.</p>
+          <div class="mode-pipe">Skeleton -> <b>Grill</b> -> Crystallize -> Build vs spec</div>
+        </article>
         <article class="mode-card learn reveal">
           <span class="mode-label">LEARN</span>
           <h3><span class="en">Understand, no code.</span><span class="ko">설명만 듣고 이해합니다.</span></h3>
@@ -1065,6 +1074,13 @@
           <p class="en">Two independent reviewers audit a diff/PR; every finding is verified before it is reported.</p>
           <p class="ko">독립 리뷰어 둘이 diff/PR을 검토하고, 모든 발견은 검증을 거쳐 리포트로 전달됩니다.</p>
           <div class="mode-pipe">Target -> Review x2 -> <b>Verify findings</b> -> Report</div>
+        </article>
+        <article class="mode-card arch reveal">
+          <span class="mode-label">ARCH</span>
+          <h3><span class="en">Find what to deepen, no fixes.</span><span class="ko">고칠 곳을 찾고, 고치지는 않습니다.</span></h3>
+          <p class="en">Survey shallow modules and missing seams; grill the picked candidate; the refactor routes to LEGACY/SPEC.</p>
+          <p class="ko">얕은 모듈과 빠진 seam을 조사해 후보를 제시하고, 고른 후보만 따져 물은 뒤 리팩터링은 LEGACY/SPEC으로 넘깁니다.</p>
+          <div class="mode-pipe">Survey -> Candidates -> <b>Grill the pick</b> -> Route out</div>
         </article>
         <article class="mode-card harness-eval reveal">
           <span class="mode-label">HARNESS-EVAL</span>

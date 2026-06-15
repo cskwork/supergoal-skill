@@ -36,6 +36,8 @@ the finding and stops.
   same as `reference/qa.md`). When an authenticated/real logged-in session is required, switch to
   **attach-to-browser** (Playwright CLI; `https://github.com/cskwork/attach-to-browser-skill`) and record
   it on the `Tool:`/`Fallback:` lines. See `reference/qa.md` "Authenticated sessions".
+- **Navigation map.** Load `.domain-agent/qa/nav-map.md` first to reach gated/popup-heavy screens;
+  build it on first entry and correct any drifted rows in place (`reference/qa.md` "Navigation map").
 - **DB access.** Read-only, DB-independent, via `reference/db-access.md`. Used for: fetch test
   auth/credentials, verify UI values against the DB source of truth, and run dataset/environment diffs.
 
@@ -86,6 +88,9 @@ Save the run as a reusable suite under the domain pack (`reference/domain-contex
   command / Playwright spec path.
 - Index it in `.domain-agent/index.md` under `## QA Suites` so "re-run the <feature> QA" routes
   instantly.
+- `.domain-agent/qa/nav-map.md`: the one shared navigation map (entry/auth, routes, popups/new tabs,
+  selectors, `screen -> API`) - one per repo, not per suite. Load it before driving; if the site has
+  drifted, correct the touched rows (`reference/qa.md` "Navigation map").
 - Same rules as the domain pack: read-only repo write, gitignored path, no secrets/tokens/PII/raw rows.
 
 On a repeatable Playwright spec, save it to `.domain-agent/qa/<suite>/<flow>.spec.ts` (first run may be

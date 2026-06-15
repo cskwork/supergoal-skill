@@ -30,6 +30,31 @@ the summary and evidence paths. Do not run browser QA from the conductor.
    `qa/as-is-<view>.png` before, `qa/to-be-<view>.png` after. For DEBUG, as-is is the failure and to-be
    is fixed behavior.
 
+## Navigation map (load first; build on first entry; self-heal on drift)
+
+Complex apps (auth gates, popups, new tabs, deep routes) burn QA budget re-discovering how to reach a
+screen. The repo's `.domain-agent/qa/nav-map.md` is the durable map that makes navigation cheap and
+repeatable, and the same map gives DEBUG observe-first the `screen -> API` routing it needs. It is
+repo-local and gitignored (`reference/domain-context.md`); no app-specific selector, route, or
+credential ever lives in this skill.
+
+1. **Load first.** Before driving, read `.domain-agent/qa/nav-map.md` if present and navigate by its
+   entry/auth flow, route list, popup/new-tab triggers, tab-switch notes, and stable selectors.
+2. **Build on first entry (when absent).** Within the action budget, do one light mapping pass and save
+   it: the entry/auth flow; the `screen -> URL` route list; every click that opens a **new tab or
+   popup** and the resulting target; how to switch the driver to that target; stable selectors for key
+   controls; and each screen's real API calls from `agent-browser network requests` (method + path).
+   Write `.domain-agent/qa/nav-map.md` and index it in `index.md`.
+3. **Self-heal on drift.** When a saved entry no longer matches the live site - a selector ref is gone,
+   a route 404s/redirects, a popup opens a different target, or an API path/method changed - re-map only
+   that slice, correct that row, and bump `config.json.lastUpdated`. Never re-crawl the whole app. This
+   is how a site change flows back into the map inside the workflow, so the next DEBUG/QA run navigates
+   the current site.
+
+**New tab / popup handling.** When an action opens a new tab or popup, switch the driver to that target
+and re-`snapshot` before interacting, then record `trigger -> target` in nav-map (confirm the exact
+agent-browser tab/target subcommand via `agent-browser skills get core --full`).
+
 ## Authenticated sessions (attach-to-browser)
 
 `agent-browser` is the default driver. When a flow needs a real, already-logged-in session that

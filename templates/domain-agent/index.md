@@ -22,6 +22,10 @@ Purpose: route agents to the smallest useful domain context for this repo.
 
 - `<feature/flow>`: `qa/<suite>.md` (`<functional|data-integrity|before-after|ab|env>`) — reusable QA-ONLY check, re-run on request
 
+## Navigation
+
+- Browser navigation map: `qa/nav-map.md` — entry/auth, routes, popups/new tabs, stable selectors, `screen -> API`; load before any browser run, self-heal on drift
+
 ## Terminology Routing
 
 - If a user/ticket term conflicts with `glossary.md`, surface the conflict before planning.

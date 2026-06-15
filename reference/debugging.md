@@ -24,7 +24,14 @@ first, then use WHEN to pick the responsible diff.
    and capture actual artifacts: devtools Network tab / Playwright HAR (call ORDER + payloads),
    API responses, logs, DB/queue records. Diff actual vs expected at that boundary - a missing
    field, an out-of-order dependency call, or an unexpected status often ends the search in
-   minutes.
+   minutes. For a web/UI symptom, drive this through `qa-tester` (`reference/qa.md`): load the
+   repo's `.domain-agent/qa/nav-map.md` to reach the exact screen (its entry/auth flow, popups,
+   new tabs), then capture the screen's real calls with `agent-browser network requests --filter
+   <api-prefix>` - the method + path + status it actually fires. That pins screen -> exact
+   endpoint, so you open only the backend code that owns it instead of guessing where the symptom
+   lives. If no nav-map exists yet, build one first (`reference/qa.md` "Navigation map"); if a saved
+   entry no longer matches the live site (selector miss, route 404, popup target moved, API path
+   changed), correct that row as you go, and promote a confirmed `screen -> API` row back into it.
 2. **Bisect by boundaries, not by code.** Walk the chain the data/behavior crosses (UI -> API ->
    queue -> store -> batch -> external) checking the actual artifact at each hop; for
    "stopped accumulating" symptoms compare each hop's last-seen timestamp against the incident

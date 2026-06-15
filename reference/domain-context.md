@@ -53,6 +53,10 @@ Use these folder/file names even when the user chooses a different root path:
 - `qa/*.md` - Reusable QA suites from QA-ONLY runs (`reference/qa-only.md`): scenario list,
   `Comparison:` type, named DB checks, saved baseline values, and the re-run command / Playwright
   spec path; indexed in `index.md` under `## QA Suites`. No secrets, raw rows, or PII.
+- `qa/nav-map.md` - the single browser navigation map for this repo: entry/auth flow, `screen -> URL`
+  routes, popup/new-tab triggers and how to switch the driver to them, stable selectors, and each
+  screen's real API calls (method + path). Loaded before any browser QA/observe run and self-healed
+  on drift (`reference/qa.md` "Navigation map"). No secrets, raw rows, or PII.
 
 ## Retrieval loop (every run; capped)
 
@@ -85,7 +89,9 @@ Do not refresh the whole pack every run; verify selected facts against current c
   stale-context misses - review the router, code map, test map, invariants, and high-traffic flows;
   split broad files instead of appending more context.
 - Triggered refresh: saved knowledge conflicts with current code, or a run proves a stable new
-  routing fact.
+  routing fact. `qa/nav-map.md` is verified against the live site on every browser run; correct a
+  drifted row (selector, route, popup target, API path) in place as a triggered refresh, not a
+  whole-app re-crawl.
 
 ## Domain Brief format
 
@@ -117,7 +123,8 @@ hypotheses, or facts one current-code lookup finds just as fast.
 
 Append surgically: term -> `glossary.md`; invariant -> `invariants.md`; entry point -> `code-map.md`;
 command -> `test-map.md`; flow -> `flows/<flow>.md`; stable failure pattern ->
-`tickets/<short-slug>.md`; reusable QA suite -> `qa/<suite>.md` (indexed under `## QA Suites`). After
+`tickets/<short-slug>.md`; reusable QA suite -> `qa/<suite>.md` (indexed under `## QA Suites`);
+browser navigation fact (route, popup/new-tab, stable selector, `screen -> API`) -> `qa/nav-map.md`. After
 each save, update `index.md` search keys and `config.json.lastUpdated`; keep entries short and split
 files that accumulate unrelated content.
 

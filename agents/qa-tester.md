@@ -16,8 +16,13 @@ DO (browser apps, in order):
    impossible" — run step 2, do NOT jump to a headless-Chrome render. A static single HTML file opens
    via its `file://` path; a server app is served on localhost from the working tree (or the Verify
    worktree when one is used).
-2. Black-box per `reference/qa.md`: golden path + edge cases + a11y (`snapshot`).
-3. Capture as-is/to-be evidence at the same framing: `qa/as-is-<view>.png` before, `qa/to-be-<view>.png`
+2. **Load the navigation map.** Read `.domain-agent/qa/nav-map.md` if present and navigate by it
+   (entry/auth, routes, popups/new tabs, selectors). If absent, build it on first entry; if a saved
+   entry drifts from the live site (selector miss, 404, popup target moved, API path changed), correct
+   that row as you go. Capture each screen's real calls with `agent-browser network requests`. Full
+   procedure: `reference/qa.md` "Navigation map".
+3. Black-box per `reference/qa.md`: golden path + edge cases + a11y (`snapshot`).
+4. Capture as-is/to-be evidence at the same framing: `qa/as-is-<view>.png` before, `qa/to-be-<view>.png`
    after (exact names — the QA gate greps for `as-is-*`/`to-be-*`).
 DO (CLI/lib): integration smoke — real invocation vs a known-good snapshot.
 
@@ -32,7 +37,8 @@ WRITE: `verification.md` `## QA` section + evidence files under `qa/`. The `## Q
 - if the driver is NOT agent-browser, a `Fallback:` line stating why agent-browser was impossible;
 - the as-is/to-be evidence paths and (for server apps) the served URL + teardown note.
 
-RETURN: a compressed summary — flows exercised, pass/fail, the driver used, evidence paths — not your transcript.
+RETURN: a compressed summary — flows exercised, pass/fail, the driver used, evidence paths, the
+nav-map path + any `screen -> API` rows captured or corrected — not your transcript.
 
 GATE: browser apps — golden + edge + a11y pass AND `bash templates/qa-gate.sh <vault> browser` exits 0
 (as-is/to-be evidence + `Tool:` line present; non-agent-browser driver carries a `Fallback:` justification).

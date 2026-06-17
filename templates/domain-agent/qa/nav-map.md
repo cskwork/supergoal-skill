@@ -9,7 +9,7 @@ See `reference/qa.md` "Navigation map".
 
 - Start URL: `<url>`
 - How to get in: `<login steps / token / SSO / postMessage / nothing>`
-- Driver: `<agent-browser | attach-to-browser>` (`<why, if not agent-browser>`)
+- Driver: `playwright-cli` (auth via named session / state-load / CDP attach if needed)
 
 ## Tab / popup handling
 

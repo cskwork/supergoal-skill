@@ -51,16 +51,16 @@ require_text "db-access never hardcodes creds"    "reference/db-access.md" "NEVE
 require_text "db-access runs in db-reader"        "reference/db-access.md" "dedicated \`db-reader\` subagent"
 
 require_text "qa-auditor does not read DB"        "agents/qa-auditor.md" "do NOT read the database yourself"
-require_text "qa-auditor default agent-browser"   "agents/qa-auditor.md" "Default driver is \`agent-browser\`"
-require_text "qa-auditor uses attach for auth"    "agents/qa-auditor.md" "attach-to-browser"
+require_text "qa-auditor playwright-cli only"     "agents/qa-auditor.md" "is the only driver"
+require_text "qa-auditor auth via native paths"   "agents/qa-auditor.md" "native paths"
 require_text "db-reader is select-only"           "agents/db-reader.md" "Read-only ONLY"
 require_text "db-reader never writes auth to file" "agents/db-reader.md" "NEVER write auth/credentials to any file"
 
-require_text "qa.md has attach-to-browser policy" "reference/qa.md" "Authenticated sessions (attach-to-browser)"
+require_text "qa.md has native auth policy"       "reference/qa.md" "Authenticated sessions (native playwright-cli)"
 require_text "domain-context registers qa suites" "reference/domain-context.md" "Reusable QA suites from QA-ONLY runs"
 require_text "index template has QA Suites"       "templates/domain-agent/index.md" "## QA Suites"
 require_text "db-reader may write its evidence"   "agents/db-reader.md" "Read, Grep, Glob, Bash, Write"
-require_text "qa-auditor always records doctor"   "agents/qa-auditor.md" "Always run and record the \`agent-browser doctor\` preflight"
+require_text "qa-auditor installs playwright-cli" "agents/qa-auditor.md" "npm install -g @playwright/cli@latest"
 
 # ---- Part B: qa-only-gate.sh scenarios -----------------------------------
 GATE="$ROOT/templates/qa-only-gate.sh"
@@ -82,7 +82,7 @@ mkbrowser() {
   local v="$T/$1"; rm -rf "$v"; mkdir -p "$v/qa"
   printf 'QA scope: checkout flow on staging\n' > "$v/brief.md"
   printf '# QA report\n## What worked\n- login -> PASS\n## What didn'"'"'t\n- none\n## What I discovered\n- nothing\n## How to re-run\n- `.domain-agent/qa/checkout.md`\n' > "$v/report.md"
-  printf 'verdict: GREEN\n## QA\nagent-browser doctor: pass\nTool: agent-browser\n- as-is/to-be captured\n' > "$v/verification.md"
+  printf 'verdict: GREEN\n## QA\nTool: playwright-cli\n- as-is/to-be captured\n' > "$v/verification.md"
   : > "$v/qa/as-is-1040.png"; : > "$v/qa/to-be-1040.png"
   printf '{ "action_count": 12, "action_cap": 100 }\n' > "$v/state.json"
   echo "$v"
@@ -109,31 +109,31 @@ run_case "2.2 no numeric action_count -> blocked"  1 "action_count"       bash "
 v=$(mkbrowser g3); printf '{ "action_count": 50 }\n' > "$v/state.json"
 run_case "3.1 action_cap defaults to 100 -> PASS"  0 "within cap 100"     bash "$GATE" "$v" browser
 
-# Attach-to-browser (authenticated session): sanctioned driver, still records the doctor preflight.
+# Authenticated session: native playwright-cli (named session / state-load / CDP attach), one driver.
 v=$(mkbrowser g3b)
-printf 'verdict: GREEN\n## QA\nagent-browser doctor: pass\nTool: attach-to-browser\nFallback: authenticated session required\n- as-is/to-be captured\n' > "$v/verification.md"
-run_case "3.2 attach-to-browser for auth -> PASS"  0 "QA-ONLY GATE PASS"  bash "$GATE" "$v" browser
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\n- auth via state-load; as-is/to-be captured\n' > "$v/verification.md"
+run_case "3.2 native auth session -> PASS"         0 "QA-ONLY GATE PASS"  bash "$GATE" "$v" browser
 
 # DB read-only backstop.
 v=$(mkbrowser g4)
-printf 'verdict: GREEN\n## QA\nagent-browser doctor: pass\nTool: agent-browser\nDB: mysql (read-only via aidt-mysql-cli)\n- as-is/to-be captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: mysql (read-only via aidt-mysql-cli)\n- as-is/to-be captured\n' > "$v/verification.md"
 run_case "4.1 DB read-only, no writes -> PASS"     0 "every DB: line marked read-only" bash "$GATE" "$v" browser
 v=$(mkbrowser g4b)
-printf 'verdict: GREEN\n## QA\nagent-browser doctor: pass\nTool: agent-browser\nDB: mysql (via cli)\n- as-is/to-be captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: mysql (via cli)\n- as-is/to-be captured\n' > "$v/verification.md"
 run_case "4.2 DB line not read-only -> blocked"    1 "not marked read-only" bash "$GATE" "$v" browser
 v=$(mkbrowser g4c)
-printf 'verdict: GREEN\n## QA\nagent-browser doctor: pass\nTool: agent-browser\nDB: mysql (read-only via cli)\nran: UPDATE orders SET total=1\n- as-is/to-be captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: mysql (read-only via cli)\nran: UPDATE orders SET total=1\n- as-is/to-be captured\n' > "$v/verification.md"
 run_case "4.3 DB write SQL recorded -> blocked"    1 "DB write statement"  bash "$GATE" "$v" browser
 # Second DB line unmarked rides behind a first read-only line -> must be caught per-line.
 v=$(mkbrowser g4d)
-printf 'verdict: GREEN\n## QA\nagent-browser doctor: pass\nTool: agent-browser\nDB: postgres (read-only via psql)\nDB: mysql (via cli)\n- as-is/to-be captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: postgres (read-only via psql)\nDB: mysql (via cli)\n- as-is/to-be captured\n' > "$v/verification.md"
 run_case "4.4 mixed DB lines, one unmarked -> blocked" 1 "not marked read-only" bash "$GATE" "$v" browser
 # REPLACE INTO / GRANT are writes too.
 v=$(mkbrowser g4e)
-printf 'verdict: GREEN\n## QA\nagent-browser doctor: pass\nTool: agent-browser\nDB: mysql (read-only via cli)\nran: REPLACE INTO cache VALUES (1)\n- as-is/to-be captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: mysql (read-only via cli)\nran: REPLACE INTO cache VALUES (1)\n- as-is/to-be captured\n' > "$v/verification.md"
 run_case "4.5 REPLACE INTO -> blocked"             1 "DB write statement"  bash "$GATE" "$v" browser
 v=$(mkbrowser g4f)
-printf 'verdict: GREEN\n## QA\nagent-browser doctor: pass\nTool: agent-browser\nDB: mysql (read-only via cli)\nran: GRANT SELECT ON db.* TO qa\n- as-is/to-be captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: mysql (read-only via cli)\nran: GRANT SELECT ON db.* TO qa\n- as-is/to-be captured\n' > "$v/verification.md"
 run_case "4.6 GRANT -> blocked"                    1 "DB write statement"  bash "$GATE" "$v" browser
 
 # CLI app-type: qa-gate.sh needs only ## QA; everything else still enforced.

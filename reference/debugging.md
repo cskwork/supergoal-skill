@@ -4,7 +4,8 @@ DEBUG is deep-and-narrow work. Use one driving `debugger`/`tracer` so the causal
 Spawn helpers only for independent probes, and put their summaries in the vault.
 
 Reproduce's exit gate is a trusted feedback loop: a deterministic repro you can re-run cheaply after
-every probe. No trusted loop, no fix. For web/UI bugs, drive the loop through `qa-tester` and
+every probe. No trusted loop, no fix - if one cannot be built, STOP and report that, never "fix"
+against an unverifiable signal. For web/UI bugs, drive the loop through `qa-tester` and
 `reference/qa.md` so browser dumps stay out of the conductor context.
 
 ## Read-only until the cause is confirmed
@@ -80,8 +81,10 @@ When the failure spans DB, API, network, or message-queue boundaries, map before
    first; load full code only for the few suspects that survive.
 3. **Compete hypotheses (symptom vs cause).** Put 2-3 root causes in `README.md` using a hypothesis
    ledger format: symptom, candidate cause, evidence-for, evidence-against,
-   and "definite & imminent?". Pick the next probe that best separates them. Resist fixating on the
-   first plausible cause; advance only causes backed by direct evidence.
+   and "definite & imminent?". Phrase each candidate as a falsifiable prediction (if cause C, then
+   probe P flips the result) so the most discriminating probe is obvious. Pick the next probe that
+   best separates them. Resist fixating on the first plausible cause; advance only causes backed by
+   direct evidence.
 4. **Confirm.** Before locking the cause, present the 3-5 ranked hypotheses to the user for re-ranking
    (cheap checkpoint, non-blocking — proceed on your own ranking if the user is AFK; see
    `reference/interview.md`). Then back one hypothesis with direct evidence at the boundary, advancing

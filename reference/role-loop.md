@@ -42,6 +42,10 @@ Loop critic->fixer only while a fresh red appears. The verifier pass is a regres
 for *very easy* issues; past that, re-running the project's REAL tests is REQUIRED, plus DB evidence for
 data-backed bugs (`reference/db-access.md`) - DB proves data state but does not replace the red-green test.
 
+Board (optional): if the Supergoal Board is enabled (`reference/observability.md`), the conductor may
+call `sg-emit --phase <P>` at each transition (Frame/Build/Critic/Fixer/Verify/Done). Opt-in and
+best-effort - it observes only, never blocks or gates the loop.
+
 ## Guardrails (keep it baseline-first, not Goodhart)
 
 - The critic's generated tests are a SIGNAL to surface hidden requirements - NOT the acceptance oracle.
@@ -51,3 +55,6 @@ data-backed bugs (`reference/db-access.md`) - DB proves data state but does not 
   fixer optimizes to is the failure mode - keep them black-box and spec-anchored.
 - Cost: the loop is several times a single run's effort. Use it when correctness on behavior the visible
   tests miss matters; for a quick pass, one build is cheaper.
+- Stop condition: cap the critic->fixer loop at 3 cycles; if a 4th would start, escalate to the user
+  with the open reds instead of grinding. Doubt-theater anti-signal: 2+ cycles that produce findings but
+  change no code means the critic is validating, not doubting - stop and recut the critic's spec focus.

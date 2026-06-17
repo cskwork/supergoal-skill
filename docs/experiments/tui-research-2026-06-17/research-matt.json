@@ -1,0 +1,146 @@
+{
+  "repo": "github.com/mattpocock/skills (main, ~132k stars) — \"agent skills to do real engineering, not vibe coding\"; small, composable, model-agnostic skills, deliberately the anti-GSD/BMAD/Spec-Kit posture (keep user control, don't own the process).",
+  "skills": [
+    {
+      "name": "diagnose",
+      "purpose": "Disciplined 6-phase bug/perf-regression loop: build feedback loop -> reproduce -> hypothesise -> instrument -> fix+regression-test -> cleanup+post-mortem. Directly parallels supergoal DEBUG mode.",
+      "notable_techniques": "Phase 1 (the feedback loop) IS the skill, everything else 'just consumes the signal' — spend disproportionate effort there; a 10-rung ladder of loop constructors ordered cheapest-first (failing test -> curl -> CLI snapshot-diff -> headless browser -> replay captured trace -> throwaway harness -> property/fuzz -> bisection harness -> differential old-vs-new -> HITL bash script as last resort). 'Iterate on the loop as a product' (faster/sharper/more deterministic; 2s deterministic beats 30s flaky). Non-deterministic bugs: goal is a higher reproduction RATE (loop 100x, stress, inject sleeps) not a clean repro. 3-5 RANKED FALSIFIABLE hypotheses before testing any ('if X then changing Y makes bug vanish') — show ranked list to user as a cheap checkpoint, they re-rank instantly with domain knowledge. Tag every debug log with a unique prefix [DEBUG-a4f2] so cleanup is one grep. Regression test only if a 'correct seam' exists — if not, that ABSENCE is itself the finding, hand to improve-architecture. Post-mortem asks 'what would have prevented this' AFTER the fix (more info now than at start)."
+    },
+    {
+      "name": "grill-with-docs",
+      "purpose": "Adversarial one-question-at-a-time interview that stress-tests a plan against the project's domain glossary (CONTEXT.md) and decisions (ADRs), updating docs inline as decisions crystallise. Parallels supergoal Frame/ARCH/SPEC.",
+      "notable_techniques": "Ask ONE question at a time, wait for the answer, always offer your own recommended answer. 'If a question can be answered by exploring the codebase, explore instead of asking.' Walk the design tree resolving inter-decision dependencies one-by-one. Four challenge moves: challenge term-conflicts against glossary; sharpen fuzzy/overloaded terms to a canonical one; invent concrete edge-case scenarios to force precision; cross-reference claims against actual code and surface contradictions. Side effects happen INLINE not batched. ADR offered only when ALL THREE: hard-to-reverse AND surprising-without-context AND a real trade-off — otherwise skip. CONTEXT.md is a glossary ONLY, 'totally devoid of implementation details', not a spec/scratchpad."
+    },
+    {
+      "name": "tdd",
+      "purpose": "Red-green-refactor with a hard ban on horizontal slicing. Parallels supergoal Build under test-first.",
+      "notable_techniques": "Explicit named anti-pattern 'Horizontal Slices' (all tests then all impl) producing 'crap tests' that test imagined shape, not behaviour, and go insensitive to real changes. Mandate VERTICAL tracer-bullet slices: one test -> one impl -> repeat, each test responding to what the last cycle taught you. 'Never refactor while RED.' Tests must survive an internal refactor — if renaming an internal fn breaks a test, the test was testing implementation. 'The interface is the test surface.' Per-cycle 5-item checklist. Use deep-module thinking (small interface, deep impl) when choosing what to test."
+    },
+    {
+      "name": "improve-codebase-architecture",
+      "purpose": "Surface 'deepening opportunities' (shallow->deep modules) for testability and AI-navigability. Parallels supergoal ARCH/REVIEW.",
+      "notable_techniques": "A locked architecture vocabulary (module/interface/implementation/depth/seam/adapter/leverage/locality) used EXACTLY in every suggestion — 'consistent language is the point', explicitly forbids drifting to component/service/API/boundary. The DELETION TEST: imagine deleting the module — if complexity vanishes it was a pass-through; if complexity reappears across N callers it earned its keep. 'One adapter = hypothetical seam, two adapters = real seam' (don't add indirection unless something actually varies). Depth defined as leverage (behaviour-per-interface-learned), explicitly REJECTING Ousterhout's lines-ratio definition because it rewards padding implementation. Output is a self-contained Tailwind+Mermaid HTML report written to OS temp dir (never the repo), before/after diagrams per candidate, recommendation-strength badges, then a grilling loop on the chosen candidate. Dependency taxonomy (in-process / local-substitutable / remote-owned ports&adapters / true-external mock) decides how each deepened module is tested."
+    },
+    {
+      "name": "triage",
+      "purpose": "Move issues through a small state machine of roles (bug/enhancement x needs-triage/needs-info/ready-for-agent/ready-for-human/wontfix). Parallels supergoal QA-ONLY intake/routing.",
+      "notable_techniques": "Canonical role names decoupled from actual label strings via a per-repo mapping (setup skill supplies it). Reproduce bugs BEFORE grilling — a confirmed repro makes a far stronger downstream brief; failed/insufficient repro is itself a strong needs-info signal. Every AI-posted comment must carry a '> This was generated by AI during triage' disclaimer. Rejected enhancements get persisted to an .out-of-scope/ knowledge base for dedup + institutional memory. Resume-aware: read prior triage notes, don't re-ask resolved questions."
+    },
+    {
+      "name": "to-prd / to-issues",
+      "purpose": "Synthesise current context into a PRD or break a plan into independently-grabbable vertical-slice issues. Parallels supergoal Frame->spec artifact.",
+      "notable_techniques": "to-prd: do NOT interview — synthesize what you already know. 'Sketch the seams at which you'll test the feature; prefer existing seams; use the HIGHEST seam possible' and confirm seams with user before writing. PRD is behavioural — no file paths/code snippets ('go stale fast'), EXCEPT a decision-encoding snippet from a prototype (state machine/reducer/schema/type shape), trimmed to decision-rich bits. to-issues: tracer-bullet vertical slices cutting through ALL layers, each demoable alone; tag slices HITL vs AFK (prefer AFK); publish in dependency order so real IDs fill 'Blocked by'; quiz the user on granularity/dependencies/HITL-marking before publishing."
+    },
+    {
+      "name": "review (two-axis)",
+      "purpose": "Review a diff since a fixed point along two independent axes — Standards (repo conventions) and Spec (originating issue/PRD). Directly parallels supergoal REVIEW-ONLY + Critic.",
+      "notable_techniques": "Two axes run as PARALLEL sub-agents so they don't pollute each other's context, then aggregated side-by-side and DELIBERATELY NOT merged/reranked (so one axis can't mask the other). Rationale spelled out: standards-pass/spec-fail and spec-pass/standards-fail are distinct failure modes. Pin the fixed point first (three-dot diff against merge-base). Auto-discover spec source from commit-message issue refs; auto-discover standards from CLAUDE/AGENTS/CONTRIBUTING/ADRs but SKIP what tooling (eslint/biome/tsconfig) already enforces. Each sub-agent capped (<400 words), must cite the rule/spec line, and distinguish hard violations from judgement calls."
+    },
+    {
+      "name": "prototype",
+      "purpose": "Build throwaway code that answers ONE question, routing between a runnable terminal app (logic/state) and toggleable UI variations. Parallels a supergoal spike before committing.",
+      "notable_techniques": "'A prototype is throwaway code that answers a question — the question decides the shape.' Branch by question type and state the wrong-branch cost. Six shared rules: throwaway-and-marked-as-such, one-command-to-run, no-persistence-by-default, skip-polish, surface-full-state-after-every-action, delete-or-absorb-when-done. The ANSWER is the only durable output — capture it (commit/ADR/issue/NOTES) with the question it answered; leave a verdict placeholder if user is AFK."
+    },
+    {
+      "name": "qa (deprecated)",
+      "purpose": "Conversational QA session: user reports bugs, agent files durable user-focused issues. Direct analogue to supergoal QA-ONLY.",
+      "notable_techniques": "'At most 2-3 clarifying questions, do NOT over-interview.' Kick off a background Explore subagent NOT to find a fix but to learn the domain language and user-facing behaviour boundary for a better issue. Scope assessment: single issue vs break-down (split when independent areas/separable concerns/multiple failure modes). Issues are DURABLE — no file paths/line numbers, behaviours not code, mandatory repro steps, readable in 30s. File without asking user to pre-review; maximise parallelism across sub-issues."
+    },
+    {
+      "name": "teach",
+      "purpose": "Stateful multi-session teaching workspace. Parallels supergoal LEARN mode.",
+      "notable_techniques": "Mission-grounded: every lesson ties to MISSION.md (the WHY); if mission unclear, that's the first thing to resolve. Stateful files mirror engineering artifacts — learning-records are 'loosely equivalent to ADRs', a glossary is mandatory and adhered-to across lessons. Zone-of-proximal-development sizing from learning-records. Split fluency-strength (in-moment) vs storage-strength (long-term) and design for desirable difficulty (retrieval/spacing/interleaving). 'Never trust your parametric knowledge' — gather from high-trust resources, cite everything. Each lesson must have a tight feedback loop."
+    },
+    {
+      "name": "setup-matt-pocock-skills",
+      "purpose": "Scaffold per-repo config (issue tracker, triage-label vocabulary, domain-doc layout) into CLAUDE.md/AGENTS.md + docs/agents/. The config substrate every other skill reads.",
+      "notable_techniques": "Decouples skill logic from repo specifics via a written-down config layer the skills consult at runtime instead of hardcoding. Present the 3 decisions ONE AT A TIME each with a plain-language explainer ('assume the user does not know what these terms mean'). Edit-the-existing-file discipline: never create AGENTS.md when CLAUDE.md exists (or vice versa); update an existing '## Agent skills' block in place, never append a duplicate, never clobber surrounding user edits."
+    },
+    {
+      "name": "handoff / caveman",
+      "purpose": "Cross-cutting productivity: compact a session into a handoff doc for a fresh agent; ultra-compressed output mode.",
+      "notable_techniques": "handoff: write to OS temp dir not the workspace; include a 'suggested skills' section so the next agent knows which skill to invoke; do NOT duplicate content already in PRDs/ADRs/issues/diffs — reference by path/URL; redact secrets. caveman: a persistent terse-output mode with an explicit Auto-Clarity exception that DROPS terseness for security warnings, irreversible-action confirmations, and multi-step sequences where fragment order risks misread."
+    }
+  ],
+  "cross_cutting_patterns": [
+    "Feedback loop / seam is the load-bearing primitive everywhere: diagnose builds one before hypothesising, tdd tests at the interface seam, to-prd picks the highest test seam first, improve-architecture defines depth/seam vocabulary, review pins a diff seam. supergoal's Verify should similarly be gated on a real signal, not assertion.",
+    "Behavioural, never procedural, and path-free: agent-briefs, PRDs, issues, CONTEXT.md, out-of-scope all forbid file paths/line numbers because they 'go stale'. They describe interfaces, types, invariants, acceptance criteria. The one documented exception is a decision-encoding snippet lifted from a prototype.",
+    "Ask one question at a time, always recommend an answer, prefer exploring the codebase over asking (grill-with-docs, grill-me, setup). Cheap human checkpoints (show ranked hypotheses, confirm seams, quiz on slice granularity) without blocking when the user is AFK.",
+    "Lazy, opinionated documentation as durable memory: CONTEXT.md (glossary only), docs/adr/ (ADR only when hard-to-reverse AND surprising AND a real trade-off), .out-of-scope/ (rejected enhancements). Created only when there's something to write; ADRs and rejections explicitly prevent re-litigating settled decisions — a direct mechanism for supergoal's rejection-ADR idea.",
+    "Locked, opinionated vocabulary with explicit _Avoid_ lists and named rejected framings (LANGUAGE.md module/seam/adapter; CONTEXT.md term/_Avoid_). Consistency of language is treated AS the deliverable, not cosmetic.",
+    "Parallel sub-agents for context isolation: review runs Standards+Spec concurrently and refuses to merge them; qa/improve-arch spawn background Explore agents purely to absorb domain language. Each sub-agent prompt is word-capped and must cite its source.",
+    "Throwaway-by-default with a capture step: diagnose prototypes, prototype skill, debug logs — all must be deleted, and the only durable output is the ANSWER (captured to commit/ADR/issue) plus, for diagnose, the correct hypothesis written into the commit so the next debugger learns.",
+    "Named anti-patterns as guardrails: horizontal slicing (tdd), single-hypothesis anchoring (diagnose), over-interviewing (qa), gold-plating/scope-creep (agent-brief 'Out of scope', review spec axis). Each is stated explicitly so the agent recognises and avoids it."
+  ],
+  "standout_ideas": [
+    {
+      "idea": "The feedback-loop ladder: 10 ordered, cheapest-first ways to construct a deterministic pass/fail signal, with 'iterate on the loop as a product' (faster/sharper/more deterministic) and 'if you genuinely cannot build a loop, STOP and say so, list what you tried, ask for an artifact — do not hypothesise without a loop'.",
+      "why_relevant_to_supergoal": "supergoal's Verify and DEBUG modes assert 'verify against real tests/spec'. This gives a concrete, ordered menu for manufacturing that signal when no test exists, plus an explicit refuse-to-proceed gate that prevents the 'claimed done without evidence' failure the user's MEMORY already flags (proxy-fabricates-tool-output)."
+    },
+    {
+      "idea": "3-5 ranked falsifiable hypotheses shown to the user before any probe, plus [DEBUG-xxxx]-tagged logs for one-grep cleanup.",
+      "why_relevant_to_supergoal": "Drop-in upgrade for supergoal's Critic/Fixer in DEBUG: forces breadth before commitment (avoids first-plausible anchoring) and makes instrumentation reversible. The cheap 'show ranked list, user re-ranks instantly' checkpoint fits Frame->Critic without blocking AFK runs."
+    },
+    {
+      "idea": "Two-axis review (Standards vs Spec) as parallel, deliberately-unmerged sub-agents, because spec-pass/standards-fail and standards-pass/spec-fail are distinct and one masks the other if merged.",
+      "why_relevant_to_supergoal": "supergoal's REVIEW-ONLY and Critic loop currently risk a single blended verdict. Splitting 'does it match the spec' from 'does it follow conventions' is a precise, low-cost structural improvement, and skipping what tooling already enforces keeps the Critic focused."
+    },
+    {
+      "idea": "The deletion test + 'one adapter = hypothetical seam, two = real seam' + depth-as-leverage (rejecting the lines-ratio definition).",
+      "why_relevant_to_supergoal": "Gives supergoal's ARCH/REVIEW modes a falsifiable, non-hand-wavy criterion for 'is this abstraction earning its keep', and a guard against the over-abstraction that 'smallest correct change' is meant to avoid — directly serving the baseline-first ethos."
+    },
+    {
+      "idea": "Per-repo config substrate (setup-matt-pocock-skills writes docs/agents/*.md; skills read canonical roles -> repo-specific label strings at runtime) so skill logic stays generic and the repo specifics live in version-controlled docs.",
+      "why_relevant_to_supergoal": "supergoal's 8 modes hardcode assumptions about the repo. A read-a-config-file indirection layer would let the same harness adapt to GitHub/GitLab/local-markdown trackers and existing label/doc conventions without forking the skill — and matches the 'preserve-baseline / don't impose ceremony' lesson in MEMORY (supergoal-baseline-first)."
+    },
+    {
+      "idea": "Durable, path-free behavioural specs (agent-brief, PRD, issue) with 'Out of scope' as a first-class section, and the prototype-snippet exception for decision-encoding code.",
+      "why_relevant_to_supergoal": "supergoal surfaces hidden requirements then hands to Build. Adopting behavioural+acceptance-criteria+explicit-out-of-scope contracts (no paths/lines) makes the Frame artifact survive concurrent edits and directly curbs scope creep at Verify."
+    },
+    {
+      "idea": "ADRs/.out-of-scope as anti-re-litigation memory: record a decision only when hard-to-reverse AND surprising AND a real trade-off; persist rejected requests so future runs surface 'we rejected this before because...'.",
+      "why_relevant_to_supergoal": "supergoal already has 'rejection ADRs' (af2e5f4 friction survey). mattpocock's three-gate test and concept-keyed .out-of-scope/ files are a battle-tested format and a dedup-on-intake mechanism the harness can reuse to stop re-suggesting things the user already rejected."
+    },
+    {
+      "idea": "qa skill's 'background Explore subagent to learn domain language, not to find a fix' + 'at most 2-3 clarifying questions, don't over-interview'.",
+      "why_relevant_to_supergoal": "Calibrates supergoal's QA-ONLY and Frame intake: separates language-acquisition (cheap, parallel, non-blocking) from interrogation (bounded), avoiding the over-questioning that makes a harness feel heavier than a baseline."
+    }
+  ],
+  "structural_conventions": [
+    "One skill = one directory: SKILL.md + UPPERCASE supporting refs (LANGUAGE.md, DEEPENING.md, ADR-FORMAT.md, CONTEXT-FORMAT.md, AGENT-BRIEF.md, *-FORMAT.md) + optional scripts/ (e.g. diagnose/scripts/hitl-loop.template.sh). Progressive disclosure: SKILL.md links one level deep into refs.",
+    "YAML frontmatter is name + description only; description follows a strict contract: first sentence = what it does, second = 'Use when [specific triggers]', third person, max 1024 chars (write-a-skill codifies this as 'the only thing the agent sees when choosing a skill'). Some skills add disable-model-invocation:true (zoom-out, teach, setup, grill-me) and argument-hint.",
+    "Bucket folders with governance: engineering/ productivity/ misc/ (promoted: must appear in top-level README AND .claude-plugin/plugin.json AND bucket README) vs personal/ in-progress/ deprecated/ (must NOT appear). Each bucket README lists its skills with a one-line description linked to SKILL.md. CLAUDE.md states these rules.",
+    "Templates are inlined as fenced code blocks inside the supporting .md (PRD template, agent-brief template, issue template, CONTEXT.md/ADR/out-of-scope formats, needs-info template) so the agent emits a consistent artifact shape.",
+    "SKILL.md kept short (write-a-skill: 'under 100 lines', split when >100 lines or distinct domains); rationale and long-form format specs pushed into UPPERCASE ref files — matching the user's MEMORY note 'skill-authoring: be terse, rationale goes in changelog'.",
+    "Phase/Process numbering with per-phase checklists and explicit 'Do not proceed until...' gates (diagnose phases 1-6, tdd workflow 1-4, triage steps, setup steps). Gates are behavioural preconditions, not just headings."
+  ],
+  "evidence": [
+    "https://github.com/mattpocock/skills (repo meta via gh api: default_branch main)",
+    "README.md",
+    "CLAUDE.md",
+    "skills/engineering/README.md",
+    "skills/engineering/diagnose/SKILL.md",
+    "skills/engineering/grill-with-docs/SKILL.md",
+    "skills/engineering/grill-with-docs/ADR-FORMAT.md",
+    "skills/engineering/grill-with-docs/CONTEXT-FORMAT.md",
+    "skills/engineering/tdd/SKILL.md",
+    "skills/engineering/improve-codebase-architecture/SKILL.md",
+    "skills/engineering/improve-codebase-architecture/LANGUAGE.md",
+    "skills/engineering/improve-codebase-architecture/DEEPENING.md",
+    "skills/engineering/triage/SKILL.md",
+    "skills/engineering/triage/AGENT-BRIEF.md",
+    "skills/engineering/triage/OUT-OF-SCOPE.md",
+    "skills/engineering/to-prd/SKILL.md",
+    "skills/engineering/to-issues/SKILL.md",
+    "skills/engineering/zoom-out/SKILL.md",
+    "skills/engineering/prototype/SKILL.md",
+    "skills/engineering/setup-matt-pocock-skills/SKILL.md",
+    "skills/in-progress/review/SKILL.md",
+    "skills/deprecated/qa/SKILL.md",
+    "skills/productivity/write-a-skill/SKILL.md",
+    "skills/productivity/teach/SKILL.md",
+    "skills/productivity/caveman/SKILL.md",
+    "skills/productivity/handoff/SKILL.md",
+    "skills/productivity/grill-me/SKILL.md"
+  ]
+}

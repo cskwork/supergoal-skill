@@ -8,4 +8,6 @@ learn/*.md
 !learn/USER_PREFERENCE.template.md
 .playwright-mcp/
 *.png
+__pycache__/
+*.pyc
 # docs/experiments/

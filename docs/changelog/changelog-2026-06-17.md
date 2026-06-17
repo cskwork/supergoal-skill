@@ -1,3 +1,110 @@
+# 2026-06-17 - Supergoal Board: lock-free multi-agent state protocol + in-browser Textual dashboard
+
+## What
+
+Opt-in observability overlay (NOT a 12th mode, NOT a gate): a live, in-browser board of every agent's
+mode + workflow stage + Jira-like task board, across concurrent agents on different repos/branches/
+worktrees, with no branch locking.
+
+- `templates/observability/sg-emit.sh` - POSIX sh + jq emitter. One heartbeat JSON per agent at
+  `${SUPERGOAL_RUN_DIR:-$HOME/.supergoal/runs}/agents/<agent_id>.json`, replaced atomically
+  (`tmp.$$` -> `mv -f`). Opt-in via `.enabled` flag; best-effort (any failure -> exit 0).
+- `templates/observability/heartbeat.schema.json` - flattened v1 schema (draft-07).
+- `reference/observability.md` - producer spec: layout, lifecycle, reader liveness, concurrency table.
+- `tui/` - Textual 8.x reader. `state.py` (pure, headless-testable), `app.py` (roster DataTable +
+  stage strip + Jira board DataTable + RichLog; `set_interval(1.0)` poll, flicker-free `update_cell`
+  diffing, dead-pid greying), `serve.py` (`textual_serve.Server` wrapper), `launch.sh` (idempotent
+  background launch + browser auto-open), `app.tcss`.
+- Wiring: one advisory line in `reference/role-loop.md`; one opt-in overlay paragraph + ref-map row in
+  `SKILL.md`. Tests: `tests/observability-contract.test.sh` (producer, 16), `tests/tui-state-reader.test.sh`
+  (consumer incl. headless Pilot render, 11).
+
+## Why
+
+User asked for a "terminal Jira" that shows, in real time, which workflow each agent is on and where -
+across multiple agents and worktrees - without locking branches. The board answers "which agent, which
+mode, which phase, which task column, alive?" which 8/10 modes (markdown-only) could not surface.
+
+## Decisions
+
+- **One writer per file + atomic rename is the entire correctness story.** Lock-free, crash-safe,
+  shared-branch-safe all follow. `branch` is a display field, never a mutex -> agents share a branch
+  freely. Rejected JSONL (forces replay to derive "now") and SQLite (writer lock couples agents).
+- **Two latent design bugs in the raw research design, fixed for Claude Code reality:**
+  (1) No stable per-agent OS pid (each Bash tool call is a fresh shell) -> liveness is TIMESTAMP-primary;
+  pid is an advisory same-host refinement only. (2) Exported env does not persist across tool calls ->
+  identity is SELF-DERIVED from `git` each call (not held in env); `--slot` disambiguates same-worktree
+  agents; opt-in is a `.enabled` FILE (survives across calls), not an env var.
+- **Verifier must-fixes folded in:** single repo-independent state path (deleted the false `.omx/state`
+  read); removed the PostToolUse board-write that caused an intra-agent lost-update race (conductor-only,
+  one trigger); `jq` declared dependency; NFS rename atomicity stated as a limitation; launch never
+  stalls a run (port-wait runs inside the detached child); all emission optional.
+- **Trimmed to v1** per the verifier: `set_interval` poll instead of a `watchdog` file-watch worker
+  (phase transitions are seconds-to-minutes); cut JSONL audit, `_archive`, TTL auto-prune,
+  follow-latest, lsof dual-guard (single pidfile). Smallest thing that delivers the core ask.
+- **Baseline-first:** droppable telemetry. No gate reads these files; no mode fails when emission is
+  absent. Deleting `~/.supergoal/runs` breaks nothing. The board observes; it never blocks a commit.
+
+## Verify
+
+Reader: liveness alive/stale/dead/done correct against fixtures; robust to a torn/garbage file (skips,
+never raises). App: composes, mounts, auto-selects, renders the board, survives repeated polls - all
+headless via Textual `run_test()` Pilot. sg-emit: opt-in no-op when disabled, carry-forward + append,
+atomic (no `.tmp` leftover). `launch.sh`: creates `.enabled`, returns immediately. Full `tests/*.test.sh`:
+15/15 suites green (added observability + tui-state-reader). In-browser serving needs
+`pip install textual-serve` (serve.py degrades with an install hint if absent); the app itself is
+verified, the serve layer is a thin wrapper over the confirmed `textual_serve.Server` API.
+
+---
+
+# 2026-06-17 - Loop sharpening from external skill repos (deltas only, no duplication)
+
+## What
+
+Mined `addyosmani/agent-skills` (62k*) and `mattpocock/skills` (132k*) for transferable techniques
+(8-agent workflow + adversarial verification; research vault in
+`docs/experiments/tui-research-2026-06-17/`). Applied five surgical edits - only the genuinely missing
+delta in each case:
+
+- DEBUG `reference/debugging.md`: feedback-loop intro now says STOP+report if no trusted loop can be
+  built (was implicit in "No trusted loop, no fix"); hypothesis ledger gains a falsifiable-prediction
+  framing ("if cause C, probe P flips the result") so the discriminating probe is explicit.
+- DEBUG `agents/debugger.md`: same STOP discipline in the persona RULES.
+- GREENFIELD `SKILL.md` Frame: acceptance criteria must each be a falsifiable/measurable check
+  (reframe "make it faster" into a measured line), not a vibe.
+- Critic `agents/code-reviewer.md`: explicit adversarial stance - try to DISPROVE; do not validate,
+  summarize, or rubber-stamp.
+- `reference/role-loop.md` Guardrails: hard stop - cap critic->fixer at 3 cycles then escalate;
+  doubt-theater anti-signal (2+ cycles, findings, zero code change = validating, not doubting).
+
+Contract: `tests/role-loop-contract.test.sh` +3 assertions (3-cycle cap, doubt-theater, DISPROVE
+stance). Full `tests/*.test.sh`: 13/13 suites green.
+
+## Why
+
+The research agent proposed DEBUG ranked-hypotheses and feedback-loop-first as new, but reading the
+actual files showed both were ~90% already present (ledger + AFK-safe re-rank in `debugging.md` steps
+3-4; "No trusted loop, no fix" + Reproduce-before-hypothesise ordering). Re-adding them would be the
+exact gated-ceremony duplication this project removed once (`supergoal-baseline-first` memory). So each
+edit is a single clause/line that adds the one missing thing, not a new section.
+
+## Decisions
+
+- **Deltas only, not the proposed sections.** A1/A2 already implemented -> added only the falsifiable
+  phrasing and the explicit STOP. Smallest-correct-change over importing a redundant block.
+- **A5 (3-cycle cap) is the one real new discipline** -> it gets a Guardrail line AND a contract
+  assertion, because a stuck/self-congratulating critic loop had no machine-checked stop before.
+- **Rejected for baseline-first** (logged in `docs/experiments/.../improvements.md`): `/build auto`
+  autonomous chaining, per-task commit choreography, blanket ADRs, 95%-confidence multi-question
+  interview in DEBUG/QA, HTML/Mermaid ARCH report, caveman terse-output, multi-tracker config substrate.
+
+## Verify
+
+`tests/role-loop-contract.test.sh` -> 17 passed, 0 failed. Full suite 13/13 green. No contract-asserted
+phrase removed (Frame/LEGACY/surfaced-requirements anchors intact).
+
+---
+
 # 2026-06-17 - LEGACY: exact API capture before refactor (preserve-baseline)
 
 ## What

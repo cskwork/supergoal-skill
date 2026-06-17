@@ -46,6 +46,10 @@ the Expressive baseline for dense admin/dashboard surfaces, never a reason to lo
 frontend: always. LEGACY: only for new UI - else reuse the existing design system. Non-visual work (lib,
 API, backend, CLI without TUI): skip.
 
+**Board overlay (optional).** If the live multi-agent dashboard is enabled, the conductor calls
+`sg-emit` at each phase transition; it observes only, never gates. Setup/detail: `README.md`,
+`reference/observability.md`.
+
 ## Default loop (GREENFIELD / DEBUG / LEGACY) - role-separated
 
 Author-independent roles (separate agent per role when orchestrated - the dispatching agent is the
@@ -56,7 +60,9 @@ Author-independent roles (separate agent per role when orchestrated - the dispat
 (reproduce red -> fix green -> real suite); and if persisted data is load-bearing, DB evidence too. Both,
 not either/or - DB proves the data state, the test proves the code; neither substitutes for the other.
 
-1. **Frame.** Restate the goal + acceptance criteria in one line. If underspecified, ask <=5
+1. **Frame.** Restate the goal + acceptance criteria in one line - each criterion a falsifiable/
+   measurable check (reframe a vague goal like "make it faster" into a measured line), not a vibe.
+   If underspecified, ask <=5
    high-leverage questions (`reference/interview.md`); resolve code-answerable ones by reading code.
    If the work ships user-facing UI, load `reference/ui-ux.md` now and commit to the Expressive/polished
    baseline (see the UI/UX overlay above) so strong design drives Build from the start, not just QA.
@@ -122,6 +128,7 @@ risky work in a branch or `git worktree` (optional).
 | `reference/harness-eval.md` | HARNESS-EVAL |
 | `reference/skill-mine.md` | SKILL-MINE |
 | `reference/market-research.md` | GREENFIELD: validate demand (optional) |
+| `reference/observability.md`, `tui/` | Board: opt-in live multi-agent dashboard (sg-emit producer + Textual reader) |
 
 ## Final checklist (before claiming done)
 

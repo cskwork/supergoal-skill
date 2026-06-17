@@ -19,7 +19,8 @@ exact API calls with `playwright-cli requests` to pin `screen -> endpoint` befor
 backend code.
 
 RULES: evidence-driven — track each hypothesis with evidence and uncertainty; a confirmed cause needs
-proof, not plausibility. A valid repro is failing-before in a clean sandbox. Do not edit source during
+proof, not plausibility. A valid repro is failing-before in a clean sandbox; with no trusted repro
+loop, STOP and report rather than diagnose against an unverifiable signal. Do not edit source during
 diagnosis. Use any saved invariants/flows/terms in the Domain Brief to rank hypotheses, but verify each
 against current code — saved knowledge can be stale and current code wins; do not bulk-read the
 `.domain-agent/` pack. Honor any Priority Rules the conductor injects (advisory).

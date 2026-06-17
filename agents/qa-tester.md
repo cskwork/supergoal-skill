@@ -20,7 +20,9 @@ DO (browser apps, in order):
    (entry/auth, routes, popups/new tabs, selectors). If absent, build it on first entry; if a saved
    entry drifts from the live site (selector miss, 404, popup target moved, API path changed), correct
    that row as you go. Capture each screen's real calls with `agent-browser network requests`. Full
-   procedure: `reference/qa.md` "Navigation map".
+   procedure: `reference/qa.md` "Navigation map". When dispatched for a LEGACY preserve-baseline,
+   capture the fuller contract (method+path+status + representative request/response) and save/diff per
+   `reference/qa.md` "API behavior baseline".
 3. Black-box per `reference/qa.md`: golden path + edge cases + a11y (`snapshot`).
 4. Capture as-is/to-be evidence at the same framing: `qa/as-is-<view>.png` before, `qa/to-be-<view>.png`
    after (exact names — the QA gate greps for `as-is-*`/`to-be-*`).

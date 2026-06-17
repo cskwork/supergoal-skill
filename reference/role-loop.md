@@ -10,7 +10,8 @@ Use for any non-trivial feature/bug/refactor. Skip for a trivial single edit - e
 ## Roles (fresh context each; separate agent orchestrated, or deliberate role switch inline)
 
 1. **Build** - smallest correct change; match surrounding style; minimal diff. Bug: reproduce with a
-   failing test first.
+   failing test first. Refactor/integrate an existing API: capture its exact-behavior baseline FIRST
+   (`reference/qa.md` "API behavior baseline").
 
 2. **Critic** (`agents/code-reviewer.md`) - DO NOT edit src or weaken/delete existing tests.
    - Re-read the prose spec and repo/data rules. Enumerate REQUIRED behaviors the existing tests do not
@@ -33,6 +34,8 @@ Use for any non-trivial feature/bug/refactor. Skip for a trivial single edit - e
 4. **Verify vs ground truth** (`agents/qa-auditor.md` / `security-reviewer.md`)
    - Re-run the project's REAL tests; re-read the prose spec for uncovered rules. Fix residual failures/
      regressions minimally. Stop on green; report what was verified with command output.
+   - API refactor: re-capture the same call and diff against the pre-refactor baseline; unintended
+     drift is a red to resolve.
    - Update the run vault's `surfaced-requirements.md`: mark each surfaced requirement fixed, or note why it stays open.
 
 Loop critic->fixer only while a fresh red appears. The verifier pass is a regression guard - drop it only

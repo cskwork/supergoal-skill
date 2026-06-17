@@ -37,7 +37,7 @@ agy, and other agent CLIs - but dispatch is optional and single-driver by defaul
 |---|---|---|
 | "build / ship a new app/tool" | **GREENFIELD** | default loop |
 | "fix / broken / failing / why does" | **DEBUG** | default loop; reproduce with a failing test first |
-| "add X to our existing/legacy code" | **LEGACY** | default loop; map the code first |
+| "add X to our existing/legacy code" | **LEGACY** | default loop; map the code first; refactoring an existing API: capture its exact behavior first, Verify diffs against that baseline |
 | "spec this first - requirements/design/tasks docs" | **SPEC** | grill load-bearing decisions one question at a time; requirements -> design -> tasks crystallize under `docs/spec/`, then the default loop runs against them |
 | "explain / teach me X" (no code) | **LEARN** | Intake -> Source -> Bridge -> Teach -> Check (explain-back) |
 | "learn / map / onboard onto this codebase" | **LEARN-DOMAIN** | Survey -> Map -> Ground -> Persist a `.domain-agent/` wiki |

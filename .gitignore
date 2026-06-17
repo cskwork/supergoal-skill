@@ -6,6 +6,11 @@ data/
 learn/*.md
 !learn/README.md
 !learn/USER_PREFERENCE.template.md
+!learn/MISSION-FORMAT.md
+!learn/RESOURCES-FORMAT.md
+!learn/GLOSSARY-FORMAT.md
+!learn/LEARNING-RECORD-FORMAT.md
+learn/*/
 .playwright-mcp/
 *.png
 __pycache__/

@@ -66,6 +66,21 @@ QA-ONLY, REVIEW-ONLY, ARCH, LEARN/LEARN-DOMAIN, HARNESS-EVAL, and SKILL-MINE are
 utilities (no-code QA, findings-only review, teaching/onboarding, harness measurement, skill forging).
 They write no product code by default and confirm with you before installing anything.
 
+## Board (optional live dashboard)
+
+Watch progress across concurrent agents in real time. `bash tui/launch.sh &` opens an in-browser
+dashboard (Textual) showing each agent's mode + workflow stage (Frame -> Build -> Critic -> Fixer ->
+Verify) and a Jira-like task board, grouped by repo / branch / worktree. Branch is advisory - never
+locked, so multiple agents can share a branch freely.
+
+It is pure observability: opt-in, best-effort, and it never gates or blocks a run - if no agent emits,
+every mode still passes unchanged. When enabled, the conductor calls `sg-emit`
+(`templates/observability/`) at each phase transition, writing one atomically-replaced heartbeat JSON
+per agent under `~/.supergoal/runs/agents/`; the dashboard (`tui/`) polls and renders them. Correctness
+is just one writer per file + atomic rename - no lock anywhere. In-browser serving needs
+`pip install textual-serve`; without it, run the local TUI with `python -m tui.app`. Full spec:
+[`reference/observability.md`](reference/observability.md).
+
 ## Install
 
 This repo **is** the skill. Put it where your agent CLI finds skills:
@@ -91,9 +106,10 @@ contract tests under **WSL** bash.
 ```
 SKILL.md            thin spine: baseline-first loop, modes, reference map
 agents/             one persona file per role (analyst, architect, executor, debugger, explore, designer, qa-*, db-reader, code-reviewer, security-reviewer)
-reference/          domain-rules · domain-context · debugging · interview · plan-grounding · market-research · qa · qa-only · db-access · learn · learn-domain · ui-ux · taste-skill-v2 · functional-ui · harness-eval · skill-mine
+reference/          domain-rules · domain-context · debugging · interview · plan-grounding · market-research · qa · qa-only · db-access · learn · learn-domain · ui-ux · taste-skill-v2 · functional-ui · harness-eval · skill-mine · observability
 learn/              LEARN-mode session journals + README template + USER_PREFERENCE(.template).md
-templates/          qa-gate.sh · qa-only-gate.sh · contrast-gate.mjs · learn-grounding-gate.mjs · qa-report.md · db-access/ · domain-agent/ · domain-onboarding.html · harness-eval-gate.mjs · harness-eval-cases/ · skill-mine/ · skill-frontmatter-gate.mjs · skill.md.template
+templates/          qa-gate.sh · qa-only-gate.sh · contrast-gate.mjs · learn-grounding-gate.mjs · qa-report.md · db-access/ · domain-agent/ · domain-onboarding.html · harness-eval-gate.mjs · harness-eval-cases/ · skill-mine/ · skill-frontmatter-gate.mjs · skill.md.template · observability/ (sg-emit board state)
+tui/                optional live Board: state.py (reader) · app.py (Textual UI) · serve.py (in-browser) · launch.sh
 docs/               DESIGN.md · research-brief.md · experiments/ (the harness evals) · changelog/ · index.html (landing)
 examples/url-shortener/   a worked example service exercised across the build / debug / extend modes
 ```

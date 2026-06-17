@@ -45,6 +45,15 @@ require_text "verifier marks surfaced requirements fixed" "reference/role-loop.m
 # SKILL.md surfaces the behavior in the default loop.
 require_text "SKILL critic step logs surfaced requirements" "SKILL.md" 'run vault'\''s `surfaced-requirements.md`'
 
+# LEGACY captures an existing API's exact behavior before a refactor (preserve-baseline),
+# and Verify diffs the re-capture against it (parallel to DEBUG's screen->endpoint capture).
+require_text "SKILL LEGACY captures preserve-baseline" "SKILL.md" "capture its exact behavior first as a preserve-baseline"
+require_text "qa.md defines the API behavior baseline" "reference/qa.md" "## API behavior baseline (LEGACY preserve)"
+require_text "qa.md baseline supports backend-only HTTP capture" "reference/qa.md" "Backend-only (no UI)"
+require_text "role-loop Build captures the baseline first" "reference/role-loop.md" "capture its exact-behavior baseline FIRST"
+require_text "role-loop Verify diffs the re-capture" "reference/role-loop.md" "re-capture the same call and diff against the pre-refactor baseline"
+require_text "explore flags existing API for capture" "agents/explore.md" "flag it for a preserve-baseline capture"
+
 # Template exists and carries the expected fields.
 require_file "surfaced-requirements template exists" "templates/surfaced-requirements.md"
 require_text "template names requirement/why/covering test/status" "templates/surfaced-requirements.md" "requirement / why implied / covering test / status"

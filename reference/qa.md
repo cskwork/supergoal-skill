@@ -34,7 +34,8 @@ the summary and evidence paths. Do not run browser QA from the conductor.
 
 Complex apps (auth gates, popups, new tabs, deep routes) burn QA budget re-discovering how to reach a
 screen. The repo's `.domain-agent/qa/nav-map.md` is the durable map that makes navigation cheap and
-repeatable, and the same map gives DEBUG observe-first the `screen -> API` routing it needs. It is
+repeatable, gives DEBUG observe-first the `screen -> API` routing it needs, and routes LEGACY to the
+exact screen whose API it must baseline before a refactor. It is
 repo-local and gitignored (`reference/domain-context.md`); no app-specific selector, route, or
 credential ever lives in this skill.
 
@@ -54,6 +55,23 @@ credential ever lives in this skill.
 **New tab / popup handling.** When an action opens a new tab or popup, switch the driver to that target
 and re-`snapshot` before interacting, then record `trigger -> target` in nav-map (confirm the exact
 agent-browser tab/target subcommand via `agent-browser skills get core --full`).
+
+## API behavior baseline (LEGACY preserve)
+
+Before refactoring or integrating against an existing API, capture its exact behavior so the refactor
+preserves it (preserve the contract; DEBUG's `screen -> endpoint` only localizes). Save to the run vault
+`<vault>/qa/api-baseline-<endpoint>.md`: method + path + status + a representative request and the
+response shape (the contract, not every value).
+
+- **UI-reachable** - reach the screen via `qa/nav-map.md` and capture real calls with `agent-browser
+  network requests --filter <api-prefix>` (through `qa-tester`); promote a confirmed `screen -> API` row
+  back into nav-map.
+- **Backend-only (no UI)** - capture at the HTTP level: a recorded curl/HAR or an HTTP probe (e.g. the
+  `verify` skill) against the running endpoint.
+
+After the refactor, re-capture the same call and diff against the baseline; unintended drift is a red to
+resolve (role-loop Verify). Baselines are per-run vault evidence, never the domain pack - strip secrets,
+tokens, and PII from saved bodies.
 
 ## Authenticated sessions (attach-to-browser)
 

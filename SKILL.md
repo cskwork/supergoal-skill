@@ -28,7 +28,7 @@ One objective -> the smallest correct change -> verified against ground truth. F
 |---|---|---|
 | build / make / ship a new app/tool | GREENFIELD | default loop |
 | fix / broken / failing / crash / why does | DEBUG | default loop; runtime-symptom bugs -> observe the live flow at the symptom's boundary BEFORE code/git, report the broken boundary early; then reproduce with a failing test (`reference/debugging.md` Observe-first triage); web symptoms: pin screen->exact API with `agent-browser network requests` + repo `qa/nav-map.md` (`reference/qa.md`) |
-| add / integrate / refactor existing code | LEGACY | default loop; map the code first (`agents/explore.md`, `reference/domain-context.md`); optional DB evidence (`reference/db-access.md`) |
+| add / integrate / refactor existing code | LEGACY | default loop; map the code first (`agents/explore.md`, `reference/domain-context.md`); optional DB evidence (`reference/db-access.md`); existing-API refactor: capture its exact behavior first as a preserve-baseline, Verify diffs the re-capture (`reference/qa.md` "API behavior baseline") |
 | spec / requirements first / 스펙 문서로 구조화 | SPEC | spec-first prefix to the default loop: grill load-bearing decisions one question at a time, crystallize requirements -> design -> tasks under `docs/spec/<feature-slug>/`, then tasks.md drives Build and EARS criteria feed the critic (`reference/spec.md`) |
 | explain / teach / how does X work (no code) | LEARN | `reference/learn.md` |
 | learn / onboard / map this codebase (persist a wiki) | LEARN-DOMAIN | `reference/learn-domain.md` |

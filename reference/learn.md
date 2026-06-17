@@ -1,17 +1,89 @@
-# LEARN mode - teach, do not change code
+# LEARN mode - teach a human, do not change code
 
 Use for "explain/understand/teach me" on codebase areas or concepts. Do not write production code.
-Done means the user can define key terms and explain the idea back unaided.
+Done means the user can define key terms and explain the idea back unaided - and the lesson, mission,
+and records persist in a workspace they return to across sessions.
 
-LEARN skips the default loop (no Build/Critic/Fixer/Verify) and all implementation gates. It uses this
-lightweight flow:
+LEARN runs as a **stateful, multi-session teaching workspace**: it fuses supergoal's decomposition +
+process-trace pedagogy with the workspace model from mattpocock/skills `teach` (Knowledge / Skills /
+Wisdom, missions, beautiful HTML lessons, learning records). It still skips the default loop (no
+Build/Critic/Fixer/Verify) and all implementation gates. Flow:
 
-`Intake -> Preference -> Core question -> Source -> Bridge -> Teach loop -> Check -> Journal`
+`Intake -> Preference -> Mission -> Resources -> ZPD -> Core question -> Bridge -> Teach loop (lesson) -> Check -> Records -> Journal`
 
 ## Goal-tool boundary
 
 LEARN is tutoring, not a persistent runtime goal. Never call `create_goal`, `update_goal`, or similar.
-Check happens in chat explain-back only.
+"Stateful" here means **files**, not the goal tool: learning state lives in the teaching workspace
+below, and the Check still happens in chat explain-back. The workspace persists across sessions; the
+runtime goal machinery stays untouched.
+
+## Teaching workspace
+
+Treat `<skill>/learn/<topic>/` as the workspace for one topic (kebab-case `<topic>`). One mission per
+workspace - a second unrelated topic is a second workspace. The global profile
+`<skill>/learn/USER_PREFERENCE.md` is shared across topics. State lives in these files, created lazily
+(only when first written):
+
+| Path | What | Format |
+|---|---|---|
+| `learn/<topic>/MISSION.md` | The *reason* the user is learning this; grounds every teaching decision | `learn/MISSION-FORMAT.md` |
+| `learn/<topic>/RESOURCES.md` | Curated high-trust sources (Knowledge) + communities (Wisdom) | `learn/RESOURCES-FORMAT.md` |
+| `learn/<topic>/GLOSSARY.md` | Canonical terminology; every lesson adheres to it | `learn/GLOSSARY-FORMAT.md` |
+| `learn/<topic>/learning-records/NNNN-slug.md` | ADR-style records of genuine learning; set the next ZPD | `learn/LEARNING-RECORD-FORMAT.md` |
+| `learn/<topic>/lessons/NNNN-slug.html` | Primary teaching unit: one self-contained beautiful HTML lesson | **Lessons** below |
+| `learn/<topic>/reference/*.html` | Compressed cheat-sheets revisited later | **Reference documents** below |
+| `learn/<topic>/assets/*` | Reusable components shared across lessons | **Assets** below |
+| `learn/<topic>/NOTES.md` | Scratchpad for teaching preferences and working notes | free-form |
+| `learn/<topic>/<topic>-YYYY-MM-DD.md` | Live chat journal per session | `learn/README.md` |
+
+Per-topic files hold personal learning data and are git-ignored; only the `*-FORMAT.md` guides and
+`learn/README.md` are committed. Never commit a user's mission, records, lessons, or journal.
+
+## Philosophy: Knowledge / Skills / Wisdom
+
+Deep learning needs three things (adapted from mattpocock/skills `teach`):
+
+- **Knowledge** - captured from high-quality, high-trust resources, never from parametric guessing.
+- **Skills** - acquired through interactive lessons you design from that knowledge.
+- **Wisdom** - earned by testing skills against real practitioners (a community).
+
+Some topics lean knowledge-heavy (theory), others skills-heavy (a codebase walk, a craft). Weight the
+workspace accordingly.
+
+**Fluency vs storage strength.** In-the-moment retrieval (fluency) feels like mastery but is illusory;
+the goal is long-term retention (storage strength). Build it with *desirable difficulty*:
+
+- **Retrieval practice** - recall from memory, not re-reading (this is what the interview check does).
+- **Spacing** - distribute practice over sessions; learning records tell you what to space.
+- **Interleaving** - mix related skills in practice (skills only, not first-time knowledge).
+
+For acquiring *knowledge*, difficulty is the enemy - it eats the working memory needed to understand.
+For making *skills* durable, difficulty is the tool - effortful retrieval is what builds storage. Tune
+the difficulty ladder accordingly.
+
+## The mission
+
+Every lesson ties back to the mission - the real-world reason the user is learning this. If
+`MISSION.md` is empty or vague, interview the user on *why* before teaching anything; a bad mission is
+worse than none. Without it, knowledge is ungrounded, lessons feel abstract, and you cannot judge what
+to teach next. Missions drift as the user grows - update `MISSION.md` and add a learning record when
+they do, after confirming with the user. Format: `learn/MISSION-FORMAT.md`.
+
+## Resources (never trust parametric knowledge)
+
+Before teaching a concept, gather it from trusted sources and record them in `RESOURCES.md`
+(`learn/RESOURCES-FORMAT.md`). Prefer primary sources, recognized experts, peer-reviewed work.
+Codebase topics are "sourced" by reading the code read-only (`explore`/`architect`), not by guessing.
+Lessons cite their sources inline - citations are what make a lesson trustworthy. Each lesson
+recommends one primary source (the single highest-trust resource) for the user to read or watch.
+
+## Zone of proximal development
+
+Each lesson should challenge the user *just enough*. If the user names an exact thing to learn, teach
+that. Otherwise compute the ZPD from `learning-records/` (what they already know) + `MISSION.md` (what
+they need next), and teach the most mission-relevant thing that just fits. A lesson should be short and
+completable fast - working memory is small - yet give one tangible win to build on.
 
 
 ## Decomposition
@@ -53,8 +125,11 @@ fallback/stop before the takeaway.
      continue.
    - Difficulty controls register and chunk size. Interests drive analogies/examples.
    - Difficulty changes automatically on tuning; interests change only on request.
-1. **Source.** Gather before teaching. Codebase topics use read-only `explore`/`architect`; concepts use
-   authoritative sources. Do not guess.
+1. **Mission + Source.** Ground first. If `MISSION.md` is empty, interview the user on *why* they want
+   this before teaching anything, then write `MISSION.md` (`learn/MISSION-FORMAT.md`). Gather before
+   teaching: codebase topics use read-only `explore`/`architect`; concepts come from the high-trust
+   sources in `RESOURCES.md`. **Never trust parametric knowledge** - cite sources and record them. Do
+   not guess. Then pick the lesson in the user's zone of proximal development.
 2. **Bridge + core question.** Open with one short core question - what problem does the topic
    solve - and do not wait for the answer; the lesson answers it (a thinking hook, not a test).
    Then connect the topic to the user's world in one vivid line using a saved interest. No separate
@@ -73,8 +148,13 @@ fallback/stop before the takeaway.
    - Fill gaps and re-ask. Park edge cases under "later."
    - End every teaching turn with the difficulty menu.
 4. **Check gate.** User restates each key term and the whole idea unaided. Gaps return to Teach loop.
-5. **Journal live.** Append to `learn/<topic>-YYYY-MM-DD.md` with the question, bridge, terms, user
-   explanation, and open questions. Create `learn/` if missing; follow `learn/README.md`.
+5. **Records + journal.** When the user demonstrates genuine, non-trivial understanding (not mere
+   coverage), write a learning record `learn/<topic>/learning-records/NNNN-slug.md`
+   (`learn/LEARNING-RECORD-FORMAT.md`) - these set the next ZPD and survive sessions. Promote settled
+   terms into `GLOSSARY.md`. Then append the live chat journal to
+   `learn/<topic>/<topic>-YYYY-MM-DD.md` with the question, bridge, terms, user explanation, and open
+   questions; create the workspace if missing and follow `learn/README.md`. For anything the user will
+   revisit, also write the HTML lesson (see **Lessons**).
 
 ## Interview check
 
@@ -121,6 +201,53 @@ Stay Socratic and conversational: invite the user to answer in any order and as 
 not require every answer. Respond to whichever they take, fill the gap, and re-ask only what they
 missed. This is an interview to induce learning, not an exam - never punish a miss, just re-teach
 that piece.
+
+## Lessons (the primary teaching unit)
+
+A lesson is the main thing LEARN produces: one self-contained HTML file at
+`learn/<topic>/lessons/NNNN-slug.html` (increment `NNNN`). It teaches one tightly-scoped thing tied to
+the mission, in the user's ZPD.
+
+- **Beautiful and short.** Clean Tufte-style typography; completable quickly inside working memory; one
+  tangible win. The user returns to these, so they must read and print well.
+- **Knowledge then skill.** Teach only the knowledge the skill needs, cited inline, then drill the
+  skill through a tight feedback loop (quiz, light in-browser task, or a checklist of real-world steps)
+  that gives immediate, ideally automatic feedback.
+- **Quiz hygiene.** Every answer option is the same length in words (and characters where possible);
+  formatting leaks no clue to the correct answer; randomize the correct option's position (same rule as
+  the interview check).
+- **Linked.** Anchor-link to related lessons and to `reference/*.html`. Recommend one primary source.
+  End with a reminder that the agent is their teacher - ask follow-up questions on anything unclear.
+- **Open it.** If possible, open the lesson file for the user with a CLI command after writing it.
+
+The in-chat **Opening output format** below is the lesson's spoken counterpart for codebase/concept
+walks; the HTML lesson is its durable, reviewable form. A quick codebase explain-back may use the chat
+opening alone; for anything the user will revisit, write the lesson.
+
+## Reference documents & glossary
+
+Lessons are rarely revisited; reference documents are. After a lesson, distill its compressed essence
+into `learn/<topic>/reference/*.html` - syntax/snippets, algorithms/flowcharts, poses/sequences,
+routines - formatted for fast lookup. The **glossary** (`GLOSSARY.md`, `learn/GLOSSARY-FORMAT.md`) is
+the most important reference: add a term only once the user can use it correctly (compressing a concept
+into a tight definition is itself evidence of learning), be opinionated about the canonical word, and
+adhere to it in every later lesson.
+
+## Wisdom & communities
+
+When a question needs wisdom (real-world judgment beyond knowledge or skill), answer as far as you can,
+then point the user to a high-reputation **community** where they can test their skill for real - a
+moderated forum, subreddit, local class, or interest group - recorded under Wisdom in `RESOURCES.md`.
+If the user opts out of communities, respect it and note the preference in `RESOURCES.md`.
+
+## Assets (reusable components)
+
+Lessons are built from reusable components in `learn/<topic>/assets/`: a shared stylesheet, quiz
+widgets, simulators, diagram helpers. Reuse is the default - read `assets/` before authoring a lesson
+and build from what is there. The shared stylesheet is the first component every workspace earns, so
+all lessons look like one course, not a pile of one-offs. When a lesson needs something new and
+reusable, write it as a component in `assets/` and link it; never inline code a future lesson would
+duplicate.
 
 ## Opening output format
 
@@ -339,3 +466,9 @@ Read it at step 0. Do not re-ask each session. Use the profile without lecturing
     into explicit state and flow first.
 14. Treat "모르겠어 / I don't know" or a check miss as a signal that a piece below the current atom
     is missing - back up via **Prerequisite scaffolding**, do not rephrase at the same level.
+15. Ground every workspace in a `MISSION.md`; never trust parametric knowledge - teach from the
+    high-trust sources in `RESOURCES.md` and cite them.
+16. Produce a beautiful, self-contained HTML lesson as the primary teaching unit; reuse `assets/`
+    components and design for desirable difficulty (retrieval, spacing, interleaving), not fluency.
+17. Capture decision-grade insight in `learning-records/` and settled terms in `GLOSSARY.md`; let the
+    records, not a flat journal, set the next zone of proximal development.

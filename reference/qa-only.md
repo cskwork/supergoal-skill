@@ -32,10 +32,9 @@ the finding and stops.
 - **Target.** QA-ONLY tests an existing running app. Ask for the URL/environment (e.g. `http://localhost:3000`,
   staging). Only start a local server if the user asks; never build product code to get one. Static
   single HTML opens via `file://`.
-- **Browser driver.** `agent-browser` is the default driver (preflight + record `agent-browser doctor`,
-  same as `reference/qa.md`). When an authenticated/real logged-in session is required, switch to
-  **attach-to-browser** (Playwright CLI; `https://github.com/cskwork/attach-to-browser-skill`) and record
-  it on the `Tool:`/`Fallback:` lines. See `reference/qa.md` "Authenticated sessions".
+- **Browser driver.** `playwright-cli` is the only driver (`reference/playwright-cli.md`); install it if
+  absent, record `Tool: playwright-cli` in `## QA`. Authenticated/logged-in sessions use playwright-cli's
+  native session/state/CDP-attach paths - no separate tool. See `reference/qa.md` "Authenticated sessions".
 - **Navigation map.** Load `.domain-agent/qa/nav-map.md` first to reach gated/popup-heavy screens;
   build it on first entry and correct any drifted rows in place (`reference/qa.md` "Navigation map").
 - **DB access.** Read-only, DB-independent, via `reference/db-access.md`. Used for: fetch test

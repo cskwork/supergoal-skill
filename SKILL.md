@@ -27,7 +27,7 @@ One objective -> the smallest correct change -> verified against ground truth. F
 | Signal in the objective | Mode | Approach |
 |---|---|---|
 | build / make / ship a new app/tool | GREENFIELD | default loop |
-| fix / broken / failing / crash / why does | DEBUG | default loop; runtime-symptom bugs -> observe the live flow at the symptom's boundary BEFORE code/git, report the broken boundary early; then reproduce with a failing test (`reference/debugging.md` Observe-first triage); web symptoms: pin screen->exact API with `agent-browser network requests` + repo `qa/nav-map.md` (`reference/qa.md`) |
+| fix / broken / failing / crash / why does | DEBUG | default loop; runtime-symptom bugs -> observe the live flow at the symptom's boundary BEFORE code/git, report the broken boundary early; then reproduce with a failing test (`reference/debugging.md` Observe-first triage); web symptoms: pin screen->exact API with `playwright-cli requests` + repo `qa/nav-map.md` (`reference/qa.md`, `reference/playwright-cli.md`) |
 | add / integrate / refactor existing code | LEGACY | default loop; map the code first (`agents/explore.md`, `reference/domain-context.md`); optional DB evidence (`reference/db-access.md`); existing-API refactor: capture its exact behavior first as a preserve-baseline, Verify diffs the re-capture (`reference/qa.md` "API behavior baseline") |
 | spec / requirements first / 스펙 문서로 구조화 | SPEC | spec-first prefix to the default loop: grill load-bearing decisions one question at a time, crystallize requirements -> design -> tasks under `docs/spec/<feature-slug>/`, then tasks.md drives Build and EARS criteria feed the critic (`reference/spec.md`) |
 | explain / teach / how does X work (no code) | LEARN | `reference/learn.md` |
@@ -114,7 +114,7 @@ risky work in a branch or `git worktree` (optional).
 | `reference/spec.md`, `templates/spec/` | SPEC: requirements -> design -> tasks under `docs/spec/` before Build |
 | `reference/plan-grounding.md` | Ground the approach from docs/code before committing |
 | `reference/db-access.md`, `templates/db-access/` | Read-only DB evidence (required past *very easy* when data load-bearing) - GREENFIELD / DEBUG / LEGACY / QA-ONLY |
-| `reference/qa.md`, `qa-only.md`, `db-access.md` | QA / no-code verify; browser nav-map (`qa/nav-map.md`) |
+| `reference/qa.md`, `qa-only.md`, `playwright-cli.md`, `db-access.md` | QA / no-code verify; single browser driver = playwright-cli; nav-map (`qa/nav-map.md`) |
 | `reference/review-only.md` | REVIEW-ONLY: findings report, no fixes |
 | `reference/arch.md` | ARCH: friction survey -> candidates report -> grill the pick -> route out |
 | `reference/learn.md`, `learn-domain.md` | Teach a human / onboard the agent |

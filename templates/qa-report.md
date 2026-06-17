@@ -6,7 +6,7 @@ and keep file paths/commands verbatim. No credentials, no raw DB rows, no PII.
 
 # QA report - <objective>
 
-- Date: <YYYY-MM-DD>   Target: <url/env>   Driver: <agent-browser | attach-to-browser | CLI smoke>
+- Date: <YYYY-MM-DD>   Target: <url/env>   Driver: <playwright-cli | CLI smoke>
 - Comparison: <functional | data-integrity | before-after | ab | env>
 - Verdict: <PASS | FAIL | PARTIAL>   Actions used: <action_count>/<action_cap>
 

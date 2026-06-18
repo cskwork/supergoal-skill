@@ -53,6 +53,11 @@ independent **Critic** re-reads the spec and writes a FAILING test for each requ
 tests miss; 4) a **Fixer** makes those pass with the smallest change; 5) **Verify** against the real tests
 and re-read the spec for uncovered rules - stop on green and report what was verified with command output.
 
+Coding/debug runs use a run worktree by default: resolve and verify the source/base branch plus the
+target/integration branch before editing, create the run worktree from source/base, and only commit or
+merge into the verified target/integration branch after green verification and user acceptance. Browser UI
+changes also require real browser QA: `Tool: playwright-cli` evidence and `qa-gate.sh <vault> browser`.
+
 ```text
 /supergoal build a habit-tracker app and ship it
 /supergoal the checkout page hangs intermittently in prod. fix it

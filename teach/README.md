@@ -1,4 +1,4 @@
-# learn/
+# teach/
 
 State for the supergoal **TEACH mode** (see `reference/teach.md`). TEACH runs as a stateful,
 multi-session teaching workspace - decomposition + process-trace pedagogy fused with the workspace
@@ -7,7 +7,7 @@ model from mattpocock/skills `teach`.
 ## Layout
 
 ```
-learn/
+teach/
   README.md                  committed - this file
   USER_PREFERENCE.template.md committed - seed for the per-user profile
   USER_PREFERENCE.md          git-ignored - difficulty (1-10) + interests, shared across topics
@@ -25,7 +25,7 @@ learn/
 ```
 
 Only `README.md`, `USER_PREFERENCE.template.md`, and the `*-FORMAT.md` guides are committed. Everything
-under `learn/<topic>/` plus `USER_PREFERENCE.md` is personal learning data and is git-ignored - never
+under `teach/<topic>/` plus `USER_PREFERENCE.md` is personal learning data and is git-ignored - never
 commit a user's mission, records, lessons, or journal.
 
 ## Session journal template

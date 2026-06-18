@@ -103,3 +103,25 @@ codebase" (LEARN-DOMAIN). `TEACH` makes the two routes unambiguous at a glance.
 Done in the canonical repo (`PARA/Resource/supergoal-skill`). An earlier accidental copy of this rename
 landed in a stale, never-pushed clone (`~/.agents/skills/supergoal`); it was backed up to patches and
 discarded, and that path is now a symlink to this repo.
+
+## TEACH: also rename learn/ workspace directory -> teach/
+
+### What
+
+Followed the mode rename through to the workspace directory for full consistency: `learn/` -> `teach/`
+(git mv; 6 tracked format/README files renamed, the git-ignored `USER_PREFERENCE.md` and journals moved
+with the directory). All `learn/<topic>/`, `learn/USER_PREFERENCE.md`, `learn/*-FORMAT.md` path refs in
+`SKILL.md`, `reference/teach.md`, `reference/skill-mine.md`, `tests/teach-contract.test.sh`, and the
+`teach/*.md` guides updated to `teach/`. `.gitignore` rules updated (`teach/*.md`, `!teach/README.md`, ...).
+
+### Preserved
+
+- `reference/learn-domain.md` line 3 `"learn/onboard/map this codebase"` is natural language ("learn OR
+  onboard OR map"), not a path - left as-is.
+- `LEARN-DOMAIN` mode, the `learn-domain.md` filename, and `learn-grounding-gate.mjs` are untouched
+  (no `learn/` slash to match).
+
+### Verification
+
+- 15 contract tests pass; git recognizes 6 renames; the ignored `USER_PREFERENCE.md`/journals stay
+  ignored under the new `teach/` rules; `grep teach/onboard` -> 0 (no mis-substitution).

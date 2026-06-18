@@ -64,10 +64,10 @@ require_text "learn makes the HTML lesson the primary unit" "reference/teach.md"
 require_text "learn keeps ADR-style learning records" "reference/teach.md" "learning-records/"
 
 # --- workspace format guides must ship ---
-require_file "mission format guide exists" "learn/MISSION-FORMAT.md"
-require_file "resources format guide exists" "learn/RESOURCES-FORMAT.md"
-require_file "glossary format guide exists" "learn/GLOSSARY-FORMAT.md"
-require_file "learning-record format guide exists" "learn/LEARNING-RECORD-FORMAT.md"
+require_file "mission format guide exists" "teach/MISSION-FORMAT.md"
+require_file "resources format guide exists" "teach/RESOURCES-FORMAT.md"
+require_file "glossary format guide exists" "teach/GLOSSARY-FORMAT.md"
+require_file "learning-record format guide exists" "teach/LEARNING-RECORD-FORMAT.md"
 
 printf '\nSummary: %s passed, %s failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

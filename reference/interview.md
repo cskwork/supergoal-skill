@@ -5,7 +5,7 @@ plan targets the user's real intent. The interview resolves *what to build/fix*;
 grounding the plan in docs/code afterwards (`reference/plan-grounding.md`).
 
 Applies to GREENFIELD, DEBUG, and LEGACY only. LEARN and LEARN-DOMAIN skip it (LEARN already asks one
-scope question; see `reference/learn.md`).
+scope question; see `reference/teach.md`).
 
 This file is the standalone contract.
 

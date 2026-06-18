@@ -60,3 +60,46 @@ records, beautiful HTML lessons). The merge keeps both.
 - Full contract suite (13 grep-style tests) -> all rc=0; no regressions in learn-domain, spec, qa,
   review, role-loop, interview, arch, gate, harness-eval, db-access, domain-context, ui-ux.
 - `git status` -> only the 5 intended edits + 4 new format guides; no stray changes.
+
+## TEACH: rename LEARN mode -> TEACH (workspace structure kept)
+
+### What
+
+Renamed the human-facing tutoring mode `LEARN` -> `TEACH` to disambiguate it from `LEARN-DOMAIN`
+(codebase mapping) in the workflow routing - both previously read as "learn". The stateful teaching
+workspace from the entry above (mission, HTML lessons, learning records, FORMAT guides) is unchanged;
+only the mode name and its reference file moved.
+
+Changed:
+
+- `reference/learn.md` -> `reference/teach.md` (git mv); every `LEARN` mode-name token -> `TEACH`
+  (the soft `learn/<topic>/` workspace paths are kept).
+- `tests/learn-contract.test.sh` -> `tests/teach-contract.test.sh` (git mv); anchors and the
+  `reference/learn.md` path refs updated to `teach.md`.
+- `SKILL.md`, `reference/learn-domain.md`, `reference/domain-context.md`,
+  `tests/learn-domain-contract.test.sh`, `learn/README.md`, `learn/USER_PREFERENCE.template.md` -
+  `LEARN` mode name -> `TEACH`, and any `reference/learn.md` path ref -> `reference/teach.md`.
+
+### Preserved on purpose
+
+- `learn/<topic>/` workspace directory and `learn/*-FORMAT.md` guides kept (these are data/format, not
+  the mode name).
+- `LEARN-DOMAIN` mode and the `LEARN-GROUNDING` gate output string are untouched (perl rename used a
+  `(?!-)` lookahead so `LEARN-…` tokens are never matched).
+
+### Why
+
+In the routing table, naming the tutoring mode "learn" collided with "learn / onboard / map this
+codebase" (LEARN-DOMAIN). `TEACH` makes the two routes unambiguous at a glance.
+
+### Verification
+
+- 15 contract tests pass (incl. `teach-contract`).
+- `grep -rnE '\bLEARN\b' SKILL.md reference/ tests/ learn/ | grep -vE 'LEARN-DOMAIN|LEARN-GROUNDING'` -> 0.
+- `grep -rn 'reference/learn\.md'` over the live tree -> 0; `LEARN-DOMAIN`/`LEARN-GROUNDING` intact.
+
+### Note
+
+Done in the canonical repo (`PARA/Resource/supergoal-skill`). An earlier accidental copy of this rename
+landed in a stale, never-pushed clone (`~/.agents/skills/supergoal`); it was backed up to patches and
+discarded, and that path is now a symlink to this repo.

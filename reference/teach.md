@@ -1,10 +1,10 @@
-# LEARN mode - teach a human, do not change code
+# TEACH mode - teach a human, do not change code
 
 Use for "explain/understand/teach me" on codebase areas or concepts. Do not write production code.
 Done means the user can define key terms and explain the idea back unaided - and the lesson, mission,
 and records persist in a workspace they return to across sessions.
 
-LEARN runs as a **stateful, multi-session teaching workspace**: it fuses supergoal's decomposition +
+TEACH runs as a **stateful, multi-session teaching workspace**: it fuses supergoal's decomposition +
 process-trace pedagogy with the workspace model from mattpocock/skills `teach` (Knowledge / Skills /
 Wisdom, missions, beautiful HTML lessons, learning records). It still skips the default loop (no
 Build/Critic/Fixer/Verify) and all implementation gates. Flow:
@@ -13,7 +13,7 @@ Build/Critic/Fixer/Verify) and all implementation gates. Flow:
 
 ## Goal-tool boundary
 
-LEARN is tutoring, not a persistent runtime goal. Never call `create_goal`, `update_goal`, or similar.
+TEACH is tutoring, not a persistent runtime goal. Never call `create_goal`, `update_goal`, or similar.
 "Stateful" here means **files**, not the goal tool: learning state lives in the teaching workspace
 below, and the Check still happens in chat explain-back. The workspace persists across sessions; the
 runtime goal machinery stays untouched.
@@ -204,7 +204,7 @@ that piece.
 
 ## Lessons (the primary teaching unit)
 
-A lesson is the main thing LEARN produces: one self-contained HTML file at
+A lesson is the main thing TEACH produces: one self-contained HTML file at
 `learn/<topic>/lessons/NNNN-slug.html` (increment `NNNN`). It teaches one tightly-scoped thing tied to
 the mission, in the user's ZPD.
 

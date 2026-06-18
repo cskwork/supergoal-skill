@@ -50,6 +50,12 @@ require_text "learn trace anchor is comment-only" "reference/teach.md" "<!-- Con
 require_text "learn keeps trace at low difficulty" "reference/teach.md" "At low difficulty, use fewer rows and plainer words; do not remove the trace"
 require_text "learn blocks summary replacing trace" "reference/teach.md" "Never replace the process trace with a summary sentence"
 require_text "learn check includes process role" "reference/teach.md" "define its role and place in the process"
+
+# --- interview/quiz must randomize the correct option (anti position pattern-matching) ---
+require_text "learn interview randomizes the correct option" "reference/teach.md" "randomize the correct option's position"
+require_text "learn interview forbids always-first answer" "reference/teach.md" "Do not always place the right answer first"
+require_text "learn quiz hygiene randomizes option position" "reference/teach.md" "formatting leaks no clue to the correct answer"
+
 require_text "README routes human teaching as TEACH" "README.md" '| "explain / teach me X" (no code) | **TEACH** |'
 require_text "Korean README routes human teaching as TEACH" "README.ko.md" '| "X를 설명/가르쳐줘" (코드 변경 없음) | **TEACH** |'
 require_text "landing routes human teaching as TEACH" "docs/index.html" '<span class="mode-label">TEACH</span>'

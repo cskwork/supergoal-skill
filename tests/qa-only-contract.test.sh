@@ -42,8 +42,25 @@ require_text "qa-only is read-only"               "reference/qa-only.md" "read-o
 require_text "qa-only default cap is 100"         "reference/qa-only.md" "Default \`action_cap\` is **100**"
 require_text "qa-only separates two subagents"    "reference/qa-only.md" "Two separate read-only subagents"
 require_text "qa-only persists indexed suite"     "reference/qa-only.md" ".domain-agent/qa/<suite>.md"
+require_text "qa-only builds impact matrix"       "reference/qa-only.md" "Impact Matrix"
+require_text "qa-only covers complex scenarios"   "reference/qa-only.md" "complex multi-step scenarios"
+require_text "qa-only covers before after actions" "reference/qa-only.md" "before/during/after actions"
+require_text "qa-only checks displayed data"      "reference/qa-only.md" "displayed data accuracy and consistency"
+require_text "qa-only generalizes web feature families" "reference/qa-only.md" "feature-specific scenario families"
+require_text "qa-only checks state propagation"   "reference/qa-only.md" "state propagation paths"
+require_text "qa-only shards independent scenarios" "reference/qa-only.md" "Scenario shards"
+require_text "qa-only uses shared ledger"         "reference/qa-only.md" "qa/scenario-ledger.md"
+require_text "qa-only avoids agent cross-talk"    "reference/qa-only.md" "never agent-to-agent"
+require_text "qa-only persists impact coverage"   "reference/qa-only.md" "coverage, uncovered areas, and residual risks"
+require_text "qa-only gate enforces shared ledger" "templates/qa-only-gate.sh" "scenario-ledger.md"
+require_text "qa-only gate enforces impact heading" "templates/qa-only-gate.sh" "## Impact coverage"
+require_text "qa-only gate enforces repro heading" "templates/qa-only-gate.sh" "## Reproduction notes"
 require_text "qa-only names report anchors"       "reference/qa-only.md" "What worked"
 require_text "qa-only handoff via qa/expected.md" "reference/qa-only.md" "qa/expected.md"
+require_text "qa report names impact coverage"    "templates/qa-report.md" "## Impact coverage"
+require_text "qa report names not covered"        "templates/qa-report.md" "## Not covered"
+require_text "qa report names reproduction notes" "templates/qa-report.md" "## Reproduction notes"
+require_text "qa report shows reproduce steps"    "templates/qa-report.md" "Reproduce:"
 
 require_text "db-access is read-only hard rule"   "reference/db-access.md" "Read-only (hard rule)"
 require_text "db-access is db-independent"        "reference/db-access.md" "DB-independent abstraction"
@@ -81,7 +98,8 @@ run_case() {
 mkbrowser() {
   local v="$T/$1"; rm -rf "$v"; mkdir -p "$v/qa"
   printf 'QA scope: checkout flow on staging\n' > "$v/brief.md"
-  printf '# QA report\n## What worked\n- login -> PASS\n## What didn'"'"'t\n- none\n## What I discovered\n- nothing\n## How to re-run\n- `.domain-agent/qa/checkout.md`\n' > "$v/report.md"
+  printf '# Scenario ledger\n\n## Impact Matrix\n- direct flow\n\n## Shards\n- direct-flow -> PASS\n' > "$v/qa/scenario-ledger.md"
+  printf '# QA report\n## Impact coverage\n- direct flow, adjacent totals, refresh/reopen\n## What worked\n- login -> PASS\n## What didn'"'"'t\n- none\n## What I discovered\n- nothing\n## Reproduction notes\n- No issues to reproduce.\n## Not covered\n- none\n## How to re-run\n- `.domain-agent/qa/checkout.md`\n' > "$v/report.md"
   printf 'verdict: GREEN\n## QA\nTool: playwright-cli\n- as-is/to-be captured\n' > "$v/verification.md"
   : > "$v/qa/as-is-1040.png"; : > "$v/qa/to-be-1040.png"
   printf '{ "action_count": 12, "action_cap": 100 }\n' > "$v/state.json"
@@ -97,10 +115,12 @@ run_case "1.1 full valid browser -> PASS"          0 "QA-ONLY GATE PASS" bash "$
 rm -f "$v/report.md"
 run_case "1.2 missing report.md -> blocked"        1 "report.md missing" bash "$GATE" "$v" browser
 v=$(mkbrowser g1c)
-printf '# QA report\n## What worked\n- ok\n## What I discovered\n- x\n## How to re-run\n- y\n' > "$v/report.md"
+printf '# QA report\n## Impact coverage\n- direct flow\n## What worked\n- ok\n## What I discovered\n- x\n## Reproduction notes\n- Reproduce: open checkout\n## Not covered\n- y\n## How to re-run\n- y\n' > "$v/report.md"
 run_case "1.3 report missing a section -> blocked" 1 "What didn"          bash "$GATE" "$v" browser
 v=$(mkbrowser g1d); rm -f "$v/brief.md"
 run_case "1.4 missing brief.md -> blocked"         1 "brief.md missing"   bash "$GATE" "$v" browser
+v=$(mkbrowser g1e); rm -f "$v/qa/scenario-ledger.md"
+run_case "1.5 missing scenario ledger -> blocked"  1 "scenario-ledger.md" bash "$GATE" "$v" browser
 
 v=$(mkbrowser g2); printf '{ "action_count": 150, "action_cap": 100 }\n' > "$v/state.json"
 run_case "2.1 action_count over cap -> blocked"    1 "exceeds action_cap" bash "$GATE" "$v" browser
@@ -137,7 +157,7 @@ printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: mysql (read-only via cl
 run_case "4.6 GRANT -> blocked"                    1 "DB write statement"  bash "$GATE" "$v" browser
 
 # CLI app-type: qa-gate.sh needs only ## QA; everything else still enforced.
-v=$(mkbrowser g5); rm -rf "$v/qa"
+v=$(mkbrowser g5)
 printf 'verdict: GREEN\n## QA\nintegration smoke: bin vs fixture snapshot matches\n' > "$v/verification.md"
 run_case "5.1 CLI app + valid report -> PASS"      0 "QA-ONLY GATE PASS"  bash "$GATE" "$v" cli
 

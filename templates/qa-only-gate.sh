@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # /supergoal QA-ONLY gate — the literal exit condition for a QA-ONLY run (reference/qa-only.md).
 # QA-ONLY writes no code and runs no delivery gate, so THIS is its terminal backstop. It enforces:
-#   1) the human report exists with its four anchor sections (so the user always gets a readable result),
+#   1) the human report exists with its required anchor sections (so the user always gets a readable result),
 #   2) the underlying browser/CLI QA evidence passes (delegates to qa-gate.sh — same as in-pipeline QA),
 #   3) the run stayed within its action budget (action_count <= action_cap; default cap 100),
 #   4) if a DB was read, it was marked read-only and recorded NO write SQL (the read-only backstop).
@@ -19,6 +19,7 @@ VAULT="$1"; APPTYPE="$2"
 VERIF="$VAULT/verification.md"
 REPORT="$VAULT/report.md"
 STATE="$VAULT/state.json"
+LEDGER="$VAULT/qa/scenario-ledger.md"
 fail() { echo "QA-ONLY-GATE FAIL: $*" >&2; exit 1; }
 
 case "$APPTYPE" in browser|cli) ;; *) usage ;; esac
@@ -26,20 +27,26 @@ case "$APPTYPE" in browser|cli) ;; *) usage ;; esac
 echo "== /supergoal QA-ONLY gate =="
 echo "vault: $VAULT  app-type: $APPTYPE"
 
-# 1) Human report present with its four anchor sections (English anchors; prose may be any language).
+# 1) Human report present with its required anchor sections (English anchors; prose may be any language).
 [ -s "$VAULT/brief.md" ] || fail "brief.md missing/empty — QA scope was never recorded"
+[ -s "$LEDGER" ] || fail "qa/scenario-ledger.md missing/empty — Impact Matrix and scenario shards were not recorded"
+grep -qiF 'Impact Matrix' "$LEDGER" \
+  || fail "qa/scenario-ledger.md is missing the Impact Matrix section"
 [ -s "$REPORT" ] || fail "report.md missing/empty — the human QA report was not written (templates/qa-report.md)"
 while IFS= read -r h; do
   # Match as a real heading (start-of-line, optional trailing space), not a substring buried in prose.
   grep -qiE "^[[:space:]]*${h}[[:space:]]*$" "$REPORT" \
     || fail "report.md is missing the '$h' heading (templates/qa-report.md)"
 done <<'EOF'
+## Impact coverage
 ## What worked
 ## What didn't
 ## What I discovered
+## Reproduction notes
+## Not covered
 ## How to re-run
 EOF
-echo "  ok: report.md has all four anchor headings"
+echo "  ok: report.md has all required anchor headings"
 
 # 2) Underlying QA evidence (browser as-is/to-be + driver, or CLI smoke) via the shared qa-gate.sh.
 QAGATE="$(dirname "$0")/qa-gate.sh"

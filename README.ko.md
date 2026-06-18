@@ -42,7 +42,7 @@ harness에 묶이지 않고 dispatch할 수 있습니다. 다만 dispatch는 선
 | "스펙 문서부터 구조화해줘" | **SPEC** | 핵심 결정은 한 번에 한 질문씩 grill -> requirements/design/tasks가 `docs/spec/`에 굳어짐 -> 그 문서가 기본 루프를 이끎 |
 | "X를 설명/가르쳐줘" (코드 변경 없음) | **TEACH** | Mission -> Source -> Bridge -> Teach -> Check |
 | "이 코드베이스를 학습/온보딩해줘" | **LEARN-DOMAIN** | Survey -> Map -> Ground -> `.domain-agent/` 위키 |
-| "QA만/검증/데이터 비교" (코드 변경 없음) | **QA-ONLY** | 앱 + 읽기 전용 DB 확인 -> 증거 -> `report.md` |
+| "QA만/검증/데이터 비교" (코드 변경 없음) | **QA-ONLY** | 상세 Impact Matrix QA + 읽기 전용 DB -> 증거 -> `report.md` |
 | "코드/diff/PR 리뷰만" (수정 없음) | **REVIEW-ONLY** | 독립 리뷰어 2명 -> 검증된 findings -> `report.md` |
 | "구조 개선 / 리팩터링 후보 찾아줘" | **ARCH** | 마찰 조사 -> 후보 `report.md` -> 고른 후보 grill -> 리팩터링은 LEGACY/SPEC으로 |
 | "harness 효과 테스트 / 유무 비교" | **HARNESS-EVAL** | 케이스 -> baseline -> harness -> 머신 체크 -> 품질 점수 -> 비교 |
@@ -67,8 +67,11 @@ harness에 묶이지 않고 dispatch할 수 있습니다. 다만 dispatch는 선
 ```
 
 QA-ONLY, REVIEW-ONLY, ARCH, TEACH/LEARN-DOMAIN, HARNESS-EVAL, SKILL-MINE은 각각 다른 목적의 유틸리티입니다.
-코드 없는 QA, 수정 없는 리뷰, 교육/온보딩, harness 측정, 스킬 생성처럼 제품 코드를 바로 고치지 않는
-작업을 다룹니다. 기본적으로 제품 코드는 쓰지 않고, 무언가 설치하기 전에는 사용자에게 먼저 확인합니다.
+상세 코드 없는 QA, 수정 없는 리뷰, 교육/온보딩, harness 측정, 스킬 생성처럼 제품 코드를 바로 고치지 않는
+작업을 다룹니다. QA-ONLY는 넓은 회귀 검증 lane입니다. 직접 동작, 인접 화면, 표시 데이터 일관성, 복잡한
+다단계 시나리오, 전/중/후 액션, 실행하지 못한 위험을 action cap 안에서 기록합니다. 독립적인 QA 영역은
+scenario shard로 나눠 병렬 실행하고, conductor가 `qa/scenario-ledger.md`에 병합합니다. 기본적으로 제품 코드는
+쓰지 않고, 무언가 설치하기 전에는 사용자에게 먼저 확인합니다.
 
 ## 설치
 

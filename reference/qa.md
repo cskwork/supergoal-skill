@@ -8,6 +8,12 @@ must drive that surface with `playwright-cli` and pass `bash templates/qa-gate.s
 Lint, typecheck, build, unit tests, or static screenshots can support the result but cannot replace this
 browser evidence.
 
+QA-ONLY is the detailed regression lane. When the user asks for "QA only", broad verification, or a
+post-change impact sweep, use `reference/qa-only.md`'s Impact Matrix to cover direct behavior, adjacent
+surfaces, complex multi-step scenarios, before/during/after actions, and explicit `## Not covered`
+residual risk. GREENFIELD/LEGACY/DEBUG browser QA stays lean by default but may borrow that matrix for
+high-blast-radius changes.
+
 ## Always use the `qa-tester` subagent
 
 Browser dumps, screenshots, and console logs stay in `qa-tester` context. The conductor receives only

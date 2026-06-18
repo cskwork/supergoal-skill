@@ -60,6 +60,13 @@ Author-independent roles (separate agent per role when orchestrated - the dispat
 (reproduce red -> fix green -> real suite); and if persisted data is load-bearing, DB evidence too. Both,
 not either/or - DB proves the data state, the test proves the code; neither substitutes for the other.
 
+**Run isolation gate.** For GREENFIELD / DEBUG / LEGACY work that edits code, resolve the
+source/base branch and target/integration branch immediately after mode detection. Use repo policy when
+present; otherwise ask. Then verify both refs before mutating files, create a run worktree from the
+source/base branch, and do all implementation, tests, and run-vault writes there. Do not mutate the
+original checkout. Commit or merge only into the verified target/integration branch after verification
+and user acceptance.
+
 1. **Frame.** Restate the goal + acceptance criteria in one line - each criterion a falsifiable/
    measurable check (reframe a vague goal like "make it faster" into a measured line), not a vibe.
    If underspecified, ask <=5
@@ -79,16 +86,16 @@ not either/or - DB proves the data state, the test proves the code; neither subs
 4. **Fixer (no test edits).** Make the failing tests pass with the smallest change; no padding (no code
    not tied to a failing test or a listed defect); do not break passing tests.
 5. **Verify vs ground truth.** Re-run the project's REAL tests; re-read the prose spec for uncovered
-   rules; never weaken/delete a real test or optimize to a proxy. For user-facing UI, QA against the
-   baseline from Frame (`reference/qa.md`). If persisted data is load-bearing (and issue past *very easy*),
+   rules; never weaken/delete a real test or optimize to a proxy. For user-facing browser UI, complete
+   browser app verification with `qa-gate.sh <vault> browser`; lint, typecheck, build, and screenshots
+   without `playwright-cli` do not substitute. If persisted data is load-bearing (and issue past *very easy*),
    DB evidence is REQUIRED alongside the red-green test - via `db-reader` + `templates/db-access/`; if
    `.env` is missing, ask or skip. Loop
    critic->fixer only while a fresh red appears; stop on green and report what was verified, with command
    output.
 
 Roles map to personas: critic=`agents/code-reviewer.md`, fixer=`agents/executor.md`,
-verify=`agents/qa-auditor.md`/`security-reviewer.md` (other personas in `agents/<role>.md`). Isolate
-risky work in a branch or `git worktree` (optional).
+verify=`agents/qa-auditor.md`/`security-reviewer.md` (other personas in `agents/<role>.md`).
 
 ## No-code & utility modes
 

@@ -7,6 +7,21 @@ prose spec into FAILING tests, then a fixer that clears them.
 Use for any non-trivial feature/bug/refactor. Skip for a trivial single edit - edit directly. A naive
 "review & improve" loop only pads; an independent critic supplies the signal a re-reading author misses.
 
+## Run setup - before any file mutation
+
+For any non-trivial GREENFIELD / DEBUG / LEGACY run that edits code, first resolve the source/base branch
+and target/integration branch. Prefer repo policy or user-provided refs; if either ref is ambiguous, ask
+before editing. Then verify both refs exist in the target repo and create a branch-scoped run worktree,
+for example:
+
+```bash
+git worktree add -b <run_branch> <worktree_path> <source/base branch>
+```
+
+Run Build, Critic, Fixer, Verify, tests, and run-vault writes inside that worktree; never edit the
+original checkout. Treat dirty files in the original checkout as user work. After green verification and
+user acceptance, commit or merge only into the verified target/integration branch.
+
 ## Roles (fresh context each; separate agent orchestrated, or deliberate role switch inline)
 
 1. **Build** - smallest correct change; match surrounding style; minimal diff. Bug: reproduce with a
@@ -34,6 +49,9 @@ Use for any non-trivial feature/bug/refactor. Skip for a trivial single edit - e
 4. **Verify vs ground truth** (`agents/qa-auditor.md` / `security-reviewer.md`)
    - Re-run the project's REAL tests; re-read the prose spec for uncovered rules. Fix residual failures/
      regressions minimally. Stop on green; report what was verified with command output.
+   - Browser UI changes require `reference/qa.md` browser evidence: `Tool: playwright-cli`,
+     fixed-route as-is/to-be captures, and a passing `bash templates/qa-gate.sh <vault> browser`.
+     Lint, typecheck, unit tests, build, and a visual guess are not browser QA.
    - API refactor: re-capture the same call and diff against the pre-refactor baseline; unintended
      drift is a red to resolve.
    - Update the run vault's `surfaced-requirements.md`: mark each surfaced requirement fixed, or note why it stays open.

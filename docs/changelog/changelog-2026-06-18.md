@@ -165,3 +165,39 @@ short while preserving the current contract.
 - Headless Playwright render smoke (`docs/index.html` at 1280x900 and 390x844) -> `docOverflow: 0`,
   no edited-section overflow.
 - `git diff --check` -> clean.
+
+## Korean landing copy and localized UI reference
+
+### What
+
+Refined the Korean install-card copy and added a small future-facing UI/UX reference rule:
+
+- `docs/index.html` Korean headline now uses natural product copy instead of a literal English fragment
+  translation.
+- `reference/ui-ux.md` now states that localized visible copy is part of UI quality, and Korean should
+  prefer complete, action-oriented sentences over noun-fragment stacks.
+- `tests/ui-ux-contract.test.sh` now pins that localized-copy guidance so it is not silently removed.
+
+### Why
+
+The previous Korean text was accurate but read like translated bullet fragments: "필수 서비스 없음.
+Board/TUI는 선택. 별도 오케스트레이터 없음." That preserved the English information but produced an
+awkward Korean UI rhythm and an unnatural forced line break.
+
+### Decisions
+
+- **Rewrite Korean by intent, not line-for-line.** Kept the English information model, but expressed it
+  as Korean action copy: connect it and use it; turn Board/TUI on only when needed.
+- **Put the future rule in `reference/ui-ux.md`.** This is the frontend entry reference SuperGoal loads
+  for user-facing UI, so it is the smallest durable place to teach future runs.
+- **Add contract anchors.** A reference-only rule is easy to lose during compression; two grep anchors
+  keep the guidance visible without adding a large test surface.
+
+### Verification
+
+- Korean landing copy assertion -> stale fragment strings absent; natural Korean replacement strings
+  present.
+- `bash tests/ui-ux-contract.test.sh` -> 24 passed, 0 failed.
+- Headless Playwright Korean render smoke (`docs/index.html` at 1280x900 and 390x844) -> `docOverflow:
+  0`, no install-card overflow.
+- `git diff --check` -> clean.

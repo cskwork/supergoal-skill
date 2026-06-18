@@ -40,6 +40,8 @@ require_text "ui-ux names Expressive tier"           "reference/ui-ux.md" "Expre
 require_text "ui-ux names Functional tier"           "reference/ui-ux.md" "Functional"
 require_text "ui-ux routes Expressive -> taste"      "reference/ui-ux.md" "taste-skill-v2.md"
 require_text "ui-ux routes Functional -> functional" "reference/ui-ux.md" "functional-ui.md"
+require_text "ui-ux checks localized copy"           "reference/ui-ux.md" "Localized UI copy"
+require_text "ui-ux checks Korean line breaks"       "reference/ui-ux.md" "Korean should prefer complete, action-oriented sentences"
 
 # Functional authority exists and carries its baseline.
 require_file "functional-ui authority exists"        "reference/functional-ui.md"

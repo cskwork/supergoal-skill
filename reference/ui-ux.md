@@ -21,6 +21,13 @@ The chosen authority overlays the normal mode; phases, gates, vault, and topolog
 scaffolding may fan out, but one surface's look-and-feel is deep-and-narrow: use one Designer driver
 per surface.
 
+## Localized UI copy
+
+Visible copy is part of UI quality, not a translation afterthought. For non-English UI, rewrite the
+message in the target language's natural product rhythm instead of line-by-line translating the English.
+Check deliberate line breaks (`<br>`) as content: Korean should prefer complete, action-oriented
+sentences over noun-fragment stacks such as "필수 서비스 없음. Board/TUI는 선택."
+
 | Phase | Overlay |
 |---|---|
 | Frame | Add one-line **Design Read** and dials `DESIGN_VARIANCE`, `MOTION_INTENSITY`, `VISUAL_DENSITY` to `plan.md` (or the run `README.md` when no plan file exists). Pick official design system vs aesthetic. If the Design Read vibe names a specialized aesthetic, also pick at most ONE **aesthetic family** from `reference/taste-aesthetics.md` (selection map there) and record it on the Design Read line; no family signal means base taste-skill-v2 alone. For known brands, use existing brand color/type as accent source and record it. |

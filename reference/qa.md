@@ -3,6 +3,11 @@
 QA drives the real app like a user and records user-observable evidence. It applies to
 GREENFIELD/LEGACY and web-bug checks in DEBUG.
 
+UI changes are browser app verification: if product code changes a user-facing browser surface, the run
+must drive that surface with `playwright-cli` and pass `bash templates/qa-gate.sh <vault> browser`.
+Lint, typecheck, build, unit tests, or static screenshots can support the result but cannot replace this
+browser evidence.
+
 ## Always use the `qa-tester` subagent
 
 Browser dumps, screenshots, and console logs stay in `qa-tester` context. The conductor receives only

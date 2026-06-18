@@ -201,3 +201,46 @@ awkward Korean UI rhythm and an unnatural forced line break.
 - Headless Playwright Korean render smoke (`docs/index.html` at 1280x900 and 390x844) -> `docOverflow:
   0`, no install-card overflow.
 - `git diff --check` -> clean.
+
+## Korean landing page copy polish
+
+### What
+
+Reviewed the Korean-visible landing page copy end to end and replaced translation-shaped fragments with
+natural product UI sentences:
+
+- Reworded hero, metric, mode, principle, role, proof, and install-terminal Korean strings where the
+  grammar was technically valid but awkward in Korean.
+- Replaced ambiguous "실제 기준" wording with concrete Korean copy that names the source of truth:
+  project tests and specs.
+- Kept product and technical terms such as `Critic`, `proxy verifier`, `dispatch`, `harness`, and mode
+  names only where they are useful identifiers.
+- Preserved the existing page structure, English copy, visual system, and current SuperGoal contract.
+
+### Why
+
+The previous install-card fix addressed the most visible issue, but the broader Korean surface still had
+several line-by-line translations: noun-fragment stacks, passive wording, and unnatural subject/action
+pairs such as "목표가 작업 경로를 고릅니다" and "requirements(EARS)/design/tasks가 ... 굳어져". These
+read as translated copy rather than Korean UI writing.
+
+### Decisions
+
+- **Copy polish only.** No layout or English-content changes; the goal was grammar, rhythm, and UI
+  clarity.
+- **Name the source of truth.** "실제 기준" is too abstract in Korean, so visible copy now says
+  "프로젝트 테스트" and "테스트와 스펙" where the page means ground truth.
+- **Keep identifiers stable.** Technical labels remain in English where they map to real SuperGoal
+  concepts, while surrounding Korean explains the action naturally.
+- **Prefer complete Korean sentences.** Replaced fragment-style claims like "proxy verifier 없음" with
+  action-oriented sentences.
+
+### Verification
+
+- Korean copy assertion -> 14 expected natural strings present; 17 stale or ambiguous strings absent,
+  including "실제 기준" and "기준은 실제".
+- `bash tests/ui-ux-contract.test.sh` -> 24 passed, 0 failed.
+- `bash tests/teach-contract.test.sh` -> 33 passed, 0 failed.
+- Headless Playwright Korean render smoke (`docs/index.html` at 1280x900 and 390x844) -> `docOverflow:
+  0`, no visible Korean text overflow, no console errors.
+- `git diff --check` -> clean.

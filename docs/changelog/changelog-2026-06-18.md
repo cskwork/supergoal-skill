@@ -125,3 +125,43 @@ with the directory). All `learn/<topic>/`, `learn/USER_PREFERENCE.md`, `learn/*-
 
 - 15 contract tests pass; git recognizes 6 renames; the ignored `USER_PREFERENCE.md`/journals stay
   ignored under the new `teach/` rules; `grep teach/onboard` -> 0 (no mis-substitution).
+
+## Landing page sync with current skill contract
+
+### What
+
+Updated `docs/index.html` copy so the public landing page matches the current skill surface:
+
+- Changed "Eight lanes" to "Eleven modes" to match the mode table in `SKILL.md` and README.
+- Reworded the modes lead so `SPEC`, `LEARN-DOMAIN`, and `ARCH` are not implied away.
+- Replaced "No TUI" with "Optional Board/TUI" because the current skill has an opt-in Board
+  observability layer.
+- Changed "Three of the eight lanes" to "Three representative lanes" so the proof section stays correct
+  if the mode count changes again.
+
+### Why
+
+The landing page was published and byte-matched GitHub Pages, but two visible strings were stale:
+the page advertised eight lanes while showing eleven mode cards, and the install card denied the TUI
+that `SKILL.md` and README now document as optional observability. The fix keeps the marketing surface
+short while preserving the current contract.
+
+### Decisions
+
+- **Copy-only sync, not a redesign.** The visual layout already worked; changing structure would add
+  risk unrelated to the drift.
+- **"Optional Board/TUI" instead of "TUI required."** The Board observes only when enabled, so required
+  service language would be inaccurate.
+- **"Eleven modes" instead of enumerating all in the headline.** The card grid already lists each mode;
+  the headline only needs the count.
+
+### Verification
+
+- `node -e '<landing-copy assertions>'` -> landing copy has all 11 mode labels, the new Board/TUI copy,
+  and none of the stale eight-lane / no-TUI strings.
+- `bash tests/ui-ux-contract.test.sh` -> 22 passed, 0 failed.
+- `bash tests/observability-contract.test.sh` -> 16 passed, 0 failed.
+- `bash tests/teach-contract.test.sh` -> 33 passed, 0 failed.
+- Headless Playwright render smoke (`docs/index.html` at 1280x900 and 390x844) -> `docOverflow: 0`,
+  no edited-section overflow.
+- `git diff --check` -> clean.

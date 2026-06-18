@@ -20,25 +20,25 @@ runtime goal machinery stays untouched.
 
 ## Teaching workspace
 
-Treat `<skill>/learn/<topic>/` as the workspace for one topic (kebab-case `<topic>`). One mission per
+Treat `<skill>/teach/<topic>/` as the workspace for one topic (kebab-case `<topic>`). One mission per
 workspace - a second unrelated topic is a second workspace. The global profile
-`<skill>/learn/USER_PREFERENCE.md` is shared across topics. State lives in these files, created lazily
+`<skill>/teach/USER_PREFERENCE.md` is shared across topics. State lives in these files, created lazily
 (only when first written):
 
 | Path | What | Format |
 |---|---|---|
-| `learn/<topic>/MISSION.md` | The *reason* the user is learning this; grounds every teaching decision | `learn/MISSION-FORMAT.md` |
-| `learn/<topic>/RESOURCES.md` | Curated high-trust sources (Knowledge) + communities (Wisdom) | `learn/RESOURCES-FORMAT.md` |
-| `learn/<topic>/GLOSSARY.md` | Canonical terminology; every lesson adheres to it | `learn/GLOSSARY-FORMAT.md` |
-| `learn/<topic>/learning-records/NNNN-slug.md` | ADR-style records of genuine learning; set the next ZPD | `learn/LEARNING-RECORD-FORMAT.md` |
-| `learn/<topic>/lessons/NNNN-slug.html` | Primary teaching unit: one self-contained beautiful HTML lesson | **Lessons** below |
-| `learn/<topic>/reference/*.html` | Compressed cheat-sheets revisited later | **Reference documents** below |
-| `learn/<topic>/assets/*` | Reusable components shared across lessons | **Assets** below |
-| `learn/<topic>/NOTES.md` | Scratchpad for teaching preferences and working notes | free-form |
-| `learn/<topic>/<topic>-YYYY-MM-DD.md` | Live chat journal per session | `learn/README.md` |
+| `teach/<topic>/MISSION.md` | The *reason* the user is learning this; grounds every teaching decision | `teach/MISSION-FORMAT.md` |
+| `teach/<topic>/RESOURCES.md` | Curated high-trust sources (Knowledge) + communities (Wisdom) | `teach/RESOURCES-FORMAT.md` |
+| `teach/<topic>/GLOSSARY.md` | Canonical terminology; every lesson adheres to it | `teach/GLOSSARY-FORMAT.md` |
+| `teach/<topic>/learning-records/NNNN-slug.md` | ADR-style records of genuine learning; set the next ZPD | `teach/LEARNING-RECORD-FORMAT.md` |
+| `teach/<topic>/lessons/NNNN-slug.html` | Primary teaching unit: one self-contained beautiful HTML lesson | **Lessons** below |
+| `teach/<topic>/reference/*.html` | Compressed cheat-sheets revisited later | **Reference documents** below |
+| `teach/<topic>/assets/*` | Reusable components shared across lessons | **Assets** below |
+| `teach/<topic>/NOTES.md` | Scratchpad for teaching preferences and working notes | free-form |
+| `teach/<topic>/<topic>-YYYY-MM-DD.md` | Live chat journal per session | `teach/README.md` |
 
 Per-topic files hold personal learning data and are git-ignored; only the `*-FORMAT.md` guides and
-`learn/README.md` are committed. Never commit a user's mission, records, lessons, or journal.
+`teach/README.md` are committed. Never commit a user's mission, records, lessons, or journal.
 
 ## Philosophy: Knowledge / Skills / Wisdom
 
@@ -68,12 +68,12 @@ Every lesson ties back to the mission - the real-world reason the user is learni
 `MISSION.md` is empty or vague, interview the user on *why* before teaching anything; a bad mission is
 worse than none. Without it, knowledge is ungrounded, lessons feel abstract, and you cannot judge what
 to teach next. Missions drift as the user grows - update `MISSION.md` and add a learning record when
-they do, after confirming with the user. Format: `learn/MISSION-FORMAT.md`.
+they do, after confirming with the user. Format: `teach/MISSION-FORMAT.md`.
 
 ## Resources (never trust parametric knowledge)
 
 Before teaching a concept, gather it from trusted sources and record them in `RESOURCES.md`
-(`learn/RESOURCES-FORMAT.md`). Prefer primary sources, recognized experts, peer-reviewed work.
+(`teach/RESOURCES-FORMAT.md`). Prefer primary sources, recognized experts, peer-reviewed work.
 Codebase topics are "sourced" by reading the code read-only (`explore`/`architect`), not by guessing.
 Lessons cite their sources inline - citations are what make a lesson trustworthy. Each lesson
 recommends one primary source (the single highest-trust resource) for the user to read or watch.
@@ -118,15 +118,15 @@ fallback/stop before the takeaway.
 
 ## Flow
 
-0. **Preference first.** Read `<skill>/learn/USER_PREFERENCE.md`. It stores difficulty (1-10, default 5) and
+0. **Preference first.** Read `<skill>/teach/USER_PREFERENCE.md`. It stores difficulty (1-10, default 5) and
    1-3 interests.
    - If present: use silently.
-   - If missing/empty: seed from `learn/USER_PREFERENCE.template.md`, ask once for 1-3 interests, save, then
+   - If missing/empty: seed from `teach/USER_PREFERENCE.template.md`, ask once for 1-3 interests, save, then
      continue.
    - Difficulty controls register and chunk size. Interests drive analogies/examples.
    - Difficulty changes automatically on tuning; interests change only on request.
 1. **Mission + Source.** Ground first. If `MISSION.md` is empty, interview the user on *why* they want
-   this before teaching anything, then write `MISSION.md` (`learn/MISSION-FORMAT.md`). Gather before
+   this before teaching anything, then write `MISSION.md` (`teach/MISSION-FORMAT.md`). Gather before
    teaching: codebase topics use read-only `explore`/`architect`; concepts come from the high-trust
    sources in `RESOURCES.md`. **Never trust parametric knowledge** - cite sources and record them. Do
    not guess. Then pick the lesson in the user's zone of proximal development.
@@ -149,11 +149,11 @@ fallback/stop before the takeaway.
    - End every teaching turn with the difficulty menu.
 4. **Check gate.** User restates each key term and the whole idea unaided. Gaps return to Teach loop.
 5. **Records + journal.** When the user demonstrates genuine, non-trivial understanding (not mere
-   coverage), write a learning record `learn/<topic>/learning-records/NNNN-slug.md`
-   (`learn/LEARNING-RECORD-FORMAT.md`) - these set the next ZPD and survive sessions. Promote settled
+   coverage), write a learning record `teach/<topic>/learning-records/NNNN-slug.md`
+   (`teach/LEARNING-RECORD-FORMAT.md`) - these set the next ZPD and survive sessions. Promote settled
    terms into `GLOSSARY.md`. Then append the live chat journal to
-   `learn/<topic>/<topic>-YYYY-MM-DD.md` with the question, bridge, terms, user explanation, and open
-   questions; create the workspace if missing and follow `learn/README.md`. For anything the user will
+   `teach/<topic>/<topic>-YYYY-MM-DD.md` with the question, bridge, terms, user explanation, and open
+   questions; create the workspace if missing and follow `teach/README.md`. For anything the user will
    revisit, also write the HTML lesson (see **Lessons**).
 
 ## Interview check
@@ -205,7 +205,7 @@ that piece.
 ## Lessons (the primary teaching unit)
 
 A lesson is the main thing TEACH produces: one self-contained HTML file at
-`learn/<topic>/lessons/NNNN-slug.html` (increment `NNNN`). It teaches one tightly-scoped thing tied to
+`teach/<topic>/lessons/NNNN-slug.html` (increment `NNNN`). It teaches one tightly-scoped thing tied to
 the mission, in the user's ZPD.
 
 - **Beautiful and short.** Clean Tufte-style typography; completable quickly inside working memory; one
@@ -227,8 +227,8 @@ opening alone; for anything the user will revisit, write the lesson.
 ## Reference documents & glossary
 
 Lessons are rarely revisited; reference documents are. After a lesson, distill its compressed essence
-into `learn/<topic>/reference/*.html` - syntax/snippets, algorithms/flowcharts, poses/sequences,
-routines - formatted for fast lookup. The **glossary** (`GLOSSARY.md`, `learn/GLOSSARY-FORMAT.md`) is
+into `teach/<topic>/reference/*.html` - syntax/snippets, algorithms/flowcharts, poses/sequences,
+routines - formatted for fast lookup. The **glossary** (`GLOSSARY.md`, `teach/GLOSSARY-FORMAT.md`) is
 the most important reference: add a term only once the user can use it correctly (compressing a concept
 into a tight definition is itself evidence of learning), be opinionated about the canonical word, and
 adhere to it in every later lesson.
@@ -242,7 +242,7 @@ If the user opts out of communities, respect it and note the preference in `RESO
 
 ## Assets (reusable components)
 
-Lessons are built from reusable components in `learn/<topic>/assets/`: a shared stylesheet, quiz
+Lessons are built from reusable components in `teach/<topic>/assets/`: a shared stylesheet, quiz
 widgets, simulators, diagram helpers. Reuse is the default - read `assets/` before authoring a lesson
 and build from what is there. The shared stylesheet is the first component every workspace earns, so
 all lessons look like one course, not a pile of one-offs. When a lesson needs something new and
@@ -419,14 +419,14 @@ Every teaching turn ends with:
 
 - Bare `1` = level -1; bare `2` = hold; bare `3` = level +1.
 - Clamp to 1-10 and say when already at edge.
-- On change, rewrite `learn/USER_PREFERENCE.md`, confirm briefly, and re-pitch the same content at the new
+- On change, rewrite `teach/USER_PREFERENCE.md`, confirm briefly, and re-pitch the same content at the new
   level.
 - Treat anything beyond bare 1/2/3 as lesson content.
 
 ## User preference profile
 
-Persistent file: `<skill>/learn/USER_PREFERENCE.md`. It is git-ignored; never commit personal data. On first
-run, seed from `learn/USER_PREFERENCE.template.md`.
+Persistent file: `<skill>/teach/USER_PREFERENCE.md`. It is git-ignored; never commit personal data. On first
+run, seed from `teach/USER_PREFERENCE.template.md`.
 
 ```markdown
 # User preference profile

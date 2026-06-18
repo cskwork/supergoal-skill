@@ -24,7 +24,7 @@ user did not approve - this is the validation gate that Hermes-style autonomous 
 | Forge | Generate portable SKILL.md | skill dir | frontmatter + body within limits |
 | Verify | Gate + adversarial check | - | gate exits 0; trigger matches mined pattern |
 | Install | Copy/symlink to each chosen agent dir | skill dirs | present in every target; none clobbered |
-| Journal | Record mining evidence + decision | `learn/` | journal entry written |
+| Journal | Record mining evidence + decision | `teach/` | journal entry written |
 
 ## Window (adaptive)
 
@@ -101,8 +101,8 @@ propagation. Never silently overwrite an existing skill of the same name; on col
 
 ## Journal
 
-Append to `learn/skill-mined-<name>-YYYY-MM-DD.md`: the mining window, the candidate set shown, what the
-user picked/rejected, the recurrence evidence, and the install targets. Create `learn/` if missing.
+Append to `teach/skill-mined-<name>-YYYY-MM-DD.md`: the mining window, the candidate set shown, what the
+user picked/rejected, the recurrence evidence, and the install targets. Create `teach/` if missing.
 
 ## Always state the source location (required)
 

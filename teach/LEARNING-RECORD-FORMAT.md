@@ -1,6 +1,6 @@
 # Learning Record Format
 
-Learning records live in `learn/<topic>/learning-records/` with sequential numbering: `0001-slug.md`,
+Learning records live in `teach/<topic>/learning-records/` with sequential numbering: `0001-slug.md`,
 `0002-slug.md`, etc. Create the directory lazily - only when the first record is written.
 
 They are the teaching equivalent of ADRs: they capture non-obvious lessons, key insights, and stated
@@ -34,7 +34,7 @@ Only include these when they add genuine value. Most records won't need them.
 
 ## Numbering
 
-Scan `learn/<topic>/learning-records/` for the highest existing number and increment by one.
+Scan `teach/<topic>/learning-records/` for the highest existing number and increment by one.
 
 ## When to write a learning record
 
@@ -54,7 +54,7 @@ Write one when any of these is true:
 - Material that was merely covered. Coverage is not learning. Wait for evidence.
 - Anything already captured tersely in `GLOSSARY.md` as a term definition. Don't duplicate.
 - Session-by-session activity logs. Those belong in the chat journal
-  (`learn/<topic>/<topic>-YYYY-MM-DD.md`), not here - learning records are decision-grade insights.
+  (`teach/<topic>/<topic>-YYYY-MM-DD.md`), not here - learning records are decision-grade insights.
 
 ## Supersession
 

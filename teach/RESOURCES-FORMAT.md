@@ -1,6 +1,6 @@
 # RESOURCES.md Format
 
-`RESOURCES.md` (`learn/<topic>/RESOURCES.md`) is the curated set of trusted sources for this topic.
+`RESOURCES.md` (`teach/<topic>/RESOURCES.md`) is the curated set of trusted sources for this topic.
 Knowledge for lessons is drawn from here, not from parametric guesses. Wisdom comes from the
 communities listed here.
 

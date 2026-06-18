@@ -1,6 +1,6 @@
 # MISSION.md Format
 
-`MISSION.md` lives at the topic workspace root (`learn/<topic>/MISSION.md`). It captures the _reason_
+`MISSION.md` lives at the topic workspace root (`teach/<topic>/MISSION.md`). It captures the _reason_
 the user is learning this topic. Every teaching decision - what to teach next, which resources to
 surface, which exercises to design - should trace back to this document.
 
@@ -31,7 +31,7 @@ outcome.}
 
 ## Rules
 
-- **One mission per workspace.** Two unrelated things to learn = two `learn/<topic>/` workspaces.
+- **One mission per workspace.** Two unrelated things to learn = two `teach/<topic>/` workspaces.
 - **Concrete over abstract.** "Run a half marathon by October" beats "get fitter." "Ship a Rust CLI to
   my team" beats "learn Rust."
 - **Push back on vagueness.** If the user cannot articulate why, interview them (per `reference/teach.md`

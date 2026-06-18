@@ -50,9 +50,10 @@ Use these folder/file names even when the user chooses a different root path:
   only when the choice is hard to reverse, surprising without context, and a real tradeoff.
 - `tickets/*.md` - reusable postmortems only (a stable failure mode, invariant, or repro pattern);
   not every ticket.
-- `qa/*.md` - Reusable QA suites from QA-ONLY runs (`reference/qa-only.md`): scenario list,
-  `Comparison:` type, named DB checks, saved baseline values, and the re-run command / Playwright
-  spec path; indexed in `index.md` under `## QA Suites`. No secrets, raw rows, or PII.
+- `qa/*.md` - Reusable QA suites from QA-ONLY runs (`reference/qa-only.md`): Impact Matrix, scenario
+  list, `Comparison:` type, named DB checks, saved baseline values, reproduction notes, coverage,
+  uncovered areas, residual risks, and the re-run command / Playwright spec path; indexed in
+  `index.md` under `## QA Suites`. No secrets, raw rows, or PII.
 - `qa/nav-map.md` - the single browser navigation map for this repo: entry/auth flow, `screen -> URL`
   routes, popup/new-tab triggers and how to switch the driver to them, stable selectors, and each
   screen's real API calls (method + path). Loaded before any browser QA/observe run and self-healed

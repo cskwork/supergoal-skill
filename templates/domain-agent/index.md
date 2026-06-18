@@ -20,7 +20,7 @@ Purpose: route agents to the smallest useful domain context for this repo.
 
 ## QA Suites
 
-- `<feature/flow>`: `qa/<suite>.md` (`<functional|data-integrity|before-after|ab|env>`) — reusable QA-ONLY check, re-run on request
+- `<feature/flow>`: `qa/<suite>.md` (`<functional|data-integrity|before-after|ab|env>`) — reusable QA-ONLY Impact Matrix check, re-run on request
 
 ## Navigation
 

@@ -32,7 +32,7 @@ One objective -> the smallest correct change -> verified against ground truth. F
 | spec / requirements first / 스펙 문서로 구조화 | SPEC | spec-first prefix to the default loop: grill load-bearing decisions one question at a time, crystallize requirements -> design -> tasks under `docs/spec/<feature-slug>/`, then tasks.md drives Build and EARS criteria feed the critic (`reference/spec.md`) |
 | explain / teach / how does X work (no code) | TEACH | stateful teaching workspace `teach/<topic>/` (mission, HTML lessons, learning records); `reference/teach.md` |
 | learn / onboard / map this codebase (persist a wiki) | LEARN-DOMAIN | `reference/learn-domain.md` |
-| QA / verify / 검증만 / compare data (no code) | QA-ONLY | `reference/qa-only.md` |
+| QA / verify / 검증만 / compare data (no code) | QA-ONLY | detailed Impact Matrix QA via `reference/qa-only.md` |
 | review / audit this code/diff/PR (no fixes) | REVIEW-ONLY | `reference/review-only.md` |
 | improve the architecture / find refactoring opportunities / 구조 개선 | ARCH | survey-first, no fixes: depth/seam friction report in the run vault, grill the picked candidate, route the refactor to LEGACY/SPEC (`reference/arch.md`) |
 | test harness effectiveness / compare with vs without | HARNESS-EVAL | `reference/harness-eval.md` |
@@ -99,8 +99,10 @@ verify=`agents/qa-auditor.md`/`security-reviewer.md` (other personas in `agents/
 
 ## No-code & utility modes
 
-- **QA-ONLY** drives an already-running app (and a read-only DB), records as-is/to-be evidence, produces a
-  human `report.md`, and persists a reusable suite under `.domain-agent/qa/`. No code change.
+- **QA-ONLY** drives an already-running app (and a read-only DB), builds a detailed Impact Matrix for
+  direct behavior, adjacent surfaces, complex scenarios, before/during/after actions, and uncovered risk,
+  records as-is/to-be evidence, produces a human `report.md`, and persists a reusable suite under
+  `.domain-agent/qa/`. No code change.
   `reference/qa-only.md`, `db-access.md`; terminal gate `templates/qa-only-gate.sh`.
 - **REVIEW-ONLY** reviews a diff/PR/module and delivers an evidence-backed findings `report.md` -
   findings, not fixes; no source or test edits (`reference/review-only.md`).

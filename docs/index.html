@@ -1014,9 +1014,9 @@
   <section id="modes">
     <div class="wrap">
       <div class="section-head reveal">
-        <h2><span class="en">One command. Eight lanes.</span><span class="ko">명령 하나. 여덟 가지 작업 경로.</span></h2>
-        <p class="lead en">The objective picks the lane. Build, debug, and legacy share one role-separated loop. Teach, QA, review, harness-eval, and skill-mine are separate-purpose utilities.</p>
-        <p class="lead ko">목표가 작업 경로를 고릅니다. build·debug·legacy는 같은 역할 분리 루프를 쓰고, teach·QA·review·harness-eval·skill-mine은 각각 별도 목적의 유틸리티입니다.</p>
+        <h2><span class="en">One command. Eleven modes.</span><span class="ko">명령 하나. 열한 가지 모드.</span></h2>
+        <p class="lead en">The objective picks the lane. Build, debug, legacy, and spec share the baseline-first loop; teach, learn-domain, QA, review, architecture, harness-eval, and skill-mine stay purpose-built.</p>
+        <p class="lead ko">목표가 작업 경로를 고릅니다. build·debug·legacy·spec은 실제 기준 우선 루프를 쓰고, teach·learn-domain·QA·review·architecture·harness-eval·skill-mine은 각각 목적에 맞게 동작합니다.</p>
       </div>
       <div class="mode-grid">
         <article class="mode-card reveal">
@@ -1147,8 +1147,8 @@ Stop on green. Report with output.</pre>
     <div class="wrap">
       <div class="section-head reveal">
         <h2><span class="en">What each lane looks like.</span><span class="ko">각 작업 경로는 이렇게 동작합니다.</span></h2>
-        <p class="lead en">The same loop, shaped by the objective. Three of the eight lanes:</p>
-        <p class="lead ko">같은 루프가 목표에 맞춰 형태를 바꿉니다. 여덟 경로 중 셋:</p>
+        <p class="lead en">The same loop, shaped by the objective. Three representative lanes:</p>
+        <p class="lead ko">같은 루프가 목표에 맞춰 형태를 바꿉니다. 대표 경로 셋:</p>
       </div>
       <div class="proof-grid">
         <article class="proof-item reveal">
@@ -1195,12 +1195,13 @@ ln -s "$(pwd)/supergoal-skill" &lt;your-agent-skills-dir&gt;/supergoal
 <span class="c-cyan">/supergoal</span> CLI 할 일 앱을 만들고 출시해줘</pre>
       </div>
       <div class="install-card reveal">
-        <h2><span class="en">No service. No TUI.<br>No extra orchestrator.</span><span class="ko">서비스 없음. TUI 없음.<br>별도 오케스트레이터 없음.</span></h2>
-        <p class="en">This repo is the skill. Clone it, link it, and hand one objective to `/supergoal`.</p>
-        <p class="ko">이 저장소가 곧 스킬입니다. 클론하고 스킬 디렉터리에 연결한 뒤, `/supergoal`에 목표 하나를 맡기세요.</p>
+        <h2><span class="en">No required service. Optional Board/TUI.<br>No extra orchestrator.</span><span class="ko">필수 서비스 없음. Board/TUI는 선택.<br>별도 오케스트레이터 없음.</span></h2>
+        <p class="en">This repo is the skill. Clone it, link it, and hand one objective to `/supergoal`; the Board only observes when you opt in.</p>
+        <p class="ko">이 저장소가 곧 스킬입니다. 클론하고 스킬 디렉터리에 연결한 뒤 `/supergoal`에 목표 하나를 맡기세요. Board는 켰을 때만 관찰합니다.</p>
         <div class="pill-row">
           <span class="pill">Agent CLI</span>
           <span class="pill">Node 18+</span>
+          <span class="pill">optional Board/TUI</span>
           <span class="pill">git worktree (optional)</span>
           <span class="pill">real tests</span>
         </div>

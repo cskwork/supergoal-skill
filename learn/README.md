@@ -1,6 +1,6 @@
 # learn/
 
-State for the supergoal **LEARN mode** (see `reference/learn.md`). LEARN runs as a stateful,
+State for the supergoal **TEACH mode** (see `reference/teach.md`). TEACH runs as a stateful,
 multi-session teaching workspace - decomposition + process-trace pedagogy fused with the workspace
 model from mattpocock/skills `teach`.
 

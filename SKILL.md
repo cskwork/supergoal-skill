@@ -30,7 +30,7 @@ One objective -> the smallest correct change -> verified against ground truth. F
 | fix / broken / failing / crash / why does | DEBUG | default loop; runtime-symptom bugs -> observe the live flow at the symptom's boundary BEFORE code/git, report the broken boundary early; then reproduce with a failing test (`reference/debugging.md` Observe-first triage); web symptoms: pin screen->exact API with `playwright-cli requests` + repo `qa/nav-map.md` (`reference/qa.md`, `reference/playwright-cli.md`) |
 | add / integrate / refactor existing code | LEGACY | default loop; map the code first (`agents/explore.md`, `reference/domain-context.md`); optional DB evidence (`reference/db-access.md`); existing-API refactor: capture its exact behavior first as a preserve-baseline, Verify diffs the re-capture (`reference/qa.md` "API behavior baseline") |
 | spec / requirements first / 스펙 문서로 구조화 | SPEC | spec-first prefix to the default loop: grill load-bearing decisions one question at a time, crystallize requirements -> design -> tasks under `docs/spec/<feature-slug>/`, then tasks.md drives Build and EARS criteria feed the critic (`reference/spec.md`) |
-| explain / teach / how does X work (no code) | LEARN | stateful teaching workspace `learn/<topic>/` (mission, HTML lessons, learning records); `reference/learn.md` |
+| explain / teach / how does X work (no code) | TEACH | stateful teaching workspace `learn/<topic>/` (mission, HTML lessons, learning records); `reference/teach.md` |
 | learn / onboard / map this codebase (persist a wiki) | LEARN-DOMAIN | `reference/learn-domain.md` |
 | QA / verify / 검증만 / compare data (no code) | QA-ONLY | `reference/qa-only.md` |
 | review / audit this code/diff/PR (no fixes) | REVIEW-ONLY | `reference/review-only.md` |
@@ -100,8 +100,8 @@ risky work in a branch or `git worktree` (optional).
 - **ARCH** surveys the codebase for architectural friction (shallow modules, missing seams), delivers
   a candidates `report.md` with recommendation strengths, grills the picked candidate, and routes the
   refactor to LEGACY/SPEC - no source edits (`reference/arch.md`).
-- **LEARN / LEARN-DOMAIN** teach a human in a stateful `learn/<topic>/` workspace - mission-grounded,
-  high-trust sourced, beautiful HTML lessons + ADR-style learning records (`reference/learn.md`) - or
+- **TEACH / LEARN-DOMAIN** teach a human in a stateful `learn/<topic>/` workspace - mission-grounded,
+  high-trust sourced, beautiful HTML lessons + ADR-style learning records (`reference/teach.md`) - or
   persist a source-grounded `.domain-agent/` wiki for the agent (`reference/learn-domain.md`; gate
   `templates/learn-grounding-gate.mjs`).
 - **HARNESS-EVAL / SKILL-MINE** measure a harness with vs without on the same snapshot
@@ -124,7 +124,7 @@ risky work in a branch or `git worktree` (optional).
 | `reference/qa.md`, `qa-only.md`, `playwright-cli.md`, `db-access.md` | QA / no-code verify; single browser driver = playwright-cli; nav-map (`qa/nav-map.md`) |
 | `reference/review-only.md` | REVIEW-ONLY: findings report, no fixes |
 | `reference/arch.md` | ARCH: friction survey -> candidates report -> grill the pick -> route out |
-| `reference/learn.md`, `learn-domain.md` | Teach a human (stateful `learn/<topic>/` workspace) / onboard the agent |
+| `reference/teach.md`, `learn-domain.md` | Teach a human (stateful `learn/<topic>/` workspace) / onboard the agent |
 | `reference/ui-ux.md`, `taste-skill-v2.md`, `functional-ui.md`, `taste-aesthetics.md` | User-facing UI tier |
 | `reference/harness-eval.md` | HARNESS-EVAL |
 | `reference/skill-mine.md` | SKILL-MINE |

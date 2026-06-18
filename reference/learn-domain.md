@@ -4,7 +4,7 @@ Use for "learn/onboard/map this codebase", "build a domain wiki", "도메인 파
 The goal is durable, source-grounded `.domain-agent/` knowledge that lets later GREENFIELD/DEBUG/LEGACY
 runs route fast, not a one-off chat answer.
 
-Boundary with LEARN: LEARN (`reference/learn.md`) teaches a human and writes only a chat-time journal.
+Boundary with TEACH: TEACH (`reference/teach.md`) teaches a human and writes only a chat-time journal.
 LEARN-DOMAIN learns *for the agent* and writes the repo-local `.domain-agent/` pack. It writes no
 production code and uses no implementation gates; its only writes are the knowledge pack plus throwaway
 grounding probes in a sandbox.

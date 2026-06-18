@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # /supergoal LEARN-DOMAIN contract.
 # Fails if LEARN-DOMAIN stops being agentic-discovery, markdown-first, bottom-up, and grounded,
-# or if it is no longer distinguished from the human-facing LEARN mode.
+# or if it is no longer distinguished from the human-facing TEACH mode.
 
 set -u
 
@@ -27,7 +27,7 @@ echo "=================================================================="
 echo " /supergoal LEARN-DOMAIN contract   skill: $ROOT"
 echo "=================================================================="
 
-# Routing: SKILL.md registers the mode and separates it from LEARN.
+# Routing: SKILL.md registers the mode and separates it from TEACH.
 require_text "SKILL routes LEARN-DOMAIN mode" "SKILL.md" "LEARN-DOMAIN"
 require_text "SKILL maps learn-domain reference" "SKILL.md" "reference/learn-domain.md"
 require_text "SKILL registers grounding gate" "SKILL.md" "learn-grounding-gate.mjs"

@@ -34,7 +34,7 @@ outcome.}
 - **One mission per workspace.** Two unrelated things to learn = two `learn/<topic>/` workspaces.
 - **Concrete over abstract.** "Run a half marathon by October" beats "get fitter." "Ship a Rust CLI to
   my team" beats "learn Rust."
-- **Push back on vagueness.** If the user cannot articulate why, interview them (per `reference/learn.md`
+- **Push back on vagueness.** If the user cannot articulate why, interview them (per `reference/teach.md`
   step 1) before writing anything. A bad mission is worse than no mission.
 - **Revise when reality shifts.** Missions change. When the user's goal moves, update this file and add
   a learning record - do not leave a stale mission steering future sessions. Confirm before changing.

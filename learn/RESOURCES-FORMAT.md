@@ -33,7 +33,7 @@ communities listed here.
   with strong moderation. If a resource is marketing dressed as education, leave it out.
 - **Annotate every entry.** A bare link is useless in three months. Add one line: what it covers and
   when to reach for it.
-- **Group by Knowledge / Wisdom.** Mirrors the philosophy in `reference/learn.md`. A resource may
+- **Group by Knowledge / Wisdom.** Mirrors the philosophy in `reference/teach.md`. A resource may
   appear in only one group.
 - **Surface gaps explicitly.** If no good resource exists for an area the mission needs, add a `## Gaps`
   section listing what is missing. This drives future search.

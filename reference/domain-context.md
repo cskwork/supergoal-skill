@@ -13,7 +13,7 @@ that helps agents find the right code, tests, and terms quickly.
 
 Load this reference for GREENFIELD (new feature needs domain fit / first knowledge pack), DEBUG
 (before choosing a failing proof or root-cause path), and LEGACY (before the affected-code map). Not
-for pure LEARN unless the user asks about the target repo's domain.
+for pure TEACH unless the user asks about the target repo's domain.
 
 ## First-run setup
 

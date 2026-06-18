@@ -40,7 +40,7 @@ harness에 묶이지 않고 dispatch할 수 있습니다. 다만 dispatch는 선
 | "고장/실패/크래시/왜 이러지" | **DEBUG** | 기본 루프; 실패 테스트부터 재현 |
 | "기존/레거시 코드에 X를 추가한다" | **LEGACY** | 기본 루프; 코드 구조부터 파악 |
 | "스펙 문서부터 구조화해줘" | **SPEC** | 핵심 결정은 한 번에 한 질문씩 grill -> requirements/design/tasks가 `docs/spec/`에 굳어짐 -> 그 문서가 기본 루프를 이끎 |
-| "X를 설명/가르쳐줘" (코드 변경 없음) | **LEARN** | Intake -> Source -> Bridge -> Teach -> Check |
+| "X를 설명/가르쳐줘" (코드 변경 없음) | **TEACH** | Mission -> Source -> Bridge -> Teach -> Check |
 | "이 코드베이스를 학습/온보딩해줘" | **LEARN-DOMAIN** | Survey -> Map -> Ground -> `.domain-agent/` 위키 |
 | "QA만/검증/데이터 비교" (코드 변경 없음) | **QA-ONLY** | 앱 + 읽기 전용 DB 확인 -> 증거 -> `report.md` |
 | "코드/diff/PR 리뷰만" (수정 없음) | **REVIEW-ONLY** | 독립 리뷰어 2명 -> 검증된 findings -> `report.md` |
@@ -66,7 +66,7 @@ harness에 묶이지 않고 dispatch할 수 있습니다. 다만 dispatch는 선
 /supergoal 이 마이그레이션 harness를 3개 케이스에서 유무 비교해줘
 ```
 
-QA-ONLY, REVIEW-ONLY, ARCH, LEARN/LEARN-DOMAIN, HARNESS-EVAL, SKILL-MINE은 각각 다른 목적의 유틸리티입니다.
+QA-ONLY, REVIEW-ONLY, ARCH, TEACH/LEARN-DOMAIN, HARNESS-EVAL, SKILL-MINE은 각각 다른 목적의 유틸리티입니다.
 코드 없는 QA, 수정 없는 리뷰, 교육/온보딩, harness 측정, 스킬 생성처럼 제품 코드를 바로 고치지 않는
 작업을 다룹니다. 기본적으로 제품 코드는 쓰지 않고, 무언가 설치하기 전에는 사용자에게 먼저 확인합니다.
 
@@ -95,8 +95,8 @@ ln -s "$(pwd)/supergoal-skill" <your-agent-skills-dir>/supergoal
 ```
 SKILL.md            핵심 안내: baseline-first 루프, 모드, 레퍼런스 맵
 agents/             역할별 지침 파일 (analyst, architect, executor, debugger, explore, designer, qa-*, db-reader, code-reviewer, security-reviewer)
-reference/          상황별 상세 가이드: domain-rules · domain-context · debugging · interview · plan-grounding · market-research · qa · qa-only · db-access · learn · learn-domain · ui-ux · taste-skill-v2 · functional-ui · harness-eval · skill-mine
-learn/              LEARN 모드 세션 기록, README 템플릿, USER_PREFERENCE(.template).md
+reference/          상황별 상세 가이드: domain-rules · domain-context · debugging · interview · plan-grounding · market-research · qa · qa-only · db-access · teach · learn-domain · ui-ux · taste-skill-v2 · functional-ui · harness-eval · skill-mine
+teach/              TEACH 모드 형식 가이드와 주제별 교육 워크스페이스
 templates/          검증 스크립트와 템플릿: qa-gate.sh · qa-only-gate.sh · contrast-gate.mjs · learn-grounding-gate.mjs · qa-report.md · domain-agent/ · domain-onboarding.html · harness-eval-gate.mjs · harness-eval-cases/ · skill-mine/ · skill-frontmatter-gate.mjs · skill.md.template
 docs/               설계 문서, 연구 메모, experiments/, changelog/, 랜딩 페이지(index.html)
 examples/url-shortener/   build / debug / extend 모드로 다룬 예제 서비스

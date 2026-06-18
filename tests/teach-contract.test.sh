@@ -50,6 +50,10 @@ require_text "learn trace anchor is comment-only" "reference/teach.md" "<!-- Con
 require_text "learn keeps trace at low difficulty" "reference/teach.md" "At low difficulty, use fewer rows and plainer words; do not remove the trace"
 require_text "learn blocks summary replacing trace" "reference/teach.md" "Never replace the process trace with a summary sentence"
 require_text "learn check includes process role" "reference/teach.md" "define its role and place in the process"
+require_text "README routes human teaching as TEACH" "README.md" '| "explain / teach me X" (no code) | **TEACH** |'
+require_text "Korean README routes human teaching as TEACH" "README.ko.md" '| "X를 설명/가르쳐줘" (코드 변경 없음) | **TEACH** |'
+require_text "landing routes human teaching as TEACH" "docs/index.html" '<span class="mode-label">TEACH</span>'
+require_text "README layout uses teach workspace" "README.md" "teach/ TEACH-mode format guides"
 
 # --- teach workspace integration (mattpocock/skills teach merged into TEACH) ---
 require_text "learn is a stateful teaching workspace" "reference/teach.md" "stateful, multi-session teaching workspace"

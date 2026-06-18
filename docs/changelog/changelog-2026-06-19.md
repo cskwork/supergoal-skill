@@ -41,6 +41,8 @@ to omit from an implementation plan even though the QA gate already required `pl
   reproduction notes, coverage, uncovered areas, and residual risks for future re-runs.
 - Added Scenario shard dispatch: independent QA surfaces can run in separate `qa-auditor` subagents, each
   writing its own shard file while the conductor owns the shared `qa/scenario-ledger.md`.
+- Clarified the public README and landing copy so Impact Matrix is defined as a feature-impact QA map, not
+  left as unexplained QA jargon.
 - Expanded `tests/qa-only-contract.test.sh` to guard the new QA-ONLY behavior.
 
 ### Why

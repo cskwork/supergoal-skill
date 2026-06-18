@@ -41,7 +41,7 @@ agy, and other agent CLIs - but dispatch is optional and single-driver by defaul
 | "spec this first - requirements/design/tasks docs" | **SPEC** | grill load-bearing decisions one question at a time; requirements -> design -> tasks crystallize under `docs/spec/`, then the default loop runs against them |
 | "explain / teach me X" (no code) | **TEACH** | Mission -> Source -> Bridge -> Teach -> Check (explain-back) |
 | "learn / map / onboard onto this codebase" | **LEARN-DOMAIN** | Survey -> Map -> Ground -> Persist a `.domain-agent/` wiki |
-| "QA only / verify / compare data - no code" | **QA-ONLY** | Detailed Impact Matrix QA + read-only DB -> evidence -> `report.md` |
+| "QA only / verify / compare data - no code" | **QA-ONLY** | Detailed Impact Matrix (feature-impact QA map) + read-only DB -> evidence -> `report.md` |
 | "review / audit this code/diff/PR - no fixes" | **REVIEW-ONLY** | Two independent reviewers -> verified findings -> `report.md` |
 | "improve the architecture / find refactoring opportunities" | **ARCH** | Friction survey -> candidates `report.md` -> grill the pick -> refactor routes to LEGACY/SPEC |
 | "test harness effectiveness / with vs without" | **HARNESS-EVAL** | Cases -> baseline run -> harness run -> machine checks -> quality score -> compare |
@@ -69,10 +69,10 @@ changes also require real browser QA: `Tool: playwright-cli` evidence and `qa-ga
 
 QA-ONLY, REVIEW-ONLY, ARCH, TEACH/LEARN-DOMAIN, HARNESS-EVAL, and SKILL-MINE are kept as separate-purpose
 utilities (detailed no-code QA, findings-only review, teaching/onboarding, harness measurement, skill
-forging). QA-ONLY is the broad regression lane: it covers displayed data consistency, direct behavior,
-adjacent surfaces, complex multi-step scenarios, before/during/after actions, and explicit not-covered risk
-within the action cap. Independent QA surfaces can run as scenario shards, merged by the conductor through
-`qa/scenario-ledger.md`.
+forging). QA-ONLY is the broad regression lane. Its Impact Matrix is a QA map of everything the feature can
+affect: displayed data consistency, direct behavior, adjacent surfaces, complex multi-step scenarios,
+before/during/after actions, and explicit not-covered risk within the action cap. Independent QA surfaces
+can run as scenario shards, merged by the conductor through `qa/scenario-ledger.md`.
 They write no product code by default and confirm with you before installing anything.
 
 ## Board (optional live dashboard)

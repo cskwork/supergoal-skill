@@ -22,7 +22,14 @@ Run Build, Critic, Fixer, Verify, tests, and run-vault writes inside that worktr
 original checkout. Treat dirty files in the original checkout as user work. After green verification and
 user acceptance, commit or merge only into the verified target/integration branch.
 
-## Roles (fresh context each; separate agent orchestrated, or deliberate role switch inline)
+## Roles (each role = a fresh-context subagent by default)
+
+Dispatch is the default, not an option: the conductor runs each role as a separate fresh-context subagent,
+so the role's heavy references (this file, `reference/domain-context.md`, `reference/taste-skill-v2.md`,
+and the like) load inside the subagent and never accumulate in the conductor's window. The subagent
+returns only a short structured result - status, what changed, test output, concerns - not its transcript.
+Run independent units in parallel (QA scenario shards, review dimensions, multi-file builds); keep
+dependent roles ordered. A trivial single edit skips the loop and edits inline.
 
 1. **Build** - smallest correct change; match surrounding style; minimal diff. Bug: reproduce with a
    failing test first. Refactor/integrate an existing API: capture its exact-behavior baseline FIRST

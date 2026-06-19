@@ -103,3 +103,16 @@ Plan: `docs/plans/2026-06-19-spine-diet-subagent-default.md`. Branch: `refactor/
 
 - `for f in tests/*.test.sh; do bash "$f"; done` -> 16 suites, 0 failing.
 - `wc -w SKILL.md` -> 1218 (was 1703). `git diff --stat` -> 4 files, +85/-111.
+
+### Follow-up: option A (no-risk further trim)
+
+- Compressed only non-pinned filler in `SKILL.md` (the redundant done-checklist -> one `Done =` line; a
+  few verbose mode-table / overlay / principle clauses). No pinned literal, no safety-contract sentence,
+  and no test was touched. `wc -w SKILL.md` -> 1128 (1703 -> 1128 = -34% cumulative); 16 suites still
+  green. Stopped at 1128 rather than chasing <600: deeper cuts would either retarget the deliberate
+  spine-safety contract or strip routing clarity from the mode table / reference map.
+- Decided NOT to split `reference/teach.md` or `reference/taste-skill-v2.md`: taste-skill-v2 has no real
+  appendix (3 lines after `# Appendices`) and already loads only inside the designer subagent;
+  teach.md's "templates" are inline illustrations of adjacent rules, so extracting them fragments a
+  cohesive, low-frequency protocol for little gain. The subagent-default flip already moves both files
+  out of the conductor's context.

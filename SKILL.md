@@ -11,17 +11,16 @@ this skill and edit directly. This file is a router; each phase loads only the r
 ## Core principles
 
 - Verify against ground truth: re-run the project's REAL tests and re-read the prose spec for rules the
-  tests miss. Spec-derived FAILING tests surface hidden requirements but never replace ground truth and
-  never optimize to a self-graded proxy.
+  tests miss; never optimize to a self-graded proxy.
 - Smallest correct change; match surrounding code; never rewrite a whole file for a few lines.
   Scope-minimalism governs code surface area, NOT visual quality: for user-facing UI a polished result is
   baseline correctness, not padding.
 - Surface hidden requirements first, as FAILING tests written by an independent critic.
 - Ask only when genuinely ambiguous; resolve code-answerable questions by reading the code.
-- Output language: write prose in the user's language; keep identifiers, file paths, commands, and
-  machine-checked anchors in canonical English so checks keep matching.
+- Output language: prose in the user's language; keep identifiers, paths, commands, and machine-checked
+  anchors in canonical English so checks keep matching.
 - Hard stops: a destructive or irreversible step (drop data, force-push, external publish) needs explicit
-  consent; genuine ambiguity blocks the freeze; if the real tests cannot pass, report it - never fake a pass.
+  consent; if the real tests cannot pass, report it - never fake a pass.
 
 ## Run isolation (GREENFIELD / DEBUG / LEGACY that edits code)
 
@@ -35,7 +34,7 @@ target/integration branch after verification and user acceptance. Full contract:
 | Signal in the objective | Mode | Route |
 |---|---|---|
 | build / make / ship a new app/tool | GREENFIELD | default loop |
-| fix / broken / failing / crash / why does | DEBUG | default loop; observe the live flow at the symptom's boundary BEFORE code/git, then reproduce with a failing test (`reference/debugging.md`); web symptoms: `reference/qa.md`, `reference/playwright-cli.md` |
+| fix / broken / failing / crash / why does | DEBUG | default loop; observe the live symptom boundary first, then reproduce with a failing test (`reference/debugging.md`); web: `reference/qa.md`, `reference/playwright-cli.md` |
 | add / integrate / refactor existing code | LEGACY | default loop; map first (`agents/explore.md`, `reference/domain-context.md`); optional DB evidence (`reference/db-access.md`); existing-API refactor: capture its exact behavior first as a preserve-baseline (`reference/qa.md`) |
 | spec / requirements first / 스펙 문서로 구조화 | SPEC | spec-first prefix: requirements -> design -> tasks under `docs/spec/`, then tasks drive Build (`reference/spec.md`) |
 | explain / teach / how does X work (no code) | TEACH | stateful `teach/<topic>/` workspace (`reference/teach.md`) |
@@ -49,10 +48,10 @@ target/integration branch after verification and user acceptance. Full contract:
 The no-code/utility modes - **QA-ONLY**, REVIEW-ONLY, ARCH, TEACH, LEARN-DOMAIN, HARNESS-EVAL,
 SKILL-MINE - write no product code by default and confirm before installing anything.
 
-**UI/UX overlay (any mode shipping user-facing UI).** Load `reference/ui-ux.md` at Frame and apply the
+**UI/UX overlay (any mode shipping user-facing UI).** Load `reference/ui-ux.md` at Frame; apply the
 Expressive/polished baseline by default (`reference/taste-skill-v2.md` is the authority for ALL
-user-facing UI), carried through Build and Verify. GREENFIELD frontend: always. LEGACY: only new UI -
-else reuse the existing design system. Non-visual work (lib, API, backend, CLI): skip.
+user-facing UI), through Build and Verify. GREENFIELD frontend: always; LEGACY: only new UI (else reuse
+the existing design system); non-visual work (lib, API, backend, CLI): skip.
 
 **Board overlay (optional).** If the live dashboard is enabled, the conductor calls `sg-emit` at each
 phase transition; it observes only, never gates (`reference/observability.md`).
@@ -66,7 +65,7 @@ DB evidence when persisted data is load-bearing. Full contract: `reference/role-
 
 1. **Frame.** Restate goal + falsifiable acceptance criteria in one line. If underspecified, ask <=5
    high-leverage questions (`reference/interview.md`); resolve code-answerable ones by reading code. UI
-   work: load `reference/ui-ux.md` now and commit to the Expressive baseline.
+   work: load `reference/ui-ux.md` now.
 2. **Build.** Smallest correct change, test-first; match surrounding style; minimal diff. Bug: reproduce
    with a failing test first (`reference/debugging.md`).
 3. **Critic (independent; no src edits).** Re-read the prose spec + repo/data rules
@@ -86,30 +85,25 @@ verify=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role>.m
 
 | Read this | When |
 |---|---|
-| `reference/role-loop.md` | default critic->fixer->verify loop + run isolation contract |
-| `agents/<role>.md` | dispatch a role persona; one file per role |
+| `reference/role-loop.md` | default loop + run isolation contract |
+| `agents/<role>.md` | dispatch a role persona |
 | `reference/domain-rules.md` | Frame: distill <=10 priority rules |
-| `reference/domain-context.md` | Surface requirements: repo-local Domain Brief |
+| `reference/domain-context.md` | repo-local Domain Brief |
 | `reference/debugging.md` | DEBUG: hypothesis-ledger diagnose loop |
 | `reference/interview.md` | ambiguity-gated <=5 question interview |
 | `reference/spec.md`, `templates/spec/` | SPEC: requirements -> design -> tasks |
-| `reference/plan-grounding.md` | ground the approach from docs/code before committing |
+| `reference/plan-grounding.md` | ground the approach before committing |
 | `reference/db-access.md`, `templates/db-access/` | read-only DB evidence (required past *very easy* when data load-bearing) |
 | `reference/qa.md`, `qa-only.md`, `playwright-cli.md` | QA / no-code verify; single browser driver = playwright-cli |
-| `reference/review-only.md` | REVIEW-ONLY: findings report, no fixes |
-| `reference/arch.md` | ARCH: friction survey -> candidates -> route out |
+| `reference/review-only.md` | REVIEW-ONLY: findings, no fixes |
+| `reference/arch.md` | ARCH: friction survey -> route out |
 | `reference/teach.md`, `learn-domain.md` | teach a human / onboard the agent |
 | `reference/ui-ux.md`, `taste-skill-v2.md`, `functional-ui.md`, `taste-aesthetics.md` | user-facing UI tier |
 | `reference/harness-eval.md` | HARNESS-EVAL |
 | `reference/skill-mine.md` | SKILL-MINE |
 | `reference/market-research.md` | GREENFIELD: validate demand (optional) |
-| `reference/observability.md`, `tui/` | Board: opt-in live multi-agent dashboard |
+| `reference/observability.md`, `tui/` | Board: opt-in live dashboard |
 
-## Before claiming done
-
-- [ ] Mode stated; hidden requirements surfaced or explicitly none
-- [ ] Smallest change; surrounding style matched; no whole-file rewrite
-- [ ] Verified against the project's REAL tests + prose spec (not a generated proxy)
-- [ ] If past *very easy*: red-green test AND, if data load-bearing, DB evidence - both, not either/or
-- [ ] If user-facing UI: Expressive/polished baseline applied through Build + Verify
-- [ ] Reported what was verified with command output; any destructive step had explicit consent
+**Done =** mode stated; smallest diff in surrounding style; REAL tests + prose spec green (not a proxy);
+past *very easy* -> red-green test + DB evidence if data load-bearing; user-facing UI at the Expressive
+baseline; destructive steps consented; report what was verified with command output.

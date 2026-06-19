@@ -17,7 +17,9 @@ independent critic - then makes the smallest correct change and verifies it agai
 tests and spec, never a generated proxy. For a trivial single edit, skip the skill and edit directly.
 
 Each role is a bundled file in `agents/`, so dispatch stays harness-agnostic across Claude Code, Codex,
-agy, and other agent CLIs - but dispatch is optional and single-driver by default.
+agy, and other agent CLIs. Each role runs in a fresh-context subagent by default - the conductor stays
+lean while the role's heavy references load inside the subagent, and independent units run in parallel; a
+trivial single edit stays inline.
 
 ## Principles
 

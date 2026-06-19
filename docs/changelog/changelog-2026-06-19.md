@@ -62,3 +62,44 @@ to both the user and the next debugging run.
   subagent writes one shard file and the conductor merges the shared ledger.
 - Make the gate require every scenario to run: rejected because access, data, roles, and action budget can
   block safe execution; the correct behavior is to name the uncovered risk, not fake coverage.
+
+## Spine diet + subagent-default (context-per-task reduction)
+
+Plan: `docs/plans/2026-06-19-spine-diet-subagent-default.md`. Branch: `refactor/spine-diet-subagent-default`.
+
+### What
+
+- Slimmed `SKILL.md` from 1703 to 1218 words (-28%) by cutting duplicated/verbose connective prose (the
+  utility-modes section that re-stated the mode table, the expanded 5-step loop, the verbose UI/UX overlay)
+  while preserving every literal that a contract test pins into the spine.
+- Flipped the default execution model to subagent-first: `reference/role-loop.md` now states each role runs
+  in a fresh-context subagent by default (conductor stays lean; the role's heavy references load inside the
+  subagent; independent units run in parallel; trivial single edit stays inline). `README.md` and
+  `README.ko.md` updated to match (was "dispatch is optional and single-driver by default").
+- All 16 contract suites stay green; no test was retargeted.
+
+### Why
+
+- The complaint was "supergoal eats a lot of context no matter the task." Two causes: (1) the always-loaded
+  `SKILL.md` carried all-mode detail (~3k tokens) regardless of mode, and (2) inline-by-default execution
+  piled every reference (role-loop, domain-context, taste-skill-v2, ...) into one conductor window. The
+  subagent machinery already existed in `agents/*.md` but was secondary.
+- superpowers (obra) `writing-skills` sets the target: a frequently-loaded entry skill should be a thin
+  router (<200 words) that defers detail; `subagent-driven-development` keeps the orchestrator lean by
+  dispatching fresh-context subagents that return only a short structured result. The skill's own test
+  comments already declared the intended direction ("SKILL.md is a slim router").
+
+### Why not smaller (the <600-word target was not met)
+
+- `tests/workflow-contract.test.sh:35` pins the operational safety contract (branch isolation, browser QA)
+  into `SKILL.md` *on purpose* - "the role loop carries the same operational contract, not only the short
+  spine." Those literal sentences set a hard floor for the spine. Reaching <600 would require retargeting
+  those tests to the reference files, which weakens the maintainer's deliberate spine-safety design - a
+  patch that passes tests but fights the structure. Rejected; left as a user decision.
+- The larger lever for "no matter what task" is the subagent-default flip, not the spine size: it moves the
+  heavy reference loads out of the conductor's context entirely.
+
+### Verified
+
+- `for f in tests/*.test.sh; do bash "$f"; done` -> 16 suites, 0 failing.
+- `wc -w SKILL.md` -> 1218 (was 1703). `git diff --stat` -> 4 files, +85/-111.

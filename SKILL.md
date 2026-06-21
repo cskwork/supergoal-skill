@@ -98,7 +98,7 @@ verify=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role>.m
 | `reference/review-only.md` | REVIEW-ONLY: findings, no fixes |
 | `reference/arch.md` | ARCH: friction survey -> route out |
 | `reference/teach.md`, `learn-domain.md` | teach a human / onboard the agent |
-| `reference/ui-ux.md`, `taste-skill-v2.md`, `functional-ui.md`, `taste-aesthetics.md` | user-facing UI tier |
+| `reference/ui-ux.md`, `taste-skill-v2.md`, `functional-ui.md`, `taste-aesthetics.md`, `engagement.md` | user-facing UI tier |
 | `reference/harness-eval.md` | HARNESS-EVAL |
 | `reference/skill-mine.md` | SKILL-MINE |
 | `reference/market-research.md` | GREENFIELD: validate demand (optional) |

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{LESSON TITLE}}</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<!-- Book layout: left TOC + horizontal page-turn. One <section> = one page.
+     Give each section an id (hash link) and data-title (TOC label).
+     lesson-book.js builds the TOC + pager from these sections. -->
+<main class="book">
+  <aside class="toc"></aside>
+  <div class="pages"><div class="pages-track">
+
+    <section id="intro" data-title="시작">
+      <div class="page-inner">
+        <p class="eyebrow">{{TOPIC}} · 레슨 {{NNNN}}</p>
+        <h1>{{LESSON TITLE}}</h1>
+        <p class="lede">{{한 줄 미션 연결}}</p>
+        <div class="hook"><strong>먼저 스스로:</strong> {{핵심 문제를 묻는 한 문장}}</div>
+      </div>
+    </section>
+
+    <section id="terms" data-title="핵심 용어">
+      <div class="page-inner">
+        <h2>핵심 용어</h2>
+        <table>
+          <thead><tr><th>용어</th><th>쉬운 뜻</th><th>흐름에서 하는 일</th></tr></thead>
+          <tbody><tr><td class="term">{{term}}</td><td>{{plain}}</td><td>{{role}}</td></tr></tbody>
+        </table>
+        <p><strong>비유:</strong> {{사용자 관심사에서 한 줄}}</p>
+      </div>
+    </section>
+
+    <section id="bridge" data-title="사람→기계">
+      <div class="page-inner">
+        <h2>사람 생각 → 기계 단계</h2>
+        <p>{{직관적 동작을 변수/조건/반복으로 옮기는 다리, 문장으로}}</p>
+      </div>
+    </section>
+
+    <section id="trace" data-title="과정 추적">
+      <div class="page-inner">
+        <h2>과정 추적</h2>
+        <ol class="trace">
+          <li>{{trigger → read/derive}}</li>
+          <li>{{decide}}</li>
+          <li>{{write/call}}</li>
+          <li class="fail">{{실패/대체 경로}}</li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="play" data-title="직접 돌려보기">
+      <div class="page-inner">
+        <h2>직접 돌려보기</h2>
+        <div id="viz"><!-- assets/<topic>-viz.js renders an interactive simulator here --></div>
+      </div>
+    </section>
+
+    <section id="check" data-title="이해 확인">
+      <div class="page-inner">
+        <h2>이해 확인 <span class="quiz-score" data-quiz-score></span></h2>
+        <div class="sg-quiz" data-explain="{{정답 해설}}">
+          <p class="sg-q">{{질문}}</p>
+          <ul class="sg-options">
+            <li data-correct>{{정답}}</li>
+            <li data-hint="{{오답 힌트}}">{{오답}}</li>
+            <li>{{오답}}</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="wrap" data-title="마무리">
+      <div class="page-inner">
+        <div class="callout takeaway"><strong>이것만 기억:</strong> {{한 문장 핵심}}</div>
+        <div class="callout later"><strong>지금은 건너뜀:</strong> {{나중에 배울 것}}</div>
+        <footer>
+          <p>1순위 자료: <a href="{{URL}}">{{권위 있는 출처}}</a></p>
+          <p>막히면 물어보세요 — 저는 당신의 튜터입니다.</p>
+        </footer>
+      </div>
+    </section>
+
+  </div></div>
+  <nav class="pager"></nav>
+</main>
+
+<script src="../assets/quiz.js"></script>
+<script src="../assets/lesson-book.js"></script>
+<!-- <script src="../assets/{{topic}}-viz.js"></script> -->
+</body>
+</html>

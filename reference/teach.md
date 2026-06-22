@@ -153,8 +153,9 @@ fallback/stop before the takeaway.
    (`teach/LEARNING-RECORD-FORMAT.md`) - these set the next ZPD and survive sessions. Promote settled
    terms into `GLOSSARY.md`. Then append the live chat journal to
    `teach/<topic>/<topic>-YYYY-MM-DD.md` with the question, bridge, terms, user explanation, and open
-   questions; create the workspace if missing and follow `teach/README.md`. For anything the user will
-   revisit, also write the HTML lesson (see **Lessons**).
+   questions; create the workspace if missing and follow `teach/README.md`. Write the interactive HTML
+   lesson by default (see **Lessons**) and open it in the browser; only an explicit throwaway
+   explain-back skips it.
 
 ## Interview check
 
@@ -204,25 +205,47 @@ that piece.
 
 ## Lessons (the primary teaching unit)
 
-A lesson is the main thing TEACH produces: one self-contained HTML file at
+A lesson is the main thing TEACH produces: one self-contained, **interactive** HTML file at
 `teach/<topic>/lessons/NNNN-slug.html` (increment `NNNN`). It teaches one tightly-scoped thing tied to
-the mission, in the user's ZPD.
+the mission, in the user's ZPD. The interactive HTML lesson is the **default deliverable for every
+teaching turn** - not a terminal transcript, and not an optional extra "for things they'll revisit."
+The in-chat opening is its spoken intro; the HTML lesson is where the learning actually lands.
 
+- **Interactive by default.** Every lesson ships at least one *working* in-browser interactive element
+  with immediate feedback: a hydrated `.sg-quiz` check, a small simulator/visualizer that lets the user
+  step through the process, or a light in-browser task. Reading-only HTML is not a lesson - the user
+  must *do* something and see the result. Feedback follows `reference/engagement.md` (immediate
+  hover/active/correct/incorrect tied to a real action; calm, not gamified).
+- **Scaffold, do not hand-roll.** On the first lesson in a workspace, copy
+  `templates/teach/assets/` into `teach/<topic>/assets/` (shared `lesson.css` + `lesson-book.js` +
+  `quiz.js` + `lesson-template.html`). Build every lesson from that scaffold so the whole course looks like one
+  thing; write topic-specific simulators as `teach/<topic>/assets/<topic>-viz.js` and reuse, never
+  inline-duplicate. Read `assets/` before authoring.
+- **Book layout, not a long scroll.** Lessons read like a book: a left table of contents jumps to any
+  section and the reader flips left/right between pages (prev/next, arrow keys, swipe, or TOC click).
+  Author each page as a `<section id data-title>` inside `.pages-track`; `lesson-book.js` builds the TOC
+  and pager. One idea per page, inside working memory; the simulator and the quiz each earn their own
+  page so the reader *does* on that page, not just reads.
+- **UI/UX bar.** Lessons are user-facing UI: hold the `reference/ui-ux.md` Expressive baseline (the
+  default for all user-facing UI). The shipped `lesson.css`/`quiz.js` already carry the WCAG 2.2
+  essentials (visible focus, keyboard operability, >=44px targets, `prefers-reduced-motion`, light/dark
+  `color-scheme`) - keep them when you adapt. Dense step-tables/visualizers also honor
+  `reference/functional-ui.md` (tabular numbers, complete states).
 - **Beautiful and short.** Clean Tufte-style typography; completable quickly inside working memory; one
   tangible win. The user returns to these, so they must read and print well.
 - **Knowledge then skill.** Teach only the knowledge the skill needs, cited inline, then drill the
-  skill through a tight feedback loop (quiz, light in-browser task, or a checklist of real-world steps)
-  that gives immediate, ideally automatic feedback.
+  skill through the tight interactive feedback loop above.
 - **Quiz hygiene.** Every answer option is the same length in words (and characters where possible);
-  formatting leaks no clue to the correct answer; randomize the correct option's position (same rule as
-  the interview check).
+  formatting leaks no clue to the correct answer; `quiz.js` randomizes the correct option's position on
+  load (same rule as the interview check) - do not encode the answer by position.
 - **Linked.** Anchor-link to related lessons and to `reference/*.html`. Recommend one primary source.
   End with a reminder that the agent is their teacher - ask follow-up questions on anything unclear.
-- **Open it.** If possible, open the lesson file for the user with a CLI command after writing it.
+- **Open it.** After writing the lesson, open it in the user's browser with a CLI command so they land
+  in the interactive material, not a file path.
 
-The in-chat **Opening output format** below is the lesson's spoken counterpart for codebase/concept
-walks; the HTML lesson is its durable, reviewable form. A quick codebase explain-back may use the chat
-opening alone; for anything the user will revisit, write the lesson.
+The in-chat **Opening output format** below is the lesson's spoken counterpart; deliver it alongside the
+HTML lesson, not instead of it. Only a throwaway one-off codebase explain-back the user explicitly will
+not revisit may use the chat opening alone.
 
 ## Reference documents & glossary
 

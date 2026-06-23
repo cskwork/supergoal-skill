@@ -32,6 +32,10 @@ echo "vault: $VAULT  app-type: $APPTYPE"
 [ -s "$LEDGER" ] || fail "qa/scenario-ledger.md missing/empty — Impact Matrix and scenario shards were not recorded"
 grep -qiF 'Impact Matrix' "$LEDGER" \
   || fail "qa/scenario-ledger.md is missing the Impact Matrix section"
+grep -qiE '^[[:space:]]*##[[:space:]]+Shards([[:space:]]|$)' "$LEDGER" \
+  || fail "qa/scenario-ledger.md is missing the Shards section"
+grep -qiE '^[[:space:]]*(\||[-*])[^\n#]*(PASS|FAIL|BLOCKED|NOT[ -]?COVERED)[^\n#]*(qa/|evidence|reason|risk|blocked|not[ -]?covered)' "$LEDGER" \
+  || fail "qa/scenario-ledger.md has no scenario outcome with status and evidence/reason"
 [ -s "$REPORT" ] || fail "report.md missing/empty — the human QA report was not written (templates/qa-report.md)"
 while IFS= read -r h; do
   # Match as a real heading (start-of-line, optional trailing space), not a substring buried in prose.

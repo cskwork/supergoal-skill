@@ -217,6 +217,9 @@ require_text "case template records quality score" "templates/harness-eval-case.
 mkresult "$T/ok.json" "harness" "$PASS_CHECKS" "proven" "harness"
 run_case "gate accepts complete eval" 0 "HARNESS-EVAL PASS" node "$GATE" "$T/ok.json"
 
+mkresult "$T/bad-claim-status.json" "harness" "$PASS_CHECKS" "maybe" "harness"
+run_case "gate blocks unknown claim_status" 1 "claim_status" node "$GATE" "$T/bad-claim-status.json"
+
 mkresult "$T/no-snapshot.json"
 node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.same_repo_snapshot=false; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/no-snapshot.json"
 run_case "gate blocks different snapshot" 1 "same_repo_snapshot" node "$GATE" "$T/no-snapshot.json"
@@ -243,6 +246,14 @@ run_case "gate blocks missing quality score" 1 "quality is required" node "$GATE
 
 mkresult "$T/bad-quality.json" "harness" "$PASS_CHECKS" "not_proven" "harness" "101"
 run_case "gate blocks out-of-range quality" 1 "average_total" node "$GATE" "$T/bad-quality.json"
+
+mkresult "$T/bad-case-total.json"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.quality.harness.by_case['case-001'].total=83; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/bad-case-total.json"
+run_case "gate blocks case total/dimension mismatch" 1 "total must equal" node "$GATE" "$T/bad-case-total.json"
+
+mkresult "$T/bad-average-total.json"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.quality.harness.average_total=81; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/bad-average-total.json"
+run_case "gate blocks average_total mismatch" 1 "average_total" node "$GATE" "$T/bad-average-total.json"
 
 mkresult "$T/proven-quality-loss.json" "harness" "$PASS_CHECKS" "proven" "baseline" "70" "82"
 run_case "gate blocks proven quality loss" 1 "quality.winner harness" node "$GATE" "$T/proven-quality-loss.json"

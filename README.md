@@ -98,9 +98,21 @@ This repo **is** the skill. Put it where your agent CLI finds skills:
 
 ```bash
 git clone https://github.com/cskwork/supergoal-skill.git
-# then either symlink or copy it into the skills dir your agent uses:
-ln -s "$(pwd)/supergoal-skill" <your-agent-skills-dir>/supergoal
-# examples: ~/.claude/skills/supergoal, ~/.codex/skills/supergoal, ~/.agents/skills/supergoal
+cd supergoal-skill
+SRC="$(pwd)"
+mkdir -p ~/.agents/skills ~/.codex/skills ~/.claude/skills
+
+# Recommended: one canonical source checkout, symlinked into each active agent.
+# If a target already exists, audit it first and preserve any local edits before replacing it.
+ln -s "$SRC" ~/.agents/skills/supergoal
+ln -s "$SRC" ~/.codex/skills/supergoal
+ln -s "$SRC" ~/.claude/skills/supergoal
+
+# Read-only drift check for active installs:
+node templates/skill-install-audit.mjs "$SRC"
+
+# Canonical repo verification:
+bash tests/run-all.sh
 ```
 
 Then in your agent CLI: `/supergoal <your objective>`.
@@ -109,8 +121,9 @@ Then in your agent CLI: `/supergoal <your objective>`.
 
 The skill runs on Windows; the remaining gate/test scripts are POSIX shell, so run them under **Git Bash**
 or **WSL** (`node` must be on `PATH`). The repo pins `.gitattributes eol=lf`. Install by **copy** if
-symlinks need admin rights (`cp -R` in Git Bash/WSL, or `mklink /D` from an elevated `cmd`); run the
-contract tests under **WSL** bash.
+symlinks need admin rights (`cp -R` in Git Bash/WSL, or `mklink /D` from an elevated `cmd`); run
+`node templates/skill-install-audit.mjs <source-skill-dir>` after copying, then run the contract tests
+under **WSL** bash.
 
 ## Layout
 
@@ -119,7 +132,8 @@ SKILL.md            thin spine: baseline-first loop, modes, reference map
 agents/             one persona file per role (analyst, architect, executor, debugger, explore, designer, qa-*, db-reader, code-reviewer, security-reviewer)
 reference/          domain-rules · domain-context · debugging · interview · plan-grounding · market-research · qa · qa-only · db-access · teach · learn-domain · ui-ux · taste-skill-v2 · functional-ui · harness-eval · skill-mine · observability
 teach/              TEACH-mode format guides + per-topic teaching workspaces
-templates/          qa-gate.sh · qa-only-gate.sh · contrast-gate.mjs · learn-grounding-gate.mjs · qa-report.md · db-access/ · domain-agent/ · domain-onboarding.html · harness-eval-gate.mjs · harness-eval-cases/ · skill-mine/ · skill-frontmatter-gate.mjs · skill.md.template · observability/ (sg-emit board state)
+templates/          qa-gate.sh · qa-only-gate.sh · contrast-gate.mjs · learn-grounding-gate.mjs · qa-report.md · db-access/ · domain-agent/ · domain-onboarding.html · harness-eval-gate.mjs · harness-eval-cases/ · skill-mine/ · skill-frontmatter-gate.mjs · skill-install-audit.mjs · skill.md.template · observability/ (sg-emit board state)
+tests/              contract tests + run-all.sh canonical verifier
 tui/                optional live Board: state.py (reader) · app.py (Textual UI) · serve.py (in-browser) · launch.sh
 docs/               DESIGN.md · research-brief.md · experiments/ (the harness evals) · changelog/ · index.html (landing)
 examples/url-shortener/   a worked example service exercised across the build / debug / extend modes

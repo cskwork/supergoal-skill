@@ -195,6 +195,8 @@ diffs against later (it travels into the persisted suite).
 - A finding needs a code fix: report it as a finding and recommend switching to DEBUG/LEGACY; do not
   edit product code.
 - DB only reachable with a write-capable account: still issue read-only statements only; never write.
+- DB truth is load-bearing but access is missing/skipped/unsafe: record `DB evidence: Not covered` under
+  `## Not covered`, with the blocker and residual risk.
 - Action cap hit: stop, report done + remaining, ask before spending a fresh budget.
 - DB credentials or PII would land in a saved file: redact; never persist secrets or raw rows.
 - Complex or adjacent scenario cannot be exercised safely: record it under `## Not covered` with the

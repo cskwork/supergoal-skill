@@ -11,7 +11,7 @@ READ ONLY: the running app, `reference/qa.md`, and `reference/playwright-cli.md`
 not source rationale.
 
 DO (browser apps, in order):
-1. **Get the driver.** `command -v playwright-cli` — if absent, `npm install -g @playwright/cli@latest`,
+1. **Get the driver.** `command -v playwright-cli` — if absent, `npm install -g @playwright/cli@0.1.14`,
    then `playwright-cli install --skills`. Browser: `--browser=chrome` (system Chrome) or `npx playwright
    install chromium`. playwright-cli is the ONLY driver — no agent-browser, no Playwright MCP, no headless
    render. If install is genuinely blocked, STOP and ask the user to install it. A static single HTML file

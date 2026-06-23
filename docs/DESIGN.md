@@ -4,14 +4,20 @@ Why each part is built the way it is. Sources: the local autopilot/ultrawork/ult
 skills (reusable mechanisms) and a fact-checked web research brief (`docs/research-brief.md`,
 18 agents, adversarially verified).
 
+Status note (2026-06-24): the active executable contract is `SKILL.md`, `reference/role-loop.md`,
+`templates/qa-gate.sh`, `templates/qa-only-gate.sh`, `templates/harness-eval-gate.mjs`,
+`templates/skill-frontmatter-gate.mjs`, and `tests/run-all.sh`. References below to
+`delivery-gate.sh` and `human-feedback-gate.mjs` are historical validation records from earlier
+revisions, not live gates in the current skill.
+
 ## Core design (gated lanes over a shared vault)
 
 The spine is **forward-only gated lanes**: a single shared **vault** as the only cross-phase state,
 an **untrusted `claims.md` re-verified by an adversarial Verify** that re-runs every claim, **role
-separation by read-scope**, and a **literal-bash delivery gate** that is never edited to pass.
+separation by read-scope**, and literal executable gates for active lanes that are never edited to pass.
 
-**Self-contained by design:** no CLI, service, TUI, or external WORKFLOW files.
-`/supergoal` runs **in-session with `Task` subagents** — no install, no ports, no poller. (Reuse-map
+**Self-contained by design:** no required service, TUI, or external WORKFLOW files.
+`/supergoal` runs **in-session with subagents**; the Board is optional observability only. (Reuse-map
 decision: keep the gate ideas, skip the heavyweight orchestration machine.)
 
 **Validate front-lane:** a dedicated demand-validation step gates GREENFIELD before any Build ticket
@@ -54,11 +60,11 @@ sub-fact is retained.
 
 ## Verification of this skill
 
-The original executable gate, `templates/delivery-gate.sh`, was tested across 5 scenarios
-(missing artifacts → FAIL; complete+GREEN+passing → PASS; RED verdict → FAIL; NO-GO → FAIL; failing
-suite → FAIL). All behaved as specified — the gate genuinely gates. The later
-`templates/human-feedback-gate.mjs` adds an executable pre-implementation approval check: two
-approval briefs in `plan.md` plus `state.json.approval` for Build/Fix.
+Historical validation: earlier revisions tested `templates/delivery-gate.sh` across 5 scenarios
+(missing artifacts -> FAIL; complete+GREEN+passing -> PASS; RED verdict -> FAIL; NO-GO -> FAIL; failing
+suite -> FAIL), and later tested `templates/human-feedback-gate.mjs` for pre-implementation approval.
+Those gates were removed when the current baseline-first contract replaced them with narrower active
+lane gates: QA, QA-ONLY, HARNESS-EVAL, LEARN-DOMAIN, DB read-only, and skill frontmatter.
 
 ### Live end-to-end validation (2026-05-29)
 Ran a full GREENFIELD pipeline on a real production-grade objective ("build a production URL

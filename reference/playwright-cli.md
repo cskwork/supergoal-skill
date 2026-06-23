@@ -7,7 +7,9 @@ force page data into the model. Run it only inside `qa-tester`/`qa-auditor`, nev
 
 ## Get the driver (inside the subagent)
 
-1. `command -v playwright-cli` - if absent, `npm install -g @playwright/cli@latest` (Node 18+).
+1. `command -v playwright-cli` - if absent, `npm install -g @playwright/cli@0.1.14` (Node 18+).
+   This repo records the package version tested by the gates; update this reference and rerun
+   `bash tests/run-all.sh` before moving the pin.
 2. `playwright-cli install --skills` - installs the upstream skill locally so the driver self-documents;
    skill-less operation is still fine via `playwright-cli --help`.
 3. Browser binary: headless by default; `--headed` to watch. Use system Chrome with

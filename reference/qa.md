@@ -27,7 +27,7 @@ drive. `playwright-cli` is the ONLY driver - command surface and install in `ref
 
 1. **Serve.** Start the app from the working tree (or the Verify worktree when one is used), poll
    until ready, record URL, tear down at end. Static/single HTML opens via `file://` from that tree.
-2. **Get the driver.** `command -v playwright-cli`; if absent `npm install -g @playwright/cli@latest`,
+2. **Get the driver.** `command -v playwright-cli`; if absent `npm install -g @playwright/cli@0.1.14`,
    then `playwright-cli install --skills`. Browser: `--browser=chrome` for system Chrome or
    `npx playwright install chromium`. If install is genuinely blocked, STOP and ask the user to install
    it - never substitute a headless render or any other tool (`reference/playwright-cli.md`).

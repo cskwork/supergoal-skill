@@ -14,14 +14,51 @@ const BODY_WARN = 20000;   // ~5k tokens; the body should stay small (progressiv
 function fail(msg) { console.error(`FAIL: ${msg}`); process.exitCode = 1; }
 function warn(msg) { console.error(`WARN: ${msg}`); }
 
-// Minimal frontmatter reader: top-level `key: value` lines between the first --- pair.
+function unquote(value) {
+  return value.replace(/^["']|["']$/g, "").trim();
+}
+
+// Minimal frontmatter reader: top-level `key: value` lines plus YAML block scalars
+// (`key: >-` / `key: |`) between the first --- pair.
 function parseFrontmatter(text) {
+  text = text.replace(/\r\n/g, "\n");
   const m = text.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
   if (!m) return { fm: null, body: text };
   const fm = {};
-  for (const line of m[1].split("\n")) {
+  const lines = m[1].split("\n");
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i];
     const mm = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
-    if (mm) fm[mm[1]] = mm[2].replace(/^["']|["']$/g, "").trim();
+    if (!mm) continue;
+    const key = mm[1];
+    const raw = mm[2].trim();
+    if (/^[>|][-+]?$/u.test(raw)) {
+      const folded = raw.startsWith(">");
+      const block = [];
+      i += 1;
+      for (; i < lines.length; i += 1) {
+        const next = lines[i];
+        if (/^[A-Za-z0-9_-]+:\s*/.test(next)) {
+          i -= 1;
+          break;
+        }
+        if (/^\s*$/.test(next)) {
+          block.push("");
+          continue;
+        }
+        const indented = next.match(/^\s+(.*)$/);
+        if (!indented) {
+          i -= 1;
+          break;
+        }
+        block.push(indented[1]);
+      }
+      fm[key] = folded
+        ? block.join(" ").replace(/[ \t]+/g, " ").trim()
+        : block.join("\n").trim();
+    } else {
+      fm[key] = unquote(raw);
+    }
   }
   return { fm, body: m[2] };
 }

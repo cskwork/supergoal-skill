@@ -53,6 +53,7 @@ issues, write "No issues to reproduce.">
 <scenario groups from the Impact Matrix that were not exercised, plus why and the residual risk. Use
 "None" only if every planned must/should scenario was covered within the action cap.>
 - <scenario group> -> not covered because <blocker>; risk: <what could still regress>
+- DB evidence: Not covered -> reason: <missing/skipped/unsafe access>; risk: <what data mismatch could still hide>
 
 ## How to re-run
 

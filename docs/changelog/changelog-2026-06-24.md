@@ -29,6 +29,8 @@
   against the real project, and stop at the verified result.
 - Added a Mermaid diagram covering GREENFIELD, DEBUG, LEGACY, SPEC, QA-ONLY, REVIEW-ONLY, ARCH, TEACH,
   LEARN-DOMAIN, HARNESS-EVAL, and SKILL-MINE.
+- Synced the same explanation and Mermaid route map into `README.ko.md`. Leaving the Korean README behind
+  was rejected because first-time Korean readers need the same routing model as the English README.
 
 ## Verification
 

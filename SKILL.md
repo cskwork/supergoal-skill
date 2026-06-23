@@ -64,8 +64,10 @@ dimensions) run in parallel. Difficulty gate: *very easy* -> skip; harder -> red
 DB evidence when persisted data is load-bearing. Full contract: `reference/role-loop.md`.
 
 1. **Frame.** Restate goal + falsifiable acceptance criteria in one line. If underspecified, ask <=5
-   high-leverage questions (`reference/interview.md`); resolve code-answerable ones by reading code. UI
-   work: load `reference/ui-ux.md` now.
+   high-leverage questions; and once the approach is grounded, if the fix's blast radius reaches past
+   its target, confirm it before Build - tiered, hard-gated when wide/destructive/behavior-changing
+   (`reference/interview.md`). Resolve code-answerable questions by reading code. UI work: load
+   `reference/ui-ux.md` now.
 2. **Build.** Smallest correct change, test-first; match surrounding style; minimal diff. Bug: reproduce
    with a failing test first (`reference/debugging.md`).
 3. **Critic (independent; no src edits).** Re-read the prose spec + repo/data rules
@@ -90,7 +92,7 @@ verify=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role>.m
 | `reference/domain-rules.md` | Frame: distill <=10 priority rules |
 | `reference/domain-context.md` | repo-local Domain Brief |
 | `reference/debugging.md` | DEBUG: hypothesis-ledger diagnose loop |
-| `reference/interview.md` | ambiguity-gated <=5 question interview |
+| `reference/interview.md` | interview: ambiguity (what) + blast-radius confirm (approach, tiered) |
 | `reference/spec.md`, `templates/spec/` | SPEC: requirements -> design -> tasks |
 | `reference/plan-grounding.md` | ground the approach before committing |
 | `reference/db-access.md`, `templates/db-access/` | read-only DB evidence (required past *very easy* when data load-bearing) |

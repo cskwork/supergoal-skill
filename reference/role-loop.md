@@ -31,9 +31,11 @@ returns only a short structured result - status, what changed, test output, conc
 Run independent units in parallel (QA scenario shards, review dimensions, multi-file builds); keep
 dependent roles ordered. A trivial single edit skips the loop and edits inline.
 
-1. **Build** - smallest correct change; match surrounding style; minimal diff. Bug: reproduce with a
-   failing test first. Refactor/integrate an existing API: capture its exact-behavior baseline FIRST
-   (`reference/qa.md` "API behavior baseline").
+1. **Build** - before the first edit, confirm any blast-radius reaching past the change's explicit
+   target has cleared its interview confirm (`reference/interview.md`: approved, AFK-proceeded, or
+   safely skipped and logged). Then: smallest correct change; match surrounding style; minimal diff.
+   Bug: reproduce with a failing test first. Refactor/integrate an existing API: capture its
+   exact-behavior baseline FIRST (`reference/qa.md` "API behavior baseline").
 
 2. **Critic** (`agents/code-reviewer.md`) - DO NOT edit src or weaken/delete existing tests.
    - Re-read the prose spec and repo/data rules. Enumerate REQUIRED behaviors the existing tests do not

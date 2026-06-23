@@ -106,6 +106,6 @@ verify=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role>.m
 | `reference/market-research.md` | GREENFIELD: validate demand (optional) |
 | `reference/observability.md`, `tui/` | Board: opt-in live dashboard |
 
-**Done =** mode stated; smallest diff in surrounding style; REAL tests + prose spec green (not a proxy);
+**Done =** mode stated; smallest diff in surrounding style; REAL tests + prose spec green (not a proxy) - a runtime MUST is proven only by exercising its real behavior, never by a test that just checks a method was called or re-asserts current behavior;
 past *very easy* -> red-green test + DB evidence if data load-bearing; user-facing UI at the Expressive
 baseline; destructive steps consented; report what was verified with command output.

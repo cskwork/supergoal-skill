@@ -1,5 +1,45 @@
 # Changelog 2026-06-23
 
+## SKILL-MINE: make `~/.agents/skills/` the canonical skill-collection store
+
+User rule while running SKILL-MINE: "skill mine should be done on `.agents/skills` where skills are
+collected" - and update the supergoal source if that is not already stated. Verified the user's premise
+against the live setup: `~/.agents/skills/` holds 105 skills (101 real dirs + 4 symlinks, incl. supergoal
+itself), and each agent dir (`~/.claude/skills/...`) symlinks into it - confirmed by identical inodes
+across `.claude` / `.agents` / `PARA/Resource/supergoal-skill` for `SKILL.md` and `reference/skill-mine.md`.
+So `.agents/skills` *is* the collection point in practice.
+
+### Decision
+
+`reference/skill-mine.md` already named `~/.agents/skills/<name>/` but only as a weak *"Recommended / e.g."*
+in the Install section, with *"Alternatively copy per-agent"* presented as an equal option - so a
+per-agent-copy install read as equally valid. Promote `.agents/skills` from option to the **standard,
+default collection store**, and reframe per-agent dirs as symlinks INTO it.
+
+Rejected alternatives:
+- *Leave it - already mentioned.* The user's condition was "if this not stated"; it was stated only weakly,
+  and weak framing is what let non-canonical installs look compliant. Strengthen, don't skip.
+- *Edit the `.claude`/`.agents` symlink copies.* They are symlinks onto `PARA/Resource/supergoal-skill`
+  (inode-verified), so editing the source repo is the single correct write point - which is exactly the
+  path the user gave.
+- *Also rewrite the Mine/Rank already-skilled scan + state-source section.* The state-source section already
+  defaults to `~/.agents/skills/<name>/` (consistent); widening scope past the Install section would exceed
+  the smallest correct change. Left untouched.
+
+### What
+
+- `reference/skill-mine.md` Install section: retitled to "collect in `~/.agents/skills/`, then symlink to
+  each chosen agent"; opening line now states skills are COLLECTED in one canonical real dir as the
+  standard/default, always forged there first; the agent table now shows each personal dir as a symlink
+  INTO the canonical store (relative for claude/codex, absolute for opencode/hermes); standalone copy
+  demoted to an explicit fallback. 14 insertions / 14 deletions, one section only.
+
+### Verification
+
+- `bash tests/workflow-contract.test.sh` -> 14 passed, 0 failed (no regression).
+- `grep` confirms `.agents/skills` now appears as canonical/standard/default in the Install section
+  (lines 84, 86-87) and stays consistent with the state-source section (lines 112, 114).
+
 ## TEACH: make the interactive HTML lesson the default deliverable, in a book layout
 
 User feedback while running TEACH on a coding problem: lessons should produce

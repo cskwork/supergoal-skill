@@ -75,10 +75,7 @@ When the failure spans DB, API, network, or message-queue boundaries, map before
    sandbox (fresh `git worktree` at HEAD). The repro must FAIL on current code and PASS after the fix
    with no new failures (F->P). Reproduction is its own skill, not free with fix-capability: scaffold
    it explicitly. Pin intermittent bugs first — flaky/timing/concurrency repros must fail consistently
-   over N repeated runs before you trust them. Record `run-to-prove`. Data-backed bug with no reachable live/dev DB:
-   build the repro on a DISPOSABLE seeded DB (minimal schema + smallest seed that triggers it) - current
-   code returns the wrong rows (RED), the fix the right rows (GREEN), a neighbouring case stays correct
-   (invariant); pattern in `templates/seeded-db-repro/`.
+   over N repeated runs before you trust them. Record `run-to-prove`.
 2. **Localize.** Narrow the smallest region. Use `git bisect`, input/state binary search, the
    distributed triage above, and focused instrumentation instead of guessing. Read structure/skeleton
    first; load full code only for the few suspects that survive.

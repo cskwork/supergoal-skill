@@ -18,7 +18,7 @@ expected values to diff the UI against.
 
 DO, in order:
 1. **Browser driver.** `playwright-cli` is the only driver (`reference/playwright-cli.md`): `command -v
-   playwright-cli`, else `npm install -g @playwright/cli@latest` then `playwright-cli install --skills`.
+   playwright-cli`, else `npm install -g @playwright/cli@0.1.14` then `playwright-cli install --skills`.
    No agent-browser, no Playwright MCP, no headless render. Authenticated/real logged-in sessions use
    playwright-cli's native paths (named session `-s=`, `state-save`/`state-load`, or CDP attach) — no
    separate tool. Record `Tool: playwright-cli` in `## QA`. If install is blocked, STOP and ask the user.

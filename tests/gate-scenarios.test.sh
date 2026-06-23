@@ -51,12 +51,21 @@ run_case "6.2 no ## QA section -> blocked"          1 "no '## QA' section"   bas
 printf 'verdict: GREEN\n## QA\nintegration smoke: bin vs fixture snapshot matches\n' > "$v/verification.md"
 run_case "6.3 CLI: ## QA present -> PASS"           0 "QA GATE PASS"         bash "$QAGATE" "$v" cli
 run_case "6.4 browser, no as-is/to-be -> blocked"   1 "no 'qa/as-is"         bash "$QAGATE" "$v" browser
-mkdir -p "$v/qa"; : > "$v/qa/as-is-1040.png"
+mkdir -p "$v/qa"; printf 'as-is proof\n' > "$v/qa/as-is-1040.png"
 run_case "6.5 as-is only, no to-be -> blocked"      1 "no 'qa/to-be"         bash "$QAGATE" "$v" browser
-: > "$v/qa/to-be-1040.png"
-run_case "6.6 evidence but no Tool line -> blocked" 1 "no 'Tool:' line"      bash "$QAGATE" "$v" browser
+printf 'to-be proof\n' > "$v/qa/to-be-1040.png"
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\n- as-is/to-be at 1040px captured\n' > "$v/verification.md"
+: > "$v/qa/as-is-1040.png"
+run_case "6.6 empty as-is evidence -> blocked"      1 "empty 'qa/as-is"      bash "$QAGATE" "$v" browser
+printf 'as-is proof\n' > "$v/qa/as-is-1040.png"; : > "$v/qa/to-be-1040.png"
+run_case "6.6b empty to-be evidence -> blocked"     1 "empty 'qa/to-be"      bash "$QAGATE" "$v" browser
+printf 'to-be proof\n' > "$v/qa/to-be-1040.png"
+printf 'verdict: GREEN\n## QA\n- as-is/to-be at 1040px captured\n' > "$v/verification.md"
+run_case "6.6c evidence but no Tool line -> blocked" 1 "no 'Tool:' line"     bash "$QAGATE" "$v" browser
 printf 'verdict: GREEN\n## QA\nTool: agent-browser\n- as-is/to-be at 1040px captured\n' > "$v/verification.md"
 run_case "6.7 agent-browser driver -> blocked"      1 "not playwright-cli"   bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\nTool: playwright-cli\n## QA\nTool: agent-browser\n- as-is/to-be at 1040px captured\n' > "$v/verification.md"
+run_case "6.7b non-QA Tool cannot mask QA driver"   1 "not playwright-cli"   bash "$QAGATE" "$v" browser
 printf 'verdict: GREEN\n## QA\nTool: headless Chrome\n- render-1040 captured\n' > "$v/verification.md"
 run_case "6.8 headless-Chrome render -> blocked"    1 "not playwright-cli"   bash "$QAGATE" "$v" browser
 printf 'verdict: GREEN\n## QA\nTool: playwright-cli\n- as-is/to-be at 1040px captured\n' > "$v/verification.md"
@@ -93,7 +102,7 @@ run_case "7.8 decorative pair -> PASS"              0 "CONTRAST GATE PASS" node 
 echo; echo "SCENARIO 9 — qa-gate.sh : contrast gate is wired in for UI runs"
 # ----------------------------------------------------------------------
 QAGATE="$SKILL_DIR/templates/qa-gate.sh"
-v=$(mkvault s9); mkdir -p "$v/qa"; : > "$v/qa/as-is-1040.png"; : > "$v/qa/to-be-1040.png"
+v=$(mkvault s9); mkdir -p "$v/qa"; printf 'as-is proof\n' > "$v/qa/as-is-1040.png"; printf 'to-be proof\n' > "$v/qa/to-be-1040.png"
 printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nUI-tier: Functional\n- as-is/to-be captured\n' > "$v/verification.md"
 run_case "9.1 UI-tier declared, no pairs file -> blocked" 1 "no 'qa/contrast-pairs.json'" bash "$QAGATE" "$v" browser
 printf '[{"el":"body","fg":"#f4efe7","bg":"#16140f","size":"body"},{"el":"t","fg":"#8a8275","bg":"#221e17","size":"normal"}]\n' > "$v/qa/contrast-pairs.json"

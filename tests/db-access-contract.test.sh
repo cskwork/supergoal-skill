@@ -37,6 +37,7 @@ require_text "db access is self-contained" "reference/db-access.md" "works witho
 require_text "db access names node runner" "reference/db-access.md" "node templates/db-access/db-access.mjs"
 require_text "db access names windows wrapper" "reference/db-access.md" "Windows may use"
 require_text "db access supports skip" "reference/db-access.md" "skip the DB phase"
+require_text "db access records skipped load-bearing evidence" "reference/db-access.md" "DB evidence: Not covered"
 require_text "db access asks when env missing" "reference/db-access.md" 'If the `.env` file does not exist'
 require_text "db access defaults env path" "reference/db-access.md" ".domain-agent/db/.env"
 require_text "db access does not require postgres-intelligence" "reference/db-access.md" "do not require them"

@@ -77,7 +77,8 @@ require_text "qa.md has native auth policy"       "reference/qa.md" "Authenticat
 require_text "domain-context registers qa suites" "reference/domain-context.md" "Reusable QA suites from QA-ONLY runs"
 require_text "index template has QA Suites"       "templates/domain-agent/index.md" "## QA Suites"
 require_text "db-reader may write its evidence"   "agents/db-reader.md" "Read, Grep, Glob, Bash, Write"
-require_text "qa-auditor installs playwright-cli" "agents/qa-auditor.md" "npm install -g @playwright/cli@latest"
+require_text "qa-auditor installs pinned playwright-cli" "agents/qa-auditor.md" "npm install -g @playwright/cli@0.1.14"
+require_text "playwright-cli reference records pinned version" "reference/playwright-cli.md" "@playwright/cli@0.1.14"
 
 # ---- Part B: qa-only-gate.sh scenarios -----------------------------------
 GATE="$ROOT/templates/qa-only-gate.sh"
@@ -98,10 +99,10 @@ run_case() {
 mkbrowser() {
   local v="$T/$1"; rm -rf "$v"; mkdir -p "$v/qa"
   printf 'QA scope: checkout flow on staging\n' > "$v/brief.md"
-  printf '# Scenario ledger\n\n## Impact Matrix\n- direct flow\n\n## Shards\n- direct-flow -> PASS\n' > "$v/qa/scenario-ledger.md"
+  printf '# Scenario ledger\n\n## Impact Matrix\n- direct flow\n\n## Shards\n| Scenario | Status | Evidence |\n|---|---|---|\n| direct-flow | PASS | qa/to-be-1040.png |\n' > "$v/qa/scenario-ledger.md"
   printf '# QA report\n## Impact coverage\n- direct flow, adjacent totals, refresh/reopen\n## What worked\n- login -> PASS\n## What didn'"'"'t\n- none\n## What I discovered\n- nothing\n## Reproduction notes\n- No issues to reproduce.\n## Not covered\n- none\n## How to re-run\n- `.domain-agent/qa/checkout.md`\n' > "$v/report.md"
   printf 'verdict: GREEN\n## QA\nTool: playwright-cli\n- as-is/to-be captured\n' > "$v/verification.md"
-  : > "$v/qa/as-is-1040.png"; : > "$v/qa/to-be-1040.png"
+  printf 'as-is proof\n' > "$v/qa/as-is-1040.png"; printf 'to-be proof\n' > "$v/qa/to-be-1040.png"
   printf '{ "action_count": 12, "action_cap": 100 }\n' > "$v/state.json"
   echo "$v"
 }
@@ -121,6 +122,9 @@ v=$(mkbrowser g1d); rm -f "$v/brief.md"
 run_case "1.4 missing brief.md -> blocked"         1 "brief.md missing"   bash "$GATE" "$v" browser
 v=$(mkbrowser g1e); rm -f "$v/qa/scenario-ledger.md"
 run_case "1.5 missing scenario ledger -> blocked"  1 "scenario-ledger.md" bash "$GATE" "$v" browser
+v=$(mkbrowser g1f)
+printf '# Scenario ledger\n\n## Impact Matrix\n- direct flow\n\n## Shards\n- direct-flow assigned but no outcome yet\n' > "$v/qa/scenario-ledger.md"
+run_case "1.6 ledger without scenario outcome -> blocked" 1 "scenario outcome" bash "$GATE" "$v" browser
 
 v=$(mkbrowser g2); printf '{ "action_count": 150, "action_cap": 100 }\n' > "$v/state.json"
 run_case "2.1 action_count over cap -> blocked"    1 "exceeds action_cap" bash "$GATE" "$v" browser

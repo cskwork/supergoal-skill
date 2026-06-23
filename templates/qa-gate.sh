@@ -34,15 +34,20 @@ echo "== /supergoal QA gate =="
 echo "vault: $VAULT  app-type: $APPTYPE"
 
 [ -s "$VERIF" ] || fail "verification.md missing/empty — QA recorded nothing"
-grep -qiE '^##[[:space:]]+QA\b' "$VERIF" \
+grep -qiE '^##[[:space:]]+QA([[:space:]]|$)' "$VERIF" \
   || fail "verification.md has no '## QA' section — QA evidence was never recorded"
+QA_SECTION="$(awk '
+  /^[[:space:]]*##[[:space:]]+QA([[:space:]]|$)/ { in_qa = 1; next }
+  /^[[:space:]]*##[[:space:]]+/ { if (in_qa) exit }
+  in_qa { print }
+' "$VERIF")"
 
 # UI/UX contrast enforcement — makes "contrast is computed, not eyeballed" a real gate for BOTH the
 # Expressive (taste-skill-v2) and Functional (functional-ui) tiers. It fires when the run declares a
 # tier (a 'UI-tier: Expressive|Functional' line in ## QA) OR a pairs file exists. A UI run that omits
 # the pair list, or whose palette has a sub-threshold pair, fails here — no silent eyeballed contrast.
 PAIRS="$QA/contrast-pairs.json"
-ui_tier_line="$(grep -iE '^[[:space:]]*[-*]?[[:space:]]*UI-tier:' "$VERIF" | head -1 || true)"
+ui_tier_line="$(printf '%s\n' "$QA_SECTION" | grep -iE '^[[:space:]]*[-*]?[[:space:]]*UI-tier:' | head -1 || true)"
 if printf '%s' "$ui_tier_line" | grep -qiE 'expressive|functional' || [ -f "$PAIRS" ]; then
   [ -f "$PAIRS" ] \
     || fail "UI-tier run but no 'qa/contrast-pairs.json' — enumerate the text/bg pairs (reference/ui-ux.md or reference/functional-ui.md)"
@@ -61,15 +66,27 @@ if [ "$APPTYPE" = cli ]; then
 fi
 
 # Browser app from here.
-# 1) User-observable proof: as-is/to-be evidence (any extension) under qa/ (reference/qa.md §4).
-ls "$QA"/as-is-* >/dev/null 2>&1 \
-  || fail "no 'qa/as-is-*' evidence — capture the before state at a fixed route/viewport (reference/qa.md as-is/to-be)"
-ls "$QA"/to-be-* >/dev/null 2>&1 \
-  || fail "no 'qa/to-be-*' evidence — capture the after state at the same framing as as-is"
+# 1) User-observable proof: non-empty as-is/to-be evidence (any extension) under qa/.
+require_evidence() {
+  local pattern="$1" purpose="$2" found=0 path
+  [ -d "$QA" ] || fail "no 'qa/${pattern}' evidence — capture the ${purpose} state at a fixed route/viewport (reference/qa.md as-is/to-be)"
+  for path in "$QA"/$pattern; do
+    [ -e "$path" ] || [ -L "$path" ] || continue
+    [ -f "$path" ] \
+      || fail "'qa/${pattern}' evidence match is not a file: ${path}"
+    [ -s "$path" ] \
+      || fail "empty 'qa/${pattern}' evidence: ${path} — capture a real screenshot/text proof"
+    found=1
+  done
+  [ "$found" = 1 ] \
+    || fail "no 'qa/${pattern}' evidence — capture the ${purpose} state at a fixed route/viewport (reference/qa.md as-is/to-be)"
+}
+require_evidence "as-is-*" "before"
+require_evidence "to-be-*" "after"
 
 # 2) The driver that exercised the app must be named on a 'Tool:' line, and it must be playwright-cli
 #    — the single sanctioned driver. No agent-browser, no Playwright MCP, no silent headless render.
-tool_line="$(grep -iE '^[[:space:]]*[-*]?[[:space:]]*Tool:' "$VERIF" | head -1 || true)"
+tool_line="$(printf '%s\n' "$QA_SECTION" | grep -iE '^[[:space:]]*[-*]?[[:space:]]*Tool:' | head -1 || true)"
 [ -n "$tool_line" ] \
   || fail "## QA has no 'Tool:' line — name the driver that exercised the app (must be playwright-cli)"
 

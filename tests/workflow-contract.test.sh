@@ -44,6 +44,12 @@ require_text "role-loop names playwright-cli for UI verification" "reference/rol
 require_text "qa says UI changes are browser app verification" "reference/qa.md" "UI changes are browser app verification"
 require_text "README documents worktree default" "README.md" "run worktree"
 require_text "README documents playwright browser gate" "README.md" 'qa-gate.sh <vault> browser'
+if [ -f "$ROOT/tests/run-all.sh" ]; then
+  PASS=$((PASS + 1)); printf '  PASS  canonical runner exists\n'
+else
+  FAIL=$((FAIL + 1)); printf '  FAIL  canonical runner exists\n'
+fi
+require_text "README documents canonical runner" "README.md" "bash tests/run-all.sh"
 
 printf '\nSummary: %s passed, %s failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

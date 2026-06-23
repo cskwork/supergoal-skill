@@ -3,7 +3,9 @@
 Use this when a GREENFIELD, DEBUG, LEGACY, or QA-ONLY task depends on database truth:
 schema shape, persisted state, source-of-truth UI values, test auth, or dataset/env diffs.
 DB-independent abstraction: the same contract covers PostgreSQL, MySQL, and SQLite.
-Skip the DB phase when the user does not want an agent DB connection.
+Skip the DB phase when the user does not want an agent DB connection. If DB truth is load-bearing but
+access is missing, skipped, or unsafe, record `DB evidence: Not covered` in the report with the concrete
+blocker and residual risk instead of treating the DB check as passed.
 
 ## Connection
 

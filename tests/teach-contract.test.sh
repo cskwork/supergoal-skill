@@ -34,6 +34,21 @@ require_file() {
   fi
 }
 
+require_node_check() {
+  local label="$1" file="$2"
+  local out
+  out="$(node --check "$ROOT/$file" 2>&1)"
+  local status=$?
+  if [ "$status" -eq 0 ]; then
+    PASS=$((PASS + 1))
+    printf '  PASS  %s\n' "$label"
+  else
+    FAIL=$((FAIL + 1))
+    printf '  FAIL  %s\n' "$label"
+    printf '        node --check %s failed: %s\n' "$file" "$out"
+  fi
+}
+
 echo "=================================================================="
 echo " /supergoal TEACH contract   skill: $ROOT"
 echo "=================================================================="
@@ -78,6 +93,22 @@ require_file "mission format guide exists" "teach/MISSION-FORMAT.md"
 require_file "resources format guide exists" "teach/RESOURCES-FORMAT.md"
 require_file "glossary format guide exists" "teach/GLOSSARY-FORMAT.md"
 require_file "learning-record format guide exists" "teach/LEARNING-RECORD-FORMAT.md"
+
+# --- interactive lesson assets must ship with TEACH ---
+require_file "teach asset README exists" "templates/teach/README.md"
+require_file "teach lesson template exists" "templates/teach/assets/lesson-template.html"
+require_file "teach lesson stylesheet exists" "templates/teach/assets/lesson.css"
+require_file "teach book engine exists" "templates/teach/assets/lesson-book.js"
+require_file "teach quiz widget exists" "templates/teach/assets/quiz.js"
+require_text "teach README explains asset copy path" "templates/teach/README.md" "teach/<topic>/assets/"
+require_text "lesson template wires book shell" "templates/teach/assets/lesson-template.html" 'main class="book"'
+require_text "lesson template wires quiz block" "templates/teach/assets/lesson-template.html" 'class="sg-quiz"'
+require_text "lesson stylesheet defines book layout" "templates/teach/assets/lesson.css" ".pages-track"
+require_text "lesson stylesheet defines quiz widget" "templates/teach/assets/lesson.css" ".sg-option"
+require_text "book engine builds TOC" "templates/teach/assets/lesson-book.js" "tocButtons"
+require_text "quiz widget randomizes options" "templates/teach/assets/quiz.js" "shuffle(options)"
+require_node_check "teach book engine parses as JS" "templates/teach/assets/lesson-book.js"
+require_node_check "teach quiz widget parses as JS" "templates/teach/assets/quiz.js"
 
 printf '\nSummary: %s passed, %s failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

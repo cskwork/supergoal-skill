@@ -18,6 +18,8 @@ try {
 const errors = [];
 const requiredChecks = 3;
 const winners = new Set(["baseline", "harness", "tie", "not_proven"]);
+const claimStatuses = new Set(["proven", "not_proven"]);
+const EPSILON = 0.01;
 const dimensions = [
   "feature_completeness",
   "test_coverage",
@@ -83,6 +85,20 @@ function requireKnownWinner(key, value) {
   if (!winners.has(value)) errors.push(`${key} must be baseline, harness, tie, or not_proven`);
 }
 
+function requireClaimStatus() {
+  if (!claimStatuses.has(result.claim_status)) {
+    errors.push("claim_status must be proven or not_proven");
+  }
+}
+
+function nearlyEqual(a, b) {
+  return Math.abs(a - b) <= EPSILON;
+}
+
+function displayNumber(value) {
+  return Number.isInteger(value) ? String(value) : value.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
+}
+
 function scoreOf(entry, label) {
   if (typeof entry === "number") return entry;
   if (entry && typeof entry.score === "number") return entry.score;
@@ -93,15 +109,22 @@ function scoreOf(entry, label) {
 function requireDimensionSet(block, label) {
   if (!block || typeof block !== "object" || Array.isArray(block)) {
     errors.push(`${label} must be an object`);
-    return;
+    return null;
   }
+  let complete = true;
+  let sum = 0;
   dimensions.forEach((dimension) => {
     const score = scoreOf(block[dimension], `${label}.${dimension}`);
-    if (score === null) return;
+    if (score === null) {
+      complete = false;
+      return;
+    }
     if (score < 0 || score > 10) {
       errors.push(`${label}.${dimension}.score must be between 0 and 10`);
     }
+    sum += score;
   });
+  return complete ? sum : null;
 }
 
 function requireQualitySide(side) {
@@ -114,7 +137,14 @@ function requireQualitySide(side) {
     errors.push(`quality.${side}.average_total must be between 0 and 100`);
   }
   if (qualitySide.dimensions) {
-    requireDimensionSet(qualitySide.dimensions, `quality.${side}.dimensions`);
+    const dimensionSum = requireDimensionSet(qualitySide.dimensions, `quality.${side}.dimensions`);
+    if (
+      dimensionSum !== null &&
+      typeof qualitySide.average_total === "number" &&
+      !nearlyEqual(qualitySide.average_total, dimensionSum)
+    ) {
+      errors.push(`quality.${side}.average_total must equal dimension score sum (${displayNumber(dimensionSum)})`);
+    }
     return;
   }
   if (!qualitySide.by_case || typeof qualitySide.by_case !== "object" || Array.isArray(qualitySide.by_case)) {
@@ -123,12 +153,29 @@ function requireQualitySide(side) {
   }
   const caseEntries = Object.entries(qualitySide.by_case);
   if (caseEntries.length === 0) errors.push(`quality.${side}.by_case must not be empty`);
+  const totals = [];
   caseEntries.forEach(([caseId, caseQuality]) => {
     if (!caseQuality || typeof caseQuality.total !== "number" || caseQuality.total < 0 || caseQuality.total > 100) {
       errors.push(`quality.${side}.by_case.${caseId}.total must be between 0 and 100`);
+    } else {
+      totals.push(caseQuality.total);
     }
-    requireDimensionSet(caseQuality && caseQuality.dimensions, `quality.${side}.by_case.${caseId}.dimensions`);
+    const dimensionSum = requireDimensionSet(caseQuality && caseQuality.dimensions, `quality.${side}.by_case.${caseId}.dimensions`);
+    if (
+      caseQuality &&
+      typeof caseQuality.total === "number" &&
+      dimensionSum !== null &&
+      !nearlyEqual(caseQuality.total, dimensionSum)
+    ) {
+      errors.push(`quality.${side}.by_case.${caseId}.total must equal dimension score sum (${displayNumber(dimensionSum)})`);
+    }
   });
+  if (totals.length > 0 && typeof qualitySide.average_total === "number") {
+    const average = totals.reduce((sum, total) => sum + total, 0) / totals.length;
+    if (!nearlyEqual(qualitySide.average_total, average)) {
+      errors.push(`quality.${side}.average_total must equal mean by_case total (${displayNumber(average)})`);
+    }
+  }
 }
 
 function requireQuality() {
@@ -160,6 +207,7 @@ requireChecks("harness");
 requireCost("baseline");
 requireCost("harness");
 requireKnownWinner("winner", result.winner);
+requireClaimStatus();
 requireQuality();
 
 if (result.claim_status === "proven" && result.winner !== "harness") {

@@ -6,8 +6,23 @@
 No extra install: clone the repo, symlink it into your skills directory, then `/supergoal <objective>`.
 Landing page: **[cskwork.github.io/supergoal-skill](https://cskwork.github.io/supergoal-skill/)**.
 
-An agent skill that takes a single objective, surfaces the requirements that are not in the prompt,
-makes the smallest correct change, and verifies it against the project's own tests and spec - then stops.
+An agent skill for heavy coding objectives where a normal "just edit it" pass is too easy to fool. It
+takes one objective, chooses the right workflow route, surfaces requirements that were not in the prompt,
+makes the smallest correct change, verifies against the project's own tests and spec, then stops.
+
+## What `/supergoal` does
+
+`/supergoal` is a routing and verification wrapper around an agent. The useful mental model:
+
+1. **Route the objective.** Classify the request as build, debug, legacy change, spec, QA, review,
+   architecture, teaching, domain onboarding, harness eval, or skill mining.
+2. **Load only the needed playbook.** The root `SKILL.md` stays small; each route loads its own
+   `reference/` and `agents/` files only when needed.
+3. **Separate roles.** Heavy work uses fresh-context subagents for build, critic, fixer, and verifier so
+   one context does not both invent and grade the answer.
+4. **Prove against the real project.** Hidden requirements become failing tests or evidence, then the run
+   verifies with the repo's real tests, browser checks, DB evidence when load-bearing, and prose spec.
+5. **Stop at the verified result.** No open-ended refactor, no proxy checklist, no fake green.
 
 ## What it adds over a plain baseline
 
@@ -34,6 +49,38 @@ trivial single edit stays inline.
 ## Modes
 
 `/supergoal` detects the mode from your objective:
+
+```mermaid
+flowchart TD
+    A["/supergoal <one heavy objective>"] --> B["Frame the goal<br/>acceptance criteria<br/>hidden risks"]
+    B --> C{"Route by objective"}
+
+    C -->|"build / make / ship"| GREENFIELD["GREENFIELD<br/>new app or tool"]
+    C -->|"fix / broken / failing"| DEBUG["DEBUG<br/>reproduce, diagnose, fix"]
+    C -->|"add / integrate / refactor"| LEGACY["LEGACY<br/>map existing code first"]
+    C -->|"spec / requirements first"| SPEC["SPEC<br/>requirements -> design -> tasks"]
+    C -->|"QA / verify only"| QAONLY["QA-ONLY<br/>Impact Matrix + evidence"]
+    C -->|"review / audit"| REVIEW["REVIEW-ONLY<br/>findings, no fixes"]
+    C -->|"architecture improvement"| ARCH["ARCH<br/>friction survey -> candidates"]
+    C -->|"explain / teach"| TEACH["TEACH<br/>stateful teaching workspace"]
+    C -->|"learn / onboard"| LEARN["LEARN-DOMAIN<br/>persist domain wiki"]
+    C -->|"harness effectiveness"| HARNESS["HARNESS-EVAL<br/>baseline vs harness"]
+    C -->|"make a reusable skill"| SKILLMINE["SKILL-MINE<br/>mine -> forge -> install"]
+
+    GREENFIELD --> LOOP["Default delivery loop<br/>Build -> Critic -> Fixer -> Verify"]
+    DEBUG --> LOOP
+    LEGACY --> LOOP
+
+    SPEC --> DOCS["Docs first<br/>then tasks route into delivery"]
+    ARCH --> PICK["Grill chosen candidate<br/>then route to LEGACY or SPEC"]
+
+    QAONLY --> REPORT["No product code by default<br/>report evidence and risk"]
+    REVIEW --> REPORT
+    TEACH --> REPORT
+    LEARN --> REPORT
+    HARNESS --> REPORT
+    SKILLMINE --> REPORT
+```
 
 | Objective looks like | Mode | Approach |
 |---|---|---|

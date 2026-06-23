@@ -19,6 +19,17 @@
 - Refreshed `docs/DESIGN.md` so removed `delivery-gate.sh` and `human-feedback-gate.mjs` references are
   historical validation notes, not current live gates.
 
+## README route map
+
+- Decision: make the README easier for first-time readers by explaining `/supergoal` as a heavy-objective
+  router plus verifier, then showing the route map as Mermaid before the mode table. Changing `SKILL.md`
+  was rejected because this request was comprehension-only and the active routing contract already had
+  the right behavior.
+- Added a five-step mental model: route the objective, load the needed playbook, separate roles, verify
+  against the real project, and stop at the verified result.
+- Added a Mermaid diagram covering GREENFIELD, DEBUG, LEGACY, SPEC, QA-ONLY, REVIEW-ONLY, ARCH, TEACH,
+  LEARN-DOMAIN, HARNESS-EVAL, and SKILL-MINE.
+
 ## Verification
 
 - `bash tests/run-all.sh` passed.

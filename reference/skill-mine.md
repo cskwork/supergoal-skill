@@ -81,23 +81,23 @@ A skill is a DIRECTORY with `SKILL.md` as the entrypoint (agentskills.io open st
 2. Adversarial check: the description's "when" must match the mined trigger, and the body's steps must
    reproduce the mined procedure. If the skill wraps a command, dry-run it once.
 
-## Install (no auto-sync - copy/symlink to each chosen agent)
+## Install (collect in `~/.agents/skills/`, then symlink to each chosen agent)
 
-Custom skills do NOT sync across agents/surfaces; install the same skill dir to each target picked at
-Intake:
+Skills are COLLECTED in one canonical store - `~/.agents/skills/<name>/`, a plain real dir (NOT a symlink
+into a skill-manager store). This is the standard, default location: always forge the real `SKILL.md` dir
+HERE first. Custom skills do NOT auto-sync across agents/surfaces, so symlink that one canonical dir into
+each agent target picked at Intake - one edit then lands everywhere:
 
-| Agent | Personal dir | Project dir |
+| Agent | Personal install (symlink -> canonical) | Project dir |
 |---|---|---|
-| Claude Code | `~/.claude/skills/<name>/SKILL.md` | `.claude/skills/<name>/SKILL.md` |
-| Codex | `~/.codex/skills/<name>/SKILL.md` | personal unless a project dir is confirmed |
-| opencode | `~/.config/opencode/skills/<name>/SKILL.md` | personal unless confirmed |
-| Hermes | `~/.hermes/skills/<name>/SKILL.md` | - |
+| Claude Code | `~/.claude/skills/<name>` -> `../../.agents/skills/<name>` (relative) | `.claude/skills/<name>` -> canonical |
+| Codex | `~/.codex/skills/<name>` -> `../../.agents/skills/<name>` (relative) | personal unless a project dir is confirmed |
+| opencode | `~/.config/opencode/skills/<name>` -> canonical (absolute) | personal unless confirmed |
+| Hermes | `~/.hermes/skills/<name>` -> canonical (absolute) | - |
 
-Recommended: keep ONE canonical real dir (e.g. `~/.agents/skills/<name>/` - a plain dir, NOT a symlink
-into a skill-manager store) and symlink it into each chosen agent dir, so one edit lands everywhere
-(claude/codex use relative `../../.agents/skills/<name>`, opencode/hermes absolute). Alternatively, for a
-fully standalone setup, copy a real `SKILL.md` dir into each agent. Either way `sync-skill` does the
-propagation. Never silently overwrite an existing skill of the same name; on collision show a diff and ask.
+`sync-skill` does the propagation from the canonical dir. Only when a standalone (no-symlink) setup is
+explicitly required, fall back to copying the real dir into each agent. Never silently overwrite an
+existing skill of the same name; on collision show a diff and ask.
 
 ## Journal
 

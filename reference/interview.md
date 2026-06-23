@@ -1,8 +1,14 @@
 # Clarifying interview - before plan freeze
 
-After context-gathering and before the plan freezes, run a conditional clarifying interview so the
-plan targets the user's real intent. The interview resolves *what to build/fix*; *how* is settled by
-grounding the plan in docs/code afterwards (`reference/plan-grounding.md`).
+After context-gathering and before the plan freezes, run a conditional interview so the plan targets
+the user's real intent. It fires on two triggers, one mechanism:
+
+- **Ambiguity** (resolve *what* to build/fix): the request is underspecified, so clarify intent;
+  *how* is then settled by grounding the plan in docs/code (`reference/plan-grounding.md`).
+- **Blast radius beyond target** (confirm the approach): the grounded fix reaches past its explicit
+  target - changes another function/module or alters existing observed behavior - so surface that
+  impact and confirm the approach, even when the request itself is unambiguous. Explore already
+  mapped these side effects (`agents/explore.md`); this is confirmation, not discovery.
 
 Applies to GREENFIELD, DEBUG, and LEGACY only. LEARN and LEARN-DOMAIN skip it (LEARN already asks one
 scope question; see `reference/teach.md`).
@@ -11,23 +17,34 @@ This file is the standalone contract.
 
 ## Where it runs
 
-| Mode | Insertion point | Context already gathered |
+Two insertion points, by trigger. Ambiguity runs before grounding (it shapes *what* to build);
+blast-radius confirm runs after grounding sets the approach but before freeze/Build (the impact is
+only concrete once the approach is chosen).
+
+| Mode | Ambiguity - before grounding | Blast-radius confirm - after grounding, before freeze/Build |
 |---|---|---|
-| GREENFIELD | End of Frame, before plan-grounding/freeze | `brief.md`, `## Validation`, Domain Brief |
-| LEGACY | End of Frame, before plan-grounding/freeze | Explore affected-code map, Domain Brief |
-| DEBUG | End of Diagnose, after ranked hypotheses, before Confirm + fix plan | hypothesis ledger, current code |
+| GREENFIELD | End of Frame | once plan-grounding fixes the approach |
+| LEGACY | End of Frame (Explore map in hand) | once plan-grounding fixes the approach |
+| DEBUG | End of Diagnose, after ranked hypotheses, before Confirm | folded into Confirm, with the hypothesis re-ranking |
+
+Context in hand: GREENFIELD `brief.md` / `## Validation` / Domain Brief; LEGACY Explore affected-code
+map + Domain Brief; DEBUG hypothesis ledger + current code.
 
 ## Gate - when to interview vs skip
 
-Interview only when the request is genuinely underspecified. Fire when **either** holds:
+Fire when **any** holds:
 
-- The request has multiple plausible interpretations, or
-- A key detail is unclear across the coverage dimensions below (objective, definition of done, scope,
-  constraints, environment, safety/reversibility).
+- **Ambiguity:** the request has multiple plausible interpretations, or a key detail is unclear across
+  the coverage dimensions below (objective, definition of done, scope, constraints, environment,
+  safety/reversibility), or
+- **Blast radius beyond target:** the grounded fix changes a function/module past its explicit target,
+  or alters existing observed behavior. This fires even when the request is unambiguous - the
+  "already clear" skip below does NOT cover it.
 
 Skip when **any** holds (and log the skip in `README.md`):
 
-- The request is already clear and single-interpretation, or
+- The request is clear AND the change stays within its explicit target (no cross-function or behavior
+  spillover), or
 - A quick, low-risk codebase/docs read can answer the missing detail (resolve it by reading, not
   asking), or
 - The mode is LEARN / LEARN-DOMAIN.
@@ -55,7 +72,9 @@ Draw the questions from these six axes. Pick the few that matter for this task; 
 6. **Safety / reversibility** - data migration, rollout/rollback, blast radius, risk.
 
 DEBUG leans on objective + definition-of-done + reproducibility/safety. GREENFIELD and LEGACY lean on
-scope + constraints + environment.
+scope + constraints + environment. When the blast-radius trigger fired, dimension 6 (safety /
+reversibility) is REQUIRED, not optional: name the functions/modules touched and the behavior that
+could change.
 
 ## Question selection
 
@@ -79,12 +98,28 @@ if the user is AFK, proceed with your own ranking. If the user re-ranks, advance
 favor only when direct evidence still supports it; never abandon evidence for preference. Record the
 presented ranking and any user re-rank in `README.md`.
 
+When the chosen fix's blast radius reaches past the cause site - other functions/modules, or observed
+behavior - present that impact alongside the re-ranking and apply the tiered strength below before the
+first source edit.
+
 ## Hard gate - block plan freeze
 
 Do not freeze the plan (GREENFIELD/LEGACY) or confirm the root cause and write the fix plan (DEBUG -
 blocking only for must-have answers, the re-ranking itself stays non-blocking) until must-have
 questions are answered, or the user explicitly approves proceeding on stated assumptions. Unanswered
 must-haves either get an explicit user-approved assumption or block.
+
+**Blast-radius confirm - strength by risk (tiered).** Default is non-blocking: present the impact
+summary and proceed on your own best judgment if the user is AFK. Escalate to a hard gate - no Build
+until the user explicitly approves, AFK or not - when **any** holds:
+
+- **Wide:** spans multiple modules or crosses a service boundary, or
+- **Destructive / irreversible:** a SKILL.md hard stop applies (drop data, force-push, external
+  publish, migration), or
+- **Behavior change:** alters an existing public contract or observed behavior callers depend on.
+
+A user approval here confirms *intent* only; it never substitutes for the Critic's independent *spec*
+check. Both the user and the agent can be wrong - the Critic is the separate signal.
 
 ## Recording
 
@@ -93,7 +128,12 @@ ledger): each question, the chosen answer or user-approved assumption, and the d
 not paste the whole exchange. A skipped interview records one line in `README.md` stating why it was
 safe to skip.
 
+For a blast-radius confirm, record the impact presented (functions/modules touched, behavior that
+could change), the strength applied (non-blocking / hard gate), and the user's approval or your
+AFK-proceed decision.
+
 ## Exit
 
 Requirements are crystallized. GREENFIELD/LEGACY proceed to plan-grounding and freeze; DEBUG proceeds
-to Confirm and the fix plan. Build starts only after the plan is grounded and frozen.
+to Confirm and the fix plan. Build starts only after the plan is grounded and frozen, and any fired
+blast-radius confirm has cleared - approved, AFK-proceeded, or safely skipped and logged.

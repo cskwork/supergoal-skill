@@ -3,7 +3,9 @@
 At the end of Frame, before Build, the planner grounds `plan.md` in the project's domain and
 architecture. The planner answers its own pressure test from explored docs/code; do not ask the human
 unless docs cannot decide a load-bearing choice (genuine ambiguity blocks the freeze - SKILL.md hard
-stops).
+stops). One choice is always the user's, not the docs': if the grounded approach's blast radius reaches
+past its explicit target (changes another function/module or alters observed behavior), hand it to the
+blast-radius confirm in `reference/interview.md` before freezing.
 
 This file is the standalone contract.
 
@@ -65,4 +67,5 @@ Vocabulary: **Module** = interface + implementation. **Interface** = what caller
 
 ## Exit
 
-`plan.md` is now grounded and frozen; Build implements it.
+`plan.md` is now grounded; run the blast-radius confirm (`reference/interview.md`) if the approach
+reaches past its target, then freeze. Build implements the frozen plan.

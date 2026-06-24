@@ -154,7 +154,7 @@ fallback/stop before the takeaway.
    terms into `GLOSSARY.md`. Then append the live chat journal to
    `teach/<topic>/<topic>-YYYY-MM-DD.md` with the question, bridge, terms, user explanation, and open
    questions; create the workspace if missing and follow `teach/README.md`. Write the interactive HTML
-   lesson by default (see **Lessons**) and open it in the browser; only an explicit throwaway
+   lesson by default (see **Lessons**), run `teach-lesson-gate.mjs` on it, and open it once the gate passes; only an explicit throwaway
    explain-back skips it.
 
 ## Interview check
@@ -240,8 +240,13 @@ The in-chat opening is its spoken intro; the HTML lesson is where the learning a
   load (same rule as the interview check) - do not encode the answer by position.
 - **Linked.** Anchor-link to related lessons and to `reference/*.html`. Recommend one primary source.
   End with a reminder that the agent is their teacher - ask follow-up questions on anything unclear.
-- **Open it.** After writing the lesson, open it in the user's browser with a CLI command so they land
-  in the interactive material, not a file path.
+- **Gate before done.** A lesson is not finished until
+  `node templates/teach-lesson-gate.mjs teach/<topic>/lessons/NNNN-slug.html` exits 0. The gate
+  deterministically rejects a reading-only page: it requires the shared `assets/lesson.css` +
+  `quiz.js` + `lesson-book.js`, the `.book` page shell (not one long scroll), and at least one
+  hydrated `.sg-quiz` with a `data-correct` option. On failure, fix the lesson - never the gate.
+- **Open it.** After the gate passes, open the lesson in the user's browser with a CLI command so they
+  land in the interactive material, not a file path.
 
 The in-chat **Opening output format** below is the lesson's spoken counterpart; deliver it alongside the
 HTML lesson, not instead of it. Only a throwaway one-off codebase explain-back the user explicitly will
@@ -492,6 +497,7 @@ Read it at step 0. Do not re-ask each session. Use the profile without lecturing
 15. Ground every workspace in a `MISSION.md`; never trust parametric knowledge - teach from the
     high-trust sources in `RESOURCES.md` and cite them.
 16. Produce a beautiful, self-contained HTML lesson as the primary teaching unit; reuse `assets/`
-    components and design for desirable difficulty (retrieval, spacing, interleaving), not fluency.
+    components and design for desirable difficulty (retrieval, spacing, interleaving), not fluency; a
+    lesson is done only when `teach-lesson-gate.mjs` passes.
 17. Capture decision-grade insight in `learning-records/` and settled terms in `GLOSSARY.md`; let the
     records, not a flat journal, set the next zone of proximal development.

@@ -110,5 +110,12 @@ require_text "quiz widget randomizes options" "templates/teach/assets/quiz.js" "
 require_node_check "teach book engine parses as JS" "templates/teach/assets/lesson-book.js"
 require_node_check "teach quiz widget parses as JS" "templates/teach/assets/quiz.js"
 
+# --- generated-lesson output gate: a lesson must be interactive, not reading-only ---
+require_file "teach lesson gate exists" "templates/teach-lesson-gate.mjs"
+require_node_check "teach lesson gate parses as JS" "templates/teach-lesson-gate.mjs"
+require_text "learn reference runs the lesson gate" "reference/teach.md" "teach-lesson-gate.mjs"
+require_text "learn reference gates before done" "reference/teach.md" "Gate before done"
+require_text "learn reference blocks reading-only lessons" "reference/teach.md" "Reading-only HTML is not a lesson"
+
 printf '\nSummary: %s passed, %s failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

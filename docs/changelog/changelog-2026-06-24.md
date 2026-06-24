@@ -32,6 +32,38 @@
 - Synced the same explanation and Mermaid route map into `README.ko.md`. Leaving the Korean README behind
   was rejected because first-time Korean readers need the same routing model as the English README.
 
+## TEACH lesson output gate
+
+- Decision: add an executable output gate, `templates/teach-lesson-gate.mjs`, that a TEACH lesson must
+  pass before it counts as done. TEACH was the one substantial mode whose `reference/teach.md`
+  described an interactive, scaffold-built, book-layout lesson but shipped no gate to enforce it - so
+  real lessons drifted into reading-only static articles (inline `<style>`, one long `<article>`
+  scroll, a promised "이해 점검" quiz that never rendered). This applies the same principle as the
+  optimization pass above: harden the executable contract, do not rely on prose.
+- The gate deterministically rejects a lesson that does not link the shared `assets/lesson.css` +
+  `quiz.js` + `lesson-book.js`, has no `.book` page shell (`.pages-track` + `.pager` + >= 2
+  `data-title` sections), or ships no hydrated `.sg-quiz` with a `data-correct` option.
+- Wired it into `reference/teach.md` (Lessons "Gate before done" bullet, Flow step 5, Tutor contract
+  item 16) and named it in the `SKILL.md` TEACH route row, matching how LEARN-DOMAIN names its gate.
+- Rejected a prose-only tightening of `reference/teach.md`: it already said "Reading-only HTML is not a
+  lesson" and lessons were still static, so stronger wording would not have changed the outcome.
+- Rejected auto-regenerating the existing `teach/repo-domain/lessons/*.html`: lessons are git-ignored
+  personal learning data tied to a mission/ZPD; the skill-level fix is enforcement, and regeneration is
+  a separate, user-driven TEACH run.
+- Rejected a shell gate like `qa-gate.sh`: lesson checks parse HTML, so a Node gate matches the
+  `contrast-gate.mjs` / `learn-grounding-gate.mjs` precedent and is auto-syntax-checked by run-all.
+
+## Verification (TEACH lesson gate)
+
+- `bash tests/run-all.sh` -> "all checks passed" (every shell contract, `node --check` on all
+  templates incl. the new gate, and the 68-test url-shortener example).
+- `bash tests/gate-scenarios.test.sh` -> 40 passed, 0 failed, incl. new SCENARIO 12 (usage exit 2,
+  scaffold template PASS, reading-only / off-scaffold / dir-scan FAIL).
+- Red-green against the real artifacts: `node templates/teach-lesson-gate.mjs teach/repo-domain/lessons`
+  fails both `0001` and `0002` (off-scaffold, no `.sg-quiz`); the scaffold `lesson-template.html` passes.
+- Note: the interactive shell was unavailable in this environment, so commands were run with output
+  redirected to files; `git diff --check` was not run here.
+
 ## Verification
 
 - `bash tests/run-all.sh` passed.

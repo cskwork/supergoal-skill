@@ -153,6 +153,29 @@ rm -f "$p/flows/refund.md"
 run_case "11.6 no flow files -> blocked"             1 "no flows"              node "$LEARNGATE" "$p"
 
 # ----------------------------------------------------------------------
+echo; echo "SCENARIO 12 — teach-lesson-gate.mjs : a lesson must be an interactive scaffold unit, not a static doc"
+# ----------------------------------------------------------------------
+TEACHGATE="$SKILL_DIR/templates/teach-lesson-gate.mjs"
+v=$(mkvault s12)
+run_case "12.0 missing path -> usage (exit 2)"          2 "usage"                  node "$TEACHGATE"
+run_case "12.1 scaffold template -> PASS"               0 "TEACH LESSON GATE PASS"  node "$TEACHGATE" "$SKILL_DIR/templates/teach/assets/lesson-template.html"
+# Reading-only article: inline <style>, no scaffold assets, no quiz, even promises a check it never renders.
+cat > "$v/reading-only.html" <<'HTML'
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>static</title>
+<style>body{font-family:serif}</style></head>
+<body><article><h1>레슨</h1><p>설명만 있는 정적 문서.</p>
+<p>아래 이해 점검으로 확인하자.</p></article></body></html>
+HTML
+run_case "12.2 reading-only doc -> FAIL exit 1"         1 "reading-only"           node "$TEACHGATE" "$v/reading-only.html"
+# Has .sg-quiz markup but inline + no shared assets / book shell -> still off-scaffold.
+cat > "$v/no-scaffold.html" <<'HTML'
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>x</title></head>
+<body><div class="sg-quiz"><ul class="sg-options"><li data-correct>a</li><li>b</li></ul></div></body></html>
+HTML
+run_case "12.3 quiz but no scaffold/book -> FAIL"       1 "lesson.css"             node "$TEACHGATE" "$v/no-scaffold.html"
+run_case "12.4 dir scan flags off-spec lessons -> FAIL" 1 "FAIL"                   node "$TEACHGATE" "$v"
+
+# ----------------------------------------------------------------------
 echo
 echo "=================================================================="
 printf " RESULT: %d passed, %d failed\n" "$PASS" "$FAIL"

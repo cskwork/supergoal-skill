@@ -37,7 +37,7 @@ target/integration branch after verification and user acceptance. Full contract:
 | fix / broken / failing / crash / why does | DEBUG | default loop; observe the live symptom boundary first, then reproduce with a failing test (`reference/debugging.md`); web: `reference/qa.md`, `reference/playwright-cli.md` |
 | add / integrate / refactor existing code | LEGACY | default loop; map first (`agents/explore.md`, `reference/domain-context.md`); optional DB evidence (`reference/db-access.md`); existing-API refactor: capture its exact behavior first as a preserve-baseline (`reference/qa.md`) |
 | spec / requirements first / 스펙 문서로 구조화 | SPEC | spec-first prefix: requirements -> design -> tasks under `docs/spec/`, then tasks drive Build (`reference/spec.md`) |
-| explain / teach / how does X work (no code) | TEACH | stateful `teach/<topic>/` workspace (`reference/teach.md`) |
+| explain / teach / how does X work (no code) | TEACH | stateful `teach/<topic>/` workspace (`reference/teach.md`); lessons must pass `teach-lesson-gate.mjs` |
 | learn / onboard / map this codebase (persist a wiki) | LEARN-DOMAIN | Survey -> Map -> Ground -> Onboard a `.domain-agent/` wiki (`reference/learn-domain.md`; gate `learn-grounding-gate.mjs`) |
 | QA / verify / 검증만 / compare data (no code) | QA-ONLY | Impact Matrix QA (`reference/qa-only.md`; gate `templates/qa-only-gate.sh`) |
 | review / audit this code/diff/PR (no fixes) | REVIEW-ONLY | `reference/review-only.md` |

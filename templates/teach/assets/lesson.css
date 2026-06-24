@@ -216,8 +216,10 @@ main.book {
 .pages { grid-area: pages; position: relative; overflow: hidden; min-width: 0; }
 .pages-track { display: flex; height: 100%; transition: transform 0.42s cubic-bezier(0.22, 0.7, 0.2, 1); will-change: transform; }
 /* width/flex pinned in px by lesson-book.js so the offset never depends on % resolution */
-.pages-track > section { flex: 0 0 auto; height: 100%; overflow-y: auto; padding: var(--space-5) var(--space-4); }
-.page-inner { max-width: var(--measure); margin: 0 auto; }
+/* each page is a slide: center its content block vertically when it fits; auto margins collapse to 0
+   on overflow, so a long page falls back to top-aligned and scrolls normally */
+.pages-track > section { flex: 0 0 auto; height: 100%; overflow-y: auto; display: flex; flex-direction: column; padding: var(--space-5) var(--space-4); }
+.page-inner { width: 100%; max-width: var(--measure); margin: auto; }
 .page-inner > :first-child { margin-top: 0; }
 
 /* pager bar */

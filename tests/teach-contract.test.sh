@@ -75,6 +75,13 @@ require_text "learn contract item teaches concepts to textbook depth" "reference
 require_text "teach template ships a concept-development page" "templates/teach/assets/lesson-template.html" "개념 풀이"
 require_text "teach README keeps terms table as index only" "templates/teach/README.md" "The terms table is an index"
 
+# --- worked scenario over analogy: trace one real input end-to-end ---
+require_text "learn prefers a real worked scenario over analogy" "reference/teach.md" "Prefer a real worked scenario to an analogy"
+require_text "learn anchors the trace in one real input" "reference/teach.md" "Anchor the trace in one concrete"
+require_text "learn replaces a rejected analogy with a traced case" "reference/teach.md" "replace it with a real traced scenario"
+require_text "learn contract item anchors process in a real scenario" "reference/teach.md" "Anchor every process or flow in one real worked scenario"
+require_text "teach template traces one example input" "templates/teach/assets/lesson-template.html" "예제 입력"
+
 # --- interview/quiz must randomize the correct option (anti position pattern-matching) ---
 require_text "learn interview randomizes the correct option" "reference/teach.md" "randomize the correct option's position"
 require_text "learn interview forbids always-first answer" "reference/teach.md" "Do not always place the right answer first"

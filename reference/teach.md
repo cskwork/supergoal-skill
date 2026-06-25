@@ -128,6 +128,14 @@ recite a tidy label.
 - **Build understanding bottom-up, like a chapter.** Lead with the concrete - an example the user can
   hold - then generalize to the rule, then name the abstraction. Reaching the abstraction is the
   *reward* for understanding the parts, not a substitute for it.
+- **Prefer a real worked scenario to an analogy.** The most dependable "concrete" is one *real* case
+  traced end-to-end with values pulled from the code, data, or sources - not an invented metaphor. For a
+  process, pick one real input and follow it through every step ("for this case: ..."), showing how it
+  changes; for a concept, show real example values from the data, never placeholders you made up. An
+  analogy may *open* a page, but a domain reader anchors on the real instance - and an invented label or
+  code shatters trust the moment they recognize it. This is "never trust parametric knowledge" applied
+  to examples: source them. When the user pushes back on an analogy ("그 비유는 별로야"), replace it
+  with a real traced scenario, not another metaphor.
 
 This does not loosen the process trace or the working-memory limit: keep the trace, keep the lesson
 scoped small, but make the explanation of each scoped concept as full as a textbook section.
@@ -139,6 +147,11 @@ steps in order, each naming the atom used, what happens, the rule/condition, and
 effect. Number the steps if it helps; do not use a table. At low difficulty, use fewer steps and
 plainer words, but do not skip the trace. If the process has a failure path, narrate the
 fallback/stop before the takeaway.
+
+Anchor the trace in one concrete, *real* input (sourced values, not invented) and show how that single
+input changes at each step - "for this case: ...". A trace that follows one real worked example end to
+end beats an abstract step list, and beats an analogy, for the load-bearing explanation. End by showing
+the final output for that input (the actual result the user would see), so the case closes where it began.
 
 <!-- Contract anchor: | 단계 | 사용되는 용어 | 일어나는 일 | 규칙/조건 | 결과/부작용 | -->
 <!-- At low difficulty, use fewer rows and plainer words; do not remove the trace. -->
@@ -537,3 +550,7 @@ Read it at step 0. Do not re-ask each session. Use the profile without lecturing
     matters with its own definition, reason, mechanism, worked example, and common trap - never
     collapse it into a one-line gloss or a single abstraction the user cannot unpack. Narrow scope
     into more lessons before thinning a concept's explanation.
+19. Anchor every process or flow in one real worked scenario traced end-to-end - a real input with
+    sourced values (code/data/docs), not an invented analogy or placeholder. Show how that one case
+    changes at each step and what final output it produces. Prefer a real instance over a metaphor for
+    the load-bearing explanation; if the user rejects an analogy, replace it with a traced real case.

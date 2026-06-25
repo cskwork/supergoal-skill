@@ -42,8 +42,13 @@ page in a `<section>` inside `.pages-track`:
 - Each `<section>` needs an `id` (hash deep-link) and `data-title` (TOC label;
   falls back to its first heading). Wrap content in `.page-inner` for a readable
   measure. `lesson-book.js` builds the TOC + pager from the sections.
-- One idea per page; keep pages inside working memory. The interactive element
-  (simulator/quiz) earns its own page so the reader *does*, not just reads.
+- One idea per page; keep pages inside working memory. Each concept earns a page
+  that develops it fully — definition, why, how, worked example, common trap — not
+  a one-line restatement of the glossary table. The terms table is an index; the
+  teaching happens on the concept pages. Narrow scope into more lessons before
+  thinning a concept's explanation.
+- The interactive element (simulator/quiz) earns its own page so the reader
+  *does*, not just reads.
 - Navigation is keyboard-operable (←/→, Home/End) and arrow keys are ignored while
   typing in a simulator input. Honors `prefers-reduced-motion` (no slide).
 

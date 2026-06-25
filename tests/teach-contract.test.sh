@@ -66,6 +66,15 @@ require_text "learn keeps trace at low difficulty" "reference/teach.md" "At low 
 require_text "learn blocks summary replacing trace" "reference/teach.md" "Never replace the process trace with a summary sentence"
 require_text "learn check includes process role" "reference/teach.md" "define its role and place in the process"
 
+# --- textbook depth: teach each concept fully, do not compress into abstractions ---
+require_text "learn teaches each concept to textbook depth" "reference/teach.md" "Textbook depth, not abstraction"
+require_text "learn treats key-terms map as an index not teaching" "reference/teach.md" "A key-terms map is an index, not the teaching"
+require_text "learn forbids compressing concepts into one abstraction" "reference/teach.md" "Do not compress several concepts into one abstract label"
+require_text "learn narrows scope not depth" "reference/teach.md" "Narrow the scope, not the depth"
+require_text "learn contract item teaches concepts to textbook depth" "reference/teach.md" "Teach each concept to textbook depth"
+require_text "teach template ships a concept-development page" "templates/teach/assets/lesson-template.html" "개념 풀이"
+require_text "teach README keeps terms table as index only" "templates/teach/README.md" "The terms table is an index"
+
 # --- interview/quiz must randomize the correct option (anti position pattern-matching) ---
 require_text "learn interview randomizes the correct option" "reference/teach.md" "randomize the correct option's position"
 require_text "learn interview forbids always-first answer" "reference/teach.md" "Do not always place the right answer first"

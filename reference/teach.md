@@ -105,6 +105,33 @@ happens, when, and why. If a term bundles multiple ideas, split it. Example: "LM
 mapping" becomes source code, source table, display code, relation row, textbook filter, fallback,
 and final label.
 
+## Textbook depth, not abstraction
+
+Decomposition splits a topic into small pieces; this rule governs how *deeply* you teach each piece.
+The goal of TEACH is not to pack a topic into the fewest abstractions - it is for the user to
+genuinely understand each concept. Teach like a textbook or a guided manual, not like a summary. The
+test of understanding is whether the user can rebuild the idea from its parts, not whether they can
+recite a tidy label.
+
+- **A key-terms map is an index, not the teaching.** The glossary table and the one-line definition
+  only *locate* a concept; they do not explain it. After the map, give each concept that matters its
+  own unhurried development: a plain definition, *why* it exists (what breaks without it), *how* it
+  works step by step, at least one concrete worked example the user can follow by hand, and the common
+  misconception or trap. A page that states a concept in one line and moves on has not taught it.
+- **Do not compress several concepts into one abstract label.** If a term bundles ideas, split it
+  (Decomposition) and develop each part - never paper over the parts with a single neat abstraction the
+  user cannot unpack. An abstraction the learner cannot rebuild from its pieces is memorized, not
+  understood.
+- **Narrow the scope, not the depth.** "Short" means a lesson covers *few* concepts (working memory is
+  small), never that each concept is explained thinly. Teach fewer things, each one fully. When a topic
+  is large, cut the scope into more lessons; never cut a concept's explanation down to a slogan.
+- **Build understanding bottom-up, like a chapter.** Lead with the concrete - an example the user can
+  hold - then generalize to the rule, then name the abstraction. Reaching the abstraction is the
+  *reward* for understanding the parts, not a substitute for it.
+
+This does not loosen the process trace or the working-memory limit: keep the trace, keep the lesson
+scoped small, but make the explanation of each scoped concept as full as a textbook section.
+
 ## Process explanation gate
 
 For every codebase, algorithm, or system lesson, narrate a small trace as natural prose - walk the
@@ -224,15 +251,20 @@ The in-chat opening is its spoken intro; the HTML lesson is where the learning a
 - **Book layout, not a long scroll.** Lessons read like a book: a left table of contents jumps to any
   section and the reader flips left/right between pages (prev/next, arrow keys, swipe, or TOC click).
   Author each page as a `<section id data-title>` inside `.pages-track`; `lesson-book.js` builds the TOC
-  and pager. One idea per page, inside working memory; the simulator and the quiz each earn their own
-  page so the reader *does* on that page, not just reads.
+  and pager. One idea per page, inside working memory - and that page *develops* the idea like a
+  textbook section (definition, why, how, worked example, common trap), not a one-line restatement of
+  the glossary row. The terms table is the index; the concept pages are where teaching happens. The
+  simulator and the quiz each earn their own page so the reader *does* on that page, not just reads.
 - **UI/UX bar.** Lessons are user-facing UI: hold the `reference/ui-ux.md` Expressive baseline (the
   default for all user-facing UI). The shipped `lesson.css`/`quiz.js` already carry the WCAG 2.2
   essentials (visible focus, keyboard operability, >=44px targets, `prefers-reduced-motion`, light/dark
   `color-scheme`) - keep them when you adapt. Dense step-tables/visualizers also honor
   `reference/functional-ui.md` (tabular numbers, complete states).
-- **Beautiful and short.** Clean Tufte-style typography; completable quickly inside working memory; one
-  tangible win. The user returns to these, so they must read and print well.
+- **Beautiful, deep, and scoped.** Clean Tufte-style typography; the user returns to these, so they
+  must read and print well. "Short" is about scope, not depth (see **Textbook depth, not
+  abstraction**): a lesson covers few concepts, but develops each one fully like a textbook chapter -
+  definition, why, how, worked example, common trap - never a one-line gloss. Cut scope into more
+  lessons before thinning a concept's explanation.
 - **Knowledge then skill.** Teach only the knowledge the skill needs, cited inline, then drill the
   skill through the tight interactive feedback loop above.
 - **Quiz hygiene.** Every answer option is the same length in words (and characters where possible);
@@ -501,3 +533,7 @@ Read it at step 0. Do not re-ask each session. Use the profile without lecturing
     lesson is done only when `teach-lesson-gate.mjs` passes.
 17. Capture decision-grade insight in `learning-records/` and settled terms in `GLOSSARY.md`; let the
     records, not a flat journal, set the next zone of proximal development.
+18. Teach each concept to textbook depth: after the key-terms index, develop every concept that
+    matters with its own definition, reason, mechanism, worked example, and common trap - never
+    collapse it into a one-line gloss or a single abstraction the user cannot unpack. Narrow scope
+    into more lessons before thinning a concept's explanation.

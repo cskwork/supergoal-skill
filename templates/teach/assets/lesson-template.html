@@ -58,13 +58,17 @@
 
     <section id="trace" data-title="과정 추적">
       <div class="page-inner">
-        <h2>과정 추적</h2>
+        <h2>과정 추적: {{예제 입력 1건}}을 따라가기</h2>
+        <!-- 비유 말고 실제 입력 1건을 잡아 각 단계에서 그게 어떻게 변하는지 따라간다.
+             값은 코드/데이터에서 끌어온 실물 — 지어내지 않는다. 끝은 그 입력의 최종 출력으로 닫는다. -->
+        <div class="callout"><strong>예제 입력:</strong> {{실제 데이터로 된 입력 1건 — 발문/레코드/요청 등}}</div>
         <ol class="trace">
-          <li>{{trigger → read/derive}}</li>
-          <li>{{decide}}</li>
-          <li>{{write/call}}</li>
-          <li class="fail">{{실패/대체 경로}}</li>
+          <li>{{trigger → read/derive}} <br><strong>→ 이 입력:</strong> {{이 단계에서 그 입력이 어떻게 변하나}}</li>
+          <li>{{decide}} <br><strong>→ 이 입력:</strong> {{선택/판정 결과}}</li>
+          <li>{{write/call}} <br><strong>→ 이 입력:</strong> {{무엇이 쓰이거나 호출되나}}</li>
+          <li class="fail">{{실패/대체 경로}} <br><strong>→ 이 입력:</strong> {{실패하면 이 입력은 어떻게 되나}}</li>
         </ol>
+        <p><strong>결과:</strong> {{이 입력이 만든 최종 출력 — 사용자가 실제로 보게 될 모습}}</p>
       </div>
     </section>
 

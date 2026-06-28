@@ -4,8 +4,31 @@ difficulty: simple
 source: "<pilot, rerun, upstream URL, or repo-specific>"
 runtime_adapter: portable
 repo_snapshot: "<git sha or immutable snapshot id>"
+default_coding_ab:
+  applies_when: "coding harness eval requested without named cases"
+  cases:
+    - fixture: "revfactory-case-002-async-race/"
+      spec: "revfactory-case-002-bug-fix.yaml"
+      mode: "DEBUG/concurrency"
+      reason: "hard runnable fixture with visible-pass hidden-fail starter"
+    - fixture: "revfactory-case-003-refactoring/"
+      spec: "revfactory-case-003-refactoring.yaml"
+      mode: "LEGACY/brownfield preservation"
+      reason: "runnable preservation fixture whose hidden suite catches behavior drift"
+  excluded_from_default:
+    - "underspec-001-deepmerge/"
+    - "underspec-002-csvline/"
+  tie_rule: "If both default cases tie, report Not proven and require authored expert runnable fixtures."
 task: |
   Exact task text. Reuse this text unchanged for baseline and harness runs.
+eval_intent:
+  goal: "User objective in their own terms, not a diff summary."
+  constraints:
+    - "Constraint learned from the conversation or repo rules."
+  tradeoffs:
+    - "Decision that affects review judgment."
+  rejected_approaches:
+    - "Alternative considered and rejected."
 acceptance:
   - "Machine-checkable expectation"
   - "Human-review expectation"
@@ -13,6 +36,12 @@ machine_checks:
   - test
   - lint
   - build
+command_manifest:
+  - name: test
+    command: "npm test"
+    source: frozen_repo
+    used_by: both
+    verifies: "visible and hidden acceptance tests"
 hidden_checks:
   - "Hidden or evaluator-only check the run must pass"
 bug_catch_matrix:
@@ -24,6 +53,18 @@ regression_protection:
   high_risk_fixed_red: "none, or security/data/concurrency/auth class"
   permanent_test_required: true
   exception_allowed_only_with_reason: true
+decision_gates:
+  - id: r1
+    action: auto-fix
+    status: resolved
+    description: "Mechanical finding surfaced by the gate."
+    recheck: "Command proving the fix."
+adapter_fixture_replay:
+  status: not_required
+  adapter_event_schema: "portable-result-json-v1"
+  fixtures: []
+  redaction: "not required"
+  replay_command: "not required"
 rubric:
   quality_score: "RevFactory-style 100-point score across 10 dimensions, each 0-10."
   correctness: "Does the result meet the task without known bugs?"

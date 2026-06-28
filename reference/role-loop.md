@@ -22,6 +22,14 @@ Run Build, Critic, Fixer, Verify, tests, and run-vault writes inside that worktr
 original checkout. Treat dirty files in the original checkout as user work. After green verification and
 user acceptance, commit or merge only into the verified target/integration branch.
 
+Before any file mutation, create the run vault's `delivery-proof.md` from
+`templates/delivery-proof.md` and start the Before/After Eval (`reference/delivery-gate.md`):
+
+- record eval intent: user goal, constraints, tradeoffs, and rejected approaches;
+- record the before state: absent feature/red acceptance check for GREENFIELD, reproduced symptom for
+  DEBUG, preserve-baseline capture for LEGACY/brownfield;
+- record the after target and command manifest from repo-owned or evaluator-owned proof commands.
+
 ## Roles (each role = a fresh-context subagent by default)
 
 Dispatch is the default, not an option: the conductor runs each role as a separate fresh-context subagent,
@@ -35,7 +43,9 @@ dependent roles ordered. A trivial single edit skips the loop and edits inline.
    target has cleared its interview confirm (`reference/interview.md`: approved, AFK-proceeded, or
    safely skipped and logged). Then: smallest correct change; match surrounding style; minimal diff.
    Bug: reproduce with a failing test first. Refactor/integrate an existing API: capture its
-   exact-behavior baseline FIRST (`reference/qa.md` "API behavior baseline").
+   exact-behavior baseline FIRST (`reference/qa.md` "API behavior baseline"). For GREENFIELD, keep the
+   first red acceptance proof or absent-feature proof in `delivery-proof.md`; for LEGACY/brownfield, keep
+   before/after comparison possible by saving the pre-change capture before edits.
 
 2. **Critic** (`agents/code-reviewer.md`) - DO NOT edit src or weaken/delete existing tests.
    - Re-read the prose spec and repo/data rules. Enumerate REQUIRED behaviors the existing tests do not
@@ -64,6 +74,9 @@ dependent roles ordered. A trivial single edit skips the loop and edits inline.
    - API refactor: re-capture the same call and diff against the pre-refactor baseline; unintended
      drift is a red to resolve.
    - Update the run vault's `surfaced-requirements.md`: mark each surfaced requirement fixed, or note why it stays open.
+   - Update `delivery-proof.md`: after evidence, command outputs/artifact paths, decision gates
+     (`auto-fix`, `no-op`, `ask-user`), intentional drift, and residual risk. Unresolved `ask-user`
+     findings or missing trusted commands block a final done claim.
 
 Loop critic->fixer only while a fresh red appears. The verifier pass is a regression guard - drop it only
 for *very easy* issues; past that, re-running the project's REAL tests is REQUIRED, plus DB evidence for

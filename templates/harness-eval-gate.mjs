@@ -21,6 +21,11 @@ const winners = new Set(["baseline", "harness", "tie", "not_proven"]);
 const claimStatuses = new Set(["proven", "not_proven"]);
 const mutationStatuses = new Set(["adopt", "revise", "reject", "not_proven"]);
 const confidenceLevels = new Set(["low", "medium", "high"]);
+const commandSources = new Set(["frozen_repo", "evaluator_owned", "arm_detected"]);
+const commandUsers = new Set(["baseline", "harness", "both"]);
+const findingActions = new Set(["auto-fix", "no-op", "ask-user"]);
+const findingStatuses = new Set(["resolved", "unresolved", "accepted", "skipped"]);
+const replayStatuses = new Set(["recorded", "not_required", "not_proven"]);
 const EPSILON = 0.01;
 const dimensions = [
   "feature_completeness",
@@ -96,6 +101,111 @@ function requireCost(side) {
   ) {
     errors.push(`${side}.cost must include numeric tokens, duration_ms, and tool_calls`);
   }
+}
+
+function requireEvalIntent() {
+  const intent = result.eval_intent;
+  if (!intent || typeof intent !== "object" || Array.isArray(intent)) {
+    errors.push("eval_intent is required");
+    return;
+  }
+  requireString(intent.goal, "eval_intent.goal");
+  requireStringArray(intent.constraints, "eval_intent.constraints");
+  requireStringArray(intent.tradeoffs, "eval_intent.tradeoffs");
+  requireStringArray(intent.rejected_approaches, "eval_intent.rejected_approaches");
+}
+
+function requireCommandManifest() {
+  const commands = result.command_manifest;
+  if (!Array.isArray(commands) || commands.length === 0) {
+    errors.push("command_manifest must not be empty");
+    return;
+  }
+  let baselineTrusted = false;
+  let harnessTrusted = false;
+  commands.forEach((command, index) => {
+    if (!command || typeof command !== "object" || Array.isArray(command)) {
+      errors.push(`command_manifest[${index}] must be an object`);
+      return;
+    }
+    requireString(command.name, `command_manifest[${index}].name`);
+    requireString(command.command, `command_manifest[${index}].command`);
+    requireString(command.verifies, `command_manifest[${index}].verifies`);
+    if (!commandSources.has(command.source)) {
+      errors.push(`command_manifest[${index}].source must be frozen_repo, evaluator_owned, or arm_detected`);
+    }
+    if (!commandUsers.has(command.used_by)) {
+      errors.push(`command_manifest[${index}].used_by must be baseline, harness, or both`);
+    }
+    const trusted = command.source === "frozen_repo" || command.source === "evaluator_owned";
+    if (trusted && (command.used_by === "baseline" || command.used_by === "both")) baselineTrusted = true;
+    if (trusted && (command.used_by === "harness" || command.used_by === "both")) harnessTrusted = true;
+  });
+  if (result.claim_status === "proven") {
+    if (!baselineTrusted) errors.push("claim_status proven requires a trusted baseline command");
+    if (!harnessTrusted) errors.push("claim_status proven requires a trusted harness command");
+  }
+}
+
+function requireDecisionGates() {
+  const gates = result.decision_gates;
+  if (!Array.isArray(gates)) {
+    errors.push("decision_gates must be an array");
+    return;
+  }
+  gates.forEach((gate, index) => {
+    if (!gate || typeof gate !== "object" || Array.isArray(gate)) {
+      errors.push(`decision_gates[${index}] must be an object`);
+      return;
+    }
+    requireString(gate.id, `decision_gates[${index}].id`);
+    requireString(gate.description, `decision_gates[${index}].description`);
+    if (!findingActions.has(gate.action)) {
+      errors.push(`decision_gates[${index}].action must be auto-fix, no-op, or ask-user`);
+    }
+    if (!findingStatuses.has(gate.status)) {
+      errors.push(`decision_gates[${index}].status must be resolved, unresolved, accepted, or skipped`);
+    }
+    if (gate.action === "ask-user") {
+      requireString(gate.human_decision, `decision_gates[${index}].human_decision`);
+      if (result.claim_status === "proven" && gate.status === "unresolved") {
+        errors.push(`decision_gates[${index}] ask-user finding must be resolved for proven claims`);
+      }
+    }
+    if (gate.action === "auto-fix") {
+      requireString(gate.recheck, `decision_gates[${index}].recheck`);
+    }
+  });
+}
+
+function requireAdapterReplay() {
+  const replay = result.adapter_fixture_replay;
+  if (!replay || typeof replay !== "object" || Array.isArray(replay)) {
+    errors.push("adapter_fixture_replay is required");
+    return;
+  }
+  if (!replayStatuses.has(replay.status)) {
+    errors.push("adapter_fixture_replay.status must be recorded, not_required, or not_proven");
+  }
+  requireString(replay.adapter_event_schema, "adapter_fixture_replay.adapter_event_schema");
+  if (replay.status === "recorded") {
+    requireStringArray(replay.fixtures, "adapter_fixture_replay.fixtures", true);
+    requireString(replay.redaction, "adapter_fixture_replay.redaction");
+    requireString(replay.replay_command, "adapter_fixture_replay.replay_command");
+  }
+  if (result.claim_status === "proven" && replay.status === "not_proven") {
+    errors.push("claim_status proven cannot use adapter_fixture_replay.status not_proven");
+  }
+}
+
+function requireSurfaceSync() {
+  const sync = result.surface_sync;
+  if (!sync || typeof sync !== "object" || Array.isArray(sync)) {
+    errors.push("surface_sync is required");
+    return;
+  }
+  requireStringArray(sync.changed_surfaces, "surface_sync.changed_surfaces", result.claim_status === "proven");
+  requireStringArray(sync.proof_commands, "surface_sync.proof_commands", result.claim_status === "proven");
 }
 
 function requireTelemetry(side) {
@@ -265,6 +375,11 @@ if (!result.runtime_adapter || typeof result.runtime_adapter !== "string") {
 requireTrue("same_repo_snapshot");
 requireTrue("isolated_worktrees");
 requireTrue("blind_grading");
+requireEvalIntent();
+requireCommandManifest();
+requireDecisionGates();
+requireAdapterReplay();
+requireSurfaceSync();
 requireCondition("baseline", "without_harness");
 requireCondition("harness", "with_harness");
 requireChecks("baseline");

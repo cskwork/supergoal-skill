@@ -16,6 +16,8 @@ this skill and edit directly. This file is a router; each phase loads only the r
   Scope-minimalism governs code surface area, NOT visual quality: for user-facing UI a polished result is
   baseline correctness, not padding.
 - Surface hidden requirements first, as FAILING tests written by an independent critic.
+- For non-trivial code changes, run Before/After Eval: capture the current state before Build, define the
+  expected after state, and prove the delta with trusted repo/evaluator commands (`reference/delivery-gate.md`).
 - Ask only when genuinely ambiguous; resolve code-answerable questions by reading the code.
 - Output language: prose in the user's language; keep identifiers, paths, commands, and machine-checked
   anchors in canonical English so checks keep matching.
@@ -67,9 +69,12 @@ DB evidence when persisted data is load-bearing. Full contract: `reference/role-
    high-leverage questions; and once the approach is grounded, if the fix's blast radius reaches past
    its target, confirm it before Build - tiered, hard-gated when wide/destructive/behavior-changing
    (`reference/interview.md`). Resolve code-answerable questions by reading code. UI work: load
-   `reference/ui-ux.md` now.
+   `reference/ui-ux.md` now. Non-trivial code work: start `delivery-proof.md` from
+   `templates/delivery-proof.md` and record eval intent, before state, after target, and command manifest
+   (`reference/delivery-gate.md`).
 2. **Build.** Smallest correct change, test-first; match surrounding style; minimal diff. Bug: reproduce
-   with a failing test first (`reference/debugging.md`).
+   with a failing test first (`reference/debugging.md`). Preserve the Before proof for LEGACY/brownfield
+   work before changing behavior.
 3. **Critic (independent; no src edits).** Re-read the prose spec + repo/data rules
    (`reference/domain-context.md`, `domain-rules.md`). For each required behavior the existing tests miss,
    write a FAILING test and log it in the run vault's `surfaced-requirements.md`. A signal, not the oracle.
@@ -78,7 +83,8 @@ DB evidence when persisted data is load-bearing. Full contract: `reference/role-
 5. **Verify vs ground truth.** Re-run the project's REAL tests; re-read the spec for uncovered rules.
    Browser UI: complete browser app verification with `qa-gate.sh <vault> browser` (lint, typecheck,
    build, and screenshots do not substitute). Data load-bearing past *very easy*: DB evidence too. Stop
-   on green; report what was verified, with command output.
+   on green only after updating `delivery-proof.md` with after evidence, resolved decision gates, and
+   residual risk; report what was verified, with command output.
 
 Roles -> personas: critic=`agents/code-reviewer.md`, fixer=`agents/executor.md`,
 verify=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role>.md`).
@@ -93,6 +99,7 @@ verify=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role>.m
 | `reference/domain-context.md` | repo-local Domain Brief |
 | `reference/debugging.md` | DEBUG: hypothesis-ledger diagnose loop |
 | `reference/interview.md` | interview: ambiguity (what) + blast-radius confirm (approach, tiered) |
+| `reference/delivery-gate.md`, `templates/delivery-proof.md` | Before/After Eval for non-trivial GREENFIELD / DEBUG / LEGACY code changes |
 | `reference/spec.md`, `templates/spec/` | SPEC: requirements -> design -> tasks |
 | `reference/plan-grounding.md` | ground the approach before committing |
 | `reference/db-access.md`, `templates/db-access/` | read-only DB evidence (required past *very easy* when data load-bearing) |
@@ -106,6 +113,7 @@ verify=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role>.m
 | `reference/market-research.md` | GREENFIELD: validate demand (optional) |
 | `reference/observability.md`, `tui/` | Board: opt-in live dashboard |
 
-**Done =** mode stated; smallest diff in surrounding style; REAL tests + prose spec green (not a proxy) - a runtime MUST is proven only by exercising its real behavior, never by a test that just checks a method was called or re-asserts current behavior;
+**Done =** mode stated; smallest diff in surrounding style; Before/After Eval complete for non-trivial
+code changes; REAL tests + prose spec green (not a proxy) - a runtime MUST is proven only by exercising its real behavior, never by a test that just checks a method was called or re-asserts current behavior;
 past *very easy* -> red-green test + DB evidence if data load-bearing; user-facing UI at the Expressive
 baseline; destructive steps consented; report what was verified with command output.

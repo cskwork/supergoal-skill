@@ -196,6 +196,61 @@ mkresult() {
   "runtime_adapter": "codex",
   "same_repo_snapshot": true,
   "isolated_worktrees": true,
+  "eval_intent": {
+    "goal": "increase hidden requirement coverage",
+    "constraints": ["preserve the same repo snapshot"],
+    "tradeoffs": ["extra verification cost is acceptable only if correctness improves"],
+    "rejected_approaches": ["self-reported success as evidence"]
+  },
+  "command_manifest": [
+    {
+      "name": "test",
+      "command": "npm test",
+      "source": "frozen_repo",
+      "used_by": "both",
+      "verifies": "visible and hidden tests"
+    },
+    {
+      "name": "lint",
+      "command": "npm run lint",
+      "source": "frozen_repo",
+      "used_by": "both",
+      "verifies": "static rules"
+    },
+    {
+      "name": "build",
+      "command": "npm run build",
+      "source": "frozen_repo",
+      "used_by": "both",
+      "verifies": "bundle succeeds"
+    }
+  ],
+  "decision_gates": [
+    {
+      "id": "r1",
+      "action": "auto-fix",
+      "status": "resolved",
+      "description": "mechanical fix",
+      "recheck": "npm test exit=0"
+    },
+    {
+      "id": "n1",
+      "action": "no-op",
+      "status": "accepted",
+      "description": "informational finding"
+    }
+  ],
+  "adapter_fixture_replay": {
+    "status": "not_required",
+    "adapter_event_schema": "codex-exec-jsonl",
+    "fixtures": [],
+    "redaction": "not required",
+    "replay_command": "not required"
+  },
+  "surface_sync": {
+    "changed_surfaces": ["reference/harness-eval.md", "templates/harness-eval-gate.mjs"],
+    "proof_commands": ["bash tests/harness-eval-contract.test.sh"]
+  },
   "baseline": {
     "condition": "without_harness",
     "machine_checks": $checks,
@@ -308,6 +363,7 @@ require_file "RevFactory case 012 exists" "templates/harness-eval-cases/revfacto
 require_file "RevFactory case 013 exists" "templates/harness-eval-cases/revfactory-case-013-bytecode-vm.yaml"
 require_file "RevFactory case 014 exists" "templates/harness-eval-cases/revfactory-case-014-event-sourcing.yaml"
 require_file "RevFactory case 015 exists" "templates/harness-eval-cases/revfactory-case-015-lsp.yaml"
+require_file "harness eval fixture README exists" "templates/harness-eval-cases/fixtures/README.md"
 require_file "harness eval result template exists" "templates/harness-eval-result.json"
 require_file "harness eval report template exists" "templates/harness-eval-report.md"
 require_text "route hook names HARNESS-EVAL" "SKILL.md" "HARNESS-EVAL"
@@ -345,13 +401,36 @@ require_text "eval records false GREEN" "reference/harness-eval.md" "false-GREEN
 require_text "eval requires scoped evidence bundle" "reference/harness-eval.md" "scoped evidence bundle"
 require_text "eval requires trajectory telemetry" "reference/harness-eval.md" "replayable trajectory telemetry"
 require_text "eval requires mutation contract" "reference/harness-eval.md" "harness mutation contract"
+require_text "eval requires explicit intent" "reference/harness-eval.md" "explicit eval intent"
+require_text "eval requires command manifest" "reference/harness-eval.md" "deterministic command manifest"
+require_text "eval requires decision gate ledger" "reference/harness-eval.md" "decision-gate ledger"
+require_text "eval requires adapter fixture replay" "reference/harness-eval.md" "adapter fixture replay"
+require_text "eval records current fixtures" "reference/harness-eval.md" "templates/harness-eval-cases/fixtures/"
+require_text "eval defines default coding A/B pair" "reference/harness-eval.md" "Default coding A/B pair"
+require_text "eval defaults async race first" "reference/harness-eval.md" "revfactory-case-002-async-race/"
+require_text "eval defaults refactoring second" "reference/harness-eval.md" "revfactory-case-003-refactoring/"
+require_text "eval rejects underspec default substitution" "reference/harness-eval.md" 'Do not substitute `underspec-001-deepmerge/`'
+require_text "eval records default tie as not proven" "reference/harness-eval.md" 'If both default cases tie, report `Not proven`'
 require_text "report records evidence bundle" "templates/harness-eval-report.md" "## Evidence Bundle"
 require_text "report records trajectory telemetry" "templates/harness-eval-report.md" "## Trajectory Telemetry"
 require_text "report records mutation contract" "templates/harness-eval-report.md" "## Harness Mutation Contract"
+require_text "report records case selection" "templates/harness-eval-report.md" "## Case Selection"
+require_text "report records default coding pair" "templates/harness-eval-report.md" "Default coding A/B pair"
+require_text "report records eval intent" "templates/harness-eval-report.md" "## Eval Intent"
+require_text "report records command manifest" "templates/harness-eval-report.md" "## Command Manifest"
+require_text "report records decision gates" "templates/harness-eval-report.md" "## Decision Gates"
+require_text "report records adapter fixture replay" "templates/harness-eval-report.md" "## Adapter Fixture Replay"
+require_text "report records surface sync" "templates/harness-eval-report.md" "## Surface Sync"
 require_text "report records quality score" "templates/harness-eval-report.md" "## Quality Score"
 require_text "report records not proven" "templates/harness-eval-report.md" "## Not Proven"
 require_text "report records bug-catch matrix" "templates/harness-eval-report.md" "## Bug-Catch Matrix"
 require_text "case template records quality score" "templates/harness-eval-case.yaml" "quality_score"
+require_text "case template records eval intent" "templates/harness-eval-case.yaml" "eval_intent"
+require_text "case template records command manifest" "templates/harness-eval-case.yaml" "command_manifest"
+require_text "case template records decision gates" "templates/harness-eval-case.yaml" "decision_gates"
+require_text "case template records adapter fixture replay" "templates/harness-eval-case.yaml" "adapter_fixture_replay"
+require_text "case template records default coding pair" "templates/harness-eval-case.yaml" "default_coding_ab"
+require_text "result template records default coding pair" "templates/harness-eval-result.json" "default_coding_ab"
 
 mkresult "$T/ok.json" "harness" "$PASS_CHECKS" "proven" "harness"
 run_case "gate accepts complete eval" 0 "HARNESS-EVAL PASS" node "$GATE" "$T/ok.json"
@@ -362,6 +441,18 @@ run_case "gate blocks unknown claim_status" 1 "claim_status" node "$GATE" "$T/ba
 mkresult "$T/no-snapshot.json"
 node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.same_repo_snapshot=false; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/no-snapshot.json"
 run_case "gate blocks different snapshot" 1 "same_repo_snapshot" node "$GATE" "$T/no-snapshot.json"
+
+mkresult "$T/no-intent.json"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); delete x.eval_intent; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/no-intent.json"
+run_case "gate blocks missing eval intent" 1 "eval_intent" node "$GATE" "$T/no-intent.json"
+
+mkresult "$T/no-command-manifest.json"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); delete x.command_manifest; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/no-command-manifest.json"
+run_case "gate blocks missing command manifest" 1 "command_manifest" node "$GATE" "$T/no-command-manifest.json"
+
+mkresult "$T/arm-detected-only.json" "harness" "$PASS_CHECKS" "proven" "harness"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.command_manifest.forEach((c)=>{c.source='arm_detected'}); fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/arm-detected-only.json"
+run_case "gate blocks proven arm-detected-only commands" 1 "trusted baseline command" node "$GATE" "$T/arm-detected-only.json"
 
 mkresult "$T/no-blind.json"
 node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.blind_grading=false; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/no-blind.json"
@@ -389,6 +480,18 @@ run_case "gate blocks unknown confidence" 1 "confidence" node "$GATE" "$T/bad-co
 mkresult "$T/no-telemetry.json"
 node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); delete x.harness.telemetry; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/no-telemetry.json"
 run_case "gate blocks missing telemetry" 1 "telemetry" node "$GATE" "$T/no-telemetry.json"
+
+mkresult "$T/unresolved-ask-user.json" "harness" "$PASS_CHECKS" "proven" "harness"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.decision_gates=[{id:'u1', action:'ask-user', status:'unresolved', description:'changes product behavior', human_decision:'pending'}]; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/unresolved-ask-user.json"
+run_case "gate blocks unresolved ask-user decision" 1 "ask-user finding" node "$GATE" "$T/unresolved-ask-user.json"
+
+mkresult "$T/no-adapter-replay.json"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); delete x.adapter_fixture_replay; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/no-adapter-replay.json"
+run_case "gate blocks missing adapter replay" 1 "adapter_fixture_replay" node "$GATE" "$T/no-adapter-replay.json"
+
+mkresult "$T/no-surface-sync.json"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); delete x.surface_sync; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/no-surface-sync.json"
+run_case "gate blocks missing surface sync" 1 "surface_sync" node "$GATE" "$T/no-surface-sync.json"
 
 mkresult "$T/proven-crash.json" "harness" "$PASS_CHECKS" "proven" "harness"
 node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.harness.telemetry.crashed=true; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/proven-crash.json"

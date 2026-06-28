@@ -24,6 +24,16 @@ to pass the hidden checks - otherwise `Not proven`.
 | Case | Run | Check | Status | Evidence |
 |---|---|---|---|---|
 
+## Evidence Bundle
+
+| Case | Run | Check | Verifies | Does not verify | Confidence | Artifact |
+|---|---|---|---|---|---|---|
+
+## Trajectory Telemetry
+
+| Case | Run | Artifact root | Logs | Commands | Edited files | Turns | Exit | Crash/context |
+|---|---|---|---|---|---|---:|---:|---|
+
 ## Quality Score
 
 RevFactory-style scoring: 10 dimensions, each 0-10, total 100.
@@ -56,6 +66,11 @@ Anchors:
 
 | Case | Baseline tokens/time/tool calls | Harness tokens/time/tool calls | Tradeoff |
 |---|---|---|---|
+
+## Harness Mutation Contract
+
+| Status | Intended delta | Safety envelope | Rollback | Proof command | Rejected alternatives |
+|---|---|---|---|---|---|
 
 ## Not Proven
 

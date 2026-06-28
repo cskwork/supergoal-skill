@@ -19,6 +19,8 @@ const errors = [];
 const requiredChecks = 3;
 const winners = new Set(["baseline", "harness", "tie", "not_proven"]);
 const claimStatuses = new Set(["proven", "not_proven"]);
+const mutationStatuses = new Set(["adopt", "revise", "reject", "not_proven"]);
+const confidenceLevels = new Set(["low", "medium", "high"]);
 const EPSILON = 0.01;
 const dimensions = [
   "feature_completeness",
@@ -35,6 +37,18 @@ const dimensions = [
 
 function requireTrue(key) {
   if (result[key] !== true) errors.push(`${key} must be true`);
+}
+
+function requireString(value, label) {
+  if (!value || typeof value !== "string") errors.push(`${label} is required`);
+}
+
+function requireStringArray(value, label, nonEmpty = false) {
+  if (!Array.isArray(value) || value.some((item) => typeof item !== "string")) {
+    errors.push(`${label} must be an array of strings`);
+    return;
+  }
+  if (nonEmpty && value.length === 0) errors.push(`${label} must not be empty`);
 }
 
 function requireCondition(side, expected) {
@@ -63,8 +77,11 @@ function requireChecks(side) {
     if (result.claim_status === "proven" && check.status !== "pass") {
       errors.push(`${side}.machine_checks[${index}].status must be pass for proven claims`);
     }
-    if (!check.evidence || typeof check.evidence !== "string") {
-      errors.push(`${side}.machine_checks[${index}].evidence is required`);
+    requireString(check.evidence, `${side}.machine_checks[${index}].evidence`);
+    requireString(check.verifies, `${side}.machine_checks[${index}].verifies`);
+    requireString(check.does_not_verify, `${side}.machine_checks[${index}].does_not_verify`);
+    if (!confidenceLevels.has(check.confidence)) {
+      errors.push(`${side}.machine_checks[${index}].confidence must be low, medium, or high`);
     }
   });
 }
@@ -78,6 +95,38 @@ function requireCost(side) {
     typeof cost.tool_calls !== "number"
   ) {
     errors.push(`${side}.cost must include numeric tokens, duration_ms, and tool_calls`);
+  }
+}
+
+function requireTelemetry(side) {
+  const telemetry = result[side] && result[side].telemetry;
+  if (!telemetry || typeof telemetry !== "object" || Array.isArray(telemetry)) {
+    errors.push(`${side}.telemetry is required`);
+    return;
+  }
+  requireString(telemetry.artifact_root, `${side}.telemetry.artifact_root`);
+  requireStringArray(telemetry.logs, `${side}.telemetry.logs`, true);
+  requireStringArray(telemetry.commands, `${side}.telemetry.commands`, true);
+  requireStringArray(telemetry.edited_files, `${side}.telemetry.edited_files`);
+  requireStringArray(telemetry.permissions_or_approvals, `${side}.telemetry.permissions_or_approvals`);
+  if (typeof telemetry.turns_completed !== "number") {
+    errors.push(`${side}.telemetry.turns_completed must be numeric`);
+  }
+  if (typeof telemetry.exit_code !== "number") {
+    errors.push(`${side}.telemetry.exit_code must be numeric`);
+  }
+  if (typeof telemetry.crashed !== "boolean") {
+    errors.push(`${side}.telemetry.crashed must be boolean`);
+  }
+  if (typeof telemetry.context_exhausted !== "boolean") {
+    errors.push(`${side}.telemetry.context_exhausted must be boolean`);
+  }
+  if (result.claim_status === "proven") {
+    if (telemetry.exit_code !== 0) errors.push(`${side}.telemetry.exit_code must be 0 for proven claims`);
+    if (telemetry.crashed) errors.push(`${side}.telemetry.crashed must be false for proven claims`);
+    if (telemetry.context_exhausted) {
+      errors.push(`${side}.telemetry.context_exhausted must be false for proven claims`);
+    }
   }
 }
 
@@ -194,6 +243,22 @@ function requireQuality() {
   }
 }
 
+function requireMutationContract() {
+  const contract = result.harness_mutation_contract;
+  if (!contract || typeof contract !== "object" || Array.isArray(contract)) {
+    errors.push("harness_mutation_contract is required");
+    return;
+  }
+  if (!mutationStatuses.has(contract.status)) {
+    errors.push("harness_mutation_contract.status must be adopt, revise, reject, or not_proven");
+  }
+  requireString(contract.intended_delta, "harness_mutation_contract.intended_delta");
+  requireString(contract.safety_envelope, "harness_mutation_contract.safety_envelope");
+  requireString(contract.rollback, "harness_mutation_contract.rollback");
+  requireString(contract.proof_command, "harness_mutation_contract.proof_command");
+  requireStringArray(contract.rejected_alternatives, "harness_mutation_contract.rejected_alternatives", true);
+}
+
 if (!result.runtime_adapter || typeof result.runtime_adapter !== "string") {
   errors.push("runtime_adapter is required");
 }
@@ -206,9 +271,12 @@ requireChecks("baseline");
 requireChecks("harness");
 requireCost("baseline");
 requireCost("harness");
+requireTelemetry("baseline");
+requireTelemetry("harness");
 requireKnownWinner("winner", result.winner);
 requireClaimStatus();
 requireQuality();
+requireMutationContract();
 
 if (result.claim_status === "proven" && result.winner !== "harness") {
   errors.push("claim_status proven requires winner harness");

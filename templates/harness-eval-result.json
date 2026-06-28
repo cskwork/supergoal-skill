@@ -6,20 +6,84 @@
   "baseline": {
     "condition": "without_harness",
     "machine_checks": [
-      { "name": "test", "status": "pass", "evidence": "command and artifact path" },
-      { "name": "lint", "status": "pass", "evidence": "command and artifact path" },
-      { "name": "build", "status": "pass", "evidence": "command and artifact path" }
+      {
+        "name": "test",
+        "status": "pass",
+        "evidence": "command and artifact path",
+        "verifies": "acceptance behavior covered by this check",
+        "does_not_verify": "known uncovered edges",
+        "confidence": "high"
+      },
+      {
+        "name": "lint",
+        "status": "pass",
+        "evidence": "command and artifact path",
+        "verifies": "static syntax/style constraints",
+        "does_not_verify": "runtime behavior",
+        "confidence": "medium"
+      },
+      {
+        "name": "build",
+        "status": "pass",
+        "evidence": "command and artifact path",
+        "verifies": "package can compile or bundle",
+        "does_not_verify": "hidden acceptance behavior",
+        "confidence": "medium"
+      }
     ],
-    "cost": { "tokens": 1000, "duration_ms": 1000, "tool_calls": 10 }
+    "cost": { "tokens": 1000, "duration_ms": 1000, "tool_calls": 10 },
+    "telemetry": {
+      "artifact_root": "docs/changelog/<YYYY-MM-DD-harness-eval>/baseline",
+      "logs": ["raw/baseline.log"],
+      "commands": ["npm test", "npm run lint", "npm run build"],
+      "edited_files": ["src/example.js"],
+      "permissions_or_approvals": [],
+      "turns_completed": 1,
+      "exit_code": 0,
+      "crashed": false,
+      "context_exhausted": false
+    }
   },
   "harness": {
     "condition": "with_harness",
     "machine_checks": [
-      { "name": "test", "status": "pass", "evidence": "command and artifact path" },
-      { "name": "lint", "status": "pass", "evidence": "command and artifact path" },
-      { "name": "build", "status": "pass", "evidence": "command and artifact path" }
+      {
+        "name": "test",
+        "status": "pass",
+        "evidence": "command and artifact path",
+        "verifies": "acceptance behavior covered by this check",
+        "does_not_verify": "known uncovered edges",
+        "confidence": "high"
+      },
+      {
+        "name": "lint",
+        "status": "pass",
+        "evidence": "command and artifact path",
+        "verifies": "static syntax/style constraints",
+        "does_not_verify": "runtime behavior",
+        "confidence": "medium"
+      },
+      {
+        "name": "build",
+        "status": "pass",
+        "evidence": "command and artifact path",
+        "verifies": "package can compile or bundle",
+        "does_not_verify": "hidden acceptance behavior",
+        "confidence": "medium"
+      }
     ],
-    "cost": { "tokens": 1200, "duration_ms": 1400, "tool_calls": 12 }
+    "cost": { "tokens": 1200, "duration_ms": 1400, "tool_calls": 12 },
+    "telemetry": {
+      "artifact_root": "docs/changelog/<YYYY-MM-DD-harness-eval>/harness",
+      "logs": ["raw/harness.log"],
+      "commands": ["npm test", "npm run lint", "npm run build"],
+      "edited_files": ["src/example.js"],
+      "permissions_or_approvals": [],
+      "turns_completed": 1,
+      "exit_code": 0,
+      "crashed": false,
+      "context_exhausted": false
+    }
   },
   "quality": {
     "method": "RevFactory-style 10 dimensions, each 0-10, total 100; anchored to observable code properties.",
@@ -64,6 +128,14 @@
       }
     },
     "winner": "harness"
+  },
+  "harness_mutation_contract": {
+    "status": "not_proven",
+    "intended_delta": "behavior this harness change is expected to improve",
+    "safety_envelope": "what the harness is allowed to change and what it must not change",
+    "rollback": "exact revert or disable path",
+    "proof_command": "node templates/harness-eval-gate.mjs <result.json>",
+    "rejected_alternatives": ["simpler or riskier alternative and why it was rejected"]
   },
   "blind_grading": true,
   "winner": "harness",

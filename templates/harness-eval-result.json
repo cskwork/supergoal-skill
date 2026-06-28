@@ -3,6 +3,80 @@
   "runtime_adapter": "portable",
   "same_repo_snapshot": true,
   "isolated_worktrees": true,
+  "default_coding_ab": {
+    "applies_when": "coding harness eval requested without named cases",
+    "cases": [
+      {
+        "fixture": "revfactory-case-002-async-race/",
+        "spec": "revfactory-case-002-bug-fix.yaml",
+        "mode": "DEBUG/concurrency",
+        "reason": "hard runnable fixture with visible-pass hidden-fail starter"
+      },
+      {
+        "fixture": "revfactory-case-003-refactoring/",
+        "spec": "revfactory-case-003-refactoring.yaml",
+        "mode": "LEGACY/brownfield preservation",
+        "reason": "runnable preservation fixture whose hidden suite catches behavior drift"
+      }
+    ],
+    "excluded_from_default": ["underspec-001-deepmerge/", "underspec-002-csvline/"],
+    "tie_rule": "If both default cases tie, report Not proven and require authored expert runnable fixtures."
+  },
+  "eval_intent": {
+    "goal": "the user's objective in their own terms",
+    "constraints": ["constraints learned from the conversation or repo rules"],
+    "tradeoffs": ["decision or tradeoff that affects review judgment"],
+    "rejected_approaches": ["alternative considered and rejected"]
+  },
+  "command_manifest": [
+    {
+      "name": "test",
+      "command": "npm test",
+      "source": "frozen_repo",
+      "used_by": "both",
+      "verifies": "visible and hidden acceptance tests"
+    },
+    {
+      "name": "lint",
+      "command": "npm run lint",
+      "source": "frozen_repo",
+      "used_by": "both",
+      "verifies": "static syntax/style constraints"
+    },
+    {
+      "name": "build",
+      "command": "npm run build",
+      "source": "frozen_repo",
+      "used_by": "both",
+      "verifies": "package can compile or bundle"
+    }
+  ],
+  "decision_gates": [
+    {
+      "id": "r1",
+      "action": "auto-fix",
+      "status": "resolved",
+      "description": "mechanical low-risk issue fixed by the pipeline",
+      "recheck": "npm test exit=0 after fix"
+    },
+    {
+      "id": "i1",
+      "action": "no-op",
+      "status": "accepted",
+      "description": "informational finding that required no code change"
+    }
+  ],
+  "adapter_fixture_replay": {
+    "status": "not_required",
+    "adapter_event_schema": "portable-result-json-v1",
+    "fixtures": [],
+    "redaction": "not required for this portable template",
+    "replay_command": "not required"
+  },
+  "surface_sync": {
+    "changed_surfaces": [],
+    "proof_commands": []
+  },
   "baseline": {
     "condition": "without_harness",
     "machine_checks": [

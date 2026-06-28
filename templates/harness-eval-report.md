@@ -10,6 +10,30 @@ Quality winner:
 Overall winner:
 Claim status:
 
+## Case Selection
+
+Default coding A/B pair:
+
+1. `revfactory-case-002-async-race/` (`revfactory-case-002-bug-fix.yaml`) - DEBUG/concurrency.
+2. `revfactory-case-003-refactoring/` (`revfactory-case-003-refactoring.yaml`) - LEGACY/brownfield
+   preservation.
+
+Do not substitute `underspec-001-deepmerge/` or `underspec-002-csvline/` for this default. If both
+default cases tie, report `Not proven`, record the runnable-corpus ceiling, and require authored expert
+runnable fixtures before claiming a stronger harness win.
+
+## Eval Intent
+
+Goal:
+Constraints:
+Tradeoffs:
+Rejected approaches:
+
+## Command Manifest
+
+| Command | Source | Used by | Verifies |
+|---|---|---|---|
+
 ## Verification (harness-native + ground truth)
 
 | Case | Harness verified natively? | Native verifier checks (if any) | Hidden-check REDs | REDs fixed | Visible-only false-GREEN? |
@@ -33,6 +57,20 @@ to pass the hidden checks - otherwise `Not proven`.
 
 | Case | Run | Artifact root | Logs | Commands | Edited files | Turns | Exit | Crash/context |
 |---|---|---|---|---|---|---:|---:|---|
+
+## Decision Gates
+
+| ID | Action | Status | Description | Human decision | Recheck |
+|---|---|---|---|---|---|
+
+Actions: `auto-fix`, `no-op`, or `ask-user`. A `proven` claim cannot leave `ask-user` unresolved.
+
+## Adapter Fixture Replay
+
+| Status | Adapter event schema | Fixtures | Redaction | Replay command |
+|---|---|---|---|---|
+
+Reusable harness claims need recorded, scrubbed fixtures or an explicit `Not proven` reason.
 
 ## Quality Score
 
@@ -71,6 +109,11 @@ Anchors:
 
 | Status | Intended delta | Safety envelope | Rollback | Proof command | Rejected alternatives |
 |---|---|---|---|---|---|
+
+## Surface Sync
+
+| Changed surfaces | Proof commands |
+|---|---|
 
 ## Not Proven
 

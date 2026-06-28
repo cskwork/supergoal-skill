@@ -37,6 +37,8 @@ Use this for Track A and whenever Track B depends on domain language or system b
    `decisions/*.md` entries are for hard-to-reverse, surprising tradeoffs with real alternatives.
 7. Record a compact grounding ledger in `plan.md`: question, answer/source, decision, and remaining
    gap. Do not paste the whole interview.
+8. Add the Before/After Eval plan (`reference/delivery-gate.md`): before-state proof, after target,
+   trusted command manifest, expected artifacts, and any `ask-user` decision gates.
 
 ## Track A - feature / novel work
 
@@ -49,6 +51,8 @@ Use this for Track A and whenever Track B depends on domain language or system b
 4. Update docs only when useful: add domain terms to the glossary; write decision notes only for
    hard-to-reverse surprising tradeoffs.
 5. Put resolved choices and definitions into `plan.md`.
+6. Put the Before/After Eval proof strategy into `plan.md`: what is absent or red before, which
+   repo/evaluator commands prove after, and what residual risk will remain.
 
 ## Track B - refactor / improve codebase
 
@@ -64,8 +68,11 @@ Vocabulary: **Module** = interface + implementation. **Interface** = what caller
    adapter is hypothetical; two adapters make a real seam.
 5. Write chosen deepenings into `plan.md` with files, problem, solution, and locality/leverage benefit.
    Surface decision conflicts only when the friction warrants reopening them.
+6. Write the brownfield Before/After Eval strategy into `plan.md`: exact behavior to preserve, baseline
+   capture command or artifact, after comparison, and intentional drift if any.
 
 ## Exit
 
 `plan.md` is now grounded; run the blast-radius confirm (`reference/interview.md`) if the approach
-reaches past its target, then freeze. Build implements the frozen plan.
+reaches past its target, ensure the Before/After Eval strategy is explicit, then freeze. Build implements
+the frozen plan.

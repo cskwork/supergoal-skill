@@ -22,6 +22,18 @@ Required controls:
   and the artifact path or command output behind the claim
 - replayable trajectory telemetry: per arm record artifact root, logs, commands, edited files,
   permissions/approvals, turns completed, exit code, crash, and context-exhaustion status
+- explicit eval intent: record the user's goal, constraints, tradeoffs, and ruled-out approaches as a
+  first-class input. Do not infer intent from the diff after the run; reviewers need the objective, not
+  just the files changed.
+- deterministic command manifest: record the exact test/lint/build/format/smoke/hidden commands, their
+  source (`frozen_repo`, `evaluator_owned`, or `arm_detected`), and which arm used them. Repo-owned or
+  evaluator-owned commands are the baseline; arm-detected commands are supplemental evidence, not the
+  whole gate.
+- decision-gate ledger: classify findings as `auto-fix`, `no-op`, or `ask-user`; product/intent-changing
+  findings are `ask-user` and must carry the human decision before a proven claim.
+- adapter fixture replay: when claiming a reusable harness improvement, record agent/CLI event fixtures,
+  redaction/scrubbing status, the adapter event schema, and the replay command. If the adapter wire format
+  changes, re-record fixtures before trusting parser-derived tokens, tool calls, crashes, or turns.
 - harness mutation contract: every adopt/revise/reject recommendation names the intended behavior delta,
   safety envelope, rollback path, proof command, and rejected alternatives
 - a reachable RevFactory-style 100-point quality score before final comparison: a fully correct
@@ -66,9 +78,31 @@ actually run in, or the result is an artifact of the wrong setup:
 Use `templates/harness-eval-case.yaml` for a blank case. The RevFactory seed files in
 `templates/harness-eval-cases/` are SPECS ONLY (task, acceptance, hidden-check descriptions, rubric) -
 they are NOT runnable. Before a case can be evaluated it needs an authored fixture: a stub source the
-agent edits, visible tests, and hidden tests that encode the bug-catch matrix. As of this writing only
-case-015-lsp ships a runnable fixture; the rest must have fixtures authored (see
-`docs/experiments/2026-06-06-harness-eval-spark-high-lsp-v2/run.mjs` for the fixture+scorer shape).
+agent edits, visible tests, and hidden tests that encode the bug-catch matrix. Runnable fixtures currently
+live under `templates/harness-eval-cases/fixtures/`:
+
+- `revfactory-case-002-async-race/`
+- `revfactory-case-003-refactoring/`
+- `underspec-001-deepmerge/`
+- `underspec-002-csvline/`
+
+Each fixture must remain validated against starter/reference/lazy implementations before use (see the
+fixture README for the `SG_EVAL_VALIDATE` replay commands). Specs without a fixture must have one authored
+before they can be evaluated.
+
+### Default coding A/B pair (hardest existing runnable pair)
+
+When the user asks for a coding harness eval without naming cases, run exactly this two-case default:
+
+1. `revfactory-case-002-async-race/` (`revfactory-case-002-bug-fix.yaml`) - DEBUG/concurrency, hard,
+   visible-pass hidden-fail starter.
+2. `revfactory-case-003-refactoring/` (`revfactory-case-003-refactoring.yaml`) - LEGACY/brownfield
+   preservation, medium fixture whose hidden suite catches behavior drift.
+
+Do not substitute `underspec-001-deepmerge/` or `underspec-002-csvline/` for this default; those are
+latent-correctness probes, not the default coding difficulty. If both default cases tie, report
+`Not proven`, record the runnable-corpus ceiling, and require authored expert runnable fixtures before
+claiming a stronger harness win.
 
 Reusable seeded case specs (the approved corpus - pick from here, never invent new cases):
 
@@ -102,10 +136,9 @@ Use the hard/expert tier only - the cases that discriminate:
   009 sql-engine, 010 crdt, 011 raft-kv, 012 spreadsheet, 013 bytecode-vm, 014 event-sourcing, 015 lsp)
 - hard: `revfactory-case-002-bug-fix`, `revfactory-case-005-complex`
 
-Only `case-015-lsp` ships a runnable fixture; author the rest from the same fixture+scorer shape before
-use. Pilot on one expert case (n=1 is `Not proven` by construction - direction only), then scale to 8-15
-expert/hard cases for a proven claim. Both arms passing everything is inconclusive (ceiling), not a win
-or a tie.
+Pilot on one runnable hard/expert or latent-correctness case (n=1 is `Not proven` by construction -
+direction only), then scale to 8-15 expert/hard cases for a proven claim. Both arms passing everything is
+inconclusive (ceiling), not a win or a tie.
 
 ## Pick a discriminating regime (lever = spec-completeness x baseline strength, not "difficulty")
 
@@ -155,6 +188,11 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
 1. Scope
 - Name `runtime_adapter`: codex, claude-code, pi-agent, mcp, or mixed.
 - Freeze repo snapshot and task wording.
+- Write `eval_intent`: the user's goal in their terms, plus constraints and tradeoffs learned during the
+  work. This is not a file-change summary.
+- Write the command manifest before either arm runs. If commands are discovered by an arm, label them
+  `arm_detected` and keep them out of the trusted baseline unless the evaluator independently accepts
+  them.
 - Choose the artifact root for logs, result JSON, commands, and the scoped evidence bundle.
 
 2. Baseline Run
@@ -182,6 +220,8 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
 
 5. Machine Checks
 - Run project-relevant checks: tests, lint, typecheck, build, smoke, browser QA, hidden tests, or data checks.
+- Prefer deterministic repo-owned/evaluator-owned commands. Auto-detected commands may add evidence, but
+  a proven claim must show which commands were trusted and why.
 - Record EACH test/check individually as `{name, status, evidence, verifies, does_not_verify, confidence}`
   - never collapse the suite into one all-or-nothing pass. A binary pass/fail hides partial progress
   (observed: baseline passed 6/9 and harness 4/9, yet a single combined check scored both as the same
@@ -212,6 +252,8 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
 - Record pass winner, quality winner, bug-catch delta, false-GREEN delta, verification-strength delta,
   trajectory-efficiency delta, regression-test delta, cost/time tradeoff, failure notes, and grader
   uncertainty.
+- Record decision gates: unresolved `ask-user` findings block a proven claim. `auto-fix` findings must
+  name the mechanical fix and its recheck; `no-op` findings must say why no action was required.
 - `claim_status: proven` requires both machine-check support and a harness quality-score win.
 
 9. Report
@@ -225,6 +267,9 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
 - Save broadly reusable case templates under `templates/harness-eval-cases/`.
 - Save raw logs, command list, result JSON, scoped evidence bundle, and mutation contract under the
   artifact root so the claim can be replayed.
+- Save adapter replay fixtures for reusable harness claims, or record why the run is `Not proven`.
+- Save surface-sync proof for any accepted harness change: which skill/docs/templates/tests changed and
+  which command proves they did not drift.
 - Promote a case into the skill only when it is clean-slate, runtime-portable,
   machine-checkable, and includes hidden checks, regression protection, cost
   fields, and the RevFactory-style quality-score rubric.
@@ -248,3 +293,7 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
 - Calling a +-1-test, n=1 delta a "win"; that is within run-to-run noise (same case flipped win->tie on re-run). Need n>=3 per arm and a per-seed vector.
 - Comparing a multi-pass harness to a single-pass baseline and crediting the skill without an equal-compute control or a stated cost multiple.
 - Running an authored fixture whose starter, a reference impl, and a lazy impl were not first checked to confirm it discriminates.
+- Inferring user intent from changed files when the original goal, constraints, or rejected approaches are available.
+- Treating agent-discovered commands as trusted ground truth without a frozen command manifest.
+- Leaving `ask-user` findings unresolved while reporting a proven harness win.
+- Claiming adapter telemetry is replayable without recorded, scrubbed fixtures and a replay command.

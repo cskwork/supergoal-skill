@@ -18,6 +18,12 @@ Required controls:
 - adversarial verification runs in the harness's native runtime profile (see Runtime fit); never
   force a multi-agent verifier/repair loop inside a single non-interactive process
 - machine checks before subjective scoring, recorded per individual check (not one all-or-nothing pass)
+- scoped evidence bundle: every machine check states what it proves, what it does not prove, confidence,
+  and the artifact path or command output behind the claim
+- replayable trajectory telemetry: per arm record artifact root, logs, commands, edited files,
+  permissions/approvals, turns completed, exit code, crash, and context-exhaustion status
+- harness mutation contract: every adopt/revise/reject recommendation names the intended behavior delta,
+  safety envelope, rollback path, proof command, and rejected alternatives
 - a reachable RevFactory-style 100-point quality score before final comparison: a fully correct
   solution must be able to reach >=80, and each dimension stays individually reachable to 10
 - blind or label-swapped grading
@@ -30,6 +36,8 @@ Required outcome accounting:
 - false-GREEN count: self-reported ship/green while machine or ground-truth checks still fail
 - Visible tests only is false-GREEN when acceptance criteria imply protocol, state, security, scope, parser, concurrency, or error-recovery edges.
 - regression protection: permanent tests added for fixed REDs, or explicit exception
+- verification strength: covered acceptance surface, uncovered surface, and residual risk by arm
+- trajectory efficiency: correctness and verification strength per cost/time/tool-call unit
 - quality score: feature completeness, test coverage, code quality, error handling, efficiency, correctness, architecture, extensibility, documentation, and dev environment
 - overclaim guard: audit trail alone is not a win unless it changes shipped correctness or quality
 
@@ -147,6 +155,7 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
 1. Scope
 - Name `runtime_adapter`: codex, claude-code, pi-agent, mcp, or mixed.
 - Freeze repo snapshot and task wording.
+- Choose the artifact root for logs, result JSON, commands, and the scoped evidence bundle.
 
 2. Baseline Run
 - Run a normal agent with no generated harness, no harness references, and no specialized role pack.
@@ -173,9 +182,10 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
 
 5. Machine Checks
 - Run project-relevant checks: tests, lint, typecheck, build, smoke, browser QA, hidden tests, or data checks.
-- Record EACH test/check individually as `{name, status, evidence}` - never collapse the suite into one
-  all-or-nothing pass. A binary pass/fail hides partial progress (observed: baseline passed 6/9 and
-  harness 4/9, yet a single combined check scored both as the same "fail").
+- Record EACH test/check individually as `{name, status, evidence, verifies, does_not_verify, confidence}`
+  - never collapse the suite into one all-or-nothing pass. A binary pass/fail hides partial progress
+  (observed: baseline passed 6/9 and harness 4/9, yet a single combined check scored both as the same
+  "fail").
 - Track the pass FRACTION per arm; it feeds the gradient correctness score below.
 - `claim_status: proven` requires all baseline and harness checks to pass.
 
@@ -199,17 +209,22 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
 - Grade against the case rubric, not against harness marketing claims.
 
 8. Compare
-- Record pass winner, quality winner, bug-catch delta, false-GREEN delta, regression-test delta, cost/time tradeoff, failure notes, and grader uncertainty.
+- Record pass winner, quality winner, bug-catch delta, false-GREEN delta, verification-strength delta,
+  trajectory-efficiency delta, regression-test delta, cost/time tradeoff, failure notes, and grader
+  uncertainty.
 - `claim_status: proven` requires both machine-check support and a harness quality-score win.
 
 9. Report
 - Use `templates/harness-eval-report.md`.
 - Claim improvement only when machine checks, quality scoring, and blind grading support it.
+- Include the harness mutation contract before recommending adoption or revision.
 - Otherwise say `Not proven`.
 
 10. Persist
 - Save run-specific cases under the vault or `.domain-agent/qa/`.
 - Save broadly reusable case templates under `templates/harness-eval-cases/`.
+- Save raw logs, command list, result JSON, scoped evidence bundle, and mutation contract under the
+  artifact root so the claim can be replayed.
 - Promote a case into the skill only when it is clean-slate, runtime-portable,
   machine-checkable, and includes hidden checks, regression protection, cost
   fields, and the RevFactory-style quality-score rubric.
@@ -221,6 +236,8 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
 - Grading after seeing labels.
 - Claiming a general percentage from one repo pilot.
 - Hiding cost or runtime overhead.
+- Hiding uncovered verification scope behind a passing command.
+- Recommending a harness change without a rollback path and proof command.
 - Treating a quality score win as sufficient when pass/fail checks regress.
 - Counting an all-pass ceiling-effect case (both arms pass everything) as a win or a meaningful tie.
 - A capped scorer whose maximum sum is below the pass threshold, or that cannot distinguish a 6/9 from a 4/9 solution.

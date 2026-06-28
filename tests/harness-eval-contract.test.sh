@@ -58,25 +58,120 @@ run_case() {
 }
 
 PASS_CHECKS='[
-  { "name": "test", "status": "pass", "evidence": "npm test exit=0" },
-  { "name": "lint", "status": "pass", "evidence": "npm run lint exit=0" },
-  { "name": "build", "status": "pass", "evidence": "npm run build exit=0" }
+  {
+    "name": "test",
+    "status": "pass",
+    "evidence": "npm test exit=0",
+    "verifies": "visible and hidden tests",
+    "does_not_verify": "browser smoke",
+    "confidence": "high"
+  },
+  {
+    "name": "lint",
+    "status": "pass",
+    "evidence": "npm run lint exit=0",
+    "verifies": "static rules",
+    "does_not_verify": "runtime behavior",
+    "confidence": "medium"
+  },
+  {
+    "name": "build",
+    "status": "pass",
+    "evidence": "npm run build exit=0",
+    "verifies": "bundle succeeds",
+    "does_not_verify": "hidden acceptance",
+    "confidence": "medium"
+  }
 ]'
 
 WEAK_CHECKS='[
-  { "name": "test", "status": "pass", "evidence": "npm test exit=0" }
+  {
+    "name": "test",
+    "status": "pass",
+    "evidence": "npm test exit=0",
+    "verifies": "visible tests",
+    "does_not_verify": "hidden acceptance",
+    "confidence": "medium"
+  }
 ]'
 
 FAILED_CHECKS='[
-  { "name": "test", "status": "fail", "evidence": "npm test exit=1" },
-  { "name": "lint", "status": "pass", "evidence": "npm run lint exit=0" },
-  { "name": "build", "status": "pass", "evidence": "npm run build exit=0" }
+  {
+    "name": "test",
+    "status": "fail",
+    "evidence": "npm test exit=1",
+    "verifies": "visible and hidden tests",
+    "does_not_verify": "browser smoke",
+    "confidence": "high"
+  },
+  {
+    "name": "lint",
+    "status": "pass",
+    "evidence": "npm run lint exit=0",
+    "verifies": "static rules",
+    "does_not_verify": "runtime behavior",
+    "confidence": "medium"
+  },
+  {
+    "name": "build",
+    "status": "pass",
+    "evidence": "npm run build exit=0",
+    "verifies": "bundle succeeds",
+    "does_not_verify": "hidden acceptance",
+    "confidence": "medium"
+  }
 ]'
 
 NO_EVIDENCE_CHECKS='[
-  { "name": "test", "status": "pass", "evidence": "npm test exit=0" },
-  { "name": "lint", "status": "pass", "evidence": "npm run lint exit=0" },
-  { "name": "build", "status": "pass" }
+  {
+    "name": "test",
+    "status": "pass",
+    "evidence": "npm test exit=0",
+    "verifies": "visible and hidden tests",
+    "does_not_verify": "browser smoke",
+    "confidence": "high"
+  },
+  {
+    "name": "lint",
+    "status": "pass",
+    "evidence": "npm run lint exit=0",
+    "verifies": "static rules",
+    "does_not_verify": "runtime behavior",
+    "confidence": "medium"
+  },
+  {
+    "name": "build",
+    "status": "pass",
+    "verifies": "bundle succeeds",
+    "does_not_verify": "hidden acceptance",
+    "confidence": "medium"
+  }
+]'
+
+NO_SCOPE_CHECKS='[
+  {
+    "name": "test",
+    "status": "pass",
+    "evidence": "npm test exit=0",
+    "does_not_verify": "browser smoke",
+    "confidence": "high"
+  },
+  {
+    "name": "lint",
+    "status": "pass",
+    "evidence": "npm run lint exit=0",
+    "verifies": "static rules",
+    "does_not_verify": "runtime behavior",
+    "confidence": "medium"
+  },
+  {
+    "name": "build",
+    "status": "pass",
+    "evidence": "npm run build exit=0",
+    "verifies": "bundle succeeds",
+    "does_not_verify": "hidden acceptance",
+    "confidence": "medium"
+  }
 ]'
 
 mkresult() {
@@ -87,6 +182,14 @@ mkresult() {
   local quality_winner="${5:-harness}"
   local harness_total="${6:-82}"
   local baseline_total="${7:-74}"
+  local mutation_status="not_proven"
+  if [ "$winner" = "harness" ] && [ "$proven" = "proven" ]; then
+    mutation_status="adopt"
+  elif [ "$winner" = "harness" ]; then
+    mutation_status="revise"
+  elif [ "$winner" = "baseline" ]; then
+    mutation_status="reject"
+  fi
   cat > "$file" <<EOF
 {
   "case_id": "case-001",
@@ -96,12 +199,34 @@ mkresult() {
   "baseline": {
     "condition": "without_harness",
     "machine_checks": $checks,
-    "cost": { "tokens": 1000, "duration_ms": 1000, "tool_calls": 10 }
+    "cost": { "tokens": 1000, "duration_ms": 1000, "tool_calls": 10 },
+    "telemetry": {
+      "artifact_root": "docs/changelog/test-baseline",
+      "logs": ["raw/baseline.log"],
+      "commands": ["npm test", "npm run lint", "npm run build"],
+      "edited_files": ["src/example.js"],
+      "permissions_or_approvals": [],
+      "turns_completed": 1,
+      "exit_code": 0,
+      "crashed": false,
+      "context_exhausted": false
+    }
   },
   "harness": {
     "condition": "with_harness",
     "machine_checks": $checks,
-    "cost": { "tokens": 1200, "duration_ms": 1400, "tool_calls": 12 }
+    "cost": { "tokens": 1200, "duration_ms": 1400, "tool_calls": 12 },
+    "telemetry": {
+      "artifact_root": "docs/changelog/test-harness",
+      "logs": ["raw/harness.log"],
+      "commands": ["npm test", "npm run lint", "npm run build"],
+      "edited_files": ["src/example.js"],
+      "permissions_or_approvals": [],
+      "turns_completed": 1,
+      "exit_code": 0,
+      "crashed": false,
+      "context_exhausted": false
+    }
   },
   "quality": {
     "method": "RevFactory-style 10 dimensions, each 0-10, total 100",
@@ -146,6 +271,14 @@ mkresult() {
       }
     },
     "winner": "$quality_winner"
+  },
+  "harness_mutation_contract": {
+    "status": "$mutation_status",
+    "intended_delta": "increase hidden requirement coverage",
+    "safety_envelope": "no product code edits by the evaluator",
+    "rollback": "restore previous harness contract",
+    "proof_command": "node templates/harness-eval-gate.mjs result.json",
+    "rejected_alternatives": ["prose-only guidance lacks a machine gate"]
   },
   "blind_grading": true,
   "winner": "$winner",
@@ -209,6 +342,12 @@ for case_path in "$ROOT"/templates/harness-eval-cases/*.yaml; do
 done
 require_text "eval records bug-catch matrix" "reference/harness-eval.md" "bug-catch matrix"
 require_text "eval records false GREEN" "reference/harness-eval.md" "false-GREEN count"
+require_text "eval requires scoped evidence bundle" "reference/harness-eval.md" "scoped evidence bundle"
+require_text "eval requires trajectory telemetry" "reference/harness-eval.md" "replayable trajectory telemetry"
+require_text "eval requires mutation contract" "reference/harness-eval.md" "harness mutation contract"
+require_text "report records evidence bundle" "templates/harness-eval-report.md" "## Evidence Bundle"
+require_text "report records trajectory telemetry" "templates/harness-eval-report.md" "## Trajectory Telemetry"
+require_text "report records mutation contract" "templates/harness-eval-report.md" "## Harness Mutation Contract"
 require_text "report records quality score" "templates/harness-eval-report.md" "## Quality Score"
 require_text "report records not proven" "templates/harness-eval-report.md" "## Not Proven"
 require_text "report records bug-catch matrix" "templates/harness-eval-report.md" "## Bug-Catch Matrix"
@@ -239,6 +378,25 @@ run_case "gate accepts failed evidence if not proven" 0 "HARNESS-EVAL PASS" node
 
 mkresult "$T/no-evidence.json" "harness" "$NO_EVIDENCE_CHECKS"
 run_case "gate blocks missing check evidence" 1 "evidence" node "$GATE" "$T/no-evidence.json"
+
+mkresult "$T/no-scope.json" "harness" "$NO_SCOPE_CHECKS"
+run_case "gate blocks missing check scope" 1 "verifies" node "$GATE" "$T/no-scope.json"
+
+mkresult "$T/bad-confidence.json"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.harness.machine_checks[0].confidence='certain'; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/bad-confidence.json"
+run_case "gate blocks unknown confidence" 1 "confidence" node "$GATE" "$T/bad-confidence.json"
+
+mkresult "$T/no-telemetry.json"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); delete x.harness.telemetry; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/no-telemetry.json"
+run_case "gate blocks missing telemetry" 1 "telemetry" node "$GATE" "$T/no-telemetry.json"
+
+mkresult "$T/proven-crash.json" "harness" "$PASS_CHECKS" "proven" "harness"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.harness.telemetry.crashed=true; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/proven-crash.json"
+run_case "gate blocks proven crash" 1 "crashed" node "$GATE" "$T/proven-crash.json"
+
+mkresult "$T/no-mutation-contract.json"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); delete x.harness_mutation_contract; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/no-mutation-contract.json"
+run_case "gate blocks missing mutation contract" 1 "harness_mutation_contract" node "$GATE" "$T/no-mutation-contract.json"
 
 mkresult "$T/no-quality.json"
 node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); delete x.quality; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/no-quality.json"

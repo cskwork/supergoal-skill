@@ -1,0 +1,80 @@
+
+> case-002-async-race@1.0.0 test
+> node --test
+
+TAP version 13
+# Subtest: concurrent gets for the same key call loader exactly once
+ok 1 - concurrent gets for the same key call loader exactly once
+  ---
+  duration_ms: 22.578375
+  type: 'test'
+  ...
+# Subtest: repeated concurrent bursts each load once on a fresh cache
+ok 2 - repeated concurrent bursts each load once on a fresh cache
+  ---
+  duration_ms: 28.6475
+  type: 'test'
+  ...
+# Subtest: different keys load concurrently, not serialized
+ok 3 - different keys load concurrently, not serialized
+  ---
+  duration_ms: 31.322083
+  type: 'test'
+  ...
+# Subtest: a failing loader is not cached and the next call retries
+ok 4 - a failing loader is not cached and the next call retries
+  ---
+  duration_ms: 0.417708
+  type: 'test'
+  ...
+# Subtest: all concurrent callers reject when the shared in-flight load fails
+ok 5 - all concurrent callers reject when the shared in-flight load fails
+  ---
+  duration_ms: 11.726166
+  type: 'test'
+  ...
+# Subtest: loads then caches; a second sequential get does not reload
+ok 6 - loads then caches; a second sequential get does not reload
+  ---
+  duration_ms: 0.607625
+  type: 'test'
+  ...
+# Subtest: clear() drops cached values
+ok 7 - clear() drops cached values
+  ---
+  duration_ms: 0.161208
+  type: 'test'
+  ...
+# Subtest: distinct keys load independently
+ok 8 - distinct keys load independently
+  ---
+  duration_ms: 0.088042
+  type: 'test'
+  ...
+# Subtest: concurrent gets for the same key share one in-flight load
+ok 9 - concurrent gets for the same key share one in-flight load
+  ---
+  duration_ms: 0.707
+  type: 'test'
+  ...
+# Subtest: different keys can load while another key is in flight
+ok 10 - different keys can load while another key is in flight
+  ---
+  duration_ms: 0.889084
+  type: 'test'
+  ...
+# Subtest: failed loads are not cached and can be retried
+ok 11 - failed loads are not cached and can be retried
+  ---
+  duration_ms: 0.446584
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 160.55225

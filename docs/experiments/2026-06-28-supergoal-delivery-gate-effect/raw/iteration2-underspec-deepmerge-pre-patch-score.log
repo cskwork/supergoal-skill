@@ -1,0 +1,68 @@
+
+> underspec-deepmerge@1.0.0 test
+> node --test
+
+TAP version 13
+# Subtest: deep-merges nested objects instead of shallow overwrite
+ok 1 - deep-merges nested objects instead of shallow overwrite
+  ---
+  duration_ms: 0.98175
+  type: 'test'
+  ...
+# Subtest: does not pollute via a __proto__ key
+ok 2 - does not pollute via a __proto__ key
+  ---
+  duration_ms: 0.12825
+  type: 'test'
+  ...
+# Subtest: null or undefined source returns the target values unchanged
+ok 3 - null or undefined source returns the target values unchanged
+  ---
+  duration_ms: 0.133875
+  type: 'test'
+  ...
+# Subtest: object replaces primitive and primitive replaces object
+ok 4 - object replaces primitive and primitive replaces object
+  ---
+  duration_ms: 0.14775
+  type: 'test'
+  ...
+# Subtest: merges two flat objects; source overrides target
+ok 5 - merges two flat objects; source overrides target
+  ---
+  duration_ms: 0.957541
+  type: 'test'
+  ...
+# Subtest: deeply merges nested plain objects into the original target
+ok 6 - deeply merges nested plain objects into the original target
+  ---
+  duration_ms: 0.119625
+  type: 'test'
+  ...
+# Subtest: source scalars, arrays, and null replace target values
+ok 7 - source scalars, arrays, and null replace target values
+  ---
+  duration_ms: 0.165208
+  type: 'test'
+  ...
+# Subtest: does not mutate nested source objects when target has no matching object
+ok 8 - does not mutate nested source objects when target has no matching object
+  ---
+  duration_ms: 0.209167
+  type: 'test'
+  ...
+# Subtest: ignores keys that can mutate object prototypes
+ok 9 - ignores keys that can mutate object prototypes
+  ---
+  duration_ms: 0.096041
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 69.788917

@@ -20,9 +20,11 @@ makes the smallest correct change, verifies against the project's own tests and 
    `reference/` and `agents/` files only when needed.
 3. **Separate roles.** Heavy work uses fresh-context subagents for build, critic, fixer, and verifier so
    one context does not both invent and grade the answer.
-4. **Prove against the real project.** Hidden requirements become failing tests or evidence, then the run
+4. **Run Before/After Eval.** Capture the before state, define the after target, and keep a command
+   manifest so the final claim proves the delta instead of just saying "tests passed."
+5. **Prove against the real project.** Hidden requirements become failing tests or evidence, then the run
    verifies with the repo's real tests, browser checks, DB evidence when load-bearing, and prose spec.
-5. **Stop at the verified result.** No open-ended refactor, no proxy checklist, no fake green.
+6. **Stop at the verified result.** No open-ended refactor, no proxy checklist, no fake green.
 
 ## What it adds over a plain baseline
 
@@ -42,6 +44,8 @@ trivial single edit stays inline.
   the tests miss. Never generate a proxy checklist/verifier and optimize to it.
 - **Smallest correct change.** Match the surrounding code; no whole-file rewrites to change a few lines.
 - **Surface hidden requirements first.** The one place a process beats a plain baseline.
+- **Before/After Eval for real code changes.** GREENFIELD proves what was absent or red before; DEBUG
+  reproduces the symptom; LEGACY/brownfield captures behavior to preserve before changing it.
 - **Ask only when genuinely ambiguous.** Resolve code-answerable questions by reading the code.
 - **Hard stops.** A destructive/irreversible step needs consent; if the real tests cannot pass, report it -
   never fake a pass.
@@ -97,10 +101,12 @@ flowchart TD
 | "make a skill from history - no product code" | **SKILL-MINE** | Mine history -> rank -> you pick -> forge portable `SKILL.md` -> install |
 
 **Default loop (GREENFIELD / DEBUG / LEGACY), role-separated:** 1) **Frame** the goal + acceptance
-criteria; 2) **Build** the smallest correct change, test-first (bug -> failing test first); 3) an
+criteria and start `delivery-proof.md` with Before/After Eval; 2) **Build** the smallest correct change,
+test-first (bug -> failing test first); 3) an
 independent **Critic** re-reads the spec and writes a FAILING test for each required behavior the existing
 tests miss; 4) a **Fixer** makes those pass with the smallest change; 5) **Verify** against the real tests
-and re-read the spec for uncovered rules - stop on green and report what was verified with command output.
+and re-read the spec for uncovered rules - stop only after after-evidence, resolved decision gates, and
+residual risk are recorded with command output.
 
 Coding/debug runs use a run worktree by default: resolve and verify the source/base branch plus the
 target/integration branch before editing, create the run worktree from source/base, and only commit or
@@ -177,9 +183,9 @@ under **WSL** bash.
 ```
 SKILL.md            thin spine: baseline-first loop, modes, reference map
 agents/             one persona file per role (analyst, architect, executor, debugger, explore, designer, qa-*, db-reader, code-reviewer, security-reviewer)
-reference/          domain-rules · domain-context · debugging · interview · plan-grounding · market-research · qa · qa-only · db-access · teach · learn-domain · ui-ux · taste-skill-v2 · functional-ui · harness-eval · skill-mine · observability
+reference/          domain-rules · domain-context · debugging · interview · delivery-gate · plan-grounding · market-research · qa · qa-only · db-access · teach · learn-domain · ui-ux · taste-skill-v2 · functional-ui · harness-eval · skill-mine · observability
 teach/              TEACH-mode format guides + per-topic teaching workspaces
-templates/          qa-gate.sh · qa-only-gate.sh · contrast-gate.mjs · learn-grounding-gate.mjs · qa-report.md · db-access/ · domain-agent/ · domain-onboarding.html · harness-eval-gate.mjs · harness-eval-cases/ · skill-mine/ · skill-frontmatter-gate.mjs · skill-install-audit.mjs · skill.md.template · observability/ (sg-emit board state)
+templates/          delivery-proof.md · qa-gate.sh · qa-only-gate.sh · contrast-gate.mjs · learn-grounding-gate.mjs · qa-report.md · db-access/ · domain-agent/ · domain-onboarding.html · harness-eval-gate.mjs · harness-eval-cases/ · skill-mine/ · skill-frontmatter-gate.mjs · skill-install-audit.mjs · skill.md.template · observability/ (sg-emit board state)
 tests/              contract tests + run-all.sh canonical verifier
 tui/                optional live Board: state.py (reader) · app.py (Textual UI) · serve.py (in-browser) · launch.sh
 docs/               DESIGN.md · research-brief.md · experiments/ (the harness evals) · changelog/ · index.html (landing)

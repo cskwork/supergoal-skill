@@ -1,0 +1,85 @@
+{
+  "experiment": "2026-06-28-supergoal-delivery-gate-effect",
+  "workspace": "/private/tmp/sg-skill-effect-eval.kHqG5I",
+  "claim_status": "partially_proven",
+  "primary_question": "Did the Before/After Eval patch improve supergoal skill-use quality on actual code feature and bug-fix tasks?",
+  "answer": {
+    "correctness": "not_proven_improved",
+    "proof_quality": "improved",
+    "runtime_install_effect": "not_active_in_global_installs"
+  },
+  "controlled_iteration": {
+    "baseline": "git archive HEAD before the current uncommitted delivery-gate patch",
+    "treatment": "current working tree with delivery-gate patch",
+    "cases": [
+      {
+        "id": "underspec-deepmerge",
+        "mode": "GREENFIELD",
+        "fixture": "templates/harness-eval-cases/fixtures/underspec-001-deepmerge",
+        "pre_patch": {
+          "score_command": "npm test after injecting canonical hidden tests",
+          "score_status": 0,
+          "tests": "9 pass, 0 fail",
+          "canonical_hidden": "4 pass, 0 fail",
+          "delivery_proof": false,
+          "required_delivery_sections": "0/7 strict sections"
+        },
+        "current_patch": {
+          "score_command": "npm test after injecting canonical hidden tests",
+          "score_status": 0,
+          "tests": "9 pass, 0 fail",
+          "canonical_hidden": "4 pass, 0 fail",
+          "delivery_proof": true,
+          "required_delivery_sections": "7/7 strict sections"
+        }
+      },
+      {
+        "id": "async-race",
+        "mode": "DEBUG",
+        "fixture": "templates/harness-eval-cases/fixtures/revfactory-case-002-async-race",
+        "pre_patch": {
+          "score_command": "npm test after injecting canonical hidden tests",
+          "score_status": 0,
+          "tests": "11 pass, 0 fail",
+          "canonical_hidden": "5 pass, 0 fail",
+          "delivery_proof": false,
+          "required_delivery_sections": "0/7 strict sections"
+        },
+        "current_patch": {
+          "score_command": "npm test after injecting canonical hidden tests",
+          "score_status": 0,
+          "tests": "13 pass, 0 fail",
+          "canonical_hidden": "5 pass, 0 fail",
+          "delivery_proof": true,
+          "required_delivery_sections": "7/7 strict sections"
+        }
+      }
+    ]
+  },
+  "installed_copy_smoke": {
+    "baseline": "/Users/danny/.agents/skills/supergoal copied install from 2026-06-21",
+    "treatment": "current repo path",
+    "note": "Secondary only. The installed copy is stale and differs from exact pre-patch HEAD, so this is runtime-risk evidence rather than patch-only proof.",
+    "deepmerge_old_installed": {
+      "score_status": 1,
+      "tests": "7 pass, 1 fail",
+      "failure": "null or undefined source returns the target values unchanged"
+    },
+    "deepmerge_current_repo": {
+      "score_status": 0,
+      "tests": "7 pass, 0 fail"
+    }
+  },
+  "raw_artifacts": [
+    "raw/iteration2-underspec-deepmerge-pre-patch-score.log",
+    "raw/iteration2-underspec-deepmerge-current-patch-score.log",
+    "raw/iteration2-async-race-pre-patch-score.log",
+    "raw/iteration2-async-race-current-patch-score.log",
+    "raw/iteration2-underspec-deepmerge-pre-patch-proof.md",
+    "raw/iteration2-underspec-deepmerge-current-patch-delivery-proof.md",
+    "raw/iteration2-async-race-pre-patch-proof.md",
+    "raw/iteration2-async-race-current-patch-delivery-proof.md",
+    "raw/iteration1-installed-old-deepmerge-score.log",
+    "raw/iteration1-repo-new-deepmerge-score.log"
+  ]
+}

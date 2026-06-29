@@ -34,6 +34,38 @@
 - Edited `SKILL.md` (read-first directive before the mode table + reference-map row), `README.md` and
   `README.ko.md` (Principles bullet + Layout).
 
+## DRY pass on the delivery-gate hardening (commit 0e54dd5)
+
+- Decision: commit 0e54dd5 ("harden supergoal proof and eval gates") introduced the Before/After Eval
+  concept in `reference/delivery-gate.md` (its single source of truth), then re-enumerated its field list
+  (eval intent / before-state / after-target / command-manifest / decision-gates / residual-risk) inside
+  SKILL.md, `role-loop.md`, and `plan-grounding.md`. Following the writing-great-skills "single source of
+  truth" + "no-op hunt" guidance, collapsed the restatements that `delivery-gate.md` already owns into
+  pointers, leaving each meaning in one place.
+- Constraint that shaped the pass: the same commit added contract tests (`delivery-gate-contract.test.sh`)
+  that grep for specific strings - the per-mode before-state lines in `role-loop.md`, the
+  `after evidence, resolved decision gates, and residual risk` clause and `Before/After Eval complete` in
+  SKILL.md, `Before/After Eval strategy` in `plan-grounding.md`. Those are the gate's firing points, so they
+  were preserved verbatim; only the unpinned field re-enumerations were cut. No gate weakened.
+- Edits:
+  - `SKILL.md`: Frame step now points to the Before/After Eval instead of re-listing its four fields; core
+    principle tightened; removed the redundant Build-step "preserve the Before proof for LEGACY" clause
+    (already carried by the LEGACY mode row and `role-loop.md`).
+  - `reference/role-loop.md`: Build step no longer repeats the GREENFIELD/LEGACY before-state that its own
+    (test-locked) Run-setup bullets define; replaced with a thin before-proof reminder.
+  - `reference/plan-grounding.md`: dropped the generic pressure-test step 8 that double-recorded the plan
+    Track A/B step 6 already capture per-branch; moved the `delivery-gate.md` pointer onto the Exit line.
+- Rejected: chasing full naming consistency across "Before/After Eval" / "delivery gate" / "delivery-proof"
+  variants - the contract tests pin specific variant strings, so renaming risks the gate for cosmetic gain.
+  Left `reference/harness-eval.md` untouched: its additions are a different mode's contract, are almost
+  entirely test-pinned phrase headers, and use a distinct (`arm_detected`) taxonomy.
+
+### Verification (DRY pass)
+
+- `bash tests/delivery-gate-contract.test.sh`: 23 passed, 0 failed (before and after).
+- `bash tests/harness-eval-contract.test.sh`: 170 passed, 0 failed.
+- `bash tests/run-all.sh`: full suite green ("all checks passed").
+
 ## Verification
 
 - `bash tests/rules-contract.test.sh` passed: 16 passed, 0 failed.

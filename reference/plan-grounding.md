@@ -37,8 +37,6 @@ Use this for Track A and whenever Track B depends on domain language or system b
    `decisions/*.md` entries are for hard-to-reverse, surprising tradeoffs with real alternatives.
 7. Record a compact grounding ledger in `plan.md`: question, answer/source, decision, and remaining
    gap. Do not paste the whole interview.
-8. Add the Before/After Eval plan (`reference/delivery-gate.md`): before-state proof, after target,
-   trusted command manifest, expected artifacts, and any `ask-user` decision gates.
 
 ## Track A - feature / novel work
 
@@ -74,5 +72,5 @@ Vocabulary: **Module** = interface + implementation. **Interface** = what caller
 ## Exit
 
 `plan.md` is now grounded; run the blast-radius confirm (`reference/interview.md`) if the approach
-reaches past its target, ensure the Before/After Eval strategy is explicit, then freeze. Build implements
-the frozen plan.
+reaches past its target, ensure the Before/After Eval strategy (`reference/delivery-gate.md`) is explicit,
+then freeze. Build implements the frozen plan.

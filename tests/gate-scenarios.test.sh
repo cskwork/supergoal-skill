@@ -176,6 +176,59 @@ run_case "12.3 quiz but no scaffold/book -> FAIL"       1 "lesson.css"          
 run_case "12.4 dir scan flags off-spec lessons -> FAIL" 1 "FAIL"                   node "$TEACHGATE" "$v"
 
 # ----------------------------------------------------------------------
+echo; echo "SCENARIO 13 — commit-gate.sh : a non-green run must not commit (failed/incomplete QA, open requirement, uncertain intent)"
+# ----------------------------------------------------------------------
+COMMITGATE="$SKILL_DIR/templates/commit-gate.sh"
+mkproof() {  # write a GREEN delivery-proof.md into $1
+  cat > "$1/delivery-proof.md" <<'EOF'
+# Delivery Proof
+## Command Manifest
+| Name | Command | Source | Proves | Used when |
+|---|---|---|---|---|
+| test | npm test | frozen_repo | suite green | both |
+## Decision Gates
+| ID | Action | Status | Finding | Decision | Recheck |
+|---|---|---|---|---|---|
+| d1 | auto-fix | resolved | lint | fixed | reran |
+## After Evidence
+| Check | Status | Evidence | Verifies | Does not verify |
+|---|---|---|---|---|
+| npm test | pass | log.txt | behavior | perf |
+## Residual Risk
+- Not proven: load
+EOF
+}
+v=$(mkvault s13)
+run_case "13.0 no args -> usage (exit 2)"             2 "usage"                    bash "$COMMITGATE"
+run_case "13.0b bad app-type -> usage (exit 2)"       2 "usage"                    bash "$COMMITGATE" "$v" mobile
+run_case "13.1 no delivery-proof -> blocked"          1 "no Before/After Eval"     bash "$COMMITGATE" "$v" none
+mkproof "$v"
+run_case "13.2 green proof -> PASS"                   0 "COMMIT GATE PASS"         bash "$COMMITGATE" "$v" none
+sed 's/| d1 | auto-fix | resolved/| d1 | ask-user | open/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+run_case "13.3 open ask-user gate -> blocked"         1 "open decision gate"       bash "$COMMITGATE" "$v" none
+mkproof "$v"
+printf '# Surfaced requirements\n## 2026-06-30 - x\n- **R** - implied; covered by `t::x`; status: open\n'  > "$v/surfaced-requirements.md"
+run_case "13.4 open surfaced requirement -> blocked"  1 "surfaced requirement is still open" bash "$COMMITGATE" "$v" none
+printf '# Surfaced requirements\n## 2026-06-30 - x\n- **R** - implied; covered by `t::x`; status: fixed\n' > "$v/surfaced-requirements.md"
+run_case "13.5 closed surfaced requirement -> PASS"   0 "COMMIT GATE PASS"         bash "$COMMITGATE" "$v" none
+printf 'Verdict: PARTIAL   Actions used: 2/100\n' > "$v/report.md"
+run_case "13.6 QA verdict PARTIAL -> blocked"         1 "FAIL/PARTIAL"             bash "$COMMITGATE" "$v" none
+printf 'Verdict: PASS   Actions used: 2/100\n' > "$v/report.md"
+run_case "13.7 QA verdict PASS -> PASS"               0 "COMMIT GATE PASS"         bash "$COMMITGATE" "$v" none
+sed 's/frozen_repo/agent_detected/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+run_case "13.8 no trusted command -> blocked"         1 "no trusted command"       bash "$COMMITGATE" "$v" none
+mkproof "$v"; rm -f "$v/report.md" "$v/surfaced-requirements.md"
+sed 's/| npm test | pass |/| npm test | FAIL |/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+run_case "13.9 after-evidence FAIL row -> blocked"    1 "failing row"              bash "$COMMITGATE" "$v" none
+mkproof "$v"; rm -f "$v/surfaced-requirements.md"
+printf 'Verdict: PASS\nlater run:\nVerdict: FAIL\n' > "$v/report.md"   # H1: FAIL hidden behind earlier PASS
+run_case "13.10 FAIL behind earlier PASS -> blocked"  1 "FAIL/PARTIAL"             bash "$COMMITGATE" "$v" none
+printf 'Verdict: <PASS | FAIL | PARTIAL>\n' > "$v/report.md"          # M1: started-but-incomplete report
+run_case "13.11 un-filled Verdict placeholder -> blocked" 1 "un-filled Verdict"    bash "$COMMITGATE" "$v" none
+rm -f "$v/report.md"
+run_case "13.12 app run w/o QA evidence -> blocked"   1 "QA evidence gate failed"  bash "$COMMITGATE" "$v" browser
+
+# ----------------------------------------------------------------------
 echo
 echo "=================================================================="
 printf " RESULT: %d passed, %d failed\n" "$PASS" "$FAIL"

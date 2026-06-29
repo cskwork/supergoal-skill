@@ -8,6 +8,10 @@ description: supergoal - baseline-first delivery. Use for "/supergoal", "supergo
 One objective -> the smallest correct change -> verified against ground truth. Trivial single edit: skip
 this skill and edit directly. This file is a router; each phase loads only the reference it needs.
 
+**Standing rules (read first, every mode).** Before classifying the mode, read `.supergoal/rules/RULES.md`
+in the project if present and honor it across all phases as the top-priority preferences - but rules never
+weaken safety gates. Create or edit it only when the user explicitly asks (`reference/rules.md`).
+
 ## Core principles
 
 - Verify against ground truth: re-run the project's REAL tests and re-read the prose spec for rules the
@@ -99,6 +103,7 @@ verify=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role>.m
 | `reference/role-loop.md` | default loop + run isolation contract |
 | `agents/<role>.md` | dispatch a role persona |
 | `reference/domain-rules.md` | Frame: distill <=10 priority rules |
+| `reference/rules.md` | read project standing rules (`.supergoal/rules/RULES.md`) first, before any mode |
 | `reference/domain-context.md` | repo-local Domain Brief |
 | `reference/debugging.md` | DEBUG: hypothesis-ledger diagnose loop |
 | `reference/interview.md` | interview: ambiguity (what) + blast-radius confirm (approach, tiered) |

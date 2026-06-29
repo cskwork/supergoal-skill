@@ -68,7 +68,7 @@ flowchart TD
     C -->|"spec / requirements first"| SPEC["SPEC<br/>requirements -> design -> tasks"]
     C -->|"QA / verify only"| QAONLY["QA-ONLY<br/>Impact Matrix + evidence"]
     C -->|"review / audit"| REVIEW["REVIEW-ONLY<br/>findings, no fixes"]
-    C -->|"architecture improvement"| ARCH["ARCH<br/>friction survey -> candidates"]
+    C -->|"architecture improvement"| ARCHITECTURE["ARCHITECTURE<br/>friction survey -> candidates"]
     C -->|"explain / teach"| TEACH["TEACH<br/>stateful teaching workspace"]
     C -->|"learn / onboard"| LEARN["LEARN-DOMAIN<br/>persist domain wiki"]
     C -->|"harness effectiveness"| HARNESS["HARNESS-EVAL<br/>baseline vs harness"]
@@ -79,7 +79,7 @@ flowchart TD
     LEGACY --> LOOP
 
     SPEC --> DOCS["Docs first<br/>then tasks route into delivery"]
-    ARCH --> PICK["Grill chosen candidate<br/>then route to LEGACY or SPEC"]
+    ARCHITECTURE --> PICK["Grill chosen candidate<br/>then route to LEGACY or SPEC"]
 
     QAONLY --> REPORT["No product code by default<br/>report evidence and risk"]
     REVIEW --> REPORT
@@ -99,7 +99,7 @@ flowchart TD
 | "learn / map / onboard onto this codebase" | **LEARN-DOMAIN** | Survey -> Map -> Ground -> Persist a `.domain-agent/` wiki |
 | "QA only / verify / compare data - no code" | **QA-ONLY** | Detailed Impact Matrix (feature-impact QA map) + read-only DB -> evidence -> `report.md` |
 | "review / audit this code/diff/PR - no fixes" | **REVIEW-ONLY** | Two independent reviewers -> verified findings -> `report.md` |
-| "improve the architecture / find refactoring opportunities" | **ARCH** | Friction survey -> candidates `report.md` -> grill the pick -> refactor routes to LEGACY/SPEC |
+| "improve the architecture / find refactoring opportunities" | **ARCHITECTURE** | Friction survey -> candidates `report.md` -> grill the pick -> refactor routes to LEGACY/SPEC |
 | "test harness effectiveness / with vs without" | **HARNESS-EVAL** | Cases -> baseline run -> harness run -> machine checks -> quality score -> compare |
 | "make a skill from history - no product code" | **SKILL-MINE** | Mine history -> rank -> you pick -> forge portable `SKILL.md` -> install |
 
@@ -125,7 +125,7 @@ changes also require real browser QA: `Tool: playwright-cli` evidence and `qa-ga
 /supergoal compare this migration harness with and without the harness on 3 cases
 ```
 
-QA-ONLY, REVIEW-ONLY, ARCH, TEACH/LEARN-DOMAIN, HARNESS-EVAL, and SKILL-MINE are kept as separate-purpose
+QA-ONLY, REVIEW-ONLY, ARCHITECTURE, TEACH/LEARN-DOMAIN, HARNESS-EVAL, and SKILL-MINE are kept as separate-purpose
 utilities (detailed no-code QA, findings-only review, teaching/onboarding, harness measurement, skill
 forging). QA-ONLY is the broad regression lane. Its Impact Matrix is a QA map of everything the feature can
 affect: displayed data consistency, direct behavior, adjacent surfaces, complex multi-step scenarios,

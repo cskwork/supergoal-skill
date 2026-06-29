@@ -27,7 +27,7 @@ ${SUPERGOAL_RUN_DIR:-$HOME/.supergoal/runs}/
 ```
 
 Registry lives **outside any target repo** on purpose: writing into the repo would dirty `git status`,
-which ARCH/REVIEW-ONLY treat as a baseline violation. Schema: `templates/observability/heartbeat.schema.json`.
+which ARCHITECTURE/REVIEW-ONLY treat as a baseline violation. Schema: `templates/observability/heartbeat.schema.json`.
 
 ## Emitting - `templates/observability/sg-emit.sh`
 

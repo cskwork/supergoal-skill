@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# /supergoal ARCH-mode contract.
+# /supergoal ARCHITECTURE-mode contract.
 # Fails if the architecture survey loses its findings-only boundary, its depth/seam
 # vocabulary, its run-vault report with recommendation strengths, its grill reuse,
 # or its route-out to LEGACY/SPEC.
@@ -41,7 +41,7 @@ echo " /supergoal arch contract   skill: $ROOT"
 echo "=================================================================="
 
 # SKILL.md wiring
-require_text "mode table routes ARCH" "SKILL.md" "| ARCH |"
+require_text "mode table routes ARCHITECTURE" "SKILL.md" "| ARCHITECTURE |"
 require_text "reference map lists arch" "SKILL.md" "reference/arch.md"
 
 # findings-only boundary

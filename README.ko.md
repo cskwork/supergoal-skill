@@ -68,7 +68,7 @@ flowchart TD
     C -->|"spec / requirements first"| SPEC["SPEC<br/>requirements -> design -> tasks"]
     C -->|"QA / verify only"| QAONLY["QA-ONLY<br/>Impact Matrix + 증거"]
     C -->|"review / audit"| REVIEW["REVIEW-ONLY<br/>findings, 수정 없음"]
-    C -->|"architecture improvement"| ARCH["ARCH<br/>마찰 조사 -> 후보"]
+    C -->|"architecture improvement"| ARCHITECTURE["ARCHITECTURE<br/>마찰 조사 -> 후보"]
     C -->|"explain / teach"| TEACH["TEACH<br/>상태가 남는 교육 workspace"]
     C -->|"learn / onboard"| LEARN["LEARN-DOMAIN<br/>도메인 위키 저장"]
     C -->|"harness effectiveness"| HARNESS["HARNESS-EVAL<br/>baseline vs harness"]
@@ -79,7 +79,7 @@ flowchart TD
     LEGACY --> LOOP
 
     SPEC --> DOCS["문서 먼저<br/>tasks가 delivery로 이어짐"]
-    ARCH --> PICK["후보를 grill<br/>LEGACY 또는 SPEC으로 이동"]
+    ARCHITECTURE --> PICK["후보를 grill<br/>LEGACY 또는 SPEC으로 이동"]
 
     QAONLY --> REPORT["기본적으로 제품 코드 변경 없음<br/>증거와 위험을 보고"]
     REVIEW --> REPORT
@@ -99,7 +99,7 @@ flowchart TD
 | "이 코드베이스를 학습/온보딩해줘" | **LEARN-DOMAIN** | Survey -> Map -> Ground -> `.domain-agent/` 위키 |
 | "QA만/검증/데이터 비교" (코드 변경 없음) | **QA-ONLY** | 상세 Impact Matrix(기능 영향 범위 QA 지도) + 읽기 전용 DB -> 증거 -> `report.md` |
 | "코드/diff/PR 리뷰만" (수정 없음) | **REVIEW-ONLY** | 독립 리뷰어 2명 -> 검증된 findings -> `report.md` |
-| "구조 개선 / 리팩터링 후보 찾아줘" | **ARCH** | 마찰 조사 -> 후보 `report.md` -> 고른 후보 grill -> 리팩터링은 LEGACY/SPEC으로 |
+| "구조 개선 / 리팩터링 후보 찾아줘" | **ARCHITECTURE** | 마찰 조사 -> 후보 `report.md` -> 고른 후보 grill -> 리팩터링은 LEGACY/SPEC으로 |
 | "harness 효과 테스트 / 유무 비교" | **HARNESS-EVAL** | 케이스 -> baseline -> harness -> 머신 체크 -> 품질 점수 -> 비교 |
 | "히스토리에서 스킬 생성" (제품 코드 변경 없음) | **SKILL-MINE** | 히스토리 마이닝 -> 랭크 -> 선택 -> 포터블 `SKILL.md` 생성 -> 설치 |
 
@@ -122,7 +122,7 @@ flowchart TD
 /supergoal 이 마이그레이션 harness를 3개 케이스에서 유무 비교해줘
 ```
 
-QA-ONLY, REVIEW-ONLY, ARCH, TEACH/LEARN-DOMAIN, HARNESS-EVAL, SKILL-MINE은 각각 다른 목적의 유틸리티입니다.
+QA-ONLY, REVIEW-ONLY, ARCHITECTURE, TEACH/LEARN-DOMAIN, HARNESS-EVAL, SKILL-MINE은 각각 다른 목적의 유틸리티입니다.
 상세 코드 없는 QA, 수정 없는 리뷰, 교육/온보딩, harness 측정, 스킬 생성처럼 제품 코드를 바로 고치지 않는
 작업을 다룹니다. QA-ONLY는 넓은 회귀 검증 lane입니다. Impact Matrix는 기능이 영향을 줄 수 있는 화면,
 데이터 경로, 권한, 전/중/후 액션, 실패 케이스를 펼친 QA 지도입니다. 직접 동작, 인접 화면, 표시 데이터

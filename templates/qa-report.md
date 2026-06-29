@@ -1,7 +1,8 @@
 <!--
 QA-ONLY human report. Fill from the qa-auditor summary. Keep it readable by a non-engineer.
-Prose in the user's language; keep the `##` anchor headings in English (the gate greps them) and keep
-file paths/commands verbatim. No credentials, no raw DB rows, no PII.
+Prose in the target repo's dominant docs language; if docs are mixed or absent, use the user's language.
+Keep the `##` anchor headings in English (the gate greps them) and keep file paths/commands verbatim.
+No credentials, no raw DB rows, no PII.
 -->
 
 # QA report - <objective>

@@ -81,6 +81,28 @@
   entries are left unedited as records.
 - Verification: `bash tests/arch-contract.test.sh` 25 passed; `bash tests/run-all.sh` green.
 
+## ARCHITECTURE: visual HTML report + closer fidelity to improve-codebase-architecture
+
+- Context: ARCHITECTURE mode is supergoal's port of mattpocock's `improve-codebase-architecture` skill.
+  Re-checked fidelity and DRY against the upstream; applied three changes.
+- HTML report (the headline change): the survey deliverable moves from markdown `report.md` to a
+  self-contained `report.html` in the run vault, with a new `templates/arch-report.html` scaffold -
+  candidate cards (Files / Problem / Solution / Benefits), a before/after shallow->deep visual, and
+  `Strong | Worth exploring | Speculative` strength badges, ending in Top recommendation + Not covered.
+  Adopts the upstream's "be visual" report. Diverges from the upstream on two points, on purpose:
+  (1) written to the run vault, not `$TMPDIR` - supergoal persists its artifacts for audit/replay;
+  (2) inline CSS only, no Tailwind/Mermaid CDN - supergoal's self-contained/offline rule (same rule as
+  `templates/domain-onboarding.html`), so before/after is inline SVG/CSS boxes instead of Mermaid.
+- DRY fix: the architecture vocabulary (Module/Interface/Depth/Seam/Leverage/Locality) was defined twice -
+  fully in `reference/arch.md` and again in `reference/plan-grounding.md` Track B - and the two had already
+  drifted (Seam: "where an interface lives" vs "replaceable boundary"). `arch.md` is now the single source;
+  plan-grounding points to it. Closes the duplication the user flagged.
+- Fidelity gaps closed: added `Adapter` to the vocabulary, added `API` to the drift blocklist, and added a
+  "sharpen a fuzzy term mid-grill -> update CONTEXT.md" inline decision (the upstream's domain-modeling
+  side effect that was missing).
+- Verification: `bash tests/arch-contract.test.sh` (report.html + template/offline assertions added);
+  `bash tests/run-all.sh` green.
+
 ## Verification
 
 - `bash tests/rules-contract.test.sh` passed: 16 passed, 0 failed.

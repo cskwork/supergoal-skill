@@ -54,9 +54,8 @@ Use this for Track A and whenever Track B depends on domain language or system b
 
 ## Track B - refactor / improve codebase
 
-Vocabulary: **Module** = interface + implementation. **Interface** = what callers must know. **Depth**
-= leverage behind a small interface. **Seam** = replaceable boundary. **Leverage** = caller gain.
-**Locality** = change/bugs/knowledge kept together.
+Vocabulary (Module, Interface, Depth, Seam, Adapter, Leverage, Locality): defined once in
+`reference/arch.md` (`## Vocabulary`) - use those definitions; do not restate them here.
 
 1. Read the Domain Brief and relevant repo docs or decision records first.
 2. Find friction: shallow modules, cross-module bouncing, test-only extractions with no locality, leaky

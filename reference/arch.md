@@ -7,13 +7,14 @@ deep ones - for testability and AI-navigability. It writes NO source or test edi
 the run vault (plus user-approved `CONTEXT.md`/ADR writes during the grill). The chosen refactor is a
 new objective for another mode; ARCHITECTURE itself never starts fixing.
 
-## Vocabulary (use these terms exactly; do not drift into "component", "service", "boundary")
+## Vocabulary (use these terms exactly; do not drift into "component", "service", "API", "boundary")
 
 - **Module** - anything with an interface and an implementation (function, class, package, slice).
 - **Interface** - everything a caller must know: types, invariants, error modes, ordering, config.
 - **Depth** - a lot of behavior behind a small interface. **Shallow** - interface nearly as complex
   as the implementation.
 - **Seam** - where an interface lives; behavior can be altered there without editing in place.
+- **Adapter** - a concrete implementation behind a seam.
 - **Leverage** - what callers get from depth. **Locality** - what maintainers get: change, bugs, and
   knowledge concentrated in one place.
 - **Deletion test** - imagine deleting the module: complexity vanishes = it was a pass-through;
@@ -35,14 +36,16 @@ new objective for another mode; ARCHITECTURE itself never starts fixing.
 
 ## Report (the survey deliverable)
 
-Write `report.md` in the run vault (`docs/changelog/<YYYY-MM>/<DD-arch-topic>/`) - not $TMPDIR, not
-the repo root; use the docs language (SKILL.md). Per candidate: Files / Problem (the friction) / Solution
-in plain language / Benefits
-stated in locality, leverage, and test terms / recommendation strength `Strong | Worth exploring |
-Speculative`. Every Strong candidate is re-checked against the cited code before it enters the
-report - plausible-but-unverified is the failure mode. End with `Top recommendation:` (which to
-tackle first and why) and `Not covered:` (so silence is not read as approval). Do NOT propose
-interfaces yet - present candidates, then ask which one to explore.
+Write a self-contained `report.html` in the run vault (`docs/changelog/<YYYY-MM>/<DD-arch-topic>/`) - not
+$TMPDIR, not the repo root; use the docs language (SKILL.md). Clone `templates/arch-report.html`: inline
+CSS only, no CDN or network (offline, like the LEARN-DOMAIN handbook); before/after as inline SVG or CSS
+boxes (shallow -> deep). Per candidate: Files / Problem (the friction) / Solution in plain language /
+Benefits stated in locality, leverage, and test terms / a before/after visual / recommendation strength
+`Strong | Worth exploring | Speculative` as a badge. Every Strong candidate is re-checked against the
+cited code before it enters the report - plausible-but-unverified is the failure mode. End with a `Top
+recommendation` block (which to tackle first and why) and a `Not covered` block (so silence is not read
+as approval). Do NOT propose interfaces yet - present candidates, then tell the user the `report.html`
+path (open it with the OS opener when available) and ask which one to explore.
 
 ## Grill the pick
 
@@ -53,6 +56,7 @@ behind the seam, which tests survive the change. Decisions land inline where the
 
 - A deepened module named after a concept missing from `CONTEXT.md` -> add the term there (create
   the file lazily; glossary only, no implementation details).
+- A fuzzy or overloaded term sharpened mid-grill -> update its `CONTEXT.md` entry right then.
 - The user rejects a candidate for a load-bearing reason -> offer a short ADR under `docs/adr/`
   (context, decision, rationale) so future surveys don't re-suggest it; skip ephemeral ("not now")
   and self-evident reasons.

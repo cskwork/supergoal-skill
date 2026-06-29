@@ -63,13 +63,21 @@ require_text "arch does not re-litigate ADRs" "reference/arch.md" "decisions not
 require_text "arch explores organically" "reference/arch.md" "Explore organically"
 
 # report
-require_text "arch report lives in the run vault" "reference/arch.md" "report.md"
+require_text "arch report lives in the run vault" "reference/arch.md" "report.html"
 require_text "arch report never goes to TMPDIR" "reference/arch.md" "not \$TMPDIR"
 require_text "arch report matches docs language" "reference/arch.md" "docs language (SKILL.md)"
 require_text "arch grades recommendation strength" "reference/arch.md" "Strong | Worth exploring | Speculative"
 require_text "arch report ends with top recommendation" "reference/arch.md" "Top recommendation"
 require_text "arch verifies strong candidates" "reference/arch.md" "re-checked against the cited code"
 require_text "arch defers interface design" "reference/arch.md" "Do NOT propose interfaces yet"
+
+# visual html report (self-contained, offline - upstream improve-codebase-architecture, supergoal form)
+require_text "arch report clones the html template" "reference/arch.md" "templates/arch-report.html"
+require_text "arch report is offline inline css" "reference/arch.md" "inline CSS only"
+require_text "arch report shows before/after" "reference/arch.md" "before/after"
+require_file "arch report template exists" "templates/arch-report.html"
+require_text "arch report template grades strength" "templates/arch-report.html" "Worth exploring"
+require_text "arch report template is self-contained" "templates/arch-report.html" "inline CSS only"
 
 # grill the pick (reuse, not reinvent)
 require_text "arch reuses the spec grill protocol" "reference/arch.md" "reference/spec.md"

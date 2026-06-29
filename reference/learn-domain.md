@@ -181,8 +181,7 @@ Constraints:
   never misled; put expert detail (signatures, file paths, probe commands) in `<details>` for
   progressive disclosure - simple on the surface, expert underneath.
 - Accessible and responsive: semantic HTML, a table of contents with anchors, usable below 768px.
-- Language: match the target repo's existing docs language for pack/onboarding prose; if docs are mixed
-  or absent, use the user's language. Keep identifiers, signatures, file paths, and commands verbatim.
+- Docs language (SKILL.md): also keep signatures verbatim.
 - No secrets, tokens, raw logs, or PII (the pack already passed the secret scan; add no new content).
 - Committing exposes internal architecture: keep it in the gitignored knowledge path; ask before moving
   it outside, exactly like publishing the pack.
@@ -214,9 +213,7 @@ Keep the pack fresh without re-summarizing the repo each change:
 | Completeness | self-check + `learn-grounding-gate.mjs` | bounded-context list + code | gaps -> work or `unverified` |
 | Onboard | `explore` renders to the Functional tier (`reference/functional-ui.md`) | persisted pack | `onboarding.html` |
 
-Language: write pack prose in the target repo's existing docs language; if docs are mixed or absent, use
-the user's language. Keep identifiers, signatures, commands, and `Grounding:`/`verified:` markers
-verbatim so the gate keeps matching.
+Docs language (SKILL.md); keep `Grounding:`/`verified:` markers verbatim so the gate keeps matching.
 
 ## Stop conditions
 

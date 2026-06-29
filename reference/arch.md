@@ -36,8 +36,8 @@ new objective for another mode; ARCH itself never starts fixing.
 ## Report (the survey deliverable)
 
 Write `report.md` in the run vault (`docs/changelog/<YYYY-MM>/<DD-arch-topic>/`) - not $TMPDIR, not
-the repo root. Match the target repo's dominant docs language; if docs are mixed or absent, use the
-user's language. Per candidate: Files / Problem (the friction) / Solution in plain language / Benefits
+the repo root; use the docs language (SKILL.md). Per candidate: Files / Problem (the friction) / Solution
+in plain language / Benefits
 stated in locality, leverage, and test terms / recommendation strength `Strong | Worth exploring |
 Speculative`. Every Strong candidate is re-checked against the cited code before it enters the
 report - plausible-but-unverified is the failure mode. End with `Top recommendation:` (which to

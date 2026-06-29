@@ -26,7 +26,7 @@ echo " /supergoal workflow contract   skill: $ROOT"
 echo "=================================================================="
 
 # Coding/debug branch isolation is required by default.
-require_text "SKILL matches repo docs language for docs" "SKILL.md" "Match its dominant prose language"
+require_text "SKILL matches repo docs language for docs" "SKILL.md" "match the target repo's dominant prose language"
 require_text "SKILL requires source/base and target refs" "SKILL.md" "source/base branch and target/integration branch"
 require_text "SKILL verifies refs before mutation" "SKILL.md" "verify both refs before mutating files"
 require_text "SKILL requires a run worktree" "SKILL.md" "create a run worktree from the source/base branch"

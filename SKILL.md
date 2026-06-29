@@ -23,11 +23,9 @@ weaken safety gates. Create or edit it only when the user explicitly asks (`refe
 - For non-trivial code changes, run Before/After Eval: capture the current state before Build, define the
   expected after state, and prove the delta with trusted repo/evaluator commands (`reference/delivery-gate.md`).
 - Ask only when genuinely ambiguous; resolve code-answerable questions by reading the code.
-- Output/doc language: before writing persistent repo docs (`docs/**`, run vaults, `.domain-agent/**`,
-  ADR/spec/changelog), inspect the target repo's existing docs. Match its dominant prose language
-  (Korean docs -> Korean; English docs -> English); if no stable docs language exists, use the user's
-  language. Keep identifiers, paths, commands, and machine-checked anchors in canonical English so checks
-  keep matching.
+- Docs language: for persistent repo docs (`docs/**`, run vaults, `.domain-agent/**`, ADR/spec/changelog),
+  match the target repo's dominant prose language; mixed or none -> the user's language. Keep identifiers,
+  paths, commands, and machine-checked anchors in canonical English so checks keep matching.
 - Hard stops: a destructive or irreversible step (drop data, force-push, external publish) needs explicit
   consent; if the real tests cannot pass, report it - never fake a pass.
 

@@ -48,7 +48,7 @@ require_text "reference map lists spec" "SKILL.md" "reference/spec.md"
 require_file "spec reference exists" "reference/spec.md"
 require_text "spec outputs to docs/spec in the target repo" "reference/spec.md" "docs/spec/<feature-slug>/"
 require_text "spec produces three documents" "reference/spec.md" "requirements.md -> design.md -> tasks.md"
-require_text "spec writes in target docs language" "reference/spec.md" "dominant docs language"
+require_text "spec writes in target docs language" "reference/spec.md" "docs language (SKILL.md)"
 
 # requirements phase format
 require_text "spec uses EARS format" "reference/spec.md" "WHEN [event] THEN [system] SHALL [response]"

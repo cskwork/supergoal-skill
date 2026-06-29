@@ -65,7 +65,7 @@ require_text "arch explores organically" "reference/arch.md" "Explore organicall
 # report
 require_text "arch report lives in the run vault" "reference/arch.md" "report.md"
 require_text "arch report never goes to TMPDIR" "reference/arch.md" "not \$TMPDIR"
-require_text "arch report matches docs language" "reference/arch.md" "dominant docs language"
+require_text "arch report matches docs language" "reference/arch.md" "docs language (SKILL.md)"
 require_text "arch grades recommendation strength" "reference/arch.md" "Strong | Worth exploring | Speculative"
 require_text "arch report ends with top recommendation" "reference/arch.md" "Top recommendation"
 require_text "arch verifies strong candidates" "reference/arch.md" "re-checked against the cited code"

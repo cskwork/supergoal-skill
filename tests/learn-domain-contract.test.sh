@@ -57,7 +57,7 @@ require_text "reference requires a self-contained file" "reference/learn-domain.
 require_text "reference forbids external scripts/CDN" "reference/learn-domain.md" "no external scripts"
 require_text "reference renders to the Functional tier" "reference/learn-domain.md" "functional-ui.md"
 require_text "reference keeps the pack the source of truth" "reference/learn-domain.md" "source of truth"
-require_text "reference matches target docs language" "reference/learn-domain.md" "target repo's existing docs language"
+require_text "reference matches target docs language" "reference/learn-domain.md" "docs language (SKILL.md)"
 require_text "template names the Functional tier" "templates/domain-onboarding.html" "functional-ui.md"
 require_text "template forbids external scripts" "templates/domain-onboarding.html" "NO external scripts"
 require_text "template carries a verified badge" "templates/domain-onboarding.html" "badge verified"

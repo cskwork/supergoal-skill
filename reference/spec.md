@@ -30,9 +30,7 @@ Skip when **any** holds (default loop without spec; log the skip in the run `REA
 
 ## Documents (in order; one file each under `docs/spec/<feature-slug>/`)
 
-Before creating or updating these files, inspect the target repo's current docs (README, `docs/`, ADRs)
-and write prose in the dominant docs language. If the docs are mixed or absent, use the user's language.
-Keep EARS keywords, filenames, requirement IDs, and machine-checked anchors canonical.
+Write prose in the docs language (SKILL.md); keep EARS keywords, filenames, and requirement IDs canonical.
 
 **1. requirements.md** (`templates/spec/requirements.md`) - **what, not how.** Behaviors, never
 technologies ("system SHALL return cached results", not "use Redis").

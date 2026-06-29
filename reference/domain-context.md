@@ -25,14 +25,12 @@ I do not see domain-agent knowledge for this repo. Should I create it at `.domai
 ```
 
 Then: create the chosen folder from `templates/domain-agent/`; write `config.json` (repo, path,
-detected docs language, dates); add the chosen path to the repo root `.gitignore` if it is absent; record the path
+`language`, dates); add the chosen path to the repo root `.gitignore` if it is absent; record the path
 in the run vault `README.md`. This is the only allowed repo write before Build besides vault setup -
 knowledge scaffolding and `.gitignore` only, never product source code. If the user declines storage,
 run with an ephemeral Domain Brief in the vault only.
 
-Use `language` for the target repo's dominant docs language, not the agent's default. Inspect README,
-`docs/`, ADRs, and existing changelog/spec prose; if mixed, record `mixed` and use the user's language
-for new prose.
+Set `language` to the repo's docs language (SKILL.md), or `mixed` when no single one dominates.
 
 ## File contract
 

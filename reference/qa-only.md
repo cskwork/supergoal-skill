@@ -113,9 +113,8 @@ domain pack (below).
 
 ## Report (the one human-facing deliverable)
 
-Write `report.md` from `templates/qa-report.md`, in the target repo's dominant docs language under
-English anchor headings; if docs are mixed or absent, use the user's language. Lead with the verdict,
-then coverage, then per-scenario pass/fail with the evidence path, then concrete
+Write `report.md` from `templates/qa-report.md` in the docs language (SKILL.md) under English anchor
+headings. Lead with the verdict, then coverage, then per-scenario pass/fail with the evidence path, then concrete
 findings (e.g. a UI value that disagreed with the DB), reproduction steps for every issue, what was not
 covered, and the exact command/suite to re-run. Keep it readable by a non-engineer.
 

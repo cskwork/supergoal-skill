@@ -56,6 +56,19 @@ require_text "delivery gate records decision gates" "reference/delivery-gate.md"
 require_text "delivery gate rejects agent-only proof" "reference/delivery-gate.md" "Agent-detected commands can supplement proof, but cannot be the whole proof"
 require_text "delivery gate blocks unresolved ask-user" "reference/delivery-gate.md" 'Unresolved `ask-user` findings block a final done claim'
 
+# Commit gate: a non-green run (failed/incomplete QA, open requirement, uncertain intent) must not commit.
+require_file "commit gate script exists" "templates/commit-gate.sh"
+require_text "delivery gate defines commit gate" "reference/delivery-gate.md" "## Commit gate"
+require_text "commit gate blocks failed/incomplete QA" "reference/delivery-gate.md" "QA verdict FAIL or PARTIAL"
+require_text "commit gate blocks open requirement" "reference/delivery-gate.md" "open requirement in"
+require_text "commit gate blocks unresolved ask-user gate" "reference/delivery-gate.md" "unresolved \`ask-user\` decision gate"
+require_text "commit gate blocks uncertain intent" "reference/delivery-gate.md" "fulfillment is uncertain"
+require_text "commit gate is fix-first" "reference/delivery-gate.md" "fix-first"
+require_text "commit gate names backstop script" "reference/delivery-gate.md" "templates/commit-gate.sh"
+require_text "SKILL hard-gates commit" "SKILL.md" "Commit is hard-gated"
+require_text "SKILL points commit gate at delivery gate" "SKILL.md" "commit gate passes"
+require_text "role loop gates commit on the script" "reference/role-loop.md" "once the commit gate passes"
+
 require_text "plan grounding carries eval strategy" "reference/plan-grounding.md" "Before/After Eval strategy"
 require_text "template records before state" "templates/delivery-proof.md" "## Before State"
 require_text "template records command manifest" "templates/delivery-proof.md" "## Command Manifest"

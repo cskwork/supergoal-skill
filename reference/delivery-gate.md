@@ -71,4 +71,20 @@ Done means `delivery-proof.md` shows:
 - trusted commands run with outputs or artifacts,
 - decision gates resolved,
 - residual risk named,
-- changelog updated with accepted and rejected alternatives.
+- changelog updated with accepted and rejected alternatives,
+- commit gate passed (`## Commit gate`).
+
+## Commit gate
+
+Commit or merge into the target/integration branch only when the proof above is green and the user has
+accepted. Block the commit while any holds: REAL tests or prose spec not green; QA verdict FAIL or PARTIAL
+(incomplete); an open requirement in `surfaced-requirements.md`; an unresolved `ask-user` decision gate; or
+the requirement's fulfillment is uncertain.
+
+Blocked is fix-first: the role-loop resolves it (fix the red, finish QA, close the requirement). Ask the
+user about the requirement only when it is requirement-level (ambiguous or unmet), genuinely uncertain, or
+the critic->fixer loop hit its cap (`reference/role-loop.md`); route via `reference/interview.md`. Never
+commit on an assumption - resolve it or get explicit acceptance.
+
+Backstop: `bash templates/commit-gate.sh <vault> <browser|cli|none>` must exit 0 before commit/merge.
+Never edit the gate to pass.

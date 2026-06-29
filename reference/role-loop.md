@@ -43,9 +43,8 @@ dependent roles ordered. A trivial single edit skips the loop and edits inline.
    target has cleared its interview confirm (`reference/interview.md`: approved, AFK-proceeded, or
    safely skipped and logged). Then: smallest correct change; match surrounding style; minimal diff.
    Bug: reproduce with a failing test first. Refactor/integrate an existing API: capture its
-   exact-behavior baseline FIRST (`reference/qa.md` "API behavior baseline"). For GREENFIELD, keep the
-   first red acceptance proof or absent-feature proof in `delivery-proof.md`; for LEGACY/brownfield, keep
-   before/after comparison possible by saving the pre-change capture before edits.
+   exact-behavior baseline FIRST (`reference/qa.md` "API behavior baseline"). Capture the run-setup before
+   proof in `delivery-proof.md` before the first edit.
 
 2. **Critic** (`agents/code-reviewer.md`) - DO NOT edit src or weaken/delete existing tests.
    - Re-read the prose spec and repo/data rules. Enumerate REQUIRED behaviors the existing tests do not

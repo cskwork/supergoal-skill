@@ -20,8 +20,8 @@ weaken safety gates. Create or edit it only when the user explicitly asks (`refe
   Scope-minimalism governs code surface area, NOT visual quality: for user-facing UI a polished result is
   baseline correctness, not padding.
 - Surface hidden requirements first, as FAILING tests written by an independent critic.
-- For non-trivial code changes, run Before/After Eval: capture the current state before Build, define the
-  expected after state, and prove the delta with trusted repo/evaluator commands (`reference/delivery-gate.md`).
+- For non-trivial code changes, run a Before/After Eval before Build: prove the before state, the after
+  target, and the delta with trusted repo/evaluator commands (`reference/delivery-gate.md`).
 - Ask only when genuinely ambiguous; resolve code-answerable questions by reading the code.
 - Docs language: for persistent repo docs (`docs/**`, run vaults, `.domain-agent/**`, ADR/spec/changelog),
   match the target repo's dominant prose language; mixed or none -> the user's language. Keep identifiers,
@@ -75,11 +75,9 @@ DB evidence when persisted data is load-bearing. Full contract: `reference/role-
    its target, confirm it before Build - tiered, hard-gated when wide/destructive/behavior-changing
    (`reference/interview.md`). Resolve code-answerable questions by reading code. UI work: load
    `reference/ui-ux.md` now. Non-trivial code work: start `delivery-proof.md` from
-   `templates/delivery-proof.md` and record eval intent, before state, after target, and command manifest
-   (`reference/delivery-gate.md`).
+   `templates/delivery-proof.md` and record the Before/After Eval (`reference/delivery-gate.md`).
 2. **Build.** Smallest correct change, test-first; match surrounding style; minimal diff. Bug: reproduce
-   with a failing test first (`reference/debugging.md`). Preserve the Before proof for LEGACY/brownfield
-   work before changing behavior.
+   with a failing test first (`reference/debugging.md`).
 3. **Critic (independent; no src edits).** Re-read the prose spec + repo/data rules
    (`reference/domain-context.md`, `domain-rules.md`). For each required behavior the existing tests miss,
    write a FAILING test and log it in the run vault's `surfaced-requirements.md`. A signal, not the oracle.

@@ -86,9 +86,9 @@ When the failure spans DB, API, network, or message-queue boundaries, map before
    best separates them. Resist fixating on the first plausible cause; advance only causes backed by
    direct evidence.
 4. **Confirm.** Before locking the cause, present the 3-5 ranked hypotheses to the user for re-ranking
-   (cheap checkpoint, non-blocking — proceed on your own ranking if the user is AFK; see
-   `reference/interview.md`). Then back one hypothesis with direct evidence at the boundary, advancing
-   a user-preferred hypothesis only when evidence still supports it. Write the fix plan in `README.md`.
+   (`reference/interview.md` DEBUG variant owns the mechanics: non-blocking, AFK-proceed, never abandon
+   evidence for preference). Then back one hypothesis with direct evidence at the boundary. Write the
+   fix plan in `README.md`.
    If that fix's blast radius reaches past the cause site (other functions/modules or observed
    behavior), present it with the re-ranking and apply the tiered blast-radius confirm
    (`reference/interview.md`) before the first edit. Stop and ask the user only on SKILL.md hard stops

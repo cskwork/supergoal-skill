@@ -93,8 +93,8 @@ best-effort - it observes only, never blocks or gates the loop.
   never declare done because self-written tests pass while real tests/spec do not.
 - Derive every generated test from the prose spec, not from a guessed rubric; a wrong generated test the
   fixer optimizes to is the failure mode - keep them black-box and spec-anchored.
-- Cost: the loop is several times a single run's effort. Use it when correctness on behavior the visible
-  tests miss matters; for a quick pass, one build is cheaper.
+- Cost: the loop costs more than one build - use it when correctness on behavior the visible tests miss
+  matters; for a quick pass, one build is cheaper.
 - Stop condition: cap the critic->fixer loop at 3 cycles; if a 4th would start, escalate to the user
   with the open reds instead of grinding. Doubt-theater anti-signal: 2+ cycles that produce findings but
   change no code means the critic is validating, not doubting - stop and recut the critic's spec focus.

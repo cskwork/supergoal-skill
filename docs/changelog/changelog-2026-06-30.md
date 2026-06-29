@@ -66,6 +66,21 @@
 - `bash tests/harness-eval-contract.test.sh`: 170 passed, 0 failed.
 - `bash tests/run-all.sh`: full suite green ("all checks passed").
 
+## Rename mode `ARCH` -> `ARCHITECTURE`
+
+- Decision: the `ARCH` abbreviation was opaque to readers (user could not tell what the word meant).
+  Renamed the user-facing mode label to the full word `ARCHITECTURE`; faithful to the mode (it surveys
+  architecture/refactoring opportunities, then routes the pick to LEGACY/SPEC and never edits code itself).
+- Surface updated consistently: SKILL.md (mode table, no-code-modes list, reference map), README.md and
+  README.ko.md (mermaid node, mode grid, utilities line), `docs/index.html` mode card label,
+  `reference/arch.md` title/body, `reference/observability.md`, and the `tests/arch-contract.test.sh`
+  assertion (`| ARCH |` -> `| ARCHITECTURE |`).
+- Kept as-is on purpose: the internal paths `reference/arch.md` and `tests/arch-contract.test.sh`, and the
+  `index.html` `mode-card arch` CSS class - they are internal identifiers, not the word the user reads, and
+  renaming them churns run-all wiring and styling for no user-facing gain. Historical changelog/experiment
+  entries are left unedited as records.
+- Verification: `bash tests/arch-contract.test.sh` 25 passed; `bash tests/run-all.sh` green.
+
 ## Verification
 
 - `bash tests/rules-contract.test.sh` passed: 16 passed, 0 failed.

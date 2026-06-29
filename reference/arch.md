@@ -1,11 +1,11 @@
-# ARCH mode - architecture survey (deepening opportunities, then grill the pick)
+# ARCHITECTURE mode - architecture survey (deepening opportunities, then grill the pick)
 
 Use when the user wants to find what to improve, not to change it yet: "improve the architecture",
 "find refactoring opportunities", "어디를 리팩터링하면 좋을까", "구조 개선 후보 찾아줘". Survey the
 codebase for architectural friction and propose deepening refactors - turning shallow modules into
 deep ones - for testability and AI-navigability. It writes NO source or test edits - read-only except
 the run vault (plus user-approved `CONTEXT.md`/ADR writes during the grill). The chosen refactor is a
-new objective for another mode; ARCH itself never starts fixing.
+new objective for another mode; ARCHITECTURE itself never starts fixing.
 
 ## Vocabulary (use these terms exactly; do not drift into "component", "service", "boundary")
 

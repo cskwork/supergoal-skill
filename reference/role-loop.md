@@ -20,7 +20,10 @@ git worktree add -b <run_branch> <worktree_path> <source/base branch>
 
 Run Build, Critic, Fixer, Verify, tests, and run-vault writes inside that worktree; never edit the
 original checkout. Treat dirty files in the original checkout as user work. After green verification and
-user acceptance, commit or merge only into the verified target/integration branch.
+user acceptance, commit or merge only into the verified target/integration branch - and only once the
+commit gate passes (`reference/delivery-gate.md`; `bash templates/commit-gate.sh <vault> <browser|cli|none>`
+exits 0). A non-green run blocks the commit: resolve it in the loop first, escalate to the user only when
+stuck (see stop condition below).
 
 Before any file mutation, create the run vault's `delivery-proof.md` from
 `templates/delivery-proof.md` and start the Before/After Eval (`reference/delivery-gate.md`):
@@ -75,7 +78,8 @@ dependent roles ordered. A trivial single edit skips the loop and edits inline.
    - Update the run vault's `surfaced-requirements.md`: mark each surfaced requirement fixed, or note why it stays open.
    - Update `delivery-proof.md`: after evidence, command outputs/artifact paths, decision gates
      (`auto-fix`, `no-op`, `ask-user`), intentional drift, and residual risk. Unresolved `ask-user`
-     findings or missing trusted commands block a final done claim.
+     findings or missing trusted commands block a final done claim and the commit
+     (`reference/delivery-gate.md` Commit gate).
 
 Loop critic->fixer only while a fresh red appears. The verifier pass is a regression guard - drop it only
 for *very easy* issues; past that, re-running the project's REAL tests is REQUIRED, plus DB evidence for

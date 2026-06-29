@@ -34,7 +34,10 @@ weaken safety gates. Create or edit it only when the user explicitly asks (`refe
 Right after mode detection, resolve the source/base branch and target/integration branch (repo policy,
 else ask). Verify both refs before mutating files, then create a run worktree from the source/base branch
 and do all work there. Do not mutate the original checkout. Commit or merge only into the verified
-target/integration branch after verification and user acceptance. Full contract: `reference/role-loop.md`.
+target/integration branch after verification and user acceptance. Commit is hard-gated by the Commit gate
+(`reference/delivery-gate.md`, backstop `templates/commit-gate.sh`): a non-green run does not commit -
+resolve it in the loop or ask the user about the requirement, never commit on an assumption. Full contract:
+`reference/role-loop.md`.
 
 ## Mode (classify, state it in one line)
 
@@ -103,7 +106,7 @@ verify=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role>.m
 | `reference/domain-context.md` | repo-local Domain Brief |
 | `reference/debugging.md` | DEBUG: hypothesis-ledger diagnose loop |
 | `reference/interview.md` | interview: ambiguity (what) + blast-radius confirm (approach, tiered) |
-| `reference/delivery-gate.md`, `templates/delivery-proof.md` | Before/After Eval for non-trivial GREENFIELD / DEBUG / LEGACY code changes |
+| `reference/delivery-gate.md`, `templates/delivery-proof.md`, `templates/commit-gate.sh` | Before/After Eval + commit gate for non-trivial GREENFIELD / DEBUG / LEGACY code changes |
 | `reference/spec.md`, `templates/spec/` | SPEC: requirements -> design -> tasks |
 | `reference/plan-grounding.md` | ground the approach before committing |
 | `reference/db-access.md`, `templates/db-access/` | read-only DB evidence (required past *very easy* when data load-bearing) |
@@ -120,4 +123,5 @@ verify=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role>.m
 **Done =** mode stated; smallest diff in surrounding style; Before/After Eval complete for non-trivial
 code changes; REAL tests + prose spec green (not a proxy) - a runtime MUST is proven only by exercising its real behavior, never by a test that just checks a method was called or re-asserts current behavior;
 past *very easy* -> red-green test + DB evidence if data load-bearing; user-facing UI at the Expressive
-baseline; destructive steps consented; report what was verified with command output.
+baseline; destructive steps consented; commit/merge only after the commit gate passes
+(`reference/delivery-gate.md`); report what was verified with command output.

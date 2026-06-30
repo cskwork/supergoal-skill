@@ -78,6 +78,9 @@ require_text "arch report shows before/after" "reference/arch.md" "before/after"
 require_file "arch report template exists" "templates/arch-report.html"
 require_text "arch report template grades strength" "templates/arch-report.html" "Worth exploring"
 require_text "arch report template is self-contained" "templates/arch-report.html" "inline CSS only"
+require_text "arch report template defaults to Korean lang" "templates/arch-report.html" '<html lang="ko">'
+require_text "arch report template uses readable Korean body size" "templates/arch-report.html" "17px/1.72"
+require_text "arch report requires Korean readable minimums" "reference/arch.md" 'at least `17px/1.7`'
 
 # grill the pick (reuse, not reinvent)
 require_text "arch reuses the spec grill protocol" "reference/arch.md" "reference/spec.md"

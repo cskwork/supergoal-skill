@@ -108,3 +108,17 @@
 - `bash tests/rules-contract.test.sh` passed: 16 passed, 0 failed.
 - `bash tests/run-all.sh` passed: full shell contract suite, `node --check` of all templates, and the
   url-shortener example all green.
+
+## ARCHITECTURE: Korean-readable HTML report defaults
+
+- Decision: the architecture report template was readable in English but too small for Korean prose when
+  cloned directly into a run vault. The default report now assumes the common Korean output path and
+  raises the base type to the already-proven Korean report size.
+- Edits: `templates/arch-report.html` now defaults to `<html lang="ko">`, `17px/1.72` body text, 36px H1,
+  25px H2, 21px card headings, 14px code/helper text, and 15px callout/module text. `reference/arch.md`
+  now tells ARCHITECTURE runs to translate visible report chrome, set Korean `lang`, and keep those
+  Korean-readable minimums.
+- Guard: `tests/arch-contract.test.sh` now pins the Korean lang default and the readable-size contract.
+- Verification: `bash tests/arch-contract.test.sh`, `git diff --check`, HTML parser smoke for
+  `templates/arch-report.html`, and full `bash tests/run-all.sh` passed. The full suite needed a
+  non-sandbox rerun because the url-shortener example binds a local test server.

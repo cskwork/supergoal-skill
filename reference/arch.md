@@ -44,8 +44,10 @@ Benefits stated in locality, leverage, and test terms / a before/after visual / 
 `Strong | Worth exploring | Speculative` as a badge. Every Strong candidate is re-checked against the
 cited code before it enters the report - plausible-but-unverified is the failure mode. End with a `Top
 recommendation` block (which to tackle first and why) and a `Not covered` block (so silence is not read
-as approval). Do NOT propose interfaces yet - present candidates, then tell the user the `report.html`
-path (open it with the OS opener when available) and ask which one to explore.
+as approval). For Korean docs, translate the report chrome, set `<html lang="ko">`, keep body text at
+least `17px/1.7`, helper text at least `14px`, and card/module text at least `15px`. Do NOT propose
+interfaces yet - present candidates, then tell the user the `report.html` path (open it with the OS
+opener when available) and ask which one to explore.
 
 ## Grill the pick
 

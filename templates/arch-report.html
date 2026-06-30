@@ -12,10 +12,11 @@
     - One candidate = one <article class="candidate">. Strength badge is required.
     - An ADR-conflicting candidate carries the .conflict callout and only appears when friction
       genuinely warrants reopening the decision.
-    - Prose in the docs language (SKILL.md); keep file paths, identifiers, and commands verbatim.
+    - Prose and visible labels in the docs language (SKILL.md); set <html lang> to that language
+      (`ko` for Korean), and keep file paths, identifiers, and commands verbatim.
     - No secrets, tokens, raw logs, or PII.
 -->
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -45,34 +46,34 @@
     * { box-sizing: border-box; }
     body {
       margin: 0; background: var(--bg); color: var(--text);
-      font: 16px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font: 17px/1.72 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     }
     .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px 96px; }
     header.page { border-bottom: 1px solid var(--border); padding: 32px 0 20px; }
-    header.page h1 { margin: 0 0 4px; font-size: 1.9rem; line-height: 1.2; }
+    header.page h1 { margin: 0 0 4px; font-size: 36px; line-height: 1.2; }
     header.page p.lede { margin: 0; color: var(--muted); max-width: 64ch; }
-    .legend { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin: 18px 0 8px; font-size: 0.85rem; color: var(--muted); }
-    h2 { font-size: 1.4rem; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin: 40px 0 16px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin: 18px 0 8px; font-size: 14px; color: var(--muted); }
+    h2 { font-size: 25px; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin: 40px 0 16px; }
     p, li { max-width: 72ch; }
-    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--code-bg); border-radius: 4px; padding: 1px 5px; font-size: 0.9em; }
-    .badge { display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: .02em; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--code-bg); border-radius: 4px; padding: 1px 5px; font-size: 14px; }
+    .badge { display: inline-block; font-size: 13px; font-weight: 700; letter-spacing: .02em; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
     .badge.strong { background: var(--strong-bg); color: var(--strong-fg); }
     .badge.worth { background: var(--worth-bg); color: var(--worth-fg); }
     .badge.speculative { background: var(--spec-bg); color: var(--spec-fg); }
     .candidate { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin: 16px 0; }
     .candidate > header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
-    .candidate h3 { margin: 0; font-size: 1.15rem; }
-    .candidate .files { color: var(--muted); font-size: 0.9rem; margin: 0 0 12px; }
+    .candidate h3 { margin: 0; font-size: 21px; }
+    .candidate .files { color: var(--muted); font-size: 14px; margin: 0 0 12px; }
     .candidate dl { display: grid; grid-template-columns: minmax(96px, auto) 1fr; gap: 6px 16px; margin: 0; }
     .candidate dt { font-weight: 600; color: var(--muted); }
     .candidate dd { margin: 0; }
     .candidate.conflict { border-color: var(--warn-fg); }
-    .callout { background: var(--warn-bg); color: var(--warn-fg); border-radius: 6px; padding: 8px 12px; font-size: 0.9rem; margin: 12px 0 0; }
+    .callout { background: var(--warn-bg); color: var(--warn-fg); border-radius: 6px; padding: 8px 12px; font-size: 15px; margin: 12px 0 0; }
     /* before/after: inline CSS boxes, no CDN */
     .ba { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; margin: 14px 0 2px; }
     .ba .col { border: 1px dashed var(--border); border-radius: 8px; padding: 10px; }
-    .ba .col h4 { margin: 0 0 8px; font-size: 0.78rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
-    .ba .mod { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; margin: 6px 0; font-size: 0.85rem; }
+    .ba .col h4 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+    .ba .mod { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; margin: 6px 0; font-size: 15px; }
     .ba .mod.deep { border-color: var(--strong-fg); }
     .ba .arrow { color: var(--accent); font-weight: 700; font-size: 1.4rem; text-align: center; }
     .top { background: var(--strong-bg); color: var(--strong-fg); border-radius: 10px; padding: 16px 20px; }

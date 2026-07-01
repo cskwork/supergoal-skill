@@ -113,7 +113,52 @@ this Windows host (sandbox unsupported); `claude -p` is the runtime.
   honest, defensible value proposition remains: forcing verification vs a one-shot on
   false-GREEN-prone tasks, high-effort crash stability, and single-pass cost trim.
 
-## Results
+## Results (n=6, sonnet, claude -p, serial/clean: 0 crashes, 1 auto-recovered retry)
 
-(Appended after the run: per-seed vectors, arm summary, BCa CI + permutation p,
-cost multiples, and the promote/`Not proven` decision.)
+| arm | hidden avg /4 | false-GREEN /6 | per-seed | cost/arm |
+|---|---|---|---|---|
+| baseline (1 pass) | 2.17 | 6/6 | 2,2,2,2,2,3 | $0.38 |
+| naive (4 pass, no skill) | 3.83 | 1/6 | 3,4,4,4,4,4 | $2.48 |
+| harness_v1 (current role-loop) | 3.50 | 3/6 | 4,4,3,3,4,3 | $2.43 |
+| harness_v2 (fixed) | 4.00 | 0/6 | 4,4,4,4,4,4 | $2.91 |
+
+Significance (decision rule: BCa 95% CI entirely >0 AND sign-flip permutation p<0.05):
+
+- **v2 vs baseline: Δ +1.83, BCa [1.17, 2.0], p=0.031 -> SIGNIFICANT WIN (proven).**
+- v2 vs naive: Δ +0.17, BCa [0, 0.33], p=1.0 -> not significant (tie).
+- v2 vs v1: Δ +0.5, BCa [0, 0.67], p=0.25 -> not significant (directional v2>v1).
+
+### Verdict
+
+1. **PROVEN: the skill (as a forced-verification harness) significantly beats the
+   realistic one-shot default.** It drives false-GREEN 6/6 -> 0 on a latent-correctness
+   task. This is the honest "using the skill beats not using it."
+2. **NOT PROVEN: role-separation is the active ingredient.** v2 ties the equal-compute
+   naive loop (p=1.0). The lever is the forced verification passes, not the
+   critic->fixer->verifier structure - confirming the repo's prior finding and the
+   external literature (arXiv 2601.12307).
+3. **The current shipped role-loop (v1) UNDERPERFORMED the no-skill naive loop**
+   (3.5 vs 3.83, FG 3 vs 1): its single-critic coverage serialization actively costs.
+   The v2 fix (critic degenerate-input sweep + verifier whole-spec sweep) recovered it
+   to 4.0/0-FG, matching naive - so the fix helps v1 (directional, not yet significant
+   at n=6) but does not make role-separation beat equal compute.
+
+### Caveat (dogfooding the new role-fidelity rule)
+
+This eval's harness arms drove PARAPHRASED inline critic/fixer/verifier prompts, not the
+literal shipped role files - exactly the drift the new role-fidelity rule flags. So this
+measures the forced-verification PATTERN, not the byte-for-byte shipped SKILL.md roles; a
+fully faithful re-run would dispatch the actual `agents/*.md`. Under the new gate this
+result's `role_source` is "paraphrase", so it is reported as a directional-to-proven
+finding about the pattern, not a gate-passing proven claim about the shipped role text.
+
+### Decision
+
+Consistent with the measured non-significance of structure vs equal compute: make
+FORCED VERIFICATION (build + whole-spec re-read passes that fix gaps and re-run the real
+tests) the mandatory default, and demote role-separation to an opt-in escalation for
+genuinely under-specified work (where the repo holds an independent critic is the lever).
+The lean change must itself pass the delivery gate (prove no quality regression vs the
+current role-loop at lower cost) before shipping - the naive arm here is the
+proof-of-concept that forced verification alone reaches 3.83/4 (FG 1/6) vs the role-loop's
+3.5/4 (FG 3/6).

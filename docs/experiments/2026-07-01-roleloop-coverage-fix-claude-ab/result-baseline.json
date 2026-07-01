@@ -1,0 +1,91 @@
+{
+  "case": "underspec-deepmerge",
+  "model": "sonnet",
+  "seeds": 6,
+  "runtime_adapter": "claude-p:sonnet",
+  "arms": {
+    "baseline": {
+      "arm": "baseline",
+      "seeds": 6,
+      "hidden_each": [
+        "2/4",
+        "2/4",
+        "2/4",
+        "2/4",
+        "2/4",
+        "3/4"
+      ],
+      "hidden_pass_each": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        3
+      ],
+      "hidden_pass_avg": 2.1667,
+      "hidden_total": 4,
+      "false_green_count": 6,
+      "crashed_count": 0,
+      "cost_usd_total": 2.2899,
+      "cost_usd_avg": 0.3817,
+      "passes_avg": 1
+    }
+  },
+  "per_seed": [
+    {
+      "arm": "baseline",
+      "seed": 0,
+      "hidden": "2/4",
+      "visible": "1/1",
+      "false_green": 1,
+      "cost_usd": 0.3798,
+      "crashed": false
+    },
+    {
+      "arm": "baseline",
+      "seed": 1,
+      "hidden": "2/4",
+      "visible": "1/1",
+      "false_green": 1,
+      "cost_usd": 0.3972,
+      "crashed": false
+    },
+    {
+      "arm": "baseline",
+      "seed": 2,
+      "hidden": "2/4",
+      "visible": "1/1",
+      "false_green": 1,
+      "cost_usd": 0.4144,
+      "crashed": false
+    },
+    {
+      "arm": "baseline",
+      "seed": 3,
+      "hidden": "2/4",
+      "visible": "1/1",
+      "false_green": 1,
+      "cost_usd": 0.3535,
+      "crashed": false
+    },
+    {
+      "arm": "baseline",
+      "seed": 4,
+      "hidden": "2/4",
+      "visible": "1/1",
+      "false_green": 1,
+      "cost_usd": 0.3613,
+      "crashed": false
+    },
+    {
+      "arm": "baseline",
+      "seed": 5,
+      "hidden": "3/4",
+      "visible": "1/1",
+      "false_green": 1,
+      "cost_usd": 0.3837,
+      "crashed": false
+    }
+  ]
+}

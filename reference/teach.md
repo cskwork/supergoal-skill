@@ -11,6 +11,12 @@ Build/Critic/Fixer/Verify) and all implementation gates. Flow:
 
 `Intake -> Preference -> Mission -> Resources -> ZPD -> Core question -> Bridge -> Teach loop (lesson) -> Check -> Records -> Journal`
 
+Sections (jump, don't rescan): Goal-tool boundary | Teaching workspace | Philosophy (K/S/W) |
+The mission | Resources | Zone of proximal development | Decomposition | Textbook depth | Process
+explanation gate | Flow | Interview check | Lessons | Reference documents & glossary | Wisdom &
+communities | Assets | Opening output format | Human-to-Code bridge | Prerequisite scaffolding |
+Difficulty ladder | Difficulty tuning | User preference profile.
+
 ## Goal-tool boundary
 
 TEACH is tutoring, not a persistent runtime goal. Never call `create_goal`, `update_goal`, or similar.

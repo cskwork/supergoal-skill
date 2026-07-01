@@ -1,0 +1,370 @@
+{
+  "case": "underspec-deepmerge",
+  "model": "sonnet",
+  "seeds": 6,
+  "runtime_adapter": "claude-p:sonnet",
+  "arms": {
+    "baseline": {
+      "arm": "baseline",
+      "seeds": 6,
+      "hidden_each": [
+        "2/4",
+        "2/4",
+        "2/4",
+        "2/4",
+        "2/4",
+        "3/4"
+      ],
+      "hidden_pass_each": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        3
+      ],
+      "hidden_pass_avg": 2.1667,
+      "hidden_total": 4,
+      "false_green_count": 6,
+      "crashed_count": 0,
+      "cost_usd_total": 2.2899,
+      "cost_usd_avg": 0.3817,
+      "passes_avg": 1
+    },
+    "naive": {
+      "arm": "naive",
+      "seeds": 6,
+      "hidden_each": [
+        "3/4",
+        "4/4",
+        "4/4",
+        "4/4",
+        "4/4",
+        "4/4"
+      ],
+      "hidden_pass_each": [
+        3,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "hidden_pass_avg": 3.8333,
+      "hidden_total": 4,
+      "false_green_count": 1,
+      "crashed_count": 0,
+      "cost_usd_total": 14.8698,
+      "cost_usd_avg": 2.4783,
+      "passes_avg": 4
+    },
+    "harness_v1": {
+      "arm": "harness_v1",
+      "seeds": 6,
+      "hidden_each": [
+        "4/4",
+        "4/4",
+        "3/4",
+        "3/4",
+        "4/4",
+        "3/4"
+      ],
+      "hidden_pass_each": [
+        4,
+        4,
+        3,
+        3,
+        4,
+        3
+      ],
+      "hidden_pass_avg": 3.5,
+      "hidden_total": 4,
+      "false_green_count": 3,
+      "crashed_count": 0,
+      "cost_usd_total": 14.5554,
+      "cost_usd_avg": 2.4259,
+      "passes_avg": 4
+    },
+    "harness_v2": {
+      "arm": "harness_v2",
+      "seeds": 6,
+      "hidden_each": [
+        "4/4",
+        "4/4",
+        "4/4",
+        "4/4",
+        "4/4",
+        "4/4"
+      ],
+      "hidden_pass_each": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "hidden_pass_avg": 4,
+      "hidden_total": 4,
+      "false_green_count": 0,
+      "crashed_count": 0,
+      "cost_usd_total": 17.4639,
+      "cost_usd_avg": 2.9107,
+      "passes_avg": 4
+    }
+  },
+  "per_seed": [
+    {
+      "arm": "baseline",
+      "seed": 0,
+      "hidden": "2/4",
+      "visible": "1/1",
+      "false_green": 1,
+      "cost_usd": 0.3798,
+      "crashed": false
+    },
+    {
+      "arm": "baseline",
+      "seed": 1,
+      "hidden": "2/4",
+      "visible": "1/1",
+      "false_green": 1,
+      "cost_usd": 0.3972,
+      "crashed": false
+    },
+    {
+      "arm": "baseline",
+      "seed": 2,
+      "hidden": "2/4",
+      "visible": "1/1",
+      "false_green": 1,
+      "cost_usd": 0.4144,
+      "crashed": false
+    },
+    {
+      "arm": "baseline",
+      "seed": 3,
+      "hidden": "2/4",
+      "visible": "1/1",
+      "false_green": 1,
+      "cost_usd": 0.3535,
+      "crashed": false
+    },
+    {
+      "arm": "baseline",
+      "seed": 4,
+      "hidden": "2/4",
+      "visible": "1/1",
+      "false_green": 1,
+      "cost_usd": 0.3613,
+      "crashed": false
+    },
+    {
+      "arm": "baseline",
+      "seed": 5,
+      "hidden": "3/4",
+      "visible": "1/1",
+      "false_green": 1,
+      "cost_usd": 0.3837,
+      "crashed": false
+    },
+    {
+      "arm": "naive",
+      "seed": 0,
+      "hidden": "3/4",
+      "visible": "1/1",
+      "false_green": 1,
+      "cost_usd": 2.9175,
+      "crashed": false,
+      "crash_reasons": [],
+      "retries_total": 0
+    },
+    {
+      "arm": "naive",
+      "seed": 1,
+      "hidden": "4/4",
+      "visible": "1/1",
+      "false_green": 0,
+      "cost_usd": 1.9707,
+      "crashed": false,
+      "crash_reasons": [],
+      "retries_total": 0
+    },
+    {
+      "arm": "naive",
+      "seed": 2,
+      "hidden": "4/4",
+      "visible": "1/1",
+      "false_green": 0,
+      "cost_usd": 2.3392,
+      "crashed": false,
+      "crash_reasons": [],
+      "retries_total": 0
+    },
+    {
+      "arm": "naive",
+      "seed": 3,
+      "hidden": "4/4",
+      "visible": "1/1",
+      "false_green": 0,
+      "cost_usd": 2.2869,
+      "crashed": false,
+      "crash_reasons": [],
+      "retries_total": 0
+    },
+    {
+      "arm": "naive",
+      "seed": 4,
+      "hidden": "4/4",
+      "visible": "1/1",
+      "false_green": 0,
+      "cost_usd": 2.4915,
+      "crashed": false,
+      "crash_reasons": [],
+      "retries_total": 1
+    },
+    {
+      "arm": "naive",
+      "seed": 5,
+      "hidden": "4/4",
+      "visible": "1/1",
+      "false_green": 0,
+      "cost_usd": 2.864,
+      "crashed": false,
+      "crash_reasons": [],
+      "retries_total": 0
+    },
+    {
+      "arm": "harness_v1",
+      "seed": 0,
+      "hidden": "4/4",
+      "visible": "1/1",
+      "false_green": 0,
+      "cost_usd": 2.4582,
+      "crashed": false,
+      "crash_reasons": [],
+      "retries_total": 0
+    },
+    {
+      "arm": "harness_v1",
+      "seed": 1,
+      "hidden": "4/4",
+      "visible": "1/1",
+      "false_green": 0,
+      "cost_usd": 2.85,
+      "crashed": false,
+      "crash_reasons": [],
+      "retries_total": 0
+    },
+    {
+      "arm": "harness_v1",
+      "seed": 2,
+      "hidden": "3/4",
+      "visible": "1/1",
+      "false_green": 1,
+      "cost_usd": 2.2609,
+      "crashed": false,
+      "crash_reasons": [],
+      "retries_total": 0
+    },
+    {
+      "arm": "harness_v1",
+      "seed": 3,
+      "hidden": "3/4",
+      "visible": "1/1",
+      "false_green": 1,
+      "cost_usd": 2.1743,
+      "crashed": false,
+      "crash_reasons": [],
+      "retries_total": 0
+    },
+    {
+      "arm": "harness_v1",
+      "seed": 4,
+      "hidden": "4/4",
+      "visible": "1/1",
+      "false_green": 0,
+      "cost_usd": 2.4467,
+      "crashed": false,
+      "crash_reasons": [],
+      "retries_total": 0
+    },
+    {
+      "arm": "harness_v1",
+      "seed": 5,
+      "hidden": "3/4",
+      "visible": "1/1",
+      "false_green": 1,
+      "cost_usd": 2.3653,
+      "crashed": false,
+      "crash_reasons": [],
+      "retries_total": 0
+    },
+    {
+      "arm": "harness_v2",
+      "seed": 0,
+      "hidden": "4/4",
+      "visible": "1/1",
+      "false_green": 0,
+      "cost_usd": 2.8049,
+      "crashed": false,
+      "crash_reasons": [],
+      "retries_total": 0
+    },
+    {
+      "arm": "harness_v2",
+      "seed": 1,
+      "hidden": "4/4",
+      "visible": "1/1",
+      "false_green": 0,
+      "cost_usd": 2.8957,
+      "crashed": false,
+      "crash_reasons": [],
+      "retries_total": 0
+    },
+    {
+      "arm": "harness_v2",
+      "seed": 2,
+      "hidden": "4/4",
+      "visible": "1/1",
+      "false_green": 0,
+      "cost_usd": 2.8579,
+      "crashed": false,
+      "crash_reasons": [],
+      "retries_total": 0
+    },
+    {
+      "arm": "harness_v2",
+      "seed": 3,
+      "hidden": "4/4",
+      "visible": "1/1",
+      "false_green": 0,
+      "cost_usd": 2.8588,
+      "crashed": false,
+      "crash_reasons": [],
+      "retries_total": 0
+    },
+    {
+      "arm": "harness_v2",
+      "seed": 4,
+      "hidden": "4/4",
+      "visible": "1/1",
+      "false_green": 0,
+      "cost_usd": 2.8065,
+      "crashed": false,
+      "crash_reasons": [],
+      "retries_total": 0
+    },
+    {
+      "arm": "harness_v2",
+      "seed": 5,
+      "hidden": "4/4",
+      "visible": "1/1",
+      "false_green": 0,
+      "cost_usd": 3.2401,
+      "crashed": false,
+      "crash_reasons": [],
+      "retries_total": 0
+    }
+  ]
+}

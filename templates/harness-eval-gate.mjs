@@ -26,6 +26,8 @@ const commandUsers = new Set(["baseline", "harness", "both"]);
 const findingActions = new Set(["auto-fix", "no-op", "ask-user"]);
 const findingStatuses = new Set(["resolved", "unresolved", "accepted", "skipped"]);
 const replayStatuses = new Set(["recorded", "not_required", "not_proven"]);
+const roleSources = new Set(["shipped_files", "generated_from_shipped"]);
+const MIN_SEEDS_PER_ARM = 6; // sign-flip permutation min two-sided p = 2/2^n; n=6 -> 0.03125 is the first < 0.05
 const EPSILON = 0.01;
 const dimensions = [
   "feature_completeness",
@@ -369,6 +371,90 @@ function requireMutationContract() {
   requireStringArray(contract.rejected_alternatives, "harness_mutation_contract.rejected_alternatives", true);
 }
 
+// The four checks below are recurrence-prevention rules and fire ONLY for a
+// proven claim; a directional/not_proven pilot (e.g. n=3) stays lenient.
+
+// Rule 1 - runtime portability: the adapter was PREFLIGHTED on the host, not assumed.
+function requireRuntimePreflight() {
+  if (result.claim_status !== "proven") return;
+  const rp = result.runtime_preflight;
+  if (!rp || typeof rp !== "object" || Array.isArray(rp)) {
+    errors.push("runtime_preflight is required for proven claims (host os, chosen adapter, preflight record)");
+    return;
+  }
+  requireString(rp.host_os, "runtime_preflight.host_os");
+  requireString(rp.chosen_adapter, "runtime_preflight.chosen_adapter");
+  const preflights = rp.preflights;
+  if (!preflights || typeof preflights !== "object" || Array.isArray(preflights)) {
+    errors.push("runtime_preflight.preflights must record each tried adapter's preflight result");
+    return;
+  }
+  const chosen = preflights[rp.chosen_adapter];
+  if (!chosen || typeof chosen !== "object") {
+    errors.push("runtime_preflight.preflights must include the chosen_adapter (proof it was preflighted, not assumed)");
+    return;
+  }
+  if (chosen.ok !== true) {
+    errors.push("runtime_preflight: the chosen_adapter must have passed preflight (ok=true)");
+  }
+}
+
+// Rule 2 - sample size + significance for the winning comparison.
+function requireStatistics() {
+  if (result.claim_status !== "proven") return;
+  const stats = result.statistics;
+  if (!stats || typeof stats !== "object" || Array.isArray(stats)) {
+    errors.push("statistics is required for proven claims (seeds_per_arm, bca_ci_95, permutation_p)");
+    return;
+  }
+  if (typeof stats.seeds_per_arm !== "number" || stats.seeds_per_arm < MIN_SEEDS_PER_ARM) {
+    errors.push(`proven claim requires n>=${MIN_SEEDS_PER_ARM} per arm (sign-flip permutation min two-sided p = 2/2^n, so n<6 cannot reach p<0.05)`);
+  }
+  requireString(stats.winning_comparison, "statistics.winning_comparison");
+  if (!Array.isArray(stats.bca_ci_95) || stats.bca_ci_95.length !== 2 || stats.bca_ci_95.some((n) => typeof n !== "number")) {
+    errors.push("statistics.bca_ci_95 must be a [low, high] pair of numbers");
+  } else if (stats.bca_ci_95[0] <= 0) {
+    errors.push("proven claim requires the BCa 95% CI entirely > 0 (its low bound must be > 0)");
+  }
+  if (typeof stats.permutation_p !== "number") {
+    errors.push("statistics.permutation_p must be numeric");
+  } else if (!(stats.permutation_p < 0.05)) {
+    errors.push("proven claim requires sign-flip permutation p < 0.05");
+  }
+}
+
+// Rule 3 - role fidelity: exercise the shipped role files, not a paraphrase that can drift.
+function requireRoleFidelity() {
+  if (result.claim_status !== "proven") return;
+  if (!roleSources.has(result.role_source)) {
+    errors.push("role_source must be shipped_files or generated_from_shipped for proven claims (a paraphrased inline prompt drifts from the shipped role files)");
+  }
+}
+
+// Rule 4 - crash accounting: a crashed/timed-out run is a recorded LOSS, never a silent zero.
+function requireCrashAccounting() {
+  if (result.claim_status !== "proven") return;
+  const stats = result.statistics;
+  const outcomes = stats && stats.seed_outcomes;
+  if (!Array.isArray(outcomes) || outcomes.length === 0) {
+    errors.push("statistics.seed_outcomes must record each seed's outcome for proven claims (crash accounting)");
+    return;
+  }
+  outcomes.forEach((outcome, index) => {
+    if (!outcome || typeof outcome !== "object" || Array.isArray(outcome)) {
+      errors.push(`statistics.seed_outcomes[${index}] must be an object`);
+      return;
+    }
+    if (typeof outcome.crashed !== "boolean") {
+      errors.push(`statistics.seed_outcomes[${index}].crashed must be boolean`);
+    }
+    if (outcome.crashed === true && outcome.recorded_loss !== true) {
+      const who = `${outcome.arm ?? "?"} seed ${outcome.seed ?? index}`;
+      errors.push(`statistics.seed_outcomes[${index}] (${who}): a crashed/timed-out run must be recorded as a loss, never a silent zero`);
+    }
+  });
+}
+
 if (!result.runtime_adapter || typeof result.runtime_adapter !== "string") {
   errors.push("runtime_adapter is required");
 }
@@ -392,6 +478,10 @@ requireKnownWinner("winner", result.winner);
 requireClaimStatus();
 requireQuality();
 requireMutationContract();
+requireRuntimePreflight();
+requireStatistics();
+requireRoleFidelity();
+requireCrashAccounting();
 
 if (result.claim_status === "proven" && result.winner !== "harness") {
   errors.push("claim_status proven requires winner harness");

@@ -3,6 +3,36 @@
   "runtime_adapter": "portable",
   "same_repo_snapshot": true,
   "isolated_worktrees": true,
+  "runtime_preflight": {
+    "host_os": "win32",
+    "preferred_adapter": "claude-p",
+    "chosen_adapter": "claude-p",
+    "preflights": {
+      "claude-p": { "available": true, "ok": true, "reason": "edit ok, tests pass" }
+    }
+  },
+  "role_source": "shipped_files",
+  "statistics": {
+    "seeds_per_arm": 6,
+    "winning_comparison": "harness-vs-baseline",
+    "bca_ci_95": [0.4, 2.6],
+    "permutation_p": 0.03125,
+    "significant": true,
+    "seed_outcomes": [
+      { "arm": "baseline", "seed": 0, "crashed": false, "recorded_loss": false },
+      { "arm": "baseline", "seed": 1, "crashed": false, "recorded_loss": false },
+      { "arm": "baseline", "seed": 2, "crashed": false, "recorded_loss": false },
+      { "arm": "baseline", "seed": 3, "crashed": false, "recorded_loss": false },
+      { "arm": "baseline", "seed": 4, "crashed": false, "recorded_loss": false },
+      { "arm": "baseline", "seed": 5, "crashed": false, "recorded_loss": false },
+      { "arm": "harness", "seed": 0, "crashed": false, "recorded_loss": false },
+      { "arm": "harness", "seed": 1, "crashed": false, "recorded_loss": false },
+      { "arm": "harness", "seed": 2, "crashed": false, "recorded_loss": false },
+      { "arm": "harness", "seed": 3, "crashed": false, "recorded_loss": false },
+      { "arm": "harness", "seed": 4, "crashed": false, "recorded_loss": false },
+      { "arm": "harness", "seed": 5, "crashed": true, "recorded_loss": true }
+    ]
+  },
   "default_coding_ab": {
     "applies_when": "coding harness eval requested without named cases",
     "cases": [

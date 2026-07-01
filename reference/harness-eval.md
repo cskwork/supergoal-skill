@@ -2,6 +2,9 @@
 
 Use when the user asks to test harness effectiveness, compare with/without harness, benchmark an agent workflow, or prove a generated harness improves outcomes.
 
+Sections (jump, don't rescan): Contract | Runtime fit | Pipeline | Cases | Pick a discriminating
+regime | Validate the fixture discriminates | Execution | Reject.
+
 ## Contract
 
 HARNESS-EVAL compares the same task with and without the harness. It measures evidence, not confidence. If the evidence is weak, report `Not proven`.

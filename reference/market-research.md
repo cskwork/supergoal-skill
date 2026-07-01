@@ -22,8 +22,8 @@ supervised, gated delivery loop for bounded objectives, not a hands-off engineer
 
 ## Dispatch
 
-Validate is wide-and-shallow. Fan out one subagent per evidence stream. The Analyst writes JTBD,
-riskiest assumption, MVP scope, and Decision into `brief.md`.
+Validate is wide-and-shallow. Fan out one subagent per evidence stream. The Analyst persona
+(`agents/analyst.md`) writes JTBD, riskiest assumption, MVP scope, and Decision into `brief.md`.
 
 Use the session's web/search tools. If the environment uses `ctx_*` / context-mode tools, use those;
 do not force blocked `curl`/`wget`.

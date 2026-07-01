@@ -12,6 +12,10 @@ To refresh: pull upstream, replace this body, then re-compress while preserving 
 -->
 
 > Not installable. Reference material for supergoal's UI/UX overlay.
+> Sections (jump, don't rescan): 0 Brief inference | 1 Three dials | 2 Foundation choice |
+> 3 Default architecture | 4 Design directives | 5 Motion | 6 Performance & a11y | 7 Dial
+> definitions | 8 Dark mode | 9 AI tells (banned) | 10 Pattern vocabulary | 11 Redesign protocol |
+> 12 Block library contract | 13 Out of scope | 14 Final pre-flight | Appendices.
 
 ---
 name: design-taste-frontend

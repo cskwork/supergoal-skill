@@ -366,8 +366,12 @@ require_file "RevFactory case 015 exists" "templates/harness-eval-cases/revfacto
 require_file "harness eval fixture README exists" "templates/harness-eval-cases/fixtures/README.md"
 require_file "harness eval result template exists" "templates/harness-eval-result.json"
 require_file "harness eval report template exists" "templates/harness-eval-report.md"
+require_file "harness eval runner template exists" "templates/harness-eval-runner.mjs"
 require_text "route hook names HARNESS-EVAL" "SKILL.md" "HARNESS-EVAL"
 require_text "route hook points at eval reference" "SKILL.md" "reference/harness-eval.md"
+require_text "route hook catches skill-lift use case" "SKILL.md" "measure skill lift"
+require_text "route hook names the reusable runner" "SKILL.md" "templates/harness-eval-runner.mjs"
+require_text "route hook marks runner as default driver" "SKILL.md" "DEFAULT portable eval driver"
 require_text "README states RevFactory case reference" "README.md" "https://github.com/revfactory/claude-code-harness/"
 require_text "eval requires same snapshot" "reference/harness-eval.md" "same repo snapshot"
 require_text "eval requires blind grading" "reference/harness-eval.md" "blind or label-swapped grading"
@@ -411,6 +415,15 @@ require_text "eval defaults async race first" "reference/harness-eval.md" "revfa
 require_text "eval defaults refactoring second" "reference/harness-eval.md" "revfactory-case-003-refactoring/"
 require_text "eval rejects underspec default substitution" "reference/harness-eval.md" 'Do not substitute `underspec-001-deepmerge/`'
 require_text "eval records default tie as not proven" "reference/harness-eval.md" 'If both default cases tie, report `Not proven`'
+require_text "eval requires runtime preflight + fallback" "reference/harness-eval.md" "pick the runtime adapter by PREFLIGHTING it on the host"
+require_text "eval cites reusable runner template" "reference/harness-eval.md" "templates/harness-eval-runner.mjs"
+require_text "eval scope selects adapter by preflight" "reference/harness-eval.md" 'Select `runtime_adapter` by PREFLIGHT'
+require_text "eval sets n>=6 significance floor" "reference/harness-eval.md" "n >= 6 per arm"
+require_text "eval justifies n>=6 with permutation min-p" "reference/harness-eval.md" "2/2^n"
+require_text "eval serializes nested passes by default" "reference/harness-eval.md" "serialize nested agent passes by default"
+require_text "eval retries transient crashes" "reference/harness-eval.md" "Retry a transient (rate-limit) crash with"
+require_text "eval requires shipped role fidelity" "reference/harness-eval.md" "shipped skill role files"
+require_text "eval references role-loop for fidelity" "reference/harness-eval.md" "reference/role-loop.md"
 require_text "report records evidence bundle" "templates/harness-eval-report.md" "## Evidence Bundle"
 require_text "report records trajectory telemetry" "templates/harness-eval-report.md" "## Trajectory Telemetry"
 require_text "report records mutation contract" "templates/harness-eval-report.md" "## Harness Mutation Contract"

@@ -52,7 +52,7 @@ resolve it in the loop or ask the user about the requirement, never commit on an
 | QA / verify / 검증만 / compare data (no code) | QA-ONLY | Impact Matrix QA (`reference/qa-only.md`; gate `templates/qa-only-gate.sh`) |
 | review / audit this code/diff/PR (no fixes) | REVIEW-ONLY | `reference/review-only.md` |
 | improve the architecture / find refactoring opportunities / 구조 개선 | ARCHITECTURE | friction survey -> candidates -> grill the pick -> route to LEGACY/SPEC (`reference/arch.md`) |
-| test harness effectiveness / with vs without | HARNESS-EVAL | `reference/harness-eval.md` |
+| test harness/skill effectiveness / with vs without / does the skill help / measure skill lift | HARNESS-EVAL | `reference/harness-eval.md` |
 | turn repeated work into a reusable skill | SKILL-MINE | `reference/skill-mine.md` |
 
 The no-code/utility modes - **QA-ONLY**, REVIEW-ONLY, ARCHITECTURE, TEACH, LEARN-DOMAIN, HARNESS-EVAL,
@@ -115,7 +115,7 @@ verify=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role>.m
 | `reference/arch.md` | ARCHITECTURE: friction survey -> route out |
 | `reference/teach.md`, `learn-domain.md` | teach a human / onboard the agent |
 | `reference/ui-ux.md`, `taste-skill-v2.md`, `functional-ui.md`, `taste-aesthetics.md`, `engagement.md` | user-facing UI tier |
-| `reference/harness-eval.md` | HARNESS-EVAL |
+| `reference/harness-eval.md`, `templates/harness-eval-runner.mjs` | HARNESS-EVAL; the runner is the DEFAULT portable eval driver (adapters + preflight + fallback + retry, serial by default) - use it, don't hand-roll a single-CLI run.mjs |
 | `reference/skill-mine.md` | SKILL-MINE |
 | `reference/market-research.md` | GREENFIELD: validate demand (optional) |
 | `reference/observability.md`, `tui/` | Board: opt-in live dashboard |

@@ -15,6 +15,11 @@ Required controls:
 - harness run gets only the approved harness, with eval-internal files stripped from the copied
   reference (case definitions, hidden checks, rubric, scorer). The harness arm must never be able to
   read the cases or hidden tests it is being judged on.
+- runtime portability: pick the runtime adapter by PREFLIGHTING it on the host - a trivial edit+test
+  pass in a throwaway sandbox - and FALL BACK to another available CLI when the preferred one is missing
+  or crashes; record host OS, the chosen adapter, and every adapter's preflight result. Never assume one
+  CLI runs: `codex exec --sandbox workspace-write` crashes instantly (0 tokens) on some Windows hosts.
+  Use the reusable runner `templates/harness-eval-runner.mjs` instead of hand-rolling a per-CLI driver.
 - adversarial verification runs in the harness's native runtime profile (see Runtime fit); never
   force a multi-agent verifier/repair loop inside a single non-interactive process
 - machine checks before subjective scoring, recorded per individual check (not one all-or-nothing pass)
@@ -41,6 +46,14 @@ Required controls:
 - blind or label-swapped grading
 - cost, time, tool count, and turn-completion recorded; a crash or context-window/timeout failure is a
   recorded LOSS for that arm, never a silent zero
+- concurrency + retry discipline: serialize nested agent passes by default (one isolated process is
+  host-proven clean); parallelize only after validating the host's concurrency ceiling, since concurrent
+  nested agents contend for a rate-limit ceiling and crash. Retry a transient (rate-limit) crash with
+  backoff and record the reason + retry count; a crash surviving its retries stays a recorded loss.
+- role fidelity: the harness arm must exercise the ACTUAL shipped skill role files (SKILL.md +
+  reference/role-loop.md + agents/*.md) or generate its role prompts FROM them and record the source. A
+  hand-paraphrased inline critic/fixer/verifier prompt can silently drift from the shipped role text, so
+  it measures a paraphrase, not the skill.
 
 Required outcome accounting:
 
@@ -68,6 +81,11 @@ actually run in, or the result is an artifact of the wrong setup:
 - A crashed / context-exhausted / timed-out arm is a recorded LOSS, not a missing data point. Capture
   `turns_completed`, `exit_code`, and a `crashed` flag; ensure token/tool-call parsing matches the
   adapter's actual event names (codex-exec emits `command_execution`, not `function_call`).
+- Preflight the runtime before spending a real eval call: run one throwaway edit+test pass and confirm
+  the adapter did not crash AND actually edited the stub; if the preferred CLI fails or is absent, fall
+  back to another available one and record host OS, chosen adapter, and each preflight result.
+  `templates/harness-eval-runner.mjs` ships the adapter selection + fallback + crash-retry so an
+  experiment imports one driver instead of re-implementing a CLI-specific spawn loop.
 
 ## Pipeline
 
@@ -137,8 +155,9 @@ Use the hard/expert tier only - the cases that discriminate:
 - hard: `revfactory-case-002-bug-fix`, `revfactory-case-005-complex`
 
 Pilot on one runnable hard/expert or latent-correctness case (n=1 is `Not proven` by construction -
-direction only), then scale to 8-15 expert/hard cases for a proven claim. Both arms passing everything is
-inconclusive (ceiling), not a win or a tie.
+direction only), then scale to 8-15 expert/hard cases for a proven claim. A proven significance claim
+also needs n >= 6 seeds per arm (see "Pick a discriminating regime" for why n < 6 is directional only).
+Both arms passing everything is inconclusive (ceiling), not a win or a tie.
 
 ## Pick a discriminating regime (lever = spec-completeness x baseline strength, not "difficulty")
 
@@ -158,8 +177,13 @@ explicit-spec task a capable baseline already passes - expect a TIE at 2-3x cost
   the role-loop's 3.3/4 (`docs/experiments/2026-06-07-harness-eval-underspecified-n3/`). So the skill
   helps vs not-invoking-it, not vs equal compute (see compute-confound below). Ambiguous choices are NOT
   fair hidden checks - test only what one reasonable reading MUST do.
-- n >= 3 per arm even in a pilot. A +-1-test delta at n=1 is noise, not a win: case-015 read as harness
-  8/9 vs baseline 7/9 one run and an exact tie the next. Report the per-seed vector, not just the mean.
+- Sample size: n >= 3 per arm is a DIRECTIONAL pilot floor - a +-1-test delta at n=1 is noise, not a win
+  (case-015 read harness 8/9 vs baseline 7/9 one run and an exact tie the next). A PROVEN significance
+  claim needs n >= 6 per arm, because the mandated sign-flip permutation test's minimum two-sided p is
+  2/2^n (n=3 -> 0.25 and n=5 -> 0.0625 cannot reach 0.05; n=6 -> 0.03125 is the first that can). So n < 6
+  is directional only. Always report the per-seed vector, not just the mean. The decision rule (BCa 95%
+  CI entirely > 0 AND sign-flip permutation p < 0.05) lives in
+  `docs/experiments/2026-07-01-roleloop-coverage-fix-claude-ab/stats.mjs`.
 - Compute confound - run BOTH baselines and SAY which win you claim; they answer different questions:
   (a) vs a 1-pass baseline = "does invoking the skill beat NOT invoking it?" Forcing useful verification
   compute IS legitimate value - a one-shot is the realistic default, and on u1 the skill caught a
@@ -186,7 +210,10 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
 ## Execution
 
 1. Scope
-- Name `runtime_adapter`: codex, claude-code, pi-agent, mcp, or mixed.
+- Select `runtime_adapter` by PREFLIGHT, not assumption: preflight the preferred CLI (codex-exec,
+  claude-p, pi-agent, mcp, or mixed) on the host and fall back to another available one if it is missing
+  or crashes; record host OS, the chosen adapter, and each adapter's preflight result. The reusable
+  runner `templates/harness-eval-runner.mjs` performs this selection + fallback.
 - Freeze repo snapshot and task wording.
 - Write `eval_intent`: the user's goal in their terms, plus constraints and tradeoffs learned during the
   work. This is not a file-change summary.
@@ -290,10 +317,12 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
 - Scoring a crashed / context-exhausted / timed-out arm as a silent zero instead of a recorded loss.
 - Forcing a multi-agent verifier/repair loop into a single non-interactive process and blaming the harness for the resulting context-window crash.
 - Inventing throwaway ad-hoc cases for a PROVEN claim instead of the RevFactory corpus; authoring a fixture is allowed only to probe the under-specified frontier, and only after the 3-way discrimination check.
-- Calling a +-1-test, n=1 delta a "win"; that is within run-to-run noise (same case flipped win->tie on re-run). Need n>=3 per arm and a per-seed vector.
+- Calling a +-1-test, n=1 delta a "win"; that is within run-to-run noise (same case flipped win->tie on re-run). A directional pilot needs n>=3 per arm and a per-seed vector; a PROVEN significance claim needs n>=6 per arm (sign-flip permutation min two-sided p = 2/2^n, so n<6 cannot reach p<0.05).
 - Comparing a multi-pass harness to a single-pass baseline and crediting the skill without an equal-compute control or a stated cost multiple.
 - Running an authored fixture whose starter, a reference impl, and a lazy impl were not first checked to confirm it discriminates.
 - Inferring user intent from changed files when the original goal, constraints, or rejected approaches are available.
 - Treating agent-discovered commands as trusted ground truth without a frozen command manifest.
 - Leaving `ask-user` findings unresolved while reporting a proven harness win.
 - Claiming adapter telemetry is replayable without recorded, scrubbed fixtures and a replay command.
+- Assuming one CLI runs the arm without a host preflight, or without a fallback when it is missing or crashes.
+- Measuring hand-paraphrased inline critic/fixer/verifier prompts instead of the actual shipped skill role files (SKILL.md + reference/role-loop.md + agents/*.md), letting the eval drift from what ships.

@@ -1,11 +1,17 @@
 # ROLE-LOOP - the default loop for GREENFIELD / DEBUG / LEGACY
 
-The disciplined form of the default loop: build, then improve via author-INDEPENDENT roles. The one
-move that beat a strong baseline at fixed effort is a critic that did not write the code turning the
-prose spec into FAILING tests, then a fixer that clears them.
+The default loop's mandatory core is build, then FORCED VERIFICATION: re-read the WHOLE prose spec from
+scratch and fix every gap - especially each input's degenerate values (null/undefined/empty/boundary)
+and error/edge paths - re-running the project's REAL tests until stable, even when the visible tests are
+already green. That forced whole-spec re-reading is the active ingredient that lifts correctness on
+false-GREEN-prone work.
 
-Use for any non-trivial feature/bug/refactor. Skip for a trivial single edit - edit directly. A naive
-"review & improve" loop only pads; an independent critic supplies the signal a re-reading author misses.
+Use for any non-trivial feature/bug/refactor. Skip for a trivial single edit - edit directly. Layer an
+independent critic (a reviewer that did NOT write the code, turning the prose spec into FAILING tests,
+then a fixer that clears them) as an OPT-IN escalation for genuinely under-specified / latent-correctness
+work, where surfacing requirements absent from the prompt is the lever. Measured caveat: on explicit-spec
+tasks that role separation did NOT beat equal-compute forced verification, so it is an escalation for the
+under-specified frontier, not an always-on default.
 
 ## Run setup - before any file mutation
 
@@ -40,7 +46,9 @@ so the role's heavy references (this file, `reference/domain-context.md`, `refer
 and the like) load inside the subagent and never accumulate in the conductor's window. The subagent
 returns only a short structured result - status, what changed, test output, concerns - not its transcript.
 Run independent units in parallel (QA scenario shards, review dimensions, multi-file builds); keep
-dependent roles ordered. A trivial single edit skips the loop and edits inline.
+dependent roles ordered. A trivial single edit skips the loop and edits inline. Build (1) and Verify (4)
+are the mandatory core; Critic (2) and Fixer (3) are the OPT-IN escalation for under-specified /
+latent-correctness work - otherwise go straight from Build to a forced Verify.
 
 1. **Build** - before the first edit, confirm any blast-radius reaching past the change's explicit
    target has cleared its interview confirm (`reference/interview.md`: approved, AFK-proceeded, or
@@ -49,7 +57,7 @@ dependent roles ordered. A trivial single edit skips the loop and edits inline.
    exact-behavior baseline FIRST (`reference/qa.md` "API behavior baseline"). Capture the run-setup before
    proof in `delivery-proof.md` before the first edit.
 
-2. **Critic** (`agents/code-reviewer.md`) - DO NOT edit src or weaken/delete existing tests.
+2. **Critic** (`agents/code-reviewer.md`; OPT-IN escalation for under-specified / latent-correctness work) - DO NOT edit src or weaken/delete existing tests.
    - Re-read the prose spec and repo/data rules. Enumerate REQUIRED behaviors the existing tests do not
      exercise - especially edges (boundary inputs, error/recovery paths, scoping/precedence, prefix/
      filter behavior, incremental update, concurrency, protocol/state).
@@ -67,9 +75,12 @@ dependent roles ordered. A trivial single edit skips the loop and edits inline.
    - No padding: add no code that is not required by a failing test or a listed defect. Do not break
      passing tests.
 
-4. **Verify vs ground truth** (`agents/qa-auditor.md` / `security-reviewer.md`)
-   - Re-run the project's REAL tests; re-read the prose spec for uncovered rules. Fix residual failures/
-     regressions minimally. Stop on green; report what was verified with command output.
+4. **Verify vs ground truth (mandatory core)** (`agents/qa-auditor.md` / `security-reviewer.md`)
+   - Forced whole-spec sweep: re-read the FULL prose spec from scratch and, for every stated-or-implied
+     behavior - especially each input's degenerate values (null/undefined/empty/boundary) and error/edge
+     paths - confirm the code is correct and fix the smallest gap, even when the visible tests are green.
+     Re-run the project's REAL tests and loop until no fresh gap appears; report what was verified with
+     command output.
    - Browser UI changes require `reference/qa.md` browser evidence: `Tool: playwright-cli`,
      fixed-route as-is/to-be captures, and a passing `bash templates/qa-gate.sh <vault> browser`.
      Lint, typecheck, unit tests, build, and a visual guess are not browser QA.
@@ -81,9 +92,10 @@ dependent roles ordered. A trivial single edit skips the loop and edits inline.
      findings or missing trusted commands block a final done claim and the commit
      (`reference/delivery-gate.md` Commit gate).
 
-Loop critic->fixer only while a fresh red appears. The verifier pass is a regression guard - drop it only
-for *very easy* issues; past that, re-running the project's REAL tests is REQUIRED, plus DB evidence for
-data-backed bugs (`reference/db-access.md`) - DB proves data state but does not replace the red-green test.
+The forced Verify is the mandatory core - drop it only for *very easy* issues; past that, the whole-spec
+re-read + re-running the project's REAL tests is REQUIRED, plus DB evidence for data-backed bugs
+(`reference/db-access.md`) - DB proves data state but does not replace the red-green test. Loop the
+opt-in critic->fixer escalation only while a fresh red appears.
 
 Board (optional): if the Supergoal Board is enabled (`reference/observability.md`), the conductor may
 call `sg-emit --phase <P>` at each transition (Frame/Build/Critic/Fixer/Verify/Done). Opt-in and

@@ -19,7 +19,10 @@ weaken safety gates. Create or edit it only when the user explicitly asks (`refe
 - Smallest correct change; match surrounding code; never rewrite a whole file for a few lines.
   Scope-minimalism governs code surface area, NOT visual quality: for user-facing UI a polished result is
   baseline correctness, not padding.
-- Surface hidden requirements first, as FAILING tests written by an independent critic.
+- Default to forced whole-spec verification: after Build, re-read every stated-or-implied requirement
+  (each input's degenerate values null/undefined/empty/boundary, error/edge paths) and fix the smallest
+  gap even when the visible tests pass. Opt-in escalation for under-specified / latent-correctness work:
+  an independent critic that did not write the code turns the unstated requirements into FAILING tests.
 - For non-trivial code changes, run a Before/After Eval before Build: prove the before state, the after
   target, and the delta with trusted repo/evaluator commands (`reference/delivery-gate.md`).
 - Ask only when genuinely ambiguous; resolve code-answerable questions by reading the code.
@@ -66,12 +69,14 @@ the existing design system); non-visual work (lib, API, backend, CLI): skip.
 **Board overlay (optional).** If the live dashboard is enabled, the conductor calls `sg-emit` at each
 phase transition; it observes only, never gates (`reference/observability.md`).
 
-## Default loop (GREENFIELD / DEBUG / LEGACY) - role-separated, subagent-default
+## Default loop (GREENFIELD / DEBUG / LEGACY) - verification-first, subagent-default
 
-Each role runs in a fresh-context subagent by default (the dispatching agent is the "conductor"); a
-trivial single edit skips the loop and edits inline. Independent units (QA scenario shards, review
-dimensions) run in parallel. Difficulty gate: *very easy* -> skip; harder -> red-green is REQUIRED, plus
-DB evidence when persisted data is load-bearing. Full contract: `reference/role-loop.md`.
+Work runs in fresh-context subagents by default (the dispatching agent is the "conductor"); a trivial
+single edit skips the loop and edits inline. Independent units (QA scenario shards, review dimensions) run
+in parallel. Difficulty gate: *very easy* -> skip; harder -> red-green is REQUIRED, plus DB evidence when
+persisted data is load-bearing. The mandatory core is Build -> Forced Verify; the independent-critic
+escalation is opt-in (a measured lever for under-specified work, not always on). Full contract:
+`reference/role-loop.md`.
 
 1. **Frame.** Restate goal + falsifiable acceptance criteria in one line. If underspecified, ask <=5
    high-leverage questions; and once the approach is grounded, if the fix's blast radius reaches past
@@ -81,16 +86,22 @@ DB evidence when persisted data is load-bearing. Full contract: `reference/role-
    `templates/delivery-proof.md` and record the Before/After Eval (`reference/delivery-gate.md`).
 2. **Build.** Smallest correct change, test-first; match surrounding style; minimal diff. Bug: reproduce
    with a failing test first (`reference/debugging.md`).
-3. **Critic (independent; no src edits).** Re-read the prose spec + repo/data rules
-   (`reference/domain-context.md`, `domain-rules.md`). For each required behavior the existing tests miss,
-   write a FAILING test and log it in the run vault's `surfaced-requirements.md`. A signal, not the oracle.
-4. **Fixer (no test edits).** Make the failing tests pass with the smallest change; no padding; do not
-   break passing tests.
-5. **Verify vs ground truth.** Re-run the project's REAL tests; re-read the spec for uncovered rules.
-   Browser UI: complete browser app verification with `qa-gate.sh <vault> browser` (lint, typecheck,
-   build, and screenshots do not substitute). Data load-bearing past *very easy*: DB evidence too. Stop
-   on green only after updating `delivery-proof.md` with after evidence, resolved decision gates, and
-   residual risk; report what was verified, with command output.
+3. **Forced Verify vs ground truth (mandatory core).** Re-read the WHOLE prose spec from scratch and, for
+   every stated-or-implied behavior - especially each input's degenerate values (null/undefined/empty/
+   boundary) and error/edge paths - confirm the code is correct and fix the smallest gap, even when the
+   visible tests are green (they are not the spec). Re-run the project's REAL tests and loop Build->Verify
+   until no fresh gap appears. Browser UI: complete browser app verification with
+   `qa-gate.sh <vault> browser` (lint, typecheck, build, and screenshots do not substitute). Data
+   load-bearing past *very easy*: DB evidence too. Stop on green only after updating `delivery-proof.md`
+   with after evidence, resolved decision gates, and residual risk; report what was verified, with
+   command output.
+4. **Critic escalation (opt-in; independent, no src edits).** For under-specified / latent-correctness
+   work - where the lever is surfacing requirements ABSENT from the prompt - escalate to an independent
+   critic that did not write the code: re-read the prose spec + repo/data rules
+   (`reference/domain-context.md`, `domain-rules.md`), write a FAILING test for each missed required
+   behavior, and log it in the run vault's `surfaced-requirements.md`; a fixer then clears the reds (no
+   test edits). A signal, not the oracle. Measured caveat: on explicit-spec tasks this role separation did
+   NOT beat equal-compute forced verification, so reserve it for the under-specified frontier.
 
 Roles -> personas: critic=`agents/code-reviewer.md`, fixer=`agents/executor.md`,
 verify=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role>.md`).

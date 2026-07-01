@@ -196,6 +196,36 @@ mkresult() {
   "runtime_adapter": "codex",
   "same_repo_snapshot": true,
   "isolated_worktrees": true,
+  "runtime_preflight": {
+    "host_os": "linux",
+    "preferred_adapter": "codex-exec",
+    "chosen_adapter": "codex-exec",
+    "preflights": {
+      "codex-exec": { "available": true, "ok": true, "reason": "edit ok, tests pass" }
+    }
+  },
+  "role_source": "shipped_files",
+  "statistics": {
+    "seeds_per_arm": 6,
+    "winning_comparison": "harness-vs-baseline",
+    "bca_ci_95": [0.4, 2.6],
+    "permutation_p": 0.03125,
+    "significant": true,
+    "seed_outcomes": [
+      { "arm": "baseline", "seed": 0, "crashed": false, "recorded_loss": false },
+      { "arm": "baseline", "seed": 1, "crashed": false, "recorded_loss": false },
+      { "arm": "baseline", "seed": 2, "crashed": false, "recorded_loss": false },
+      { "arm": "baseline", "seed": 3, "crashed": false, "recorded_loss": false },
+      { "arm": "baseline", "seed": 4, "crashed": false, "recorded_loss": false },
+      { "arm": "baseline", "seed": 5, "crashed": false, "recorded_loss": false },
+      { "arm": "harness", "seed": 0, "crashed": false, "recorded_loss": false },
+      { "arm": "harness", "seed": 1, "crashed": false, "recorded_loss": false },
+      { "arm": "harness", "seed": 2, "crashed": false, "recorded_loss": false },
+      { "arm": "harness", "seed": 3, "crashed": false, "recorded_loss": false },
+      { "arm": "harness", "seed": 4, "crashed": false, "recorded_loss": false },
+      { "arm": "harness", "seed": 5, "crashed": false, "recorded_loss": false }
+    ]
+  },
   "eval_intent": {
     "goal": "increase hidden requirement coverage",
     "constraints": ["preserve the same repo snapshot"],
@@ -444,6 +474,12 @@ require_text "case template records decision gates" "templates/harness-eval-case
 require_text "case template records adapter fixture replay" "templates/harness-eval-case.yaml" "adapter_fixture_replay"
 require_text "case template records default coding pair" "templates/harness-eval-case.yaml" "default_coding_ab"
 require_text "result template records default coding pair" "templates/harness-eval-result.json" "default_coding_ab"
+require_text "result template records runtime preflight" "templates/harness-eval-result.json" "runtime_preflight"
+require_text "result template records chosen adapter" "templates/harness-eval-result.json" "chosen_adapter"
+require_text "result template records role source" "templates/harness-eval-result.json" "role_source"
+require_text "result template records seeds per arm" "templates/harness-eval-result.json" "seeds_per_arm"
+require_text "result template records significance evidence" "templates/harness-eval-result.json" "permutation_p"
+require_text "result template records crash accounting" "templates/harness-eval-result.json" "recorded_loss"
 
 mkresult "$T/ok.json" "harness" "$PASS_CHECKS" "proven" "harness"
 run_case "gate accepts complete eval" 0 "HARNESS-EVAL PASS" node "$GATE" "$T/ok.json"
@@ -531,6 +567,50 @@ run_case "gate blocks average_total mismatch" 1 "average_total" node "$GATE" "$T
 
 mkresult "$T/proven-quality-loss.json" "harness" "$PASS_CHECKS" "proven" "baseline" "70" "82"
 run_case "gate blocks proven quality loss" 1 "quality.winner harness" node "$GATE" "$T/proven-quality-loss.json"
+
+# --- recurrence-prevention rules: enforced ONLY for a proven claim ---
+mkresult "$T/compliant-proven.json" "harness" "$PASS_CHECKS" "proven" "harness"
+run_case "gate accepts fully-compliant proven result" 0 "HARNESS-EVAL PASS" node "$GATE" "$T/compliant-proven.json"
+
+mkresult "$T/directional-n3.json" "not_proven" "$PASS_CHECKS" "not_proven" "harness"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.statistics.seeds_per_arm=3; delete x.runtime_preflight; x.role_source='paraphrase'; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/directional-n3.json"
+run_case "gate accepts not-proven directional n=3" 0 "HARNESS-EVAL PASS" node "$GATE" "$T/directional-n3.json"
+
+mkresult "$T/proven-seeds-lt6.json" "harness" "$PASS_CHECKS" "proven" "harness"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.statistics.seeds_per_arm=3; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/proven-seeds-lt6.json"
+run_case "gate blocks proven claim with n<6 per arm" 1 "n>=6 per arm" node "$GATE" "$T/proven-seeds-lt6.json"
+
+mkresult "$T/proven-ci-touches-zero.json" "harness" "$PASS_CHECKS" "proven" "harness"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.statistics.bca_ci_95=[-0.1, 2.0]; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/proven-ci-touches-zero.json"
+run_case "gate blocks proven CI not entirely above zero" 1 "entirely > 0" node "$GATE" "$T/proven-ci-touches-zero.json"
+
+mkresult "$T/proven-p-not-sig.json" "harness" "$PASS_CHECKS" "proven" "harness"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.statistics.permutation_p=0.2; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/proven-p-not-sig.json"
+run_case "gate blocks proven permutation p not significant" 1 "permutation p < 0.05" node "$GATE" "$T/proven-p-not-sig.json"
+
+mkresult "$T/proven-no-preflight.json" "harness" "$PASS_CHECKS" "proven" "harness"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); delete x.runtime_preflight; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/proven-no-preflight.json"
+run_case "gate blocks proven claim without preflight" 1 "runtime_preflight" node "$GATE" "$T/proven-no-preflight.json"
+
+mkresult "$T/proven-no-chosen-adapter.json" "harness" "$PASS_CHECKS" "proven" "harness"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); delete x.runtime_preflight.chosen_adapter; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/proven-no-chosen-adapter.json"
+run_case "gate blocks proven claim without chosen adapter" 1 "chosen_adapter" node "$GATE" "$T/proven-no-chosen-adapter.json"
+
+mkresult "$T/proven-adapter-not-preflighted.json" "harness" "$PASS_CHECKS" "proven" "harness"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.runtime_preflight.preflights={}; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/proven-adapter-not-preflighted.json"
+run_case "gate blocks proven chosen adapter not preflighted" 1 "was preflighted" node "$GATE" "$T/proven-adapter-not-preflighted.json"
+
+mkresult "$T/proven-paraphrase-roles.json" "harness" "$PASS_CHECKS" "proven" "harness"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.role_source='paraphrase'; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/proven-paraphrase-roles.json"
+run_case "gate blocks proven claim with paraphrased roles" 1 "role_source" node "$GATE" "$T/proven-paraphrase-roles.json"
+
+mkresult "$T/proven-roles-absent.json" "harness" "$PASS_CHECKS" "proven" "harness"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); delete x.role_source; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/proven-roles-absent.json"
+run_case "gate blocks proven claim with absent role source" 1 "role_source" node "$GATE" "$T/proven-roles-absent.json"
+
+mkresult "$T/proven-crashed-seed.json" "harness" "$PASS_CHECKS" "proven" "harness"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.statistics.seed_outcomes[0].crashed=true; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/proven-crashed-seed.json"
+run_case "gate blocks proven crashed seed not marked loss" 1 "recorded as a loss" node "$GATE" "$T/proven-crashed-seed.json"
 
 printf '\n%s passed, %s failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

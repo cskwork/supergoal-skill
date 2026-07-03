@@ -46,6 +46,9 @@ require_text "role-loop protects original checkout" "reference/role-loop.md" "ne
 require_text "SKILL sends UI work through browser QA gate" "SKILL.md" 'browser app verification with `qa-gate.sh <vault> browser`'
 require_text "role-loop names playwright-cli for UI verification" "reference/role-loop.md" "Tool: playwright-cli"
 require_text "qa says UI changes are browser app verification" "reference/qa.md" "UI changes are browser app verification"
+require_text "qa exposes code-change scenario stencil" "reference/qa.md" "Scenario stencil (code changes)"
+require_text "qa scenario stencil includes regression" "reference/qa.md" "Regression: previous passing neighbor scenarios"
+require_text "qa scenario stencil includes synthetic data warning" "reference/qa.md" "Do not call one fabricated green case conclusive"
 require_text "README documents worktree default" "README.md" "run worktree"
 require_text "README documents playwright browser gate" "README.md" 'qa-gate.sh <vault> browser'
 if [ -f "$ROOT/tests/run-all.sh" ]; then

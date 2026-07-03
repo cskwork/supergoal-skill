@@ -36,13 +36,19 @@ Before any file mutation, create the run vault's `delivery-proof.md` from
 Before/After Eval (`reference/delivery-gate.md`):
 
 - record eval intent: user goal, constraints, tradeoffs, and rejected approaches;
+- seed `## Requirement Trace` with numbered requirements in the user's words;
 - record the completion promise: promised outcome, required proof, stop condition, and `max_iterations`
   (default 8);
 - record the before state: absent feature/red acceptance check for GREENFIELD, reproduced symptom for
-  DEBUG, preserve-baseline capture for LEGACY/brownfield;
+  DEBUG, preserve-baseline capture for LEGACY/brownfield, plus neighbor characterization baseline for any
+  shared code/state change past *very easy*;
+- DEBUG first tries exact live reproduction. If exact reproduction is unavailable, preserve the
+  failure-triggering properties in synthetic/similar data and fill `## Reproduction Fidelity` with
+  fidelity level, data source, prod-vs-test deltas, residual risk, and post-deploy confirmation plan;
 - record the after target and command manifest from repo-owned or evaluator-owned proof commands.
 - keep `run-state.json` current after each phase with current phase, iteration, unresolved gates,
-  blockers, next action, and last proof command so an interrupted run resumes instead of restarts.
+  blockers, next action, regression_ledger, and last proof command so an interrupted run resumes instead
+  of restarts.
 
 ## Completion promise + loop cap
 
@@ -50,9 +56,11 @@ Frame writes the completion promise before Build. Build -> Forced Verify loops o
 not yet proven and a fresh, actionable gap remains. Default `max_iterations` is 8 for the Build/Verify
 loop; the opt-in critic->fixer escalation keeps its 3-cycle cap below. When the next pass would exceed
 the cap, stop and write a forced reflection in `run-state.json`: what keeps failing, the likely root
-cause, which requirement is still unproven, and the smallest next action. Then ask only if the blocker is
-requirement-level or needs user consent; otherwise recut the plan and continue only after the reflection
-identifies new evidence.
+cause, which requirement is still unproven, whether a previously green check regressed, and the smallest
+next action. Each iteration re-runs `regression_ledger`; if a previously green check turns red, stop,
+fix that regression, and record `forced_reflection.regressed_previously_green`. Then ask only if the
+blocker is requirement-level or needs user consent; otherwise recut the plan and continue only after the
+reflection identifies new evidence.
 
 ## Roles (each role = a fresh-context subagent by default)
 
@@ -76,9 +84,10 @@ latent-correctness work - otherwise go straight from Build to a forced Verify.
 1. **Build** - before the first edit, confirm any blast-radius reaching past the change's explicit
    target has cleared its interview confirm (`reference/interview.md`: approved, AFK-proceeded, or
    safely skipped and logged). Then: smallest correct change; match surrounding style; minimal diff.
-   Bug: reproduce with a failing test first. Refactor/integrate an existing API: capture its
-   exact-behavior baseline FIRST (`reference/qa.md` "API behavior baseline"). Capture the run-setup before
-   proof in `delivery-proof.md` and `run-state.json` before the first edit.
+   Bug: reproduce with a failing test first. For any shared code/state change past *very easy*, capture a
+   neighbor characterization baseline FIRST (`reference/qa.md` "Characterization baseline"). Refactor/
+   integrate an existing API: capture its exact-behavior baseline FIRST with the API behavior baseline.
+   Capture the run-setup before proof in `delivery-proof.md` and `run-state.json` before the first edit.
 
 2. **Critic** (`agents/code-reviewer.md`; OPT-IN escalation for under-specified / latent-correctness work) - DO NOT edit src or weaken/delete existing tests.
    - Re-read the prose spec and repo/data rules. Enumerate REQUIRED behaviors the existing tests do not
@@ -104,11 +113,19 @@ latent-correctness work - otherwise go straight from Build to a forced Verify.
      paths - confirm the code is correct and fix the smallest gap, even when the visible tests are green.
      Re-run the project's REAL tests and loop until no fresh gap appears; report what was verified with
      command output.
+   - Code-change scenarios use `reference/qa.md` "Scenario stencil (code changes)", including regression
+     scenarios and metamorphic relations when no exact oracle exists.
    - Browser UI changes require `reference/qa.md` browser evidence: `Tool: playwright-cli`,
      fixed-route as-is/to-be captures, and a passing `bash templates/qa-gate.sh <vault> browser`.
      Lint, typecheck, unit tests, build, and a visual guess are not browser QA.
-   - API refactor: re-capture the same call and diff against the pre-refactor baseline; unintended
-     drift is a red to resolve.
+   - Re-run every captured neighbor characterization baseline; unnamed drift is red. API refactor:
+     re-capture the same call and diff against the pre-refactor baseline; unintended drift is a red to
+     resolve.
+   - Close `## Requirement Trace`: every forward row is `met` with a verifying check, and
+     `Backward-trace: clean` proves no diff hunk is orphan scope.
+   - The mandatory core Verify for neighbor baselines and Requirement Trace closure is fresh-context:
+     the code writer's self-review is not a regression gate. Open requirements, unresolved REVISE items,
+     and stub/placeholder implementations block done; do not drop them to make the run green.
    - Update the run vault's `surfaced-requirements.md`: mark each surfaced requirement fixed, or note why it stays open.
    - Update `delivery-proof.md`: after evidence, command outputs/artifact paths, decision gates
      (`auto-fix`, `no-op`, `ask-user`), intentional drift, and residual risk. Unresolved `ask-user`
@@ -131,6 +148,10 @@ best-effort - it observes only, never blocks or gates the loop.
 - The critic's generated tests are a SIGNAL to surface hidden requirements - NOT the acceptance oracle.
   Final verification is always the project's REAL tests + prose spec. Never weaken/delete a real test,
   never declare done because self-written tests pass while real tests/spec do not.
+- Characterization baseline is a regression signal, not a correctness oracle. A known-bug snapshot changes
+  only when the bug fix is intentional and named.
+- Self-review is not a regression gate: generated explanations can approve behavior drift. Require
+  execution evidence, fresh-context verification, and no stub done claims.
 - Derive every generated test from the prose spec, not from a guessed rubric; a wrong generated test the
   fixer optimizes to is the failure mode - keep them black-box and spec-anchored.
 - Cost: the loop costs more than one build - use it when correctness on behavior the visible tests miss

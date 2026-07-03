@@ -182,6 +182,19 @@ COMMITGATE="$SKILL_DIR/templates/commit-gate.sh"
 mkproof() {  # write a GREEN delivery-proof.md into $1
   cat > "$1/delivery-proof.md" <<'EOF'
 # Delivery Proof
+## Requirement Trace
+| # | Requirement (user's words) | Source | Implementing change (file:line) | Verifying check | Status |
+|---|---|---|---|---|---|
+| r1 | preserve existing behavior | user | src/app.js:12 | npm test | met |
+
+Backward-trace: clean
+## Reproduction Fidelity
+- Fidelity level: exact
+- Test data source:
+- Failure-triggering properties preserved:
+- Prod-vs-test deltas:
+- Residual risk from data gap:
+- Post-deploy confirmation plan:
 ## Command Manifest
 | Name | Command | Source | Proves | Used when |
 |---|---|---|---|---|
@@ -227,6 +240,34 @@ printf 'Verdict: <PASS | FAIL | PARTIAL>\n' > "$v/report.md"          # M1: star
 run_case "13.11 un-filled Verdict placeholder -> blocked" 1 "un-filled Verdict"    bash "$COMMITGATE" "$v" none
 rm -f "$v/report.md"
 run_case "13.12 app run w/o QA evidence -> blocked"   1 "QA evidence gate failed"  bash "$COMMITGATE" "$v" browser
+mkproof "$v"; rm -f "$v/report.md" "$v/surfaced-requirements.md"
+sed 's/| r1 | preserve existing behavior | user | src\/app.js:12 | npm test | met |/| r1 | preserve existing behavior | user | src\/app.js:12 | npm test | open |/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+run_case "13.13 open Requirement Trace -> blocked"     1 "Requirement Trace"        bash "$COMMITGATE" "$v" none
+mkproof "$v"
+sed 's/Backward-trace: clean/Backward-trace: orphan src\/bonus.js:1/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+run_case "13.14 orphan Backward-trace -> blocked"      1 "Backward-trace is not clean" bash "$COMMITGATE" "$v" none
+mkproof "$v"
+sed 's/Fidelity level: exact/Fidelity level: exact | prod-snapshot | synthetic-representative | synthetic-minimal | not-reproduced/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+run_case "13.15 placeholder fidelity -> blocked"       1 "unknown or placeholder"   bash "$COMMITGATE" "$v" none
+mkproof "$v"
+sed 's/Fidelity level: exact/Fidelity level: synthetic-minimal/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+run_case "13.16 non-exact no risk/plan -> blocked"     1 "residual risk"           bash "$COMMITGATE" "$v" none
+mkproof "$v"
+sed 's/Fidelity level: exact/Fidelity level: synthetic-minimal/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+sed 's/Residual risk from data gap:/Residual risk from data gap: prod concurrency not fully represented/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+run_case "13.16b non-exact no confirmation -> blocked" 1 "post-deploy confirmation" bash "$COMMITGATE" "$v" none
+mkproof "$v"
+sed 's/Fidelity level: exact/Fidelity level: synthetic-minimal/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+sed 's/Residual risk from data gap:/Residual risk from data gap: (pending)/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+sed 's/Post-deploy confirmation plan:/Post-deploy confirmation plan: canary logs after deploy/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+run_case "13.16c parenthesized risk placeholder -> blocked" 1 "residual risk"       bash "$COMMITGATE" "$v" none
+mkproof "$v"
+sed 's/Fidelity level: exact/Fidelity level: synthetic-representative/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+sed 's/Failure-triggering properties preserved:/Failure-triggering properties preserved: cached deny after role change, request ordering, TTL boundary/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+sed 's/Prod-vs-test deltas:/Prod-vs-test deltas: staging has lower tenant cardinality and no real CDN cache/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+sed 's/Residual risk from data gap:/Residual risk from data gap: prod scale and concurrency may still differ; monitor authz-cache-deny-rate/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+sed 's/Post-deploy confirmation plan:/Post-deploy confirmation plan: canary 10% for 30 minutes and compare 403\/200 authz-cache logs/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+run_case "13.17 difficult synthetic proxy -> PASS"     0 "COMMIT GATE PASS"        bash "$COMMITGATE" "$v" none
 
 # ----------------------------------------------------------------------
 echo

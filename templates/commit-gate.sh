@@ -5,9 +5,11 @@
 #   1) delivery-proof.md exists and is filled,
 #   2) no decision gate is still open (ask-user/unresolved => block; resolve or ask the user, do not commit),
 #   3) no surfaced requirement is still open (a requirement the verifier has not closed),
-#   4) the after target is evidenced (delivery-proof.md ## After Evidence has a row),
-#   5) QA verdict is PASS (FAIL or PARTIAL/incomplete blocks); for an app run, browser/CLI QA evidence passes,
-#   6) at least one trusted command (frozen_repo/evaluator_owned) backs the proof.
+#   4) Requirement Trace is closed forward and backward (no open row, no orphan scope),
+#   5) non-exact Reproduction Fidelity records residual risk and post-deploy confirmation,
+#   6) the after target is evidenced (delivery-proof.md ## After Evidence has a row),
+#   7) QA verdict is PASS (FAIL or PARTIAL/incomplete blocks); for an app run, browser/CLI QA evidence passes,
+#   8) at least one trusted command (frozen_repo/evaluator_owned) backs the proof.
 # NEVER edit this script to make a non-green run commit — resolve the gap or ask the user instead.
 #
 # Usage: commit-gate.sh <vault-dir> [browser|cli|none]
@@ -56,7 +58,87 @@ if [ -s "$SURF" ]; then
   fi
 fi
 
-# 4) After target evidenced AND green: '## After Evidence' has >=1 data row and no row's Status (col 3) is
+# 4) Requirement Trace closed in both directions: every forward row has Status=met, and the reverse
+#    attestation is exactly 'Backward-trace: clean'. Any orphan scope or placeholder blocks commit.
+trace_state="$(awk -F'|' '
+  /^[[:space:]]*##[[:space:]]+Requirement Trace/ { ing=1; found=1; next }
+  /^[[:space:]]*##[[:space:]]/ { ing=0 }
+  ing && /^[[:space:]]*\|/ {
+    id=$2; gsub(/^[[:space:]]+|[[:space:]]+$/,"",id); lid=tolower(id)
+    if (id=="" || lid=="#" || id ~ /^-+$/) next
+    rows++
+    st=$7; gsub(/^[[:space:]]+|[[:space:]]+$/,"",st); lst=tolower(st)
+    if (lst != "met") { bad=1; exit }
+  }
+  END {
+    if (!found) print "MISSING";
+    else if (bad) print "BAD";
+    else if (rows==0) print "NOROW";
+    else print "OK";
+  }
+' "$PROOF")"
+case "$trace_state" in
+  OK) echo "  ok: requirement trace forward rows met" ;;
+  MISSING) fail "delivery-proof.md missing ## Requirement Trace — requirements are not traceable" ;;
+  NOROW) fail "delivery-proof.md ## Requirement Trace has no requirement row — seed and close the RTM before commit" ;;
+  *) fail "delivery-proof.md ## Requirement Trace has an unmet/open/blocked/placeholder row — close every requirement before commit" ;;
+esac
+
+backward_line="$(awk '
+  /^[[:space:]]*##[[:space:]]+Requirement Trace/ { ing=1; next }
+  /^[[:space:]]*##[[:space:]]/ { ing=0 }
+  ing && /^[[:space:]]*Backward-trace:/ { print; exit }
+' "$PROOF")"
+[ -n "$backward_line" ] || fail "delivery-proof.md missing Backward-trace line — reverse trace scope before commit"
+backward_norm="$(printf '%s' "$backward_line" | tr '[:upper:]' '[:lower:]' | sed -E 's/^[[:space:]]+|[[:space:]]+$//g; s/[[:space:]]+/ /g')"
+[ "$backward_norm" = "backward-trace: clean" ] \
+  || fail "Backward-trace is not clean — remove orphan scope or get explicit user acceptance before commit"
+echo "  ok: backward trace clean"
+
+# 5) Reproduction Fidelity: exact runs are minimal. Non-exact prod/proxy runs must record the data gap's
+#    residual risk and a post-deploy confirmation plan; a synthetic green alone is not conclusive proof.
+proof_field() {
+  local label="$1"
+  awk -v label="$label" '
+    /^[[:space:]]*##[[:space:]]+Reproduction Fidelity/ { ing=1; next }
+    /^[[:space:]]*##[[:space:]]/ { ing=0 }
+    ing {
+      line=$0
+      sub(/^[[:space:]]*-[[:space:]]*/, "", line)
+      low=tolower(line); want=tolower(label) ":"
+      if (index(low, want) == 1) {
+        sub(/^[^:]*:[[:space:]]*/, "", line)
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
+        print line
+        exit
+      }
+    }
+  ' "$PROOF"
+}
+fidelity="$(proof_field "Fidelity level")"
+[ -n "$fidelity" ] || fail "delivery-proof.md missing Reproduction Fidelity fidelity level"
+fidelity_l="$(printf '%s' "$fidelity" | tr '[:upper:]' '[:lower:]' | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')"
+case "$fidelity_l" in
+  exact)
+    echo "  ok: reproduction fidelity exact"
+    ;;
+  prod-snapshot|synthetic-representative|synthetic-minimal|not-reproduced)
+    residual="$(proof_field "Residual risk from data gap")"
+    confirm="$(proof_field "Post-deploy confirmation plan")"
+    if ! printf '%s' "$residual" | grep -qE '[[:alnum:]]' || printf '%s' "$residual" | grep -qiE '^(todo|tbd|none|n/a|<.*>|\(.*\))$'; then
+      fail "non-exact Reproduction Fidelity missing residual risk from data gap"
+    fi
+    if ! printf '%s' "$confirm" | grep -qE '[[:alnum:]]' || printf '%s' "$confirm" | grep -qiE '^(todo|tbd|none|n/a|<.*>|\(.*\))$'; then
+      fail "non-exact Reproduction Fidelity missing post-deploy confirmation plan"
+    fi
+    echo "  ok: non-exact reproduction fidelity records residual risk and post-deploy plan"
+    ;;
+  *)
+    fail "unknown or placeholder Reproduction Fidelity level '$fidelity' — use exact, prod-snapshot, synthetic-representative, synthetic-minimal, or not-reproduced"
+    ;;
+esac
+
+# 6) After target evidenced AND green: '## After Evidence' has >=1 data row and no row's Status (col 3) is
 #    a failing word (fail/red/error/broken/partial). A recorded red row is not a green after target.
 evi="$(awk -F'|' '
   /^[[:space:]]*##[[:space:]]+After Evidence/ { ing=1; next }
@@ -76,7 +158,7 @@ case "$evi" in
   *)   fail "delivery-proof.md ## After Evidence has no row — the after target is not evidenced; finish verification before commit" ;;
 esac
 
-# 5) QA verdict: block on ANY FAIL/PARTIAL anywhere in the vault (not just the first), and on an un-filled
+# 7) QA verdict: block on ANY FAIL/PARTIAL anywhere in the vault (not just the first), and on an un-filled
 #    '<PASS | FAIL | PARTIAL>' placeholder (a started-but-incomplete QA report). No verdict line at all =>
 #    non-QA change, skip. For an app run, delegate browser/CLI evidence to the shared qa-gate.sh.
 if grep -rhiE 'Verdict:[[:space:]]*(FAIL|PARTIAL)([[:space:]]|$)' "$VAULT" >/dev/null 2>&1; then
@@ -92,7 +174,7 @@ if [ "$APPTYPE" != none ]; then
 fi
 echo "  ok: QA verdict clean"
 
-# 6) A trusted command backs the proof (agent-detected commands cannot be the whole proof).
+# 8) A trusted command backs the proof (agent-detected commands cannot be the whole proof).
 grep -qE 'frozen_repo|evaluator_owned' "$PROOF" \
   || fail "no trusted command (frozen_repo/evaluator_owned) in the manifest — agent-detected alone cannot prove done"
 echo "  ok: trusted command present"

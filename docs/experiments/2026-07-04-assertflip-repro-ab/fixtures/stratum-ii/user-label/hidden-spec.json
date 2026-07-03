@@ -1,0 +1,13 @@
+{
+  "id": "user-label",
+  "stratum": "ii",
+  "module": "src/user.mjs",
+  "export": "formatUserLabel",
+  "bug": "Missing profile data crashes instead of producing Anonymous.",
+  "cases": [
+    { "name": "known user name is trimmed", "args": [{ "profile": { "name": " Ada " } }], "expect": "Ada" },
+    { "name": "missing profile becomes Anonymous", "args": [{}], "expect": "Anonymous" },
+    { "name": "blank profile name becomes Anonymous", "args": [{ "profile": { "name": "   " } }], "expect": "Anonymous" }
+  ]
+}
+

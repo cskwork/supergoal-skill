@@ -1,5 +1,5 @@
-id: external-deepswe-v1.1-headroom
-title: "DeepSWE v1.1 public headroom task set"
+id: external-deepswe-v1.1-public-pilot
+title: "DeepSWE v1.1 public full-cycle task set"
 case_type: external_benchmark
 benchmark:
   name: DeepSWE
@@ -37,6 +37,7 @@ eval_intent:
     - "Treating the local authz-cache u3 fixture as a harness win; it only proves hidden-test discrimination."
     - "Using private LMS code that cannot be committed or independently replayed."
     - "Treating the 2026-07-03 Happy DOM interrupted harness arm as a valid correctness result."
+    - "Treating a completed Happy DOM tie with perfect baseline score as meaningful harness lift."
 arms:
   baseline:
     prompt_condition: "Original DeepSWE instruction only."
@@ -62,7 +63,7 @@ metrics:
 decision_rule:
   directional_pilot: "At least 3 paired seeds per arm on the primary task; report per-seed vectors."
   proven_claim: "At least 6 paired seeds per arm across multiple tasks, paired McNemar p < 0.05 on binary task outcomes, and no unacceptable cost/time regression."
-  no_signal: "If both arms pass every selected task, report Not proven and select harder held-out tasks."
+  no_signal: "If both arms pass every selected task, report not_proven_no_headroom and select harder held-out tasks."
 tasks:
   - id: happy-dom-abort-pending-body-reads
     task_url: "https://deepswe.datacurve.ai/data/v1/tasks/happy-dom-abort-pending-body-reads"
@@ -72,7 +73,7 @@ tasks:
     category: bugfix
     language: typescript
     why_selected: "Default public pilot: async shutdown bugfix with pending body reads, formData parsing, timers, navigation cleanup, and preservation checks."
-    public_headroom_note: "2026-07-03 Codex baseline reached reward=0, f2p=1/14, p2p=165/165; this shows public verifier headroom, not harness lift."
+    public_headroom_note: "The interrupted 2026-07-03 setup run showed only diagnostic headroom. The later no-interrupt Codex gpt-5.5 low run saturated both arms: baseline and harness reward=1, f2p=14/14, p2p=165/165. Keep this as the default public full-cycle pilot, but require harder held-out tasks for effectiveness claims."
     minimum_pilot: true
   - id: cliffy-config-file-parsing
     task_url: "https://deepswe.datacurve.ai/data/v1/tasks/cliffy-config-file-parsing"
@@ -103,6 +104,10 @@ tasks:
     why_selected: "XML diff, patch, reverse patch, merge, and summaries test larger domain implementation breadth."
     minimum_pilot: false
 commands:
+  full_cycle_runner:
+    - "node templates/harness-eval-external/deepswe/run-full-cycle.mjs --task happy-dom-abort-pending-body-reads --agent codex --model gpt-5.5 --reasoning-effort low --codex-auth-json auto --timeout-seconds 900 --run-root /tmp/sg-deepswe-happy-dom-full-cycle"
+  full_cycle_dry_run:
+    - "node templates/harness-eval-external/deepswe/run-full-cycle.mjs --dry-run --task happy-dom-abort-pending-body-reads --agent codex --model gpt-5.5 --reasoning-effort low --codex-auth-json auto --timeout-seconds 900 --run-root /tmp/sg-deepswe-happy-dom-full-cycle"
   clone_benchmark:
     - "git clone https://github.com/datacurve-ai/deep-swe /tmp/deep-swe"
     - "git -C /tmp/deep-swe checkout 3cda4081fed96103a6395de39c85e9b20275e307"
@@ -124,3 +129,4 @@ artifacts:
     - "model.patch"
     - "harness-metadata.json for harness arm"
     - "stop policy and actual process outcome"
+    - "full-cycle runner manifest.json, summary.json, report.md, and per-arm logs"

@@ -1,0 +1,13 @@
+{
+  "id": "normalize-score",
+  "stratum": "i",
+  "module": "src/score.mjs",
+  "export": "normalizeScore",
+  "bug": "Scores round but are not clamped to the 0..100 range.",
+  "cases": [
+    { "name": "negative scores clamp to zero", "args": [-4.2], "expect": 0 },
+    { "name": "scores over the cap clamp to one hundred", "args": [147.6], "expect": 100 },
+    { "name": "in-range scores still round", "args": [88.2], "expect": 88 }
+  ]
+}
+

@@ -45,5 +45,21 @@ base_cls: error 34 / collection 16 / assertion 14. → 대부분 버그가 **예
 - **권장: 변경 ① revert.** 두 독립 null + 레포 선례(tie 시 revert). 남은 유일 avenue는 변경 ①을 execution-feedback 루프로 재설계 후 재검증(대형 투자, 유저 결정 사안).
 - **corpus 재확증**: 강한 baseline이 있으면 skill 지시 하나로는 못 이긴다. 이번엔 real·hard·non-saturated regime에서까지 확인 — 가장 강한 반증.
 
+---
+
+## 재실행 — FAITHFUL AssertFlip (execution-feedback 루프)
+
+유저 지시("revert 후 test 재실행") + 위 "지시 ≠ 루프" 발견에 따라, one-shot 지시가 아닌 **진짜 AssertFlip execution 루프**로 재검증.
+
+**설계 (equal-compute로 invert lever 격리):** 같은 8개 sympy 버그, 인스턴스별 sympy base worktree, **sonnet** 프로듀서가 Bash로 pytest를 실제 실행하며 반복(budget 5). arm A = assert-current → 실행 → green까지 refine → **invert** → red 확인; arm B = expected 직접 assert → 실행 → refine(동일 실행 예산, invert 없음). 48런(wf_4c500627-145, 47/48; 1 rate-limit). 준수 확인: 에이전트들이 pytest를 실제 1~4회 실행(one-shot haiku와 달리 루프가 진짜 돎).
+
+**결과:** **arm A 18/24(75%) vs arm B 16/24(67%), stratified permutation p=0.397 (무의미).** per-instance: **5개 ceiling(3/3=3/3)** + **2개 floor(0/3=0/3, 24102·24213)** + **1개 A>B(21612: A 3/3 vs B 1/3)**. 차이 전부가 21612 하나에서 나옴.
+
+**21612에서 메커니즘이 실제로 작동(정당성 확인):** LaTeX 파싱 wrong-value 버그. B의 두 실패(B r1·r3)는 `base=assertion, fix=assertion` — 기대값을 미묘하게 틀리게 assert(symbolic `result==expected` vs 정확한 str 포맷)해 **fix 후에도 실패**(=not F2P). arm A는 파싱을 먼저 실행해 sympy의 실제 `str()` 표현을 본 뒤 invert → 정확한 포맷을 lock → 3/3. **AssertFlip이 설계대로 "wrong-expected-value 함정"을 회피한 첫 실증.** (antlr4 존재 확인, 결과 legit.)
+
+**판정:** execution-loop 버전은 **처음으로 메커니즘의 실제 작동을 보였으나 통계적으로 무의미(p=0.40)** — 8-instance 샘플이 ceiling 5 + floor 2에 몰려 판별 인스턴스가 ~1개뿐. lever는 wrong-value·headroom 버그에서 도움이 될 수 있음이 directional로 시사되나, **확증되지 않음.** 세 번째 null. 스킬 변경 ①은 여전히 **미채택(revert 유지)**.
+
+**확증에 필요한 것:** headroom-선별(wrong-value, mid-난이도 = ceiling도 floor도 아닌) 인스턴스로 n 확대. 현재 mix는 대부분 issue 본문에 완성 repro가 있어(ceiling) 또는 너무 어려워(floor) lever 표면이 없음. wrong-value 버그 10~15개에서 A>B가 유지되면 유의성 도달 가능.
+
 ## provenance
-research wf_e0566bbe-c6c · toy A/B wf_f9ebfc43-92a · real-bug produce wf_b530155e-957 · harness `swt/{lib,validate_all,grade_swt,produce_wf}` · data princeton-nlp/SWE-bench_Lite · AssertFlip arXiv:2507.17542.
+research wf_e0566bbe-c6c · toy A/B wf_f9ebfc43-92a · real-bug one-shot wf_b530155e-957 · **real-bug execloop wf_4c500627-145** · harness `swt/{lib,validate_all,grade_swt,produce_wf,execloop_wf,setup_worktrees}` · data princeton-nlp/SWE-bench_Lite · AssertFlip arXiv:2507.17542.

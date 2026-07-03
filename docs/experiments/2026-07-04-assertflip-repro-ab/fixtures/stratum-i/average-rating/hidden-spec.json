@@ -1,0 +1,12 @@
+{
+  "id": "average-rating",
+  "stratum": "i",
+  "module": "src/ratings.mjs",
+  "export": "averageRating",
+  "bug": "Missing ratings are counted as zero instead of ignored.",
+  "cases": [
+    { "name": "null ratings are ignored", "args": [[4, null, 6]], "expect": 5 },
+    { "name": "multiple null ratings are ignored", "args": [[null, 3, null, 5]], "expect": 4 },
+    { "name": "all missing ratings produce zero", "args": [[null, null]], "expect": 0 }
+  ]
+}

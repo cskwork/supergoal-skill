@@ -24,3 +24,22 @@
 **커밋 범위:** PRD + 이 changelog만. 세션 시작 시점부터 dirty였던 `docs/experiments/.../harness-ref-002/` 63파일 및 기타 untracked(`docs/superpowers/`, `learn/`)는 내 변경 아님 → 제외.
 
 **근거 원본:** 워크플로우 `wf_e0566bbe-c6c` (kept/rejected·verdict·web evidence 전문).
+
+---
+
+## verify 단계 실행 — A/B null result (변경 ① unproven)
+
+**산출물:** `docs/experiments/2026-07-04-assertflip-repro-ab/report.md` (codex가 scaffold, Claude가 실행·채점)
+
+**방법:** arm A(assertflip 지침) vs arm B(shipped) 를 Haiku로 A/B(wf_f9ebfc43-92a, 64 runs, 8 fixtures × 2 arms × 4). 에이전트는 산출물만 write, **채점은 Claude가 `grade.mjs` out-of-band 결정론적 재실행**(자기보고 불신).
+
+**결과:** stratum-i(invertible) **완벽한 ceiling tie** — `valid_repro` A 24/24 = B 24/24, `resolved` 20/24 = 20/24, per-fixture 전부 동일. PRD §5 사전등록 KILL 기준(층(i) 델타=0) 발동 → **개선 proven 아님.** stratum-ii(crash)는 grader가 assertion-red를 요구해 crash repro(thrown exception)를 측정 못 함 → uninformative(A<B는 grader artifact, regression 아님).
+
+**판정:**
+- 변경 ①(`reference/debugging.md` step 1 + `SKILL.md`) 편집은 **커밋하지 않고 working tree에 uncommitted 유지** — baseline-first + commit-gate 규율(비-green 커밋 금지, PRD §6 Phase-2 게이트 미통과).
+- lever는 **반증이 아니라 미검증** — toy fixture가 너무 쉬워(ceiling) assertflip이 해결하는 "직접 실패 테스트 fumble"이 발생하지 않음. 실제 headroom은 repro authoring이 병목인 real SWE-bench-class 버그에서만 나타남 → corpus의 "미검증 niche"와 동성질, 경량 in-repo eval 사정권 밖.
+- **부수 발견:** `grade.mjs`의 valid-repro 정의(assertion-red 필수)가 crash 버그와 비호환 — crash stratum 채점 불가. 향후 iteration은 grader가 "HEAD throw + fix 후 non-throw"를 valid로 인정하거나 fixture를 wrong-value로 재설계해야.
+
+**커밋 범위(verify):** 실험 dir(`docs/experiments/2026-07-04-assertflip-repro-ab/` — fixtures·grader·report·README) + 이 changelog 추가분. `reference/debugging.md`·`SKILL.md`는 **제외**(unproven).
+
+**결론:** 이번 A/B는 corpus의 baseline-first를 **재확증**(ceiling-driven tie). 처음으로 축을 특정해 단일 lever를 분리하고 real-bug regime으로 escalation 경로를 명확히 함. provenance: wf_e0566bbe-c6c(research), wf_f9ebfc43-92a(A/B).

@@ -1,0 +1,13 @@
+{
+  "id": "retry-delay",
+  "stratum": "i",
+  "module": "src/retry.mjs",
+  "export": "retryDelayMs",
+  "bug": "Retry attempt numbering starts at zero instead of one.",
+  "cases": [
+    { "name": "first retry waits one base interval", "args": [1], "expect": 100 },
+    { "name": "second retry doubles once", "args": [2], "expect": 200 },
+    { "name": "third retry doubles twice", "args": [3], "expect": 400 }
+  ]
+}
+

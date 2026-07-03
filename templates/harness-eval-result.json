@@ -17,6 +17,17 @@
     "winning_comparison": "harness-vs-baseline",
     "bca_ci_95": [0.4, 2.6],
     "permutation_p": 0.03125,
+    "mcnemar": {
+      "discordant_baseline_only": 1,
+      "discordant_harness_only": 5,
+      "p": 0.03125,
+      "significant": true
+    },
+    "snr_filter": {
+      "matched_removed": 8,
+      "discordant_kept": 6,
+      "rule": "remove no-signal matched pass/pass and fail/fail pairs before McNemar"
+    },
     "significant": true,
     "seed_outcomes": [
       { "arm": "baseline", "seed": 0, "crashed": false, "recorded_loss": false },
@@ -51,6 +62,46 @@
     ],
     "excluded_from_default": ["underspec-001-deepmerge/", "underspec-002-csvline/"],
     "tie_rule": "If both default cases tie, report Not proven and require authored expert runnable fixtures."
+  },
+  "axis_metrics": {
+    "correctness": {
+      "metric": "paired pass/fail plus quality score",
+      "baseline": 0.7,
+      "harness": 0.9,
+      "delta": 0.2
+    },
+    "token_cost": {
+      "metric": "total_tokens per invocation",
+      "baseline": 1000,
+      "harness": 1200,
+      "delta": 200,
+      "source": "adapter telemetry"
+    },
+    "wall_clock": {
+      "metric": "duration_ms per invocation",
+      "baseline": 1000,
+      "harness": 1400,
+      "delta": 400,
+      "source": "adapter telemetry"
+    },
+    "routing_accuracy": {
+      "metric": "held-out trigger accuracy",
+      "status": "measured",
+      "baseline": 0.65,
+      "harness": 0.85,
+      "delta": 0.2
+    }
+  },
+  "routing_accuracy": {
+    "applies": true,
+    "prompt_count": 20,
+    "trials_per_prompt": 3,
+    "train_test_split": "60/40",
+    "should_trigger_rate": 0.9,
+    "should_not_trigger_rate": 0.8,
+    "heldout_accuracy": 0.85,
+    "near_miss_failures": ["route-017"],
+    "artifact": "routing/routing-probe.json"
   },
   "eval_intent": {
     "goal": "the user's objective in their own terms",

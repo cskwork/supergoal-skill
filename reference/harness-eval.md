@@ -49,6 +49,12 @@ Required controls:
 - blind or label-swapped grading
 - cost, time, tool count, and turn-completion recorded; a crash or context-window/timeout failure is a
   recorded LOSS for that arm, never a silent zero
+- four-axis accounting for every accepted harness change: task success/correctness, token/cost,
+  wall-clock speed, and routing accuracy. If an axis is not applicable, record why; do not hide it.
+- routing accuracy for skill/router changes: at least 20 should-trigger / should-not-trigger near-miss
+  prompts, 3 trials each, with a 60/40 train/test split. Use held-out trigger accuracy for adoption.
+- token/time capture source: record `tokens`/`total_tokens`, `duration_ms`, tool calls, and the adapter or
+  task-notification event that supplied them. Parser-derived values need adapter fixture replay.
 - concurrency + retry discipline: serialize nested agent passes by default (one isolated process is
   host-proven clean); parallelize only after validating the host's concurrency ceiling, since concurrent
   nested agents contend for a rate-limit ceiling and crash. Retry a transient (rate-limit) crash with
@@ -67,6 +73,8 @@ Required outcome accounting:
 - verification strength: covered acceptance surface, uncovered surface, and residual risk by arm
 - trajectory efficiency: correctness and verification strength per cost/time/tool-call unit
 - quality score: feature completeness, test coverage, code quality, error handling, efficiency, correctness, architecture, extensibility, documentation, and dev environment
+- routing accuracy: trigger rate on should-trigger prompts, non-trigger rate on should-not-trigger
+  prompts, near-miss failures, train/test split, and held-out score
 - overclaim guard: audit trail alone is not a win unless it changes shipped correctness or quality
 
 ## Runtime fit (match the eval to how the harness actually runs)
@@ -92,7 +100,7 @@ actually run in, or the result is an artifact of the wrong setup:
 
 ## Pipeline
 
-`Scope -> Cases -> Baseline Run -> Harness Run -> Machine Checks -> Quality Score -> Blind Grade -> Compare -> Report -> Persist`
+`Scope -> Cases -> Routing Probe -> Baseline Run -> Harness Run -> Machine Checks -> Quality Score -> Blind Grade -> Compare -> Report -> Persist`
 
 ## Cases
 
@@ -187,6 +195,11 @@ explicit-spec task a capable baseline already passes - expect a TIE at 2-3x cost
   is directional only. Always report the per-seed vector, not just the mean. The decision rule (BCa 95%
   CI entirely > 0 AND sign-flip permutation p < 0.05) lives in
   `docs/experiments/2026-07-01-roleloop-coverage-fix-claude-ab/stats.mjs`.
+- For binary pass/fail A/B, also run paired McNemar on the SAME tasks. Filter no-signal matched pairs
+  (both pass or both fail) for the McNemar table and report `discordant_baseline_only`,
+  `discordant_harness_only`, exact two-sided `p`, and the removed matched count. Use
+  `templates/harness-eval-stats.mjs` for the portable calculation. Do not use overlapping confidence
+  intervals as a winner gate; CI overlap can be visually useful but is not the hypothesis test.
 - Compute confound - run BOTH baselines and SAY which win you claim; they answer different questions:
   (a) vs a 1-pass baseline = "does invoking the skill beat NOT invoking it?" Forcing useful verification
   compute IS legitimate value - a one-shot is the realistic default, and on u1 the skill caught a
@@ -225,10 +238,17 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
   them.
 - Choose the artifact root for logs, result JSON, commands, and the scoped evidence bundle.
 
-2. Baseline Run
+2. Routing Probe (required for router/skill-trigger changes; otherwise record not-applicable)
+- Build at least 20 prompts split across should-trigger, should-not-trigger, and near-miss cases; run
+  each 3 times.
+- Tune only on the 60% train split; select wording/config on the 40% held-out split.
+- Record trigger/non-trigger rates in `routing_accuracy` and include raw prompt outcomes in the artifact
+  root.
+
+3. Baseline Run
 - Run a normal agent with no generated harness, no harness references, and no specialized role pack.
 
-3. Harness Run
+4. Harness Run
 - Run the same agent/tool family with only the approved harness added, eval-internal files stripped
   from the copied reference (see Contract).
 - Match the harness to its Runtime fit. In an orchestrated runtime the harness arm runs a separate
@@ -238,7 +258,7 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
   not a multi-agent verifier loop that would exhaust the context window.
 - The builder repairs every verifier RED or records `Not proven`; do not advance on a visible-test-only GREEN.
 
-4. Verification (record-only - the eval does NOT impose a verifier/repair loop)
+5. Verification (record-only - the eval does NOT impose a verifier/repair loop)
 - Baseline-first: do not drive an adversarial-verifier + repair loop onto the harness arm. Eight evals
   showed that ceremony costs 2-3x without beating a strong baseline on explicit-spec tasks, and crashes
   when forced into a single non-interactive process.
@@ -248,7 +268,7 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
   advance a visible-test-only GREEN; if hidden checks fail, record `Not proven` with the failing checks.
 - Record REDs caught, remaining REDs, and false-GREEN in the bug-catch matrix.
 
-5. Machine Checks
+6. Machine Checks
 - Run project-relevant checks: tests, lint, typecheck, build, smoke, browser QA, hidden tests, or data checks.
 - Prefer deterministic repo-owned/evaluator-owned commands. Auto-detected commands may add evidence, but
   a proven claim must show which commands were trusted and why.
@@ -259,7 +279,7 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
 - Track the pass FRACTION per arm; it feeds the gradient correctness score below.
 - `claim_status: proven` requires all baseline and harness checks to pass.
 
-6. Quality Score
+7. Quality Score
 - Score each arm with a RevFactory-style 100-point quality rubric.
 - Use 10 dimensions, each 0-10: `feature_completeness`, `test_coverage`, `code_quality`, `error_handling`, `efficiency`, `correctness`, `architecture`, `extensibility`, `documentation`, `dev_environment`.
 - Keep the rubric REACHABLE: a fully correct solution must be able to reach >=80, and every dimension
@@ -274,25 +294,27 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
   score the same as a lean one of equal correctness.
 - Record score rationale per dimension in `quality.baseline` and `quality.harness`.
 
-7. Blind Grade
+8. Blind Grade
 - Hide labels or swap labels before subjective scoring.
 - Grade against the case rubric, not against harness marketing claims.
 
-8. Compare
+9. Compare
 - Record pass winner, quality winner, bug-catch delta, false-GREEN delta, verification-strength delta,
-  trajectory-efficiency delta, regression-test delta, cost/time tradeoff, failure notes, and grader
-  uncertainty.
+  trajectory-efficiency delta, regression-test delta, cost/time tradeoff, routing-accuracy delta, failure
+  notes, and grader uncertainty.
+- Record paired statistics: sign-flip/BCa for gradient scores, and McNemar + SNR-filtered discordant
+  pairs for binary pass/fail outcomes.
 - Record decision gates: unresolved `ask-user` findings block a proven claim. `auto-fix` findings must
   name the mechanical fix and its recheck; `no-op` findings must say why no action was required.
 - `claim_status: proven` requires both machine-check support and a harness quality-score win.
 
-9. Report
+10. Report
 - Use `templates/harness-eval-report.md`.
 - Claim improvement only when machine checks, quality scoring, and blind grading support it.
 - Include the harness mutation contract before recommending adoption or revision.
 - Otherwise say `Not proven`.
 
-10. Persist
+11. Persist
 - Save run-specific cases under the vault or `.domain-agent/qa/`.
 - Save broadly reusable case templates under `templates/harness-eval-cases/`.
 - Save raw logs, command list, result JSON, scoped evidence bundle, and mutation contract under the
@@ -311,6 +333,9 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
 - Grading after seeing labels.
 - Claiming a general percentage from one repo pilot.
 - Hiding cost or runtime overhead.
+- Omitting one of the four axes: correctness, token/cost, wall-clock speed, routing accuracy.
+- Claiming routing improvement without should-trigger/should-not-trigger near-miss probes and held-out
+  trigger accuracy.
 - Hiding uncovered verification scope behind a passing command.
 - Recommending a harness change without a rollback path and proof command.
 - Treating a quality score win as sufficient when pass/fail checks regress.
@@ -321,6 +346,7 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
 - Forcing a multi-agent verifier/repair loop into a single non-interactive process and blaming the harness for the resulting context-window crash.
 - Inventing throwaway ad-hoc cases for a PROVEN claim instead of the RevFactory corpus; authoring a fixture is allowed only to probe the under-specified frontier, and only after the 3-way discrimination check.
 - Calling a +-1-test, n=1 delta a "win"; that is within run-to-run noise (same case flipped win->tie on re-run). A directional pilot needs n>=3 per arm and a per-seed vector; a PROVEN significance claim needs n>=6 per arm (sign-flip permutation min two-sided p = 2/2^n, so n<6 cannot reach p<0.05).
+- Using overlapping confidence intervals as the A/B winner gate instead of paired tests.
 - Comparing a multi-pass harness to a single-pass baseline and crediting the skill without an equal-compute control or a stated cost multiple.
 - Running an authored fixture whose starter, a reference impl, and a lazy impl were not first checked to confirm it discriminates.
 - Inferring user intent from changed files when the original goal, constraints, or rejected approaches are available.

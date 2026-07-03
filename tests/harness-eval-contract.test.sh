@@ -224,7 +224,57 @@ mkresult() {
       { "arm": "harness", "seed": 3, "crashed": false, "recorded_loss": false },
       { "arm": "harness", "seed": 4, "crashed": false, "recorded_loss": false },
       { "arm": "harness", "seed": 5, "crashed": false, "recorded_loss": false }
-    ]
+    ],
+    "mcnemar": {
+      "discordant_baseline_only": 1,
+      "discordant_harness_only": 5,
+      "p": 0.03125,
+      "significant": true
+    },
+    "snr_filter": {
+      "matched_removed": 8,
+      "discordant_kept": 6,
+      "rule": "remove no-signal matched pass/pass and fail/fail pairs before McNemar"
+    }
+  },
+  "axis_metrics": {
+    "correctness": {
+      "metric": "paired pass/fail plus quality score",
+      "baseline": 0.7,
+      "harness": 0.9,
+      "delta": 0.2
+    },
+    "token_cost": {
+      "metric": "total_tokens per invocation",
+      "baseline": 1000,
+      "harness": 1200,
+      "delta": 200,
+      "source": "adapter telemetry"
+    },
+    "wall_clock": {
+      "metric": "duration_ms per invocation",
+      "baseline": 1000,
+      "harness": 1400,
+      "delta": 400,
+      "source": "adapter telemetry"
+    },
+    "routing_accuracy": {
+      "metric": "held-out trigger accuracy",
+      "baseline": 0.65,
+      "harness": 0.85,
+      "delta": 0.2
+    }
+  },
+  "routing_accuracy": {
+    "applies": true,
+    "prompt_count": 20,
+    "trials_per_prompt": 3,
+    "train_test_split": "60/40",
+    "should_trigger_rate": 0.9,
+    "should_not_trigger_rate": 0.8,
+    "heldout_accuracy": 0.85,
+    "near_miss_failures": ["route-017"],
+    "artifact": "routing/routing-probe.json"
   },
   "eval_intent": {
     "goal": "increase hidden requirement coverage",
@@ -397,6 +447,7 @@ require_file "harness eval fixture README exists" "templates/harness-eval-cases/
 require_file "harness eval result template exists" "templates/harness-eval-result.json"
 require_file "harness eval report template exists" "templates/harness-eval-report.md"
 require_file "harness eval runner template exists" "templates/harness-eval-runner.mjs"
+require_file "harness eval stats helper exists" "templates/harness-eval-stats.mjs"
 require_text "route hook names HARNESS-EVAL" "SKILL.md" "HARNESS-EVAL"
 require_text "route hook points at eval reference" "SKILL.md" "reference/harness-eval.md"
 require_text "route hook catches skill-lift use case" "SKILL.md" "measure skill lift"
@@ -450,6 +501,10 @@ require_text "eval cites reusable runner template" "reference/harness-eval.md" "
 require_text "eval scope selects adapter by preflight" "reference/harness-eval.md" 'Select `runtime_adapter` by PREFLIGHT'
 require_text "eval sets n>=6 significance floor" "reference/harness-eval.md" "n >= 6 per arm"
 require_text "eval justifies n>=6 with permutation min-p" "reference/harness-eval.md" "2/2^n"
+require_text "eval requires four-axis accounting" "reference/harness-eval.md" "four-axis accounting"
+require_text "eval requires routing probe" "reference/harness-eval.md" "should-trigger / should-not-trigger"
+require_text "eval requires McNemar" "reference/harness-eval.md" "paired McNemar"
+require_text "eval rejects overlapping CI winner gate" "reference/harness-eval.md" "overlapping confidence intervals"
 require_text "eval serializes nested passes by default" "reference/harness-eval.md" "serialize nested agent passes by default"
 require_text "eval retries transient crashes" "reference/harness-eval.md" "Retry a transient (rate-limit) crash with"
 require_text "eval requires shipped role fidelity" "reference/harness-eval.md" "shipped skill role files"
@@ -465,6 +520,10 @@ require_text "report records decision gates" "templates/harness-eval-report.md" 
 require_text "report records adapter fixture replay" "templates/harness-eval-report.md" "## Adapter Fixture Replay"
 require_text "report records surface sync" "templates/harness-eval-report.md" "## Surface Sync"
 require_text "report records quality score" "templates/harness-eval-report.md" "## Quality Score"
+require_text "report records four-axis metrics" "templates/harness-eval-report.md" "## Four-Axis Metrics"
+require_text "report records routing accuracy" "templates/harness-eval-report.md" "## Routing Accuracy"
+require_text "report records statistics" "templates/harness-eval-report.md" "## Statistics"
+require_text "report rejects overlapping CI gate" "templates/harness-eval-report.md" "overlapping confidence intervals"
 require_text "report records not proven" "templates/harness-eval-report.md" "## Not Proven"
 require_text "report records bug-catch matrix" "templates/harness-eval-report.md" "## Bug-Catch Matrix"
 require_text "case template records quality score" "templates/harness-eval-case.yaml" "quality_score"
@@ -473,16 +532,33 @@ require_text "case template records command manifest" "templates/harness-eval-ca
 require_text "case template records decision gates" "templates/harness-eval-case.yaml" "decision_gates"
 require_text "case template records adapter fixture replay" "templates/harness-eval-case.yaml" "adapter_fixture_replay"
 require_text "case template records default coding pair" "templates/harness-eval-case.yaml" "default_coding_ab"
+require_text "case template records routing probe" "templates/harness-eval-case.yaml" "routing_probe"
+require_text "case template records duration metric" "templates/harness-eval-case.yaml" "duration_ms"
 require_text "result template records default coding pair" "templates/harness-eval-result.json" "default_coding_ab"
+require_text "result template records axis metrics" "templates/harness-eval-result.json" "axis_metrics"
+require_text "result template records routing accuracy" "templates/harness-eval-result.json" "routing_accuracy"
 require_text "result template records runtime preflight" "templates/harness-eval-result.json" "runtime_preflight"
 require_text "result template records chosen adapter" "templates/harness-eval-result.json" "chosen_adapter"
 require_text "result template records role source" "templates/harness-eval-result.json" "role_source"
 require_text "result template records seeds per arm" "templates/harness-eval-result.json" "seeds_per_arm"
 require_text "result template records significance evidence" "templates/harness-eval-result.json" "permutation_p"
+require_text "result template records McNemar" "templates/harness-eval-result.json" "mcnemar"
+require_text "result template records SNR filter" "templates/harness-eval-result.json" "snr_filter"
 require_text "result template records crash accounting" "templates/harness-eval-result.json" "recorded_loss"
+require_text "stats helper exports paired binary stats" "templates/harness-eval-stats.mjs" "pairedBinaryStats"
 
 mkresult "$T/ok.json" "harness" "$PASS_CHECKS" "proven" "harness"
 run_case "gate accepts complete eval" 0 "HARNESS-EVAL PASS" node "$GATE" "$T/ok.json"
+
+cat > "$T/pairs.json" <<'EOF'
+[
+  { "case_id": "a", "baseline_pass": true, "harness_pass": true },
+  { "case_id": "b", "baseline_pass": true, "harness_pass": false },
+  { "case_id": "c", "baseline_pass": false, "harness_pass": true },
+  { "case_id": "d", "baseline_pass": false, "harness_pass": true }
+]
+EOF
+run_case "stats helper emits McNemar table" 0 "discordant_harness_only" node "$ROOT/templates/harness-eval-stats.mjs" "$T/pairs.json"
 
 mkresult "$T/bad-claim-status.json" "harness" "$PASS_CHECKS" "maybe" "harness"
 run_case "gate blocks unknown claim_status" 1 "claim_status" node "$GATE" "$T/bad-claim-status.json"
@@ -588,6 +664,18 @@ mkresult "$T/proven-p-not-sig.json" "harness" "$PASS_CHECKS" "proven" "harness"
 node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.statistics.permutation_p=0.2; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/proven-p-not-sig.json"
 run_case "gate blocks proven permutation p not significant" 1 "permutation p < 0.05" node "$GATE" "$T/proven-p-not-sig.json"
 
+mkresult "$T/proven-no-mcnemar.json" "harness" "$PASS_CHECKS" "proven" "harness"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); delete x.statistics.mcnemar; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/proven-no-mcnemar.json"
+run_case "gate blocks proven claim without McNemar" 1 "statistics.mcnemar" node "$GATE" "$T/proven-no-mcnemar.json"
+
+mkresult "$T/proven-mcnemar-not-sig.json" "harness" "$PASS_CHECKS" "proven" "harness"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.statistics.mcnemar.p=0.2; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/proven-mcnemar-not-sig.json"
+run_case "gate blocks proven McNemar p not significant" 1 "McNemar p < 0.05" node "$GATE" "$T/proven-mcnemar-not-sig.json"
+
+mkresult "$T/proven-no-snr.json" "harness" "$PASS_CHECKS" "proven" "harness"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); delete x.statistics.snr_filter; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/proven-no-snr.json"
+run_case "gate blocks proven claim without SNR filter" 1 "statistics.snr_filter" node "$GATE" "$T/proven-no-snr.json"
+
 mkresult "$T/proven-no-preflight.json" "harness" "$PASS_CHECKS" "proven" "harness"
 node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); delete x.runtime_preflight; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/proven-no-preflight.json"
 run_case "gate blocks proven claim without preflight" 1 "runtime_preflight" node "$GATE" "$T/proven-no-preflight.json"
@@ -611,6 +699,18 @@ run_case "gate blocks proven claim with absent role source" 1 "role_source" node
 mkresult "$T/proven-crashed-seed.json" "harness" "$PASS_CHECKS" "proven" "harness"
 node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.statistics.seed_outcomes[0].crashed=true; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/proven-crashed-seed.json"
 run_case "gate blocks proven crashed seed not marked loss" 1 "recorded as a loss" node "$GATE" "$T/proven-crashed-seed.json"
+
+mkresult "$T/proven-no-axis.json" "harness" "$PASS_CHECKS" "proven" "harness"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); delete x.axis_metrics; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/proven-no-axis.json"
+run_case "gate blocks proven claim without four axes" 1 "axis_metrics" node "$GATE" "$T/proven-no-axis.json"
+
+mkresult "$T/proven-no-routing.json" "harness" "$PASS_CHECKS" "proven" "harness"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); delete x.routing_accuracy; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/proven-no-routing.json"
+run_case "gate blocks proven claim without routing accuracy" 1 "routing_accuracy" node "$GATE" "$T/proven-no-routing.json"
+
+mkresult "$T/proven-routing-small.json" "harness" "$PASS_CHECKS" "proven" "harness"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.routing_accuracy.prompt_count=12; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/proven-routing-small.json"
+run_case "gate blocks undersized routing probe" 1 "prompt_count" node "$GATE" "$T/proven-routing-small.json"
 
 printf '\n%s passed, %s failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

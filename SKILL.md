@@ -42,6 +42,18 @@ target/integration branch after verification and user acceptance. Commit is hard
 resolve it in the loop or ask the user about the requirement, never commit on an assumption. Full contract:
 `reference/role-loop.md`.
 
+## IntentGate (classify before routing, state it in one line)
+
+Before the mode table, write: `IntentGate: intent=<work kind>; confidence=<high|medium|low>;
+mode=<route>; capability_refs=<refs/tools needed>`. Category is the work kind; capability refs are the
+skill files/tools to load after routing. High confidence -> route immediately. Medium confidence -> route
+to the safest narrow mode and name the uncertainty. Low confidence or conflicting intent -> ask one
+blocking question. Do not load a heavy reference just to classify.
+
+Near-miss rule: if the words mention a capability but the real task is no-code, route to the no-code mode
+first (QA-ONLY/REVIEW-ONLY/TEACH/LEARN/HARNESS-EVAL/SKILL-MINE). If the user asks to edit code, route to
+GREENFIELD/DEBUG/LEGACY only after the edit target is clear.
+
 ## Mode (classify, state it in one line)
 
 | Signal in the objective | Mode | Route |
@@ -78,12 +90,14 @@ persisted data is load-bearing. The mandatory core is Build -> Forced Verify; th
 escalation is opt-in (a measured lever for under-specified work, not always on). Full contract:
 `reference/role-loop.md`.
 
-1. **Frame.** Restate goal + falsifiable acceptance criteria in one line. If underspecified, ask <=5
+1. **Frame.** Restate goal + falsifiable acceptance criteria in one line. Write a completion promise:
+   the promised outcome, required proof, stop condition, and `max_iterations` (default 8). If underspecified, ask <=5
    high-leverage questions; and once the approach is grounded, if the fix's blast radius reaches past
    its target, confirm it before Build - tiered, hard-gated when wide/destructive/behavior-changing
    (`reference/interview.md`). Resolve code-answerable questions by reading code. UI work: load
    `reference/ui-ux.md` now. Non-trivial code work: start `delivery-proof.md` from
-   `templates/delivery-proof.md` and record the Before/After Eval (`reference/delivery-gate.md`).
+   `templates/delivery-proof.md`, create `run-state.json` from `templates/run-state.json`, and record
+   the Before/After Eval (`reference/delivery-gate.md`).
 2. **Build.** Smallest correct change, test-first; match surrounding style; minimal diff. Bug: reproduce
    with a failing test first (`reference/debugging.md`).
 3. **Forced Verify vs ground truth (mandatory core).** Re-read the WHOLE prose spec from scratch and, for
@@ -101,7 +115,10 @@ escalation is opt-in (a measured lever for under-specified work, not always on).
    (`reference/domain-context.md`, `domain-rules.md`), write a FAILING test for each missed required
    behavior, and log it in the run vault's `surfaced-requirements.md`; a fixer then clears the reds (no
    test edits). A signal, not the oracle. Measured caveat: on explicit-spec tasks this role separation did
-   NOT beat equal-compute forced verification, so reserve it for the under-specified frontier.
+   NOT beat equal-compute forced verification, so reserve it for the under-specified frontier. For wide
+   under-specified plans, run a bounded adversarial plan attack before Build: security, scope, correctness,
+   performance, and operability critics may attack the plan, but only accepted required risks become tests
+   or decision gates.
 
 Roles -> personas: critic=`agents/code-reviewer.md`, fixer=`agents/executor.md`,
 verify=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role>.md`).
@@ -117,7 +134,7 @@ verify=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role>.m
 | `reference/domain-context.md` | repo-local Domain Brief |
 | `reference/debugging.md` | DEBUG: hypothesis-ledger diagnose loop |
 | `reference/interview.md` | interview: ambiguity (what) + blast-radius confirm (approach, tiered) |
-| `reference/delivery-gate.md`, `templates/delivery-proof.md`, `templates/commit-gate.sh` | Before/After Eval + commit gate for non-trivial GREENFIELD / DEBUG / LEGACY code changes |
+| `reference/delivery-gate.md`, `templates/delivery-proof.md`, `templates/run-state.json`, `templates/commit-gate.sh` | Before/After Eval + resumable run state + commit gate for non-trivial GREENFIELD / DEBUG / LEGACY code changes |
 | `reference/spec.md`, `templates/spec/` | SPEC: requirements -> design -> tasks |
 | `reference/plan-grounding.md` | ground the approach before committing |
 | `reference/db-access.md`, `templates/db-access/` | read-only DB evidence (required past *very easy* when data load-bearing) |

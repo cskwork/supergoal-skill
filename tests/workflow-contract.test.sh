@@ -26,6 +26,9 @@ echo " /supergoal workflow contract   skill: $ROOT"
 echo "=================================================================="
 
 # Coding/debug branch isolation is required by default.
+require_text "SKILL classifies intent before routing" "SKILL.md" "IntentGate"
+require_text "SKILL separates category from capability refs" "SKILL.md" "Category is the work kind; capability refs"
+require_text "SKILL asks only on low confidence routing" "SKILL.md" "Low confidence or conflicting intent"
 require_text "SKILL matches repo docs language for docs" "SKILL.md" "match the target repo's dominant prose language"
 require_text "SKILL requires source/base and target refs" "SKILL.md" "source/base branch and target/integration branch"
 require_text "SKILL verifies refs before mutation" "SKILL.md" "verify both refs before mutating files"

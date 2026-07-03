@@ -59,8 +59,12 @@ require_file "surfaced-requirements template exists" "templates/surfaced-require
 require_text "template names requirement/why/covering test/status" "templates/surfaced-requirements.md" "requirement / why implied / covering test / status"
 
 # Critic->fixer loop has a hard stop (3-cycle cap) and a doubt-theater anti-signal.
+require_text "role-loop caps build-verify at max iterations" "reference/role-loop.md" "max_iterations"
+require_text "role-loop forces reflection at cap" "reference/role-loop.md" "forced reflection"
 require_text "role-loop caps critic->fixer at 3 cycles" "reference/role-loop.md" "cap the critic->fixer loop at 3 cycles"
 require_text "role-loop names the doubt-theater anti-signal" "reference/role-loop.md" "Doubt-theater anti-signal"
+require_text "role-loop has conditional plan attack" "reference/role-loop.md" "Adversarial plan attack"
+require_text "role-loop gates plan attack to under-specified work" "reference/role-loop.md" "under-specified, wide-blast-radius"
 # Critic carries an explicit adversarial (disprove, not validate) stance.
 require_text "critic stance is to disprove, not rubber-stamp" "agents/code-reviewer.md" "try to DISPROVE"
 

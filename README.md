@@ -14,14 +14,16 @@ whole-spec verification pass against the project's own tests and spec, then stop
 
 `/supergoal` is a routing and verification wrapper around an agent. The useful mental model:
 
-1. **Route the objective.** Classify the request as build, debug, legacy change, spec, QA, review,
-   architecture, teaching, domain onboarding, harness eval, or skill mining.
+1. **Route the objective.** IntentGate first classifies the real work kind with confidence, then routes
+   as build, debug, legacy change, spec, QA, review, architecture, teaching, domain onboarding, harness
+   eval, or skill mining.
 2. **Load only the needed playbook.** The root `SKILL.md` stays small; each route loads its own
    `reference/` and `agents/` files only when needed.
 3. **Keep contexts fresh.** Heavy work uses fresh-context subagents for build and verify. Critic/Fixer is
    an opt-in escalation for under-specified work, not the always-on default.
-4. **Run Before/After Eval.** Capture the before state, define the after target, and keep a command
-   manifest so the final claim proves the delta instead of just saying "tests passed."
+4. **Run Before/After Eval.** Capture the before state, define the after target, write a completion
+   promise, and keep a resumable run state plus command manifest so the final claim proves the delta
+   instead of just saying "tests passed."
 5. **Prove against the real project.** Visible-green is not trusted by itself; the run re-reads the whole
    spec and verifies with the repo's real tests, browser checks, DB evidence when load-bearing, and prose
    spec. Hidden requirements become durable evidence, and failing tests when the critic escalation is used.
@@ -107,12 +109,13 @@ flowchart TD
 | "make a skill from history - no product code" | **SKILL-MINE** | Mine history -> rank -> you pick -> forge portable `SKILL.md` -> install |
 
 **Default loop (GREENFIELD / DEBUG / LEGACY):** 1) **Frame** the goal + acceptance criteria and start
-`delivery-proof.md` with Before/After Eval; 2) **Build** the smallest correct change, test-first
+`delivery-proof.md` with Before/After Eval plus `run-state.json`; 2) **Build** the smallest correct change, test-first
 (bug -> failing test first); 3) **Forced Verify** by re-reading the whole prose spec, checking degenerate
 inputs and edge/error paths, fixing the smallest fresh gap, and re-running the real tests until stable;
 4) escalate to independent **Critic -> Fixer** only for genuinely under-specified or latent-correctness
-work where missing requirements need to become failing tests; 5) stop only after after-evidence, resolved
-decision gates, and residual risk are recorded with command output.
+work where missing requirements need to become failing tests; 5) stop only after the completion promise,
+after-evidence, resolved decision gates, and residual risk are recorded with command output. The normal
+Build -> Verify loop has a default 8-iteration cap with forced reflection before continuing.
 
 Coding/debug runs use a run worktree by default: resolve and verify the source/base branch plus the
 target/integration branch before editing, create the run worktree from source/base, and only commit or
@@ -191,7 +194,7 @@ SKILL.md            thin spine: baseline-first loop, modes, reference map
 agents/             one persona file per role (analyst, architect, executor, debugger, explore, designer, qa-*, db-reader, code-reviewer, security-reviewer)
 reference/          domain-rules · rules (project standing rules) · domain-context · debugging · interview · delivery-gate · plan-grounding · market-research · qa · qa-only · db-access · teach · learn-domain · ui-ux · taste-skill-v2 · functional-ui · harness-eval · skill-mine · observability
 teach/              TEACH-mode format guides + per-topic teaching workspaces
-templates/          delivery-proof.md · rules.md · qa-gate.sh · qa-only-gate.sh · commit-gate.sh · contrast-gate.mjs · learn-grounding-gate.mjs · qa-report.md · db-access/ · domain-agent/ · domain-onboarding.html · arch-report.html · harness-eval-gate.mjs · harness-eval-cases/ · skill-mine/ · skill-frontmatter-gate.mjs · skill-install-audit.mjs · skill.md.template · observability/ (sg-emit board state)
+templates/          delivery-proof.md · run-state.json · rules.md · qa-gate.sh · qa-only-gate.sh · commit-gate.sh · contrast-gate.mjs · learn-grounding-gate.mjs · qa-report.md · db-access/ · domain-agent/ · domain-onboarding.html · arch-report.html · harness-eval-gate.mjs · harness-eval-stats.mjs · harness-eval-cases/ · skill-mine/ · skill-frontmatter-gate.mjs · skill-install-audit.mjs · skill.md.template · observability/ (sg-emit board state)
 tests/              contract tests + run-all.sh canonical verifier
 tui/                optional live Board: state.py (reader) · app.py (Textual UI) · serve.py (in-browser) · launch.sh
 docs/               DESIGN.md · research-brief.md · experiments/ (the harness evals) · changelog/ · index.html (landing)
@@ -214,6 +217,10 @@ example service exercised across build, debug, and extend modes.
 
 HARNESS-EVAL reusable sample cases come from RevFactory's `claude-code-harness`:
 https://github.com/revfactory/claude-code-harness/
+
+Current HARNESS-EVAL claims use four axes: task correctness, token/cost, wall-clock speed, and routing
+accuracy. Binary pass/fail comparisons use paired McNemar with SNR filtering; gradient quality scores
+keep the existing sign-flip/BCa gate.
 
 ## Credit
 

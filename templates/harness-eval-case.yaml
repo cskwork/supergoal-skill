@@ -1,6 +1,7 @@
 id: case-001
 title: "Short task title"
 difficulty: simple
+case_type: coding # coding | routing
 source: "<pilot, rerun, upstream URL, or repo-specific>"
 runtime_adapter: portable
 repo_snapshot: "<git sha or immutable snapshot id>"
@@ -32,6 +33,19 @@ eval_intent:
 acceptance:
   - "Machine-checkable expectation"
   - "Human-review expectation"
+routing_probe:
+  applies: false
+  train_test_split: "60/40"
+  trials_per_prompt: 3
+  prompts:
+    - id: route-001
+      split: train
+      expected: should_trigger
+      text: "/supergoal fix the failing checkout test"
+    - id: route-002
+      split: heldout
+      expected: should_not_trigger
+      text: "Rewrite this sentence more politely"
 machine_checks:
   - test
   - lint
@@ -74,8 +88,10 @@ rubric:
   efficiency: "Was overhead justified by quality?"
 cost_fields:
   - wall_clock_minutes
+  - duration_ms
   - model
   - reasoning_effort
   - tool_calls
+  - total_tokens
   - token_estimate
 persist_path: "docs/changelog/<YYYY-MM>/<DD-harness-eval>/cases/<id>.yaml or .domain-agent/qa/harness-eval/<id>.yaml"

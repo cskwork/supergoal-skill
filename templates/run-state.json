@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "mode": "GREENFIELD|DEBUG|LEGACY|SPEC|QA-ONLY|REVIEW-ONLY|ARCHITECTURE|TEACH|LEARN-DOMAIN|HARNESS-EVAL|SKILL-MINE",
+  "intent_gate": {
+    "intent": "",
+    "confidence": "high|medium|low",
+    "mode": "",
+    "capability_refs": [],
+    "uncertainty": ""
+  },
+  "branches": {
+    "source_base_branch": "",
+    "target_integration_branch": "",
+    "run_branch": "",
+    "worktree_path": "",
+    "refs_verified": false
+  },
+  "completion_promise": {
+    "promised_outcome": "",
+    "required_proof": [],
+    "stop_condition": "",
+    "max_iterations": 8,
+    "status": "open|fulfilled|blocked"
+  },
+  "phase": "Frame",
+  "iteration": 0,
+  "unresolved_gates": [],
+  "blockers": [],
+  "last_proof_command": "",
+  "next_action": "",
+  "forced_reflection": {
+    "required_when_iteration_cap_hit": true,
+    "what_keeps_failing": "",
+    "likely_root_cause": "",
+    "unproven_requirement": "",
+    "smallest_next_action": ""
+  },
+  "updated_at": "YYYY-MM-DDTHH:MM:SSZ"
+}

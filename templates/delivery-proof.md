@@ -7,6 +7,14 @@
 - Tradeoffs:
 - Rejected approaches:
 
+## Completion Promise
+
+- Promised outcome:
+- Required proof:
+- Stop condition:
+- Max iterations: 8
+- Status: open / fulfilled / blocked
+
 ## Before State
 
 - Mode: GREENFIELD / DEBUG / LEGACY

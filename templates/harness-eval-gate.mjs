@@ -28,7 +28,10 @@ const findingStatuses = new Set(["resolved", "unresolved", "accepted", "skipped"
 const replayStatuses = new Set(["recorded", "not_required", "not_proven"]);
 const roleSources = new Set(["shipped_files", "generated_from_shipped"]);
 const MIN_SEEDS_PER_ARM = 6; // sign-flip permutation min two-sided p = 2/2^n; n=6 -> 0.03125 is the first < 0.05
+const MIN_ROUTING_PROMPTS = 20;
+const MIN_ROUTING_TRIALS = 3;
 const EPSILON = 0.01;
+const axes = ["correctness", "token_cost", "wall_clock", "routing_accuracy"];
 const dimensions = [
   "feature_completeness",
   "test_coverage",
@@ -421,6 +424,42 @@ function requireStatistics() {
   } else if (!(stats.permutation_p < 0.05)) {
     errors.push("proven claim requires sign-flip permutation p < 0.05");
   }
+  requireMcnemar(stats);
+  requireSnrFilter(stats);
+}
+
+function requireMcnemar(stats) {
+  const m = stats.mcnemar;
+  if (!m || typeof m !== "object" || Array.isArray(m)) {
+    errors.push("statistics.mcnemar is required for proven binary pass/fail A/B claims");
+    return;
+  }
+  if (typeof m.discordant_baseline_only !== "number" || m.discordant_baseline_only < 0) {
+    errors.push("statistics.mcnemar.discordant_baseline_only must be a non-negative number");
+  }
+  if (typeof m.discordant_harness_only !== "number" || m.discordant_harness_only < 0) {
+    errors.push("statistics.mcnemar.discordant_harness_only must be a non-negative number");
+  }
+  if (typeof m.p !== "number") {
+    errors.push("statistics.mcnemar.p must be numeric");
+  } else if (!(m.p < 0.05)) {
+    errors.push("proven claim requires paired McNemar p < 0.05");
+  }
+}
+
+function requireSnrFilter(stats) {
+  const snr = stats.snr_filter;
+  if (!snr || typeof snr !== "object" || Array.isArray(snr)) {
+    errors.push("statistics.snr_filter is required for proven claims");
+    return;
+  }
+  if (typeof snr.matched_removed !== "number" || snr.matched_removed < 0) {
+    errors.push("statistics.snr_filter.matched_removed must be a non-negative number");
+  }
+  if (typeof snr.discordant_kept !== "number" || snr.discordant_kept <= 0) {
+    errors.push("statistics.snr_filter.discordant_kept must be positive");
+  }
+  requireString(snr.rule, "statistics.snr_filter.rule");
 }
 
 // Rule 3 - role fidelity: exercise the shipped role files, not a paraphrase that can drift.
@@ -455,6 +494,60 @@ function requireCrashAccounting() {
   });
 }
 
+function requireAxisMetrics() {
+  if (result.claim_status !== "proven") return;
+  const metrics = result.axis_metrics;
+  if (!metrics || typeof metrics !== "object" || Array.isArray(metrics)) {
+    errors.push("axis_metrics is required for proven claims (correctness, token_cost, wall_clock, routing_accuracy)");
+    return;
+  }
+  axes.forEach((axis) => {
+    const entry = metrics[axis];
+    if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
+      errors.push(`axis_metrics.${axis} is required for proven claims`);
+      return;
+    }
+    requireString(entry.metric, `axis_metrics.${axis}.metric`);
+    if (entry.status === "not_applicable") {
+      requireString(entry.reason, `axis_metrics.${axis}.reason`);
+      return;
+    }
+    ["baseline", "harness", "delta"].forEach((key) => {
+      if (typeof entry[key] !== "number") errors.push(`axis_metrics.${axis}.${key} must be numeric`);
+    });
+  });
+}
+
+function requireRoutingAccuracy() {
+  if (result.claim_status !== "proven") return;
+  const routing = result.routing_accuracy;
+  if (!routing || typeof routing !== "object" || Array.isArray(routing)) {
+    errors.push("routing_accuracy is required for proven claims");
+    return;
+  }
+  if (routing.applies === false) {
+    requireString(routing.reason, "routing_accuracy.reason");
+    return;
+  }
+  if (routing.applies !== true) errors.push("routing_accuracy.applies must be true or false");
+  if (typeof routing.prompt_count !== "number" || routing.prompt_count < MIN_ROUTING_PROMPTS) {
+    errors.push(`routing_accuracy.prompt_count must be >= ${MIN_ROUTING_PROMPTS}`);
+  }
+  if (typeof routing.trials_per_prompt !== "number" || routing.trials_per_prompt < MIN_ROUTING_TRIALS) {
+    errors.push(`routing_accuracy.trials_per_prompt must be >= ${MIN_ROUTING_TRIALS}`);
+  }
+  if (routing.train_test_split !== "60/40") {
+    errors.push("routing_accuracy.train_test_split must be 60/40");
+  }
+  ["should_trigger_rate", "should_not_trigger_rate", "heldout_accuracy"].forEach((key) => {
+    if (typeof routing[key] !== "number" || routing[key] < 0 || routing[key] > 1) {
+      errors.push(`routing_accuracy.${key} must be a number between 0 and 1`);
+    }
+  });
+  requireStringArray(routing.near_miss_failures, "routing_accuracy.near_miss_failures");
+  requireString(routing.artifact, "routing_accuracy.artifact");
+}
+
 if (!result.runtime_adapter || typeof result.runtime_adapter !== "string") {
   errors.push("runtime_adapter is required");
 }
@@ -482,6 +575,8 @@ requireRuntimePreflight();
 requireStatistics();
 requireRoleFidelity();
 requireCrashAccounting();
+requireAxisMetrics();
+requireRoutingAccuracy();
 
 if (result.claim_status === "proven" && result.winner !== "harness") {
   errors.push("claim_status proven requires winner harness");

@@ -32,12 +32,27 @@ exits 0). A non-green run blocks the commit: resolve it in the loop first, escal
 stuck (see stop condition below).
 
 Before any file mutation, create the run vault's `delivery-proof.md` from
-`templates/delivery-proof.md` and start the Before/After Eval (`reference/delivery-gate.md`):
+`templates/delivery-proof.md`, create `run-state.json` from `templates/run-state.json`, and start the
+Before/After Eval (`reference/delivery-gate.md`):
 
 - record eval intent: user goal, constraints, tradeoffs, and rejected approaches;
+- record the completion promise: promised outcome, required proof, stop condition, and `max_iterations`
+  (default 8);
 - record the before state: absent feature/red acceptance check for GREENFIELD, reproduced symptom for
   DEBUG, preserve-baseline capture for LEGACY/brownfield;
 - record the after target and command manifest from repo-owned or evaluator-owned proof commands.
+- keep `run-state.json` current after each phase with current phase, iteration, unresolved gates,
+  blockers, next action, and last proof command so an interrupted run resumes instead of restarts.
+
+## Completion promise + loop cap
+
+Frame writes the completion promise before Build. Build -> Forced Verify loops only while the promise is
+not yet proven and a fresh, actionable gap remains. Default `max_iterations` is 8 for the Build/Verify
+loop; the opt-in critic->fixer escalation keeps its 3-cycle cap below. When the next pass would exceed
+the cap, stop and write a forced reflection in `run-state.json`: what keeps failing, the likely root
+cause, which requirement is still unproven, and the smallest next action. Then ask only if the blocker is
+requirement-level or needs user consent; otherwise recut the plan and continue only after the reflection
+identifies new evidence.
 
 ## Roles (each role = a fresh-context subagent by default)
 
@@ -50,12 +65,20 @@ dependent roles ordered. A trivial single edit skips the loop and edits inline. 
 are the mandatory core; Critic (2) and Fixer (3) are the OPT-IN escalation for under-specified /
 latent-correctness work - otherwise go straight from Build to a forced Verify.
 
+0. **Adversarial plan attack (conditional, no src edits)** - only for under-specified, wide-blast-radius,
+   security/data/concurrency, or latent-correctness work. Before Build, dispatch independent critics for
+   security, scope, correctness, performance, and operability. Each critic tries to break the plan from
+   one angle. Accept only findings grounded in the prose spec, current code/data, or known platform
+   rules; convert accepted required risks into failing tests, decision gates, or explicit residual risk.
+   Skip this on explicit-spec or tiny work because equal-compute forced verification is the cheaper
+   default.
+
 1. **Build** - before the first edit, confirm any blast-radius reaching past the change's explicit
    target has cleared its interview confirm (`reference/interview.md`: approved, AFK-proceeded, or
    safely skipped and logged). Then: smallest correct change; match surrounding style; minimal diff.
    Bug: reproduce with a failing test first. Refactor/integrate an existing API: capture its
    exact-behavior baseline FIRST (`reference/qa.md` "API behavior baseline"). Capture the run-setup before
-   proof in `delivery-proof.md` before the first edit.
+   proof in `delivery-proof.md` and `run-state.json` before the first edit.
 
 2. **Critic** (`agents/code-reviewer.md`; OPT-IN escalation for under-specified / latent-correctness work) - DO NOT edit src or weaken/delete existing tests.
    - Re-read the prose spec and repo/data rules. Enumerate REQUIRED behaviors the existing tests do not
@@ -91,6 +114,8 @@ latent-correctness work - otherwise go straight from Build to a forced Verify.
      (`auto-fix`, `no-op`, `ask-user`), intentional drift, and residual risk. Unresolved `ask-user`
      findings or missing trusted commands block a final done claim and the commit
      (`reference/delivery-gate.md` Commit gate).
+   - Update `run-state.json`: phase, iteration, gate status, last proof command, blockers, next action,
+     and completion-promise status.
 
 The forced Verify is the mandatory core - drop it only for *very easy* issues; past that, the whole-spec
 re-read + re-running the project's REAL tests is REQUIRED, plus DB evidence for data-backed bugs
@@ -110,6 +135,7 @@ best-effort - it observes only, never blocks or gates the loop.
   fixer optimizes to is the failure mode - keep them black-box and spec-anchored.
 - Cost: the loop costs more than one build - use it when correctness on behavior the visible tests miss
   matters; for a quick pass, one build is cheaper.
-- Stop condition: cap the critic->fixer loop at 3 cycles; if a 4th would start, escalate to the user
-  with the open reds instead of grinding. Doubt-theater anti-signal: 2+ cycles that produce findings but
+- Stop condition: cap the Build->Verify loop at `max_iterations` (default 8) with forced reflection, and
+  cap the critic->fixer loop at 3 cycles; if a 4th critic cycle would start, escalate to the user with
+  the open reds instead of grinding. Doubt-theater anti-signal: 2+ cycles that produce findings but
   change no code means the critic is validating, not doubting - stop and recut the critic's spec focus.

@@ -8,12 +8,14 @@ proven.
 
 Before/After Eval is required for every non-trivial code-project change.
 
-The run vault must contain `delivery-proof.md` from `templates/delivery-proof.md` before Build mutates
-files. Keep it compact; it is a proof ledger, not a transcript.
+The run vault must contain `delivery-proof.md` from `templates/delivery-proof.md` and `run-state.json`
+from `templates/run-state.json` before Build mutates files. Keep them compact; they are proof and resume
+ledgers, not transcripts.
 
 Required fields:
 
 - `eval_intent`: the user's goal in their words, plus constraints, tradeoffs, and rejected approaches.
+- `completion_promise`: promised outcome, required proof, stop condition, and `max_iterations` (default 8).
 - `before_state`: observed current behavior before the change.
 - `after_target`: falsifiable expected behavior after the change.
 - `command_manifest`: exact commands used for proof, with source:
@@ -24,6 +26,8 @@ Required fields:
 - `after_evidence`: command outputs, artifact paths, screenshots, DB reads, or API captures proving the
   after target.
 - `residual_risk`: what the checks do not prove.
+- `run_state`: current phase, iteration count, unresolved gates, blockers, next action, and last proof
+  command, updated after each phase so a run can resume after interruption.
 
 ## Before State
 
@@ -67,10 +71,12 @@ Unresolved `ask-user` findings block a final done claim.
 Done means `delivery-proof.md` shows:
 
 - before state captured,
+- completion promise recorded and either fulfilled or explicitly blocked,
 - after target evaluated,
 - trusted commands run with outputs or artifacts,
 - decision gates resolved,
 - residual risk named,
+- `run-state.json` updated with the final phase, completion-promise status, and no hidden blockers,
 - changelog updated with accepted and rejected alternatives,
 - commit gate passed (`## Commit gate`).
 

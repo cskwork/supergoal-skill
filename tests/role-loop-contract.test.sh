@@ -38,6 +38,10 @@ require_text "critic records surfaced requirements as markdown" "reference/role-
 require_text "record explains why a requirement is implied" "reference/role-loop.md" "why it is required though the prompt never stated it"
 require_text "record links the covering failing test" "reference/role-loop.md" "the failing test that now covers it"
 require_text "record entries start open" "reference/role-loop.md" "status: open"
+require_text "critic classifies inferred requirements" "reference/role-loop.md" 'classify each candidate as `must`, `should`, or `ask-user`'
+require_text "critic only tests must requirements" "reference/role-loop.md" 'Only `must` requirements'
+require_text "critic does not invent stricter semantics" "reference/role-loop.md" "Do not turn silence into stricter semantics"
+require_text "fixer blocks ask-user generated tests" "reference/role-loop.md" "stop and report the decision gate"
 
 # Verifier closes them out.
 require_text "verifier marks surfaced requirements fixed" "reference/role-loop.md" "mark each surfaced requirement fixed"
@@ -69,7 +73,10 @@ require_text "qa-auditor treats self-review as non-gate" "agents/qa-auditor.md" 
 
 # Template exists and carries the expected fields.
 require_file "surfaced-requirements template exists" "templates/surfaced-requirements.md"
-require_text "template names requirement/why/covering test/status" "templates/surfaced-requirements.md" "requirement / why implied / covering test / status"
+require_text "template names requirement/classification/why/test/status" "templates/surfaced-requirements.md" "requirement / classification / why implied / covering test / status"
+require_text "template separates ask-user decisions" "templates/surfaced-requirements.md" 'Ambiguous or product-changing semantics are `ask-user` decision gates'
+require_text "code-reviewer carries requirement threshold" "agents/code-reviewer.md" "Requirement threshold"
+require_text "executor blocks speculative critic tests" "agents/executor.md" "stop and report a decision gate"
 
 # Critic->fixer loop has a hard stop (3-cycle cap) and a doubt-theater anti-signal.
 require_text "role-loop caps build-verify at max iterations" "reference/role-loop.md" "max_iterations"

@@ -7,11 +7,14 @@ already green. That forced whole-spec re-reading is the active ingredient that l
 false-GREEN-prone work.
 
 Use for any non-trivial feature/bug/refactor. Skip for a trivial single edit - edit directly. Layer an
-independent critic (a reviewer that did NOT write the code, turning the prose spec into FAILING tests,
-then a fixer that clears them) as an OPT-IN escalation for genuinely under-specified / latent-correctness
-work, where surfacing requirements absent from the prompt is the lever. Measured caveat: on explicit-spec
-tasks that role separation did NOT beat equal-compute forced verification, so it is an escalation for the
-under-specified frontier, not an always-on default.
+independent critic (a reviewer that did NOT write the code, classifying inferred requirements before any
+new failing tests, then a fixer that clears accepted REDs) as an OPT-IN escalation for genuinely
+under-specified / latent-correctness work, where surfacing requirements absent from the prompt is the
+lever. The critic classifies inferred behavior before testing it: required `must` behavior can become a
+RED; ambiguous or product-changing
+semantics become `ask-user` gates. Measured caveat: on explicit-spec tasks that role separation did NOT
+beat equal-compute forced verification, so it is an escalation for the under-specified frontier, not an
+always-on default.
 
 ## Run setup - before any file mutation
 
@@ -93,17 +96,25 @@ latent-correctness work - otherwise go straight from Build to a forced Verify.
    - Re-read the prose spec and repo/data rules. Enumerate REQUIRED behaviors the existing tests do not
      exercise - especially edges (boundary inputs, error/recovery paths, scoping/precedence, prefix/
      filter behavior, incremental update, concurrency, protocol/state).
-   - Write a NEW FAILING test for each, in a separate file, derived strictly from the spec. Prefer
-     black-box behavior tests and properties (roundtrip, idempotency, invariants).
+   - Requirement threshold: classify each candidate as `must`, `should`, or `ask-user`. Only `must`
+     requirements grounded in the prose spec, current/API behavior, repo/data rules, or platform safety
+     get failing tests. Do not turn silence into stricter semantics (for example throwing on degenerate
+     inputs) when multiple reasonable behaviors exist; record that as an `ask-user` decision gate or
+     residual risk.
+   - For each `must`, write a NEW FAILING test in a separate file, derived strictly from the spec.
+     Prefer black-box behavior tests and properties (roundtrip, idempotency, invariants).
    - Record each surfaced requirement in the run vault's `surfaced-requirements.md`
      (`docs/changelog/<YYYY-MM>/<DD-topic>/surfaced-requirements.md`; create if absent; format in
-     `templates/surfaced-requirements.md`): a dated heading, one bullet per requirement - what the spec
-     implies, why it is required though the prompt never stated it, and the failing test that now covers
-     it (status: open). This is the durable, human-readable trail of what the prompt left implicit.
+     `templates/surfaced-requirements.md`): a dated heading, one bullet per `must` requirement - what the
+     spec implies, why it is required though the prompt never stated it, and the failing test that now
+     covers it (status: open). This is the durable, human-readable trail of what the prompt left implicit.
    - Leave the failing tests red.
 
 3. **Fixer** (`agents/executor.md`) - DO NOT edit test files.
    - Read NOTES + run the suite. Make the failing tests pass with the SMALLEST change.
+   - If a critic-authored test appears to encode an `ask-user` choice, contradict current/API behavior, or
+     harden semantics not required by the spec or safety, stop and report the decision gate instead of
+     optimizing source to it.
    - No padding: add no code that is not required by a failing test or a listed defect. Do not break
      passing tests.
 
@@ -148,6 +159,8 @@ best-effort - it observes only, never blocks or gates the loop.
 - The critic's generated tests are a SIGNAL to surface hidden requirements - NOT the acceptance oracle.
   Final verification is always the project's REAL tests + prose spec. Never weaken/delete a real test,
   never declare done because self-written tests pass while real tests/spec do not.
+- Ambiguous edges are not REDs. If a behavior has multiple reasonable interpretations, classify it as
+  `ask-user` or residual risk; do not invent stricter semantics just because the prompt is silent.
 - Characterization baseline is a regression signal, not a correctness oracle. A known-bug snapshot changes
   only when the bug fix is intentional and named.
 - Self-review is not a regression gate: generated explanations can approve behavior drift. Require

@@ -182,3 +182,43 @@ Rejected alternatives:
   they are drift signals only.
 - Fully automate reverse trace from `git diff`: rejected for this pass because proof templates need the
   contract first; attested `Backward-trace: clean` is the minimal reliable gate.
+
+## Critic requirement-threshold guard
+
+Decision: add an explicit requirement threshold for forced verification and critic escalation: inferred
+behaviors are classified as `must`, `should`, or `ask-user`; only grounded `must` behavior becomes a
+generated failing test.
+
+Why: the `u1` deepMerge capability run showed a concrete overreach failure. The single-pass no-skill arm
+passed hidden tests on 2/3 seeds (`3/4`, `4/4`, `4/4`), while both four-pass arms failed the same hidden
+null/undefined-source check on all seeds (`3/4`, `3/4`, `3/4`). The multi-pass drafts converged on
+throwing `TypeError` for absent sources, even though the evaluator ground truth treated absent source as
+a no-op. More passes did not improve capability here; they made ambiguous degenerate-input semantics more
+strict than the hidden contract.
+
+What changed:
+
+- `SKILL.md`, `reference/role-loop.md`, and `agents/code-reviewer.md` now say ambiguous or
+  product-changing semantics are `ask-user` decision gates, not generated RED tests.
+- `agents/executor.md` now tells the fixer to stop and report a decision gate if a critic-authored test
+  encodes an ask-user choice or hardens semantics not required by spec or safety.
+- `templates/surfaced-requirements.md` now records only classified `must` requirements; ambiguous
+  candidates go to decision gates.
+- `tests/role-loop-contract.test.sh` now asserts the requirement threshold, stricter-semantics guard, and
+  fixer stop behavior.
+
+Rejected alternatives:
+
+- Special-case `deepMerge` null handling in the eval: rejected because the defect is skill behavior, not
+  the fixture implementation.
+- Treat every degenerate input as a mandatory generated test: rejected because that caused the observed
+  false-green path when the prompt left multiple reasonable semantics open.
+- Drop critic escalation entirely: rejected because the role loop still helps on latent correctness; the
+  fix is to classify requirements before turning them into REDs.
+
+Proof commands:
+
+- `SG_EVAL_VALIDATE=1 SG_EVAL_CASE=u1 SG_EVAL_RUN_ROOT=/tmp/sg-meaningful-skill-eval-LFyTmG/validate-u1-3way node /tmp/sg-meaningful-skill-eval-LFyTmG/docs/experiments/2026-06-07-harness-eval-medium-hard-skill-vs-baseline/run.mjs`
+- `SG_EVAL_CASE=u1 SG_EVAL_BASELINE_SEEDS=3 SG_EVAL_HARNESS_SEEDS=0 SG_EVAL_NAIVE_SEEDS=0 SG_EVAL_RESULT_SUFFIX=-baseline-headroom SG_EVAL_RUN_ROOT=/tmp/sg-meaningful-skill-eval-LFyTmG/run-u1-baseline-headroom SG_EVAL_MODEL=gpt-5.5 SG_EVAL_EFFORT=low node /tmp/sg-meaningful-skill-eval-LFyTmG/docs/experiments/2026-06-07-harness-eval-underspecified-n3/run.mjs`
+- `SG_EVAL_CASE=u1 SG_EVAL_BASELINE_SEEDS=0 SG_EVAL_HARNESS_SEEDS=3 SG_EVAL_NAIVE_SEEDS=0 SG_EVAL_RESULT_SUFFIX=-harness-n3 SG_EVAL_RUN_ROOT=/tmp/sg-meaningful-skill-eval-LFyTmG/run-u1-harness-n3 SG_EVAL_MODEL=gpt-5.5 SG_EVAL_EFFORT=low node /tmp/sg-meaningful-skill-eval-LFyTmG/docs/experiments/2026-06-07-harness-eval-underspecified-n3/run.mjs`
+- `SG_EVAL_CASE=u1 SG_EVAL_BASELINE_SEEDS=0 SG_EVAL_HARNESS_SEEDS=0 SG_EVAL_NAIVE_SEEDS=3 SG_EVAL_RESULT_SUFFIX=-naive-n3 SG_EVAL_RUN_ROOT=/tmp/sg-meaningful-skill-eval-LFyTmG/run-u1-naive-n3 SG_EVAL_MODEL=gpt-5.5 SG_EVAL_EFFORT=low node /tmp/sg-meaningful-skill-eval-LFyTmG/docs/experiments/2026-06-07-harness-eval-underspecified-n3/run.mjs`

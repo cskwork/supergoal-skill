@@ -13,7 +13,8 @@ Required controls:
 
 - same repo snapshot
 - isolated worktrees or equivalent clean sandboxes
-- identical task statement
+- identical benchmark task statement; if the harness condition is delivered as a prompt prefix, preserve
+  the original task body byte-for-byte and record both the base-task hash and the harness-source hashes
 - baseline gets no harness references
 - harness run gets only the approved harness, with eval-internal files stripped from the copied
   reference (case definitions, hidden checks, rubric, scorer). The harness arm must never be able to
@@ -49,6 +50,9 @@ Required controls:
 - blind or label-swapped grading
 - cost, time, tool count, and turn-completion recorded; a crash or context-window/timeout failure is a
   recorded LOSS for that arm, never a silent zero
+- stop policy is declared before launch. Manual interruption after observing progress invalidates paired
+  correctness; a predeclared budget timeout may be scored only when both arms use the same cutoff and
+  patch-capture rule.
 - four-axis accounting for every accepted harness change: task success/correctness, token/cost,
   wall-clock speed, and routing accuracy. If an axis is not applicable, record why; do not hide it.
 - routing accuracy for skill/router changes: at least 20 should-trigger / should-not-trigger near-miss
@@ -114,6 +118,7 @@ live under `templates/harness-eval-cases/fixtures/`:
 - `revfactory-case-003-refactoring/`
 - `underspec-001-deepmerge/`
 - `underspec-002-csvline/`
+- `underspec-003-authz-cache/`
 
 Each fixture must remain validated against starter/reference/lazy implementations before use (see the
 fixture README for the `SG_EVAL_VALIDATE` replay commands). Specs without a fixture must have one authored
@@ -128,10 +133,59 @@ When the user asks for a coding harness eval without naming cases, run exactly t
 2. `revfactory-case-003-refactoring/` (`revfactory-case-003-refactoring.yaml`) - LEGACY/brownfield
    preservation, medium fixture whose hidden suite catches behavior drift.
 
-Do not substitute `underspec-001-deepmerge/` or `underspec-002-csvline/` for this default; those are
-latent-correctness probes, not the default coding difficulty. If both default cases tie, report
+Do not substitute `underspec-001-deepmerge/`, `underspec-002-csvline/`, or
+`underspec-003-authz-cache/` for this default; those are latent-correctness probes, not the default
+coding difficulty. If both default cases tie, report
 `Not proven`, record the runnable-corpus ceiling, and require authored expert runnable fixtures before
 claiming a stronger harness win.
+
+### Public external benchmark mode (DeepSWE-style)
+
+When private/local fixtures are ceilinged out, not committable, or too synthetic for the user's question,
+switch to a public benchmark task instead of inventing another local case. Use
+`templates/harness-eval-external/deepswe/task-set.yaml` for the first approved public task set and
+`templates/harness-eval-external/deepswe/prepare-supergoal-arm.mjs` to build the harness arm.
+
+Required external-task provenance:
+
+- benchmark name, public URL, repo URL, and immutable benchmark ref
+- upstream source repo and base commit
+- task id, task URL, language, category, and why it has baseline headroom
+- declared stop policy: timeout, valid outcomes, whether patch capture after budget timeout/error is
+  scored, and why manual interruption is invalid
+- verifier provenance and artifact paths, especially `verifier/reward.json`, `verifier/ctrf.json`,
+  `verifier/test-stdout.txt`, `verifier/run.log`, and `model.patch`
+- original task body hash for the harness arm and source hashes for the approved harness reference
+- exact runner, agent, model, seed policy, token source, duration source, and environment
+
+Default public pilot candidate:
+
+- `happy-dom-abort-pending-body-reads` from DeepSWE v1.1: upstream
+  `https://github.com/capricorn86/happy-dom`, base commit
+  `82a0888cb2c87a6123e05424b528f8e8c9b3e426`, TypeScript bugfix. Use it first because it is a real
+  async lifecycle task with pending body reads, abort semantics, multipart parsing, navigation cleanup,
+  and preservation checks. The 2026-07-03 Codex pilot showed verifier headroom (`f2p=1/14`,
+  `p2p=165/165`) but the harness arm was manually interrupted, so that run is setup evidence only, not a
+  valid correctness A/B. Rerun with the manifest stop policy before claiming lift.
+- `cliffy-config-file-parsing` is now a secondary broad feature task, not the default low-effort public
+  pilot, because the earlier low-turn Claude attempt exceeded budget and produced no patch.
+
+External A/B scoring:
+
+- correctness: pass rate from DeepSWE `reward.json`; report absolute percentage-point lift and relative
+  percent lift separately
+- partial correctness: pass fraction or failed-test count from `reward.json`/`ctrf.json` when available
+- token/cost and wall-clock: Pier or adapter trajectory metadata
+- routing accuracy: only applicable when the change affects supergoal routing; otherwise link the
+  separate 20-prompt routing probe
+- process outcome: `completed`, `budget_timeout`, `error`, or `invalid_manual_interrupt`. Only
+  `completed` and predeclared `budget_timeout` outcomes are usable for paired correctness; manual
+  interruption is diagnostic only.
+
+Do not claim a public benchmark win from `u3`. The authz-cache `u3` result only proves hidden-test
+discrimination: starter/lazy can pass visible 3/3 while hidden behavior fails 1/8, and the reference can
+pass hidden 8/8. It is not a harness improvement unless a paired with/without run shows a pass-rate or
+quality lift.
 
 Reusable seeded case specs (the approved corpus - pick from here, never invent new cases):
 
@@ -188,6 +242,11 @@ explicit-spec task a capable baseline already passes - expect a TIE at 2-3x cost
   the role-loop's 3.3/4 (`docs/experiments/2026-06-07-harness-eval-underspecified-n3/`). So the skill
   helps vs not-invoking-it, not vs equal compute (see compute-confound below). Ambiguous choices are NOT
   fair hidden checks - test only what one reasonable reading MUST do.
+- If the default hard case ceilings out under low effort, run the authored low-effort discriminator:
+  `SG_EVAL_CASE=u3 SG_EVAL_EFFORT=low SG_EVAL_BASELINE_SEEDS=1 SG_EVAL_HARNESS_SEEDS=1 node docs/experiments/2026-06-07-harness-eval-medium-hard-skill-vs-baseline/run.mjs`.
+  This authorization-cache case is intentionally security/concurrency-heavy: starter and lazy
+  implementations pass visible 3/3 but hidden 1/8, while the reference implementation passes hidden
+  8/8. Treat n=1 as directional only; scale to n >= 6 before claiming statistical proof.
 - Sample size: n >= 3 per arm is a DIRECTIONAL pilot floor - a +-1-test delta at n=1 is noise, not a win
   (case-015 read harness 8/9 vs baseline 7/9 one run and an exact tie the next). A PROVEN significance
   claim needs n >= 6 per arm, because the mandated sign-flip permutation test's minimum two-sided p is
@@ -329,7 +388,8 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
 ## Reject
 
 - Self-reported agent success as evidence.
-- Different task wording between runs.
+- Different benchmark task wording between runs. An approved harness prefix is allowed only when the
+  original task body is preserved and hashed separately from the harness reference.
 - Grading after seeing labels.
 - Claiming a general percentage from one repo pilot.
 - Hiding cost or runtime overhead.
@@ -343,6 +403,8 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
 - A capped scorer whose maximum sum is below the pass threshold, or that cannot distinguish a 6/9 from a 4/9 solution.
 - Exposing eval cases, hidden checks, or the rubric to the harness arm via the copied reference.
 - Scoring a crashed / context-exhausted / timed-out arm as a silent zero instead of a recorded loss.
+- Treating a manual post-hoc interrupt as a valid paired arm. Manual interruption after seeing elapsed
+  time invalidates correctness scoring; rerun with a predeclared timeout/patch-capture policy.
 - Forcing a multi-agent verifier/repair loop into a single non-interactive process and blaming the harness for the resulting context-window crash.
 - Inventing throwaway ad-hoc cases for a PROVEN claim instead of the RevFactory corpus; authoring a fixture is allowed only to probe the under-specified frontier, and only after the 3-way discrimination check.
 - Calling a +-1-test, n=1 delta a "win"; that is within run-to-run noise (same case flipped win->tie on re-run). A directional pilot needs n>=3 per arm and a per-seed vector; a PROVEN significance claim needs n>=6 per arm (sign-flip permutation min two-sided p = 2/2^n, so n<6 cannot reach p<0.05).

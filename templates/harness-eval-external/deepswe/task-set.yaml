@@ -1,0 +1,126 @@
+id: external-deepswe-v1.1-headroom
+title: "DeepSWE v1.1 public headroom task set"
+case_type: external_benchmark
+benchmark:
+  name: DeepSWE
+  site_url: "https://deepswe.datacurve.ai/"
+  repo_url: "https://github.com/datacurve-ai/deep-swe"
+  benchmark_ref: "3cda4081fed96103a6395de39c85e9b20275e307"
+  task_count_at_ref: 113
+  verifier_outputs:
+    - "verifier/reward.json"
+    - "verifier/ctrf.json"
+    - "verifier/test-stdout.txt"
+    - "verifier/run.log"
+default_task_id: happy-dom-abort-pending-body-reads
+stop_policy:
+  timeout_seconds: 900
+  valid_outcomes:
+    - completed
+    - budget_timeout
+    - error
+  manual_interrupt: invalid_paired_correctness
+  capture_patch_on_budget_timeout: true
+  score_patch_after_terminate_timeout_or_error: true
+adapter_policy:
+  preferred_official: "DeepSWE/Pier committed-code grading in a clean isolated environment."
+  codex_readonly_git_fallback: "If the Codex workspace sandbox makes .git read-only, capture working-tree diffs for both arms after terminate/timeout/error and score those patches with the same verifier."
+eval_intent:
+  goal: "Measure whether supergoal improves public, complex source-code task success versus the same agent without supergoal."
+  constraints:
+    - "Use internet-available open-source tasks, not private LMS code."
+    - "Use the same benchmark task, model, agent, repo snapshot, and verifier for both arms."
+    - "Keep hidden verifier files, solution patches, grader code, and tests out of the harness prompt."
+  tradeoffs:
+    - "A harness prompt may cost more tokens; claim a win only when pass-rate or partial reward improves enough to justify the cost."
+  rejected_approaches:
+    - "Treating the local authz-cache u3 fixture as a harness win; it only proves hidden-test discrimination."
+    - "Using private LMS code that cannot be committed or independently replayed."
+    - "Treating the 2026-07-03 Happy DOM interrupted harness arm as a valid correctness result."
+arms:
+  baseline:
+    prompt_condition: "Original DeepSWE instruction only."
+  harness:
+    prompt_condition: "Original DeepSWE instruction plus generated supergoal harness prefix from templates/harness-eval-external/deepswe/prepare-supergoal-arm.mjs."
+    role_source: "shipped_files"
+    required_source_files:
+      - "SKILL.md"
+      - "reference/role-loop.md"
+      - "reference/delivery-gate.md"
+      - "agents/qa-auditor.md"
+metrics:
+  correctness:
+    primary: "task pass rate from reward.json binary reward."
+    secondary: "pass_fraction or failed-test count from reward.json/ctrf.json when available."
+    lift: "absolute percentage-point delta; relative percent lift only as secondary context."
+  cost:
+    primary: "total_tokens per run from agent/Pier trajectory metadata."
+  speed:
+    primary: "duration_ms or wall-clock seconds per run from Pier metadata."
+  routing_accuracy:
+    primary: "not applicable unless this run changes the supergoal trigger/router; otherwise reuse the 20-prompt routing probe."
+decision_rule:
+  directional_pilot: "At least 3 paired seeds per arm on the primary task; report per-seed vectors."
+  proven_claim: "At least 6 paired seeds per arm across multiple tasks, paired McNemar p < 0.05 on binary task outcomes, and no unacceptable cost/time regression."
+  no_signal: "If both arms pass every selected task, report Not proven and select harder held-out tasks."
+tasks:
+  - id: happy-dom-abort-pending-body-reads
+    task_url: "https://deepswe.datacurve.ai/data/v1/tasks/happy-dom-abort-pending-body-reads"
+    local_path: "tasks/happy-dom-abort-pending-body-reads"
+    upstream_repo: "https://github.com/capricorn86/happy-dom"
+    base_commit: "82a0888cb2c87a6123e05424b528f8e8c9b3e426"
+    category: bugfix
+    language: typescript
+    why_selected: "Default public pilot: async shutdown bugfix with pending body reads, formData parsing, timers, navigation cleanup, and preservation checks."
+    public_headroom_note: "2026-07-03 Codex baseline reached reward=0, f2p=1/14, p2p=165/165; this shows public verifier headroom, not harness lift."
+    minimum_pilot: true
+  - id: cliffy-config-file-parsing
+    task_url: "https://deepswe.datacurve.ai/data/v1/tasks/cliffy-config-file-parsing"
+    local_path: "tasks/cliffy-config-file-parsing"
+    upstream_repo: "https://github.com/c4spar/cliffy"
+    base_commit: "132a437c40cffbdfbe474ca808c8debde59e2633"
+    category: feature_request
+    language: typescript
+    why_selected: "Secondary broad feature task with parser, precedence, inheritance, caching, and validation edges."
+    public_headroom_note: "Previously too broad for the low-turn Claude pilot: both arms exceeded budget and produced no patch."
+    minimum_pilot: false
+  - id: yjs-map-conflict-detection
+    task_url: "https://deepswe.datacurve.ai/data/v1/tasks/yjs-map-conflict-detection"
+    local_path: "tasks/yjs-map-conflict-detection"
+    upstream_repo: "https://github.com/yjs/yjs"
+    base_commit: "7795050a749bd1111cbbdd9d0219b27226a8e710"
+    category: feature_request
+    language: javascript
+    why_selected: "CRDT-style map conflict detection requires domain reasoning about deterministic concurrent writes."
+    minimum_pilot: false
+  - id: etree-xml-diff-patch
+    task_url: "https://deepswe.datacurve.ai/data/v1/tasks/etree-xml-diff-patch"
+    local_path: "tasks/etree-xml-diff-patch"
+    upstream_repo: "https://github.com/beevik/etree"
+    base_commit: "4032e04c8f2e2f35e43ce5d772fcef14a5df4d74"
+    category: feature_request
+    language: go
+    why_selected: "XML diff, patch, reverse patch, merge, and summaries test larger domain implementation breadth."
+    minimum_pilot: false
+commands:
+  clone_benchmark:
+    - "git clone https://github.com/datacurve-ai/deep-swe /tmp/deep-swe"
+    - "git -C /tmp/deep-swe checkout 3cda4081fed96103a6395de39c85e9b20275e307"
+  install_runner:
+    - "uv tool install datacurve-pier"
+  prepare_harness_task:
+    - "node templates/harness-eval-external/deepswe/prepare-supergoal-arm.mjs /tmp/deep-swe /tmp/deep-swe-supergoal happy-dom-abort-pending-body-reads ."
+  baseline_example:
+    - "pier run -p /tmp/deep-swe/tasks/happy-dom-abort-pending-body-reads --agent mini-swe-agent --model openai/gpt-5.5"
+  harness_example:
+    - "pier run -p /tmp/deep-swe-supergoal/tasks/happy-dom-abort-pending-body-reads --agent mini-swe-agent --model openai/gpt-5.5"
+artifacts:
+  required_per_run:
+    - "Pier trajectory metadata"
+    - "verifier/reward.json"
+    - "verifier/ctrf.json"
+    - "verifier/test-stdout.txt"
+    - "verifier/run.log"
+    - "model.patch"
+    - "harness-metadata.json for harness arm"
+    - "stop policy and actual process outcome"

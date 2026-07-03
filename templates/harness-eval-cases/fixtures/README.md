@@ -10,6 +10,7 @@ and ships its visible + hidden suites. Validated to DISCRIMINATE before use (see
 | `revfactory-case-003-refactoring/` | medium | passes ALL (measures preservation) | every coupon/tax/shipping/VIP-floor/rounding edge survives the refactor |
 | `underspec-001-deepmerge/` | under-specified | stub throws (greenfield) | deep merge, **prototype-pollution guard**, null source, type replacement |
 | `underspec-002-csvline/` | under-specified | stub throws (greenfield) | quoted commas, escaped `""`, empty/trailing fields, quoted spaces |
+| `underspec-003-authz-cache/` | under-specified hard-low-effort | visible pass, 1/8 hidden pass | tenant/user/action/version authz leaks, denied-decision staleness, in-flight dedupe |
 
 ## Discrimination property (validated)
 
@@ -17,14 +18,16 @@ and ships its visible + hidden suites. Validated to DISCRIMINATE before use (see
 - refactor (003): starter passes ALL; a behavior-breaking refactor regresses a hidden check.
 - greenfield (u1/u2): stub fails all; a reference impl passes all; a lazy impl
   (`{...t,...s}` / `split(',')`) fails the discriminating hidden checks.
+- authz-cache (u3): starter and lazy impl pass visible 3/3 but hidden 1/8; reference passes hidden 8/8.
 
 Re-validate any case with the no-codex path in its origin runner:
 
-    SG_EVAL_VALIDATE=1 SG_EVAL_CASE=<002|003|u1|u2> node <origin run.mjs>
+    SG_EVAL_VALIDATE=1 SG_EVAL_CASE=<002|003|u1|u2|u3> node <origin run.mjs>
 
 ## Origins
 
 - 002, 003: `docs/experiments/2026-06-07-harness-eval-medium-hard-skill-vs-baseline/run.mjs`
+- u3:      `docs/experiments/2026-06-07-harness-eval-medium-hard-skill-vs-baseline/run.mjs`
 - u1, u2:   `docs/experiments/2026-06-07-harness-eval-underspecified-n3/run.mjs`
 
 Authored case specs (yaml) for the under-spec cases live in `../authored/`. The RevFactory case

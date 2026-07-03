@@ -19,7 +19,38 @@ default_coding_ab:
   excluded_from_default:
     - "underspec-001-deepmerge/"
     - "underspec-002-csvline/"
+    - "underspec-003-authz-cache/"
   tie_rule: "If both default cases tie, report Not proven and require authored expert runnable fixtures."
+external_task:
+  applies: false
+  benchmark: "DeepSWE"
+  benchmark_url: "https://deepswe.datacurve.ai/"
+  benchmark_repo: "https://github.com/datacurve-ai/deep-swe"
+  benchmark_ref: "<immutable benchmark commit>"
+  task_id: "happy-dom-abort-pending-body-reads"
+  task_url: "https://deepswe.datacurve.ai/data/v1/tasks/happy-dom-abort-pending-body-reads"
+  upstream_repo: "https://github.com/capricorn86/happy-dom"
+  base_commit: "82a0888cb2c87a6123e05424b528f8e8c9b3e426"
+  language: typescript
+  category: bugfix
+  stop_policy:
+    timeout_seconds: 900
+    manual_interrupt: invalid_paired_correctness
+    capture_patch_on_budget_timeout: true
+  base_task_text_sha256: "<sha256 of original instruction.md>"
+  harness_source_sha256:
+    - path: "SKILL.md"
+      sha256: "<sha256>"
+  verifier_artifacts:
+    - "verifier/reward.json"
+    - "verifier/ctrf.json"
+    - "verifier/test-stdout.txt"
+    - "verifier/run.log"
+  pass_rate_lift:
+    baseline_pass_rate: 0
+    harness_pass_rate: 0
+    absolute_percentage_points: 0
+    relative_percent: 0
 task: |
   Exact task text. Reuse this text unchanged for baseline and harness runs.
 eval_intent:

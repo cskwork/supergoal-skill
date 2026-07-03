@@ -10,6 +10,33 @@ Quality winner:
 Overall winner:
 Claim status:
 
+## External Task Provenance
+
+Use this section for public benchmark tasks such as DeepSWE. If not applicable, state `not applicable`.
+
+| Field | Value |
+|---|---|
+| Benchmark |  |
+| Benchmark URL |  |
+| Benchmark repo/ref |  |
+| Task ID / URL |  |
+| Upstream repo/base commit |  |
+| Language/category |  |
+| Stop policy |  |
+| Process outcome | `completed`, `budget_timeout`, `error`, or `invalid_manual_interrupt` |
+| Base task text sha256 |  |
+| Harness source sha256 |  |
+| Verifier artifacts | `reward.json`, `ctrf.json`, `test-stdout.txt`, `run.log` |
+
+## Pass-Rate Lift
+
+| Task set | Baseline pass rate | Harness pass rate | Absolute percentage-point delta | Relative percent lift | Partial reward delta | Claim |
+|---|---:|---:|---:|---:|---:|---|
+|  |  |  |  |  |  |  |
+
+Use `Not proven` for n=1, missing paired seeds, missing verifier artifacts, an all-pass ceiling, or
+`invalid_manual_interrupt`. Report absolute percentage-point lift before relative percent lift.
+
 ## Four-Axis Metrics
 
 | Axis | Metric | Baseline | Harness | Delta | Source / reason |
@@ -35,9 +62,14 @@ Default coding A/B pair:
 2. `revfactory-case-003-refactoring/` (`revfactory-case-003-refactoring.yaml`) - LEGACY/brownfield
    preservation.
 
-Do not substitute `underspec-001-deepmerge/` or `underspec-002-csvline/` for this default. If both
-default cases tie, report `Not proven`, record the runnable-corpus ceiling, and require authored expert
-runnable fixtures before claiming a stronger harness win.
+Do not substitute `underspec-001-deepmerge/`, `underspec-002-csvline/`, or
+`underspec-003-authz-cache/` for this default. If both default cases tie, report `Not proven`, record the
+runnable-corpus ceiling, and require authored expert runnable fixtures before claiming a stronger
+harness win.
+
+Low-effort discriminator:
+
+- `underspec-003-authz-cache/` (`SG_EVAL_CASE=u3`) - security/concurrency latent-correctness probe.
 
 ## Eval Intent
 

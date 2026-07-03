@@ -207,7 +207,7 @@ forced whole-spec verification beat one-shot baseline and matched or beat role s
 ceremony, while generated-proxy verifiers can score worse via Goodhart. The next proof frontier is not
 more synthetic fixtures; it is the production-adoption plan in
 `docs/changelog/2026-07/02-production-adoption/plan.md`, which tracks symlink deployment, trigger
-accuracy, and private-safe production pilot metrics. `examples/url-shortener/` remains the worked
+accuracy, and production pilot metrics: date, mode, gaps, and gate results. `examples/url-shortener/` remains the worked
 example service exercised across build, debug, and extend modes.
 
 ## Harness Eval Reference

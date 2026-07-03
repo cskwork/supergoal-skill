@@ -25,7 +25,7 @@
 | G1 | 참조 무결성(경로·게이트 파일 존재, 페르소나 라우팅)이 기계 검증되지 않음 | 오늘은 수동 검사로 0건이지만, 파일 rename/삭제 한 번이면 라우터가 조용히 404 | 워크플로 실행이 로드 실패로 중단 — 재발 가능성 높음 |
 | G2 | 300줄 초과 참조 파일에 TOC 없음: `reference/teach.md`(556), `taste-skill-v2.md`(371), `harness-eval.md`(328) | skill-creator 가이드: >300줄 참조 파일은 TOC 필수 | 로드한 에이전트가 필요한 섹션을 못 찾고 전체를 재스캔 — 비효율 |
 | G3 | `agents/analyst.md`가 파일 경로로는 어디서도 지목되지 않음 (market-research.md가 "The Analyst"라는 단어로만 언급) | 다른 페르소나는 전부 `agents/<role>.md` 경로로 디스패치됨 | conductor가 페르소나 파일을 로드하지 않고 즉흥 프롬프트로 대체 — 실행마다 절차가 달라짐 (predictability 위반) |
-| G4 | 설치본(~/.claude/skills/supergoal)이 심링크가 아닌 복사본 — 오늘 06:23 외부 동기화로 최신화됐지만 다음 커밋부터 다시 드리프트 | 6/21 사본은 delivery-gate, commit-gate, lean 루프가 빠진 채 11일간 실행됨 | 저장소에서 검증한 워크플로와 실제 실행되는 워크플로가 다름 |
+| G4 | 설치본(~/.claude/skills/supergoal)이 심링크가 아닌 복사본 — 오늘 06:23 외부 동기화로 최신화됐지만 다음 커밋부터 다시 달라질 수 있음 | 6/21 사본은 delivery-gate, commit-gate, lean 루프가 빠진 채 11일간 실행됨 | 저장소에서 검증한 워크플로와 실제 실행되는 워크플로가 다름 |
 
 ## 변경 명세
 
@@ -45,7 +45,7 @@
 - **C3 (G3) — analyst 디스패치 포인터.** `reference/market-research.md`의 "The Analyst writes..."
   문장에 `(agents/analyst.md)` 경로를 명시해 conductor가 페르소나 파일을 로드하게 한다.
 - **C4 (G4) — 보고만, 변경 없음.** 오늘 사용자의 동기화 프로세스가 복사 방식으로 방금 갱신했으므로
-  여기서 덮어쓰지 않는다. 권고: `sync-skill`(심링크 배포)로 전환하면 드리프트가 구조적으로 소멸.
+  여기서 덮어쓰지 않는다. 권고: `sync-skill`(심링크 배포)로 전환하면 설치본 차이가 구조적으로 사라진다.
   최종 보고에 명시한다.
 
 ## 기각한 대안 (왜 안 하는가)

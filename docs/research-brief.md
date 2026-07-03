@@ -6,7 +6,7 @@
 skill now has 11 modes and a lean default loop: Build -> Forced Verify is mandatory, while Critic/Fixer
 is opt-in for under-specified or latent-correctness work. Current adoption work is tracked in
 `docs/changelog/2026-07/02-production-adoption/plan.md`, which shifts proof from synthetic fixtures to
-private-safe production metrics.
+production-session metrics.
 
 **Method note:** Findings synthesized from a verified claim set. Semantic duplicates merged. One claim was **REFUTED in verification and is excluded** from the evidence base: the "empirically 4–6x single-agent token overhead / ~40–50 lines per child" claim — its load-bearing numbers came from a single design RFC (openclaw #35203), were mislabeled "empirical," and were misattributed to Anthropic. Only its supported sub-fact survives (see Quality §).
 

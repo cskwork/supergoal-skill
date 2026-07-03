@@ -232,8 +232,7 @@ read as translated copy rather than Korean UI writing.
   "프로젝트 테스트" and "테스트와 스펙" where the page means ground truth.
 - **Keep identifiers stable.** Technical labels remain in English where they map to real SuperGoal
   concepts, while surrounding Korean explains the action naturally.
-- **Prefer complete Korean sentences.** Replaced fragment-style claims like "proxy verifier 없음" with
-  action-oriented sentences.
+- **Prefer complete Korean sentences.** Replaced fragment-style claims with action-oriented sentences.
 
 ### Verification
 

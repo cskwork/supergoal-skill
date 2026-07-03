@@ -43,3 +43,17 @@
 **커밋 범위(verify):** 실험 dir(`docs/experiments/2026-07-04-assertflip-repro-ab/` — fixtures·grader·report·README) + 이 changelog 추가분. `reference/debugging.md`·`SKILL.md`는 **제외**(unproven).
 
 **결론:** 이번 A/B는 corpus의 baseline-first를 **재확증**(ceiling-driven tie). 처음으로 축을 특정해 단일 lever를 분리하고 real-bug regime으로 escalation 경로를 명확히 함. provenance: wf_e0566bbe-c6c(research), wf_f9ebfc43-92a(A/B).
+
+---
+
+## escalation — REAL 버그(SWE-bench_Lite sympy) A/B (유저 요청: non-saturated 하드 task)
+
+**산출물:** `docs/experiments/2026-07-04-swt-assertflip-realbug-ab/report.md`
+
+**방법(진짜 SWT-Bench-Lite):** `princeton-nlp/SWE-bench_Lite`에서 py3.9 호환 sympy 8 인스턴스. Docker 없이 sympy 소스 실행(PYTHONPATH+mpmath), 8/8 gold fix로 fail-to-pass 사전검증. arm A(assertflip) vs B(shipped) Haiku 64런(wf_b530155e-957). 채점 = **SWT-bench 표준 fail-to-pass**(base FAIL + gold fix 시 PASS), Claude out-of-band 결정론적.
+
+**결과:** **arm A 23/32(72%) vs arm B 22/32(69%), stratified permutation p=1.000.** 유의미한 lift 전무. per-instance: 4 ceiling + 2 floor + 1 tie + 1 A>B(23262, n=1). 유일한 win은 B가 기대값을 틀리게 assert(fix=assertion)한 걸 assertflip이 회피한 것 — 메커니즘 일치하나 노이즈.
+
+**결정적 발견:** 진짜 AssertFlip은 **execution-feedback 루프**(passing test→실행→refine→invert)인데, 이 eval의 arm A와 PRD 변경 ①은 **one-shot 지시**라 메커니즘 미포함. → 검증된 것은 "assertflip을 지시로만 주면 real 하드 버그에서 lift 없음(p=1.0)"; **미검증은 execution-loop 구현**.
+
+**판정:** 변경 ①은 **두 번째 null**(토이 24/24 tie + real p=1.0) → **커밋 금지 유지**, **revert 권장**. 남은 avenue = 변경 ①을 execution-feedback 루프로 재설계 후 재검증(대형, 유저 결정). corpus baseline-first를 real·hard·non-saturated regime에서까지 재확증(최강 반증). provenance: wf_b530155e-957.

@@ -48,6 +48,18 @@ require_text "verifier marks surfaced requirements fixed" "reference/role-loop.m
 
 # SKILL.md surfaces the behavior in the default loop.
 require_text "SKILL critic step logs surfaced requirements" "SKILL.md" 'run vault'\''s `surfaced-requirements.md`'
+require_text "SKILL names equal-compute improve loop" "SKILL.md" "Build -> Improve full spec -> Improve edge cases -> Final Verify"
+require_text "SKILL keeps production ambiguity as ask-user" "SKILL.md" "Production/source-code domain ambiguity"
+require_text "SKILL allows conservative no-user default" "SKILL.md" "conservative, reversible default"
+require_text "role-loop names mandatory improve passes" "reference/role-loop.md" "Build -> Improve full spec -> Improve edge cases -> Final Verify"
+require_text "role-loop has full-spec improver role" "reference/role-loop.md" "Improve full spec"
+require_text "role-loop has edge-case improver role" "reference/role-loop.md" "Improve edge cases"
+require_text "role-loop preserves user feedback for production domain" "reference/role-loop.md" "Production/domain behavior-changing ambiguity needs user feedback"
+require_text "role-loop records conservative no-user default" "reference/role-loop.md" "conservative, reversible default"
+require_text "executor supports full-spec improve mode" "agents/executor.md" "DO (Improve full spec)"
+require_text "executor supports edge-case improve mode" "agents/executor.md" "DO (Improve edge cases)"
+require_text "qa-auditor verifies after improve passes" "agents/qa-auditor.md" "builder and both improve passes"
+require_text "critic is optional escalation" "agents/code-reviewer.md" "Optional Critic escalation"
 
 # LEGACY captures an existing API's exact behavior before a refactor (preserve-baseline),
 # and Verify diffs the re-capture against it (parallel to DEBUG's screen->endpoint capture).

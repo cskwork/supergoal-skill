@@ -7,8 +7,8 @@ No extra install: clone the repo, symlink it into your skills directory, then `/
 Landing page: **[cskwork.github.io/supergoal-skill](https://cskwork.github.io/supergoal-skill/)**.
 
 An agent skill for heavy coding objectives where a normal "just edit it" pass is too easy to fool. It
-takes one objective, chooses the right workflow route, surfaces requirements that were not in the prompt,
-makes the smallest correct change, verifies against the project's own tests and spec, then stops.
+takes one objective, chooses the right workflow route, makes the smallest correct change, forces a
+whole-spec verification pass against the project's own tests and spec, then stops.
 
 ## What `/supergoal` does
 
@@ -18,32 +18,35 @@ makes the smallest correct change, verifies against the project's own tests and 
    architecture, teaching, domain onboarding, harness eval, or skill mining.
 2. **Load only the needed playbook.** The root `SKILL.md` stays small; each route loads its own
    `reference/` and `agents/` files only when needed.
-3. **Separate roles.** Heavy work uses fresh-context subagents for build, critic, fixer, and verifier so
-   one context does not both invent and grade the answer.
+3. **Keep contexts fresh.** Heavy work uses fresh-context subagents for build and verify. Critic/Fixer is
+   an opt-in escalation for under-specified work, not the always-on default.
 4. **Run Before/After Eval.** Capture the before state, define the after target, and keep a command
    manifest so the final claim proves the delta instead of just saying "tests passed."
-5. **Prove against the real project.** Hidden requirements become failing tests or evidence, then the run
-   verifies with the repo's real tests, browser checks, DB evidence when load-bearing, and prose spec.
+5. **Prove against the real project.** Visible-green is not trusted by itself; the run re-reads the whole
+   spec and verifies with the repo's real tests, browser checks, DB evidence when load-bearing, and prose
+   spec. Hidden requirements become durable evidence, and failing tests when the critic escalation is used.
 6. **Stop at the verified result.** No open-ended refactor, no proxy checklist, no fake green.
 
 ## What it adds over a plain baseline
 
-A strong model with the real spec is the bar. `/supergoal` adds only what a plain baseline cannot do for
-free: it surfaces the requirements that are **not in the prompt** - as FAILING tests written by an
-independent critic - then makes the smallest correct change and verifies it against the project's real
-tests and spec, never a generated proxy. For a trivial single edit, skip the skill and edit directly.
+A strong model with the real spec is the bar. `/supergoal` adds the part a plain baseline skips under
+pressure: after the build, it forces a fresh whole-spec verification pass, checks degenerate inputs and
+edge/error paths, re-runs the project's real tests, and records the proof. For genuinely
+under-specified work, it can escalate to an independent critic that writes spec-derived failing tests
+before a fixer clears them. For a trivial single edit, skip the skill and edit directly.
 
 Each role is a bundled file in `agents/`, so dispatch stays harness-agnostic across Claude Code, Codex,
-agy, and other agent CLIs. Each role runs in a fresh-context subagent by default - the conductor stays
-lean while the role's heavy references load inside the subagent, and independent units run in parallel; a
-trivial single edit stays inline.
+agy, and other agent CLIs. Build and Verify are the mandatory core; Critic/Fixer stay available for the
+under-specified frontier. The conductor stays lean while heavy references load inside subagents, and
+independent units run in parallel; a trivial single edit stays inline.
 
 ## Principles
 
 - **Verify against ground truth.** Re-run the project's REAL tests and re-read the prose spec for rules
   the tests miss. Never generate a proxy checklist/verifier and optimize to it.
 - **Smallest correct change.** Match the surrounding code; no whole-file rewrites to change a few lines.
-- **Surface hidden requirements first.** The one place a process beats a plain baseline.
+- **Forced verification before trust.** Re-read the whole spec after Build, even when visible tests are
+  green; critic escalation is reserved for latent requirement risk.
 - **Before/After Eval for real code changes.** GREENFIELD proves what was absent or red before; DEBUG
   reproduces the symptom; LEGACY/brownfield captures behavior to preserve before changing it.
 - **Ask only when genuinely ambiguous.** Resolve code-answerable questions by reading the code.
@@ -74,7 +77,7 @@ flowchart TD
     C -->|"harness effectiveness"| HARNESS["HARNESS-EVAL<br/>baseline vs harness"]
     C -->|"make a reusable skill"| SKILLMINE["SKILL-MINE<br/>mine -> forge -> install"]
 
-    GREENFIELD --> LOOP["Default delivery loop<br/>Build -> Critic -> Fixer -> Verify"]
+    GREENFIELD --> LOOP["Default delivery loop<br/>Build -> Forced Verify<br/>(Critic/Fixer opt-in)"]
     DEBUG --> LOOP
     LEGACY --> LOOP
 
@@ -103,13 +106,13 @@ flowchart TD
 | "test harness effectiveness / with vs without" | **HARNESS-EVAL** | Cases -> baseline run -> harness run -> machine checks -> quality score -> compare |
 | "make a skill from history - no product code" | **SKILL-MINE** | Mine history -> rank -> you pick -> forge portable `SKILL.md` -> install |
 
-**Default loop (GREENFIELD / DEBUG / LEGACY), role-separated:** 1) **Frame** the goal + acceptance
-criteria and start `delivery-proof.md` with Before/After Eval; 2) **Build** the smallest correct change,
-test-first (bug -> failing test first); 3) an
-independent **Critic** re-reads the spec and writes a FAILING test for each required behavior the existing
-tests miss; 4) a **Fixer** makes those pass with the smallest change; 5) **Verify** against the real tests
-and re-read the spec for uncovered rules - stop only after after-evidence, resolved decision gates, and
-residual risk are recorded with command output.
+**Default loop (GREENFIELD / DEBUG / LEGACY):** 1) **Frame** the goal + acceptance criteria and start
+`delivery-proof.md` with Before/After Eval; 2) **Build** the smallest correct change, test-first
+(bug -> failing test first); 3) **Forced Verify** by re-reading the whole prose spec, checking degenerate
+inputs and edge/error paths, fixing the smallest fresh gap, and re-running the real tests until stable;
+4) escalate to independent **Critic -> Fixer** only for genuinely under-specified or latent-correctness
+work where missing requirements need to become failing tests; 5) stop only after after-evidence, resolved
+decision gates, and residual risk are recorded with command output.
 
 Coding/debug runs use a run worktree by default: resolve and verify the source/base branch plus the
 target/integration branch before editing, create the run worktree from source/base, and only commit or
@@ -136,9 +139,9 @@ They write no product code by default and confirm with you before installing any
 ## Board (optional live dashboard)
 
 Watch progress across concurrent agents in real time. `bash tui/launch.sh &` opens an in-browser
-dashboard (Textual) showing each agent's mode + workflow stage (Frame -> Build -> Critic -> Fixer ->
-Verify) and a Jira-like task board, grouped by repo / branch / worktree. Branch is advisory - never
-locked, so multiple agents can share a branch freely.
+dashboard (Textual) showing each agent's mode + workflow stage (Frame -> Build -> Verify, with
+Critic/Fixer only when escalated) and a Jira-like task board, grouped by repo / branch / worktree. Branch
+is advisory - never locked, so multiple agents can share a branch freely.
 
 It is pure observability: opt-in, best-effort, and it never gates or blocks a run - if no agent emits,
 every mode still passes unchanged. When enabled, the conductor calls `sg-emit`
@@ -197,11 +200,15 @@ examples/url-shortener/   a worked example service exercised across the build / 
 
 ## Evidence
 
-The design is grounded in head-to-head evals - `docs/experiments/2026-06-07-harness-eval-*` and
-`log/changelog-2026-06-07.md` (3 cases, 2 models, 4 harness forms). The result that shapes the skill: on
-tasks with an explicit spec, a strong baseline that reads the real spec is the bar to beat, and optimizing
-to a generated-proxy verifier can score worse via Goodhart. `examples/url-shortener/` is a worked example
-service exercised across the build, debug, and extend modes.
+The design is grounded in head-to-head evals - especially
+`docs/experiments/2026-07-01-roleloop-coverage-fix-claude-ab/FINDINGS.md` and
+`docs/harness-eval-explained.md`. The result that shapes the current skill: on explicit-spec tasks,
+forced whole-spec verification beat one-shot baseline and matched or beat role separation at lower
+ceremony, while generated-proxy verifiers can score worse via Goodhart. The next proof frontier is not
+more synthetic fixtures; it is the production-adoption plan in
+`docs/changelog/2026-07/02-production-adoption/plan.md`, which tracks symlink deployment, trigger
+accuracy, and private-safe production pilot metrics. `examples/url-shortener/` remains the worked
+example service exercised across build, debug, and extend modes.
 
 ## Harness Eval Reference
 

@@ -883,7 +883,7 @@
     <span class="status-led" aria-hidden="true"></span>
     <span class="mono">verify - ground-truth</span>
     <span class="label en">the real test suite is the oracle, never a generated proxy</span>
-    <span class="label ko">판단 기준은 프로젝트 테스트입니다. 생성된 proxy가 아닙니다.</span>
+    <span class="label ko">판단 기준은 스스로 만든 기준이 아니라 프로젝트 테스트입니다.</span>
     <span class="pass">GREEN</span>
     <span class="spacer"></span>
     <span class="gatebar-controls" role="group" aria-label="Text size">
@@ -910,7 +910,7 @@
       <p class="hero-sub en">The smallest correct change, verified.</p>
       <p class="hero-sub ko">필요한 만큼만 고치고, 테스트와 스펙으로 확인합니다.</p>
       <p class="hero-copy en">Hand `/supergoal` one objective. It makes the smallest correct change, then distrusts visible green: re-read the whole spec, check edge paths, run the real tests, and escalate to Critic/Fixer only when hidden requirements are the risk.</p>
-      <p class="hero-copy ko">`/supergoal`에 목표 하나를 맡기세요. 필요한 만큼만 고친 뒤 겉 green을 그대로 믿지 않습니다. 전체 스펙을 다시 읽고, 엣지 경로를 확인하고, 프로젝트 테스트를 돌립니다. 숨은 요구사항 위험이 클 때만 Critic/Fixer로 확장합니다.</p>
+      <p class="hero-copy ko">`/supergoal`에 목표 하나를 맡기세요. 필요한 만큼만 고친 뒤, 테스트 통과 표시만으로 끝내지 않습니다. 전체 스펙을 다시 읽고, 예외 경로를 확인하고, 프로젝트 테스트를 다시 돌립니다. 숨은 요구사항 위험이 클 때만 Critic/Fixer로 확장합니다.</p>
       <div class="cta-row">
         <a class="btn primary" href="#install"><span class="en">Install</span><span class="ko">설치</span></a>
         <a class="btn" href="#workflow"><span class="en">The loop</span><span class="ko">루프</span></a>
@@ -936,14 +936,14 @@
 <span class="c-soft">mode</span> LEGACY
 <span class="c-green">build</span> 필요한 만큼만 패치
 <span class="c-red">forced_verify</span> 스펙 틈 2개 발견
-<span class="c-green">verify</span> 프로젝트 테스트 stable
+<span class="c-green">verify</span> 프로젝트 테스트 안정 통과
 <span class="c-green">done</span> exit 0</pre>
       </div>
       <div class="signal-card">
         <h3><span class="en">Run telemetry</span><span class="ko">실행 신호</span></h3>
         <div class="signal-row"><span><span class="en">spec sweep</span><span class="ko">스펙 재검증</span></span><div class="track"><span></span></div><b><span class="en">forced</span><span class="ko">필수</span></b></div>
         <div class="signal-row"><span><span class="en">diff</span><span class="ko">변경량</span></span><div class="track"><span></span></div><b><span class="en">minimal</span><span class="ko">최소</span></b></div>
-        <div class="signal-row"><span><span class="en">real suite</span><span class="ko">프로젝트 테스트</span></span><div class="track"><span></span></div><b>stable</b></div>
+        <div class="signal-row"><span><span class="en">real suite</span><span class="ko">프로젝트 테스트</span></span><div class="track"><span></span></div><b><span class="en">stable</span><span class="ko">안정 통과</span></b></div>
       </div>
     </div>
   </div>
@@ -976,9 +976,9 @@
       </div>
       <div class="metric-grid">
         <div class="metric reveal"><strong>11</strong><span class="en">modes; the objective picks the lane.</span><span class="ko">가지 모드. 목표에 따라 경로가 정해집니다.</span></div>
-        <div class="metric reveal"><strong>1</strong><span class="en">forced verify pass after Build before done can be claimed.</span><span class="ko">Build 뒤에는 완료 주장 전 강제 검증이 한 번 더 필요합니다.</span></div>
-        <div class="metric reveal"><strong>0</strong><span class="en">generated-proxy verifiers; only your real tests grade the work.</span><span class="ko">생성된 proxy verifier를 쓰지 않습니다. 프로젝트 테스트로 결과를 판단합니다.</span></div>
-        <div class="metric reveal"><strong>10</strong><span class="en">production-pilot rows planned: metrics only, no private code.</span><span class="ko">프로덕션 파일럿 10행 계획: 지표만 기록하고 회사 코드는 넣지 않습니다.</span></div>
+        <div class="metric reveal"><strong>1</strong><span class="en">forced verify pass after Build before done can be claimed.</span><span class="ko">Build 뒤에는 완료라고 말하기 전에 강제 검증을 한 번 더 거칩니다.</span></div>
+        <div class="metric reveal"><strong>0</strong><span class="en">generated-proxy verifiers; only your real tests grade the work.</span><span class="ko">자체 생성 검증기를 쓰지 않습니다. 프로젝트 테스트로 결과를 판단합니다.</span></div>
+        <div class="metric reveal"><strong>10</strong><span class="en">production-pilot rows planned: metrics only.</span><span class="ko">프로덕션 파일럿 10건: 날짜, 모드, 발견한 격차, 게이트 결과만 기록합니다.</span></div>
       </div>
     </div>
   </section>
@@ -987,9 +987,9 @@
     <div class="wrap split">
       <div class="copy-stack">
         <div class="claim reveal">
-          <h3><span class="en">It distrusts visible green.</span><span class="ko">겉 green을 그대로 믿지 않습니다.</span></h3>
+          <h3><span class="en">It distrusts visible green.</span><span class="ko">테스트 통과 표시만으로 끝내지 않습니다.</span></h3>
           <p class="en">After Build, it re-reads the whole spec, checks degenerate values and edge/error paths, and fixes the smallest fresh gap even when the visible tests already pass.</p>
-          <p class="ko">Build 뒤에 전체 스펙을 다시 읽고, null/빈 값/경계값과 에러 경로를 확인합니다. 겉 테스트가 이미 통과해도 새로 찾은 틈은 가장 작게 고칩니다.</p>
+          <p class="ko">Build 뒤에 전체 스펙을 다시 읽고, null/빈 값/경계값과 에러 경로를 확인합니다. 보이는 테스트가 이미 통과해도 새로 찾은 틈은 가장 작게 고칩니다.</p>
         </div>
         <div class="claim reveal">
           <h3><span class="en">It keeps the change minimal.</span><span class="ko">변경을 필요한 만큼만 유지합니다.</span></h3>
@@ -1109,7 +1109,7 @@
         <p class="lead ko">매 실행에 적용되는 짧은 계약입니다. 통과만을 위한 의식이 아닙니다.</p>
       </div>
       <div class="gate-grid">
-        <article class="gate-item reveal"><span class="gate-no">1</span><h3><span class="en">Verify against ground truth</span><span class="ko">테스트와 스펙으로 검증</span></h3><p class="en">Re-run the real tests; re-read the prose spec for rules they miss. Never optimize to a generated proxy.</p><p class="ko">프로젝트 테스트를 다시 돌리고, 테스트가 놓친 규칙은 글로 적힌 스펙을 다시 읽습니다. 생성된 proxy를 기준으로 삼지 않습니다.</p></article>
+        <article class="gate-item reveal"><span class="gate-no">1</span><h3><span class="en">Verify against ground truth</span><span class="ko">테스트와 스펙으로 검증</span></h3><p class="en">Re-run the real tests; re-read the prose spec for rules they miss. Never optimize to a generated proxy.</p><p class="ko">프로젝트 테스트를 다시 돌리고, 테스트가 놓친 규칙은 글로 적힌 스펙을 다시 읽습니다. 스스로 만든 기준에 맞춰 결과를 꾸미지 않습니다.</p></article>
         <article class="gate-item reveal"><span class="gate-no">2</span><h3><span class="en">Smallest correct change</span><span class="ko">필요한 만큼만 변경</span></h3><p class="en">Match the surrounding code. No whole-file rewrite to change a few lines.</p><p class="ko">주변 코드 스타일을 따릅니다. 몇 줄 바꾸려고 파일 전체를 다시 쓰지 않습니다.</p></article>
         <article class="gate-item reveal"><span class="gate-no">3</span><h3><span class="en">Escalate when hidden requirements matter</span><span class="ko">숨은 요구사항 위험이 클 때 확장</span></h3><p class="en">Critic/Fixer is available for under-specified work, but the default core is Build -> Forced Verify.</p><p class="ko">Critic/Fixer는 요구사항이 덜 명시된 작업에서 쓰는 확장입니다. 기본 핵심은 Build -> Forced Verify입니다.</p></article>
         <article class="gate-item reveal"><span class="gate-no">4</span><h3><span class="en">Ask only when ambiguous</span><span class="ko">모호할 때만 질문</span></h3><p class="en">Resolve code-answerable questions by reading the code. Interrupt only for genuine forks.</p><p class="ko">코드로 답할 수 있는 것은 먼저 코드를 읽어 해결합니다. 진짜 선택지가 갈릴 때만 멈춥니다.</p></article>
@@ -1128,7 +1128,7 @@
           <div class="file-chip"><code>SKILL.md</code><span class="en">baseline-first loop, modes, map</span><span class="ko">핵심 루프, 모드, 레퍼런스 맵</span></div>
           <div class="file-chip"><code>agents/&lt;role&gt;.md</code><span class="en">one persona per role</span><span class="ko">역할별 지침 파일</span></div>
           <div class="file-chip"><code>reference/role-loop.md</code><span class="en">Build -> Forced Verify; Critic/Fixer opt-in</span><span class="ko">Build -> Forced Verify; Critic/Fixer는 선택 확장</span></div>
-          <div class="file-chip"><code>reference/domain-context.md</code><span class="en">surface hidden requirements</span><span class="ko">숨은 요구사항 표면화</span></div>
+          <div class="file-chip"><code>reference/domain-context.md</code><span class="en">surface hidden requirements</span><span class="ko">숨은 요구사항 찾기</span></div>
           <div class="file-chip"><code>reference/debugging.md</code><span class="en">reproduce-first diagnose loop</span><span class="ko">재현 우선 진단 루프</span></div>
           <div class="file-chip"><code>.domain-agent/</code><span class="en">persisted wiki / QA suite</span><span class="ko">저장된 위키 / QA 스위트</span></div>
         </div>
@@ -1154,9 +1154,9 @@ Stop on green. Report with output.</pre>
       <div class="proof-grid">
         <article class="proof-item reveal">
           <span class="tag">GREENFIELD</span>
-          <h3><span class="en">Visible green is not enough.</span><span class="ko">겉 green만으로는 부족합니다.</span></h3>
+          <h3><span class="en">Visible green is not enough.</span><span class="ko">테스트 통과 표시만으로는 부족합니다.</span></h3>
           <p class="en">After the first build passes visible tests, the verifier re-reads the full spec and checks edge paths before the change is accepted.</p>
-          <p class="ko">첫 build가 보이는 테스트를 통과해도, Verifier가 전체 스펙과 엣지 경로를 다시 확인한 뒤에야 변경을 받아들입니다.</p>
+          <p class="ko">첫 build가 보이는 테스트를 통과해도, Verifier가 전체 스펙과 예외 경로를 다시 확인한 뒤에야 변경을 받아들입니다.</p>
         </article>
         <article class="proof-item debug reveal">
           <span class="tag">DEBUG</span>
@@ -1195,7 +1195,7 @@ git clone https://github.com/cskwork/supergoal-skill.git
 <span class="c-soft"># 업데이트하기 쉽게 연결</span>
 ln -s "$(pwd)/supergoal-skill" &lt;your-agent-skills-dir&gt;/supergoal
 
-<span class="c-soft"># active install이 드리프트하지 않는지 확인</span>
+<span class="c-soft"># 설치본이 소스와 달라졌는지 확인</span>
 node templates/skill-install-audit.mjs "$(pwd)/supergoal-skill"
 
 <span class="c-soft"># 그다음 사용하는 agent CLI에서</span>

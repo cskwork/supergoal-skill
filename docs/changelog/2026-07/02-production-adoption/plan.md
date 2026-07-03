@@ -15,12 +15,12 @@
   못 이긴다. 스킬이 주장하는 가치 영역 — under-specified 요구, 레거시 blast radius, 데이터
   하중 변경 — 에서의 **프로덕션 증거는 0건**이다.
 - **배포본이 복사본이다.** `~/.claude/skills/supergoal`은 2026-07-02 06:23 동기화로 지금은
-  저장소와 해시 동일하지만, 다음 커밋부터 다시 드리프트한다. 6/21 사본은 commit gate·delivery
+  저장소와 해시가 같지만, 다음 커밋부터 다시 달라질 수 있다. 6/21 사본은 commit gate·delivery
   gate·lean 루프가 빠진 채 11일간 실행된 전례가 있다 (저장소는 A를 검증, 세션은 B를 실행).
 - **발동률이 미측정이다.** description은 e3328e6에서 압축됐고, 실제 업무 문구("리팩토링 해줘",
   "why is this slow")에서 트리거되는지 측정치가 없다. 발동하지 않으면 사용 자체가 0이다.
 - **증거 수집 채널이 없다.** 프로덕션 실행이 남겨야 할 산출물(run vault의 `delivery-proof.md`,
-  `surfaced-requirements.md`, commit-gate 결과)이 어디에도 집계되지 않는다 — "의미 있게
+  `surfaced-requirements.md`, commit-gate 기록)이 어디에도 집계되지 않는다 — "의미 있게
   쓰였는가"라는 질문에 답할 데이터 자체가 없다.
 
 ## 2. "의미 있는 사용"의 조작적 정의 (반증 가능 기준)
@@ -61,10 +61,9 @@
 - **대상 과제 프로파일**: 사용자의 실제 업무 저장소에서 스킬이 겨냥하는 작업만 — under-specified
   요구, 레거시 수정(blast radius 있음), 데이터 하중 변경. explicit-spec 단순 과제는 제외
   (lift 없음이 이미 측정된 영역; 스킬 자체도 trivial은 skip을 지시).
-- **계측**: 과제별 run vault(delivery-proof.md, surfaced-requirements.md, gate 로그)는 대상
-  저장소에 남긴다. 이 저장소에는 **지표만** 수집: `docs/experiments/production-pilot/LEDGER.md`
-  에 과제당 한 행 — 날짜, 모드, 난이도, verify가 잡은 격차 수, gate 결과, 대략 오버헤드, 마찰
-  한 줄. **회사 코드·식별 정보는 절대 이 저장소에 넣지 않는다** (origin이 공개 GitHub).
+- **계측**: 과제별 run vault(delivery-proof.md, surfaced-requirements.md, gate 로그)는 해당 작업
+  저장소에 남긴다. 이 저장소에는 `docs/experiments/production-pilot/LEDGER.md`에 과제당 한 행만
+  기록한다 — 날짜, 모드, 난이도, verify가 잡은 격차 수, 게이트 결과, 대략 오버헤드, 마찰 한 줄.
 - **마찰 로그**: 매 과제 후 한 줄 — 스킬이 도운 지점/방해한 지점. SKILL-MINE의 입력이 된다.
 - **기간/규모**: 2주 또는 10과제 중 먼저 도달하는 쪽.
 
@@ -93,11 +92,11 @@
 ## 5. 기각한 대안 (왜 안 하는가)
 
 - **합성 A/B(#2)를 먼저 집행**: $100-170을 쓰고도 "프로덕션에서 의미 있게 쓰이는가"에는 답하지
-  못한다 — fixture는 발동·배포 드리프트·마찰을 측정하지 않는다. 파일럿이 답 못 주는 질문이
+  못한다 — fixture는 발동·배포본 차이·마찰을 측정하지 않는다. 파일럿이 답 못 주는 질문이
   남으면 그때 집행 (계획서는 이미 완성돼 있어 지연 비용이 없다).
 - **프로덕션 RCT(과제별 스킬 on/off 무작위)**: 같은 과제를 두 번 할 수 없고 과제 간 이질성이
   커서 현실적 n으로는 검정력이 없다. 관찰 지표(M3) + 마찰 로그로 대체한다.
-- **회사 저장소의 run vault를 이 저장소에 수집**: origin이 공개 GitHub — 지표 요약만 허용.
+- **다른 저장소의 run vault를 이 저장소에 수집**: 이 계획에는 요약 지표만 필요하다.
 - **hook 기반 자동 텔레메트리**: ledger 수기 한 행이 먼저다. 파일럿이 유지 판정을 받으면
   그때 자동화를 검토한다 (선제적 계측은 의례가 될 위험).
 

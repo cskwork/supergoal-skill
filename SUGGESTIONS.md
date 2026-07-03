@@ -17,12 +17,12 @@ rough cost. None are regressions - the tree is green without them.
 
 - Why: synthetic fixtures do not answer whether `/supergoal` is actually invoked on real work, whether
   installs drift, or which devices help in production sessions. The active plan moves evidence to real
-  tasks while keeping private code out of this public repo.
+  tasks and records only summary metrics in this repo.
 - Do: run `docs/changelog/2026-07/02-production-adoption/plan.md`: symlink deploy, trigger accuracy,
   then a 10-task or 2-week production pilot with only metrics in
   `docs/experiments/production-pilot/LEDGER.md`.
-- Cost: several real tasks over time. Guard: no company code, repo names, secrets, or run-vault contents
-  go into this public repo.
+- Cost: several real tasks over time. Guard: keep the ledger to date, mode, gap, gate, overhead, and friction
+  only.
 
 ## 2b. Revisit the pending confirmatory A/B only after the pilot
 

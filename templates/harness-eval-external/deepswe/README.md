@@ -9,23 +9,32 @@ containers, and verifier artifacts.
 Do not claim `u3` proves a harness win. `u3` proves the fixture discriminates: visible checks can pass
 while hidden authorization/cache checks fail. A harness win needs paired public benchmark artifacts.
 
-## Default Public Pilot
+## Default Public Tasks
 
-Primary task: `happy-dom-abort-pending-body-reads`
+Primary scoring task: `etree-xml-diff-patch`
+
+- Benchmark task: `https://deepswe.datacurve.ai/data/v1/tasks/etree-xml-diff-patch`
+- Upstream repo: `https://github.com/beevik/etree`
+- Base commit: `4032e04c8f2e2f35e43ce5d772fcef14a5df4d74`
+- Benchmark ref used for this manifest: `3cda4081fed96103a6395de39c85e9b20275e307`
+- Why this first for scoring: it is a larger Go feature task covering XML diff, patch application,
+  reverse patches, three-way merge, and summaries. It is intentionally broader than the saturated Happy
+  DOM bugfix, so it is the default candidate for baseline-headroom/effectiveness runs.
+
+Smoke task: `happy-dom-abort-pending-body-reads`
 
 - Benchmark task: `https://deepswe.datacurve.ai/data/v1/tasks/happy-dom-abort-pending-body-reads`
 - Upstream repo: `https://github.com/capricorn86/happy-dom`
 - Base commit: `82a0888cb2c87a6123e05424b528f8e8c9b3e426`
 - Benchmark ref used for this manifest: `3cda4081fed96103a6395de39c85e9b20275e307`
-- Why this first: it is a real TypeScript async lifecycle bugfix with pending body reads, abort behavior,
-  multipart parsing, navigation cleanup, and preservation checks. It uses public source and verifier
-  artifacts instead of private LMS code.
+- Why keep it: it is a real TypeScript async lifecycle bugfix with public source and verifier artifacts,
+  so it is useful for checking that Pier, Codex auth, patch capture, and reports work end to end.
 
 Important: the 2026-07-03 Codex pilot is a setup artifact, not a valid paired correctness result. The
 harness arm was manually interrupted after elapsed time was observed. A later no-interrupt full-cycle run
 completed both arms, but current Codex `gpt-5.5` low reasoning saturated the task: baseline and harness
-both reached `reward=1`, `f2p=14/14`, `p2p=165/165`. Use Happy DOM as the default public full-cycle
-pilot, not as proof of harness lift under saturated settings.
+both reached `reward=1`, `f2p=14/14`, `p2p=165/165`. Use Happy DOM only as a public full-cycle smoke
+task, not as proof of harness lift under saturated settings.
 
 ## Protocol
 
@@ -35,13 +44,13 @@ then harness serially through Pier, enforces the declared stop policy, and write
 
 ```bash
 node templates/harness-eval-external/deepswe/run-full-cycle.mjs \
-  --task happy-dom-abort-pending-body-reads \
+  --task etree-xml-diff-patch \
   --agent codex \
   --model gpt-5.5 \
   --reasoning-effort low \
   --codex-auth-json auto \
   --timeout-seconds 900 \
-  --run-root /tmp/sg-deepswe-happy-dom-full-cycle
+  --run-root /tmp/sg-deepswe-etree-full-cycle
 ```
 
 Use `--dry-run` first to inspect the exact commands without spending model time. Use `--force` only for a
@@ -50,7 +59,8 @@ targets.
 
 Codex runs default to `--reasoning-effort low` in this lane. That holds the compute budget equal across
 baseline and harness arms. If baseline reaches perfect public verifier score, the runner reports
-`not_proven_no_headroom` instead of a generic win/loss.
+`not_proven_no_headroom` instead of a generic win/loss. A scoring run should not stop at a no-headroom
+task; use the harder default task or another held-out DeepSWE task until baseline headroom is visible.
 The runner also defaults to `--codex-auth-json auto`: when `OPENAI_API_KEY` is absent and
 `~/.codex/auth.json` exists, it passes `CODEX_FORCE_AUTH_JSON=1` into Pier without logging the secret.
 It also records a non-secret `chatgpt.com` allowlist hint because Codex auth.json uses the ChatGPT Codex
@@ -78,7 +88,7 @@ uv tool install datacurve-pier
 node templates/harness-eval-external/deepswe/prepare-supergoal-arm.mjs \
   /tmp/deep-swe \
   /tmp/deep-swe-supergoal \
-  happy-dom-abort-pending-body-reads \
+  etree-xml-diff-patch \
   .
 ```
 
@@ -103,11 +113,11 @@ stop_policy:
    budget, or errors; do not score `HEAD` for one arm and a working tree for the other.
 
 ```bash
-pier run -p /tmp/deep-swe/tasks/happy-dom-abort-pending-body-reads \
+pier run -p /tmp/deep-swe/tasks/etree-xml-diff-patch \
   --agent mini-swe-agent \
   --model openai/gpt-5.5
 
-pier run -p /tmp/deep-swe-supergoal/tasks/happy-dom-abort-pending-body-reads \
+pier run -p /tmp/deep-swe-supergoal/tasks/etree-xml-diff-patch \
   --agent mini-swe-agent \
   --model openai/gpt-5.5
 ```
@@ -146,7 +156,7 @@ Minimum language:
 - Manual interruption after observing progress: invalid paired correctness. Report only diagnostic
   artifacts and rerun with a predeclared timeout.
 - Completed tie where baseline is already perfect: `not_proven_no_headroom`. Report it as a valid
-  full-cycle reliability check, then add harder public tasks before claiming harness effectiveness.
+  full-cycle reliability check only, then run harder public tasks before claiming harness effectiveness.
 
 ## Controls
 
@@ -156,5 +166,7 @@ Minimum language:
 - Harness gets only the approved supergoal files embedded by the adapter.
 - Hidden tests, verifier code, and solution patches are not copied into the prompt.
 - A costlier harness loses unless correctness or partial reward improves enough to justify the overhead.
-- `cliffy-config-file-parsing` remains a secondary broad feature task, not the default low-effort pilot;
-  it previously exceeded the low-turn budget without a patch under the Claude adapter.
+- `happy-dom-abort-pending-body-reads` is smoke only after the completed no-interrupt Codex run saturated
+  both arms.
+- `cliffy-config-file-parsing` remains secondary; it previously exceeded the low-turn budget without a
+  patch under the Claude adapter.

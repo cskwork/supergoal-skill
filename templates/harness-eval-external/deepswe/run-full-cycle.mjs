@@ -17,7 +17,8 @@ import { createHash } from "node:crypto";
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(SCRIPT_DIR, "../../..");
 const DEFAULT_REF = "3cda4081fed96103a6395de39c85e9b20275e307";
-const DEFAULT_TASK = "happy-dom-abort-pending-body-reads";
+const SMOKE_TASK = "happy-dom-abort-pending-body-reads";
+const DEFAULT_TASK = "etree-xml-diff-patch";
 const CODEX_AUTH_JSON_ALLOWLIST_TOML = '[pier_network_allowlist]\nbase_url = "https://chatgpt.com"\n';
 
 function usage() {
@@ -26,7 +27,7 @@ function usage() {
 Runs a no-manual-interrupt DeepSWE baseline/harness A/B cycle through Pier.
 
 Options:
-  --task <id>                 DeepSWE task id (default: ${DEFAULT_TASK})
+  --task <id>                 DeepSWE task id (default scoring task: ${DEFAULT_TASK}; smoke: ${SMOKE_TASK})
   --benchmark-root <path>     DeepSWE checkout (default: /tmp/deep-swe-sg)
   --run-root <path>           Output root (default: /tmp/sg-deepswe-full-cycle-<timestamp>)
   --agent <name>              Pier agent (default: codex)

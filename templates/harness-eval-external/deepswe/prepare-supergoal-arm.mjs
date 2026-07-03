@@ -89,6 +89,18 @@ the approved supergoal reference embedded here. Do not use benchmark verifier fi
 solution patches if they are visible through local tooling. The benchmark task body after the marker
 \`# Original DeepSWE Task\` must remain the source of product requirements.
 
+## DeepSWE scoring contract
+
+- The evaluator grades the repository patch, not the final explanation. Make code changes in the repo.
+- Preserve existing behavior while fixing the requested behavior: DeepSWE-style scoring rewards
+  fail-to-pass progress only when pass-to-pass preservation does not regress.
+- Use repo-native tests or focused scripts to reproduce and verify behavior where feasible; do not edit
+  benchmark verifier files, hidden tests, or solution files.
+- Commit the final code changes if the environment permits, because DeepSWE v1.1 captures committed work.
+  If the workspace blocks commits, leave the working tree patch complete and minimal for adapter capture.
+- Avoid broad rewrites. Prefer the smallest domain-correct patch that explains itself through tests and
+  surrounding code.
+
 Base task instruction sha256: ${sha256(baseInstruction)}
 Harness source files:
 ${fileList}
@@ -109,7 +121,7 @@ writeFileSync(
       base_instruction_sha256: sha256(baseInstruction),
       harness_instruction_sha256: sha256(readFileSync(destInstruction, "utf8")),
       harness_source_files: harnessFiles.map(({ path, sha256 }) => ({ path, sha256 })),
-      rule: "Preserve original DeepSWE task body; prepend only approved supergoal harness reference.",
+      rule: "Preserve original DeepSWE task body; prepend only approved supergoal harness reference and DeepSWE scoring contract.",
     },
     null,
     2,

@@ -1,0 +1,330 @@
+[
+ {
+  "id": "sympy__sympy-20212",
+  "arm": "A",
+  "run": 1,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-20212",
+  "arm": "A",
+  "run": 2,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-20212",
+  "arm": "A",
+  "run": 3,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-20212",
+  "arm": "B",
+  "run": 1,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-20212",
+  "arm": "B",
+  "run": 2,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-20212",
+  "arm": "B",
+  "run": 3,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-20442",
+  "arm": "A",
+  "run": 1,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-20442",
+  "arm": "A",
+  "run": 2,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-20442",
+  "arm": "A",
+  "run": 3,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-20442",
+  "arm": "B",
+  "run": 1,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-20442",
+  "arm": "B",
+  "run": 2,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-20442",
+  "arm": "B",
+  "run": 3,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-21055",
+  "arm": "A",
+  "run": 1,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-21055",
+  "arm": "A",
+  "run": 2,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-21055",
+  "arm": "A",
+  "run": 3,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-21055",
+  "arm": "B",
+  "run": 1,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-21055",
+  "arm": "B",
+  "run": 2,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-21055",
+  "arm": "B",
+  "run": 3,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-21847",
+  "arm": "A",
+  "run": 1,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-21847",
+  "arm": "A",
+  "run": 2,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-21847",
+  "arm": "A",
+  "run": 3,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-21847",
+  "arm": "B",
+  "run": 1,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-21847",
+  "arm": "B",
+  "run": 2,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-21847",
+  "arm": "B",
+  "run": 3,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-23191",
+  "arm": "A",
+  "run": 2,
+  "base_cls": "assertion",
+  "fix_cls": "assertion",
+  "valid_f2p": false
+ },
+ {
+  "id": "sympy__sympy-23191",
+  "arm": "A",
+  "run": 3,
+  "base_cls": "assertion",
+  "fix_cls": "assertion",
+  "valid_f2p": false
+ },
+ {
+  "id": "sympy__sympy-23191",
+  "arm": "B",
+  "run": 1,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-23191",
+  "arm": "B",
+  "run": 2,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-23191",
+  "arm": "B",
+  "run": 3,
+  "base_cls": "assertion",
+  "fix_cls": "assertion",
+  "valid_f2p": false
+ },
+ {
+  "id": "sympy__sympy-24152",
+  "arm": "A",
+  "run": 1,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-24152",
+  "arm": "A",
+  "run": 2,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-24152",
+  "arm": "A",
+  "run": 3,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-24152",
+  "arm": "B",
+  "run": 1,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-24152",
+  "arm": "B",
+  "run": 2,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-24152",
+  "arm": "B",
+  "run": 3,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-24909",
+  "arm": "A",
+  "run": 1,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-24909",
+  "arm": "A",
+  "run": 2,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-24909",
+  "arm": "A",
+  "run": 3,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-24909",
+  "arm": "B",
+  "run": 1,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-24909",
+  "arm": "B",
+  "run": 2,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ },
+ {
+  "id": "sympy__sympy-24909",
+  "arm": "B",
+  "run": 3,
+  "base_cls": "assertion",
+  "fix_cls": "pass",
+  "valid_f2p": true
+ }
+]

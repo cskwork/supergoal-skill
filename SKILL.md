@@ -23,8 +23,9 @@ weaken safety gates. Create or edit it only when the user explicitly asks (`refe
   (each input's degenerate values null/undefined/empty/boundary, error/edge paths) and fix the smallest
   gap even when the visible tests pass. Non-trivial code runs seed numbered requirements in
   `## Requirement Trace`; done requires every row met and `Backward-trace: clean` (no orphan scope).
-  Opt-in escalation for under-specified / latent-correctness work:
-  an independent critic that did not write the code turns the unstated requirements into FAILING tests.
+  Opt-in escalation for under-specified / latent-correctness work: an independent critic classifies
+  inferred requirements; only grounded must-behaviors become FAILING tests, while ambiguous or
+  product-changing semantics become `ask-user` decision gates.
 - For non-trivial code changes, run a Before/After Eval before Build: prove the before state, the after
   target, and the delta with trusted repo/evaluator commands (`reference/delivery-gate.md`).
 - Ask only when genuinely ambiguous; resolve code-answerable questions by reading the code.
@@ -118,13 +119,14 @@ escalation is opt-in (a measured lever for under-specified work, not always on).
 4. **Critic escalation (opt-in; independent, no src edits).** For under-specified / latent-correctness
    work - where the lever is surfacing requirements ABSENT from the prompt - escalate to an independent
    critic that did not write the code: re-read the prose spec + repo/data rules
-   (`reference/domain-context.md`, `domain-rules.md`), write a FAILING test for each missed required
-   behavior, and log it in the run vault's `surfaced-requirements.md`; a fixer then clears the reds (no
-   test edits). A signal, not the oracle. Measured caveat: on explicit-spec tasks this role separation did
-   NOT beat equal-compute forced verification, so reserve it for the under-specified frontier. For wide
-   under-specified plans, run a bounded adversarial plan attack before Build: security, scope, correctness,
-   performance, and operability critics may attack the plan, but only accepted required risks become tests
-   or decision gates.
+   (`reference/domain-context.md`, `domain-rules.md`), classify inferred behavior as `must`, `should`, or
+   `ask-user`, write FAILING tests only for grounded `must` requirements, and log them in the run vault's
+   `surfaced-requirements.md`; a fixer then clears the reds (no test edits). Ambiguous or
+   product-changing semantics are decision gates, not generated REDs. A signal, not the oracle. Measured
+   caveat: on explicit-spec tasks this role separation did NOT beat equal-compute forced verification, so
+   reserve it for the under-specified frontier. For wide under-specified plans, run a bounded adversarial
+   plan attack before Build: security, scope, correctness, performance, and operability critics may attack
+   the plan, but only accepted required risks become tests or decision gates.
 
 Roles -> personas: critic=`agents/code-reviewer.md`, fixer=`agents/executor.md`,
 verify=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role>.md`).

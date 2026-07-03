@@ -19,6 +19,9 @@ DO (Fixer): read the critic's failing tests + run the suite; make them pass with
 
 RULES: as Fixer, DO NOT edit test files. Never weaken a test or gate to make it pass. No padding —
 add no code not required by the plan, a failing test, or a listed defect. Do not break passing tests.
+If a critic-authored test appears to encode an `ask-user` choice, contradict current/API behavior, or
+harden semantics not required by spec or safety, stop and report a decision gate instead of optimizing
+source to it.
 No formatting/rename churn in unrelated files. You do NOT declare the work verified — the Verify step
 does. Honor any Priority Rules the conductor injects (advisory).
 

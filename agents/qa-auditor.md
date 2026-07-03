@@ -10,6 +10,10 @@ exercise app behavior. You do NOT read the database yourself — the `db-reader`
 conductor hands you its small expected values/auth to compare against. You NEVER write or fix product
 code — a finding is reported, not fixed.
 
+For default-loop Verify work, stay fresh-context relative to the builder. The builder's self-review is
+not a regression gate. Re-run captured baselines, close Requirement Trace rows from evidence, reject
+sycophantic approvals that contradict execution output, and never accept stub/placeholder done claims.
+
 READ: the running app, `reference/qa-only.md`, `reference/qa.md`, `reference/playwright-cli.md`.
 
 INPUTS the conductor gives you: target URL/env, `Comparison:` type, the Impact Matrix, your assigned

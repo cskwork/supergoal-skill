@@ -77,3 +77,35 @@ Rejected alternatives:
   equal-compute forced verification is leaner on explicit-spec work.
 - Use overlapping confidence intervals as the A/B winner gate: rejected because paired tests are the
   correct fit for same-task binary outcomes.
+
+## QA regression scope and requirement trace hardening
+
+Decision: implement the QA regression-scope plan as a tiered contract: shared code/state changes past
+`very easy` capture neighbor characterization baselines, non-trivial code runs close a bidirectional
+Requirement Trace, and DEBUG/prod proxy checks record reproduction fidelity.
+
+Why: the existing loop proved the changed target well, but adjacent behavior and user requirement
+coverage were still easy to under-map. The fix is not more always-on ceremony; it is conditional evidence
+where the risk appears.
+
+What changed:
+
+- `reference/qa.md` now exposes a lean code-change scenario stencil and a characterization baseline path
+  for neighboring behavior.
+- `reference/role-loop.md`, `reference/delivery-gate.md`, and `SKILL.md` now require RTM closure,
+  neighbor baseline reruns, fresh-context regression verification, and non-exact reproduction fidelity.
+- `templates/delivery-proof.md` and `templates/run-state.json` now carry Requirement Trace,
+  Neighbor Baseline, Reproduction Fidelity, and `regression_ledger` fields.
+- `templates/commit-gate.sh` now blocks unmet Requirement Trace rows, non-clean Backward-trace scope, and
+  non-exact reproduction without residual risk plus post-deploy confirmation.
+- Contract tests now assert the new anchors, and `tests/gate-scenarios.test.sh` exercises open RTM,
+  orphan backward trace, exact reproduction, and synthetic-representative proxy cases.
+
+Rejected alternatives:
+
+- Turn the Impact Matrix into the default loop for every task: rejected because prior evals favored the
+  lean forced-verification path for explicit work.
+- Treat characterization snapshots as correctness proof: rejected because they can preserve a known bug;
+  they are drift signals only.
+- Fully automate reverse trace from `git diff`: rejected for this pass because proof templates need the
+  contract first; attested `Backward-trace: clean` is the minimal reliable gate.

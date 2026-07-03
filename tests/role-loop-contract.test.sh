@@ -53,6 +53,19 @@ require_text "qa.md baseline supports backend-only HTTP capture" "reference/qa.m
 require_text "role-loop Build captures the baseline first" "reference/role-loop.md" "capture its exact-behavior baseline FIRST"
 require_text "role-loop Verify diffs the re-capture" "reference/role-loop.md" "re-capture the same call and diff against the pre-refactor baseline"
 require_text "explore flags existing API for capture" "agents/explore.md" "flag it for a preserve-baseline capture"
+require_text "qa.md defines characterization baseline" "reference/qa.md" "## Characterization baseline (non-UI code changes)"
+require_text "role-loop generalizes baseline to shared code" "reference/role-loop.md" "shared code/state change past *very easy*"
+require_text "role-loop reruns neighbor characterization baseline" "reference/role-loop.md" "Re-run every captured neighbor characterization baseline"
+require_text "role-loop says characterization is not oracle" "reference/role-loop.md" "Characterization baseline is a regression signal, not a correctness oracle"
+require_text "qa.md says characterization is not oracle" "reference/qa.md" "not a correctness oracle"
+require_text "qa.md defines scenario stencil" "reference/qa.md" "## Scenario stencil (code changes)"
+require_text "scenario stencil includes regression category" "reference/qa.md" "Regression: previous passing neighbor scenarios"
+require_text "scenario stencil includes metamorphic relation" "reference/qa.md" "Metamorphic relation"
+require_text "role-loop references scenario stencil" "reference/role-loop.md" "Scenario stencil (code changes)"
+require_text "role-loop self-review is not regression gate" "reference/role-loop.md" "self-review is not a regression gate"
+require_text "role-loop blocks stub done claims" "reference/role-loop.md" "stub/placeholder implementations block done"
+require_text "qa-auditor rejects stub placeholders" "agents/qa-auditor.md" "never accept stub/placeholder done claims"
+require_text "qa-auditor treats self-review as non-gate" "agents/qa-auditor.md" "self-review is not a regression gate"
 
 # Template exists and carries the expected fields.
 require_file "surfaced-requirements template exists" "templates/surfaced-requirements.md"
@@ -61,6 +74,8 @@ require_text "template names requirement/why/covering test/status" "templates/su
 # Critic->fixer loop has a hard stop (3-cycle cap) and a doubt-theater anti-signal.
 require_text "role-loop caps build-verify at max iterations" "reference/role-loop.md" "max_iterations"
 require_text "role-loop forces reflection at cap" "reference/role-loop.md" "forced reflection"
+require_text "role-loop reruns regression ledger" "reference/role-loop.md" 'Each iteration re-runs `regression_ledger`'
+require_text "run state stores regression ledger" "templates/run-state.json" "regression_ledger"
 require_text "role-loop caps critic->fixer at 3 cycles" "reference/role-loop.md" "cap the critic->fixer loop at 3 cycles"
 require_text "role-loop names the doubt-theater anti-signal" "reference/role-loop.md" "Doubt-theater anti-signal"
 require_text "role-loop has conditional plan attack" "reference/role-loop.md" "Adversarial plan attack"

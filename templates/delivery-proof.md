@@ -15,6 +15,14 @@
 - Max iterations: 8
 - Status: open / fulfilled / blocked
 
+## Requirement Trace
+
+| # | Requirement (user's words) | Source | Implementing change (file:line) | Verifying check | Status |
+|---|---|---|---|---|---|
+| r1 |  |  |  |  | open / met / blocked |
+
+Backward-trace: clean | <orphan file:line list>
+
 ## Before State
 
 - Mode: GREENFIELD / DEBUG / LEGACY
@@ -23,11 +31,26 @@
 - What this proves:
 - What this does not prove:
 
+## Neighbor Baseline
+
+| Snapshot | Captured at | Re-run status |
+|---|---|---|
+|  |  | skipped / pass / fail |
+
 ## After Target
 
 - Expected behavior:
 - Compatibility to preserve:
 - Intentional drift:
+
+## Reproduction Fidelity
+
+- Fidelity level: exact | prod-snapshot | synthetic-representative | synthetic-minimal | not-reproduced
+- Test data source:
+- Failure-triggering properties preserved:
+- Prod-vs-test deltas:
+- Residual risk from data gap:
+- Post-deploy confirmation plan:
 
 ## Command Manifest
 

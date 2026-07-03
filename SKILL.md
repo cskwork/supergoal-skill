@@ -21,7 +21,9 @@ weaken safety gates. Create or edit it only when the user explicitly asks (`refe
   baseline correctness, not padding.
 - Default to forced whole-spec verification: after Build, re-read every stated-or-implied requirement
   (each input's degenerate values null/undefined/empty/boundary, error/edge paths) and fix the smallest
-  gap even when the visible tests pass. Opt-in escalation for under-specified / latent-correctness work:
+  gap even when the visible tests pass. Non-trivial code runs seed numbered requirements in
+  `## Requirement Trace`; done requires every row met and `Backward-trace: clean` (no orphan scope).
+  Opt-in escalation for under-specified / latent-correctness work:
   an independent critic that did not write the code turns the unstated requirements into FAILING tests.
 - For non-trivial code changes, run a Before/After Eval before Build: prove the before state, the after
   target, and the delta with trusted repo/evaluator commands (`reference/delivery-gate.md`).
@@ -60,7 +62,7 @@ GREENFIELD/DEBUG/LEGACY only after the edit target is clear.
 |---|---|---|
 | build / make / ship a new app/tool | GREENFIELD | default loop |
 | fix / broken / failing / crash / why does | DEBUG | default loop; observe the live symptom boundary first, then reproduce with a failing test (`reference/debugging.md`); web: `reference/qa.md`, `reference/playwright-cli.md` |
-| add / integrate / refactor existing code | LEGACY | default loop; map first (`agents/explore.md`, `reference/domain-context.md`); optional DB evidence (`reference/db-access.md`); existing-API refactor: capture its exact behavior first as a preserve-baseline (`reference/qa.md`) |
+| add / integrate / refactor existing code | LEGACY | default loop; map first (`agents/explore.md`, `reference/domain-context.md`); optional DB evidence (`reference/db-access.md`); existing-API refactor: capture its exact behavior first as a preserve-baseline; shared code/state change past *very easy*: capture neighboring behavior first as a characterization baseline (`reference/qa.md`) |
 | spec / requirements first / 스펙 문서로 구조화 | SPEC | spec-first prefix: requirements -> design -> tasks under `docs/spec/`, then tasks drive Build (`reference/spec.md`) |
 | explain / teach / how does X work (no code) | TEACH | stateful `teach/<topic>/` workspace (`reference/teach.md`); lessons must pass `teach-lesson-gate.mjs` |
 | learn / onboard / map this codebase (persist a wiki) | LEARN-DOMAIN | Survey -> Map -> Ground -> Onboard a `.domain-agent/` wiki (`reference/learn-domain.md`; gate `learn-grounding-gate.mjs`) |
@@ -90,7 +92,8 @@ persisted data is load-bearing. The mandatory core is Build -> Forced Verify; th
 escalation is opt-in (a measured lever for under-specified work, not always on). Full contract:
 `reference/role-loop.md`.
 
-1. **Frame.** Restate goal + falsifiable acceptance criteria in one line. Write a completion promise:
+1. **Frame.** Restate goal + falsifiable acceptance criteria in one line. Seed numbered requirements in
+   `## Requirement Trace`. Write a completion promise:
    the promised outcome, required proof, stop condition, and `max_iterations` (default 8). If underspecified, ask <=5
    high-leverage questions; and once the approach is grounded, if the fix's blast radius reaches past
    its target, confirm it before Build - tiered, hard-gated when wide/destructive/behavior-changing
@@ -99,16 +102,19 @@ escalation is opt-in (a measured lever for under-specified work, not always on).
    `templates/delivery-proof.md`, create `run-state.json` from `templates/run-state.json`, and record
    the Before/After Eval (`reference/delivery-gate.md`).
 2. **Build.** Smallest correct change, test-first; match surrounding style; minimal diff. Bug: reproduce
-   with a failing test first (`reference/debugging.md`).
+   with a failing test first (`reference/debugging.md`). Shared code/state changes past *very easy*:
+   capture neighbor characterization baseline before editing.
 3. **Forced Verify vs ground truth (mandatory core).** Re-read the WHOLE prose spec from scratch and, for
    every stated-or-implied behavior - especially each input's degenerate values (null/undefined/empty/
    boundary) and error/edge paths - confirm the code is correct and fix the smallest gap, even when the
    visible tests are green (they are not the spec). Re-run the project's REAL tests and loop Build->Verify
    until no fresh gap appears. Browser UI: complete browser app verification with
    `qa-gate.sh <vault> browser` (lint, typecheck, build, and screenshots do not substitute). Data
-   load-bearing past *very easy*: DB evidence too. Stop on green only after updating `delivery-proof.md`
-   with after evidence, resolved decision gates, and residual risk; report what was verified, with
-   command output.
+   load-bearing past *very easy*: DB evidence too. Re-run captured neighbor baselines, close
+   `## Requirement Trace`, and keep `Backward-trace: clean`. DEBUG prod issue: record reproduction
+   fidelity; if not exact, done is conditional on residual risk + post-deploy confirmation plan. Stop on
+   green only after updating `delivery-proof.md` with after evidence, resolved decision gates, and
+   residual risk; report what was verified, with command output.
 4. **Critic escalation (opt-in; independent, no src edits).** For under-specified / latent-correctness
    work - where the lever is surfacing requirements ABSENT from the prompt - escalate to an independent
    critic that did not write the code: re-read the prose spec + repo/data rules
@@ -150,6 +156,9 @@ verify=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role>.m
 
 **Done =** mode stated; smallest diff in surrounding style; Before/After Eval complete for non-trivial
 code changes; REAL tests + prose spec green (not a proxy) - a runtime MUST is proven only by exercising its real behavior, never by a test that just checks a method was called or re-asserts current behavior;
-past *very easy* -> red-green test + DB evidence if data load-bearing; user-facing UI at the Expressive
-baseline; destructive steps consented; commit/merge only after the commit gate passes
-(`reference/delivery-gate.md`); report what was verified with command output.
+past *very easy* -> red-green test + DB evidence if data load-bearing; captured neighbor snapshots
+re-run green with unnamed drift resolved; all requirements met and traced, with no orphan scope; DEBUG
+prod issue has reproduction fidelity recorded, and non-exact reproduction has conditional done plus a
+post-deploy confirmation plan; user-facing UI at the Expressive baseline; destructive steps consented;
+commit/merge only after the commit gate passes (`reference/delivery-gate.md`); report what was verified
+with command output.

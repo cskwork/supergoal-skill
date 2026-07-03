@@ -14,6 +14,37 @@ surfaces, complex multi-step scenarios, before/during/after actions, and explici
 residual risk. GREENFIELD/LEGACY/DEBUG browser QA stays lean by default but may borrow that matrix for
 high-blast-radius changes.
 
+## Characterization baseline (non-UI code changes)
+
+Use when the change is past *very easy* and touches code/state shared by another feature: function,
+module, global state, DB row/schema, config, cache, or integration contract. Skip for narrow *very easy*
+edits and log the reason in the proof.
+
+1. Pick reachable neighbor behavior the change could break.
+2. Before editing, put that behavior under a check and save current output to
+   `<vault>/qa/baseline/<neighbor>.txt`.
+3. After editing, re-run the same check and diff against the snapshot.
+
+Unnamed drift is red. Intentional drift must be named in `delivery-proof.md`. Characterization is a
+regression signal, not a correctness oracle: it can preserve a known bug, so update that snapshot only
+when the bug fix is intentional.
+
+## Scenario stencil (code changes)
+
+Lean default for DEBUG/LEGACY/GREENFIELD code verification:
+
+- Equivalence partitions: normal inputs that should follow the same rule.
+- Boundary values: null/undefined/empty/min/max/ordering edges.
+- Negative/error paths: rejected inputs, failed dependencies, recovery.
+- Regression: previous passing neighbor scenarios the change could break; link to captured baselines.
+- Metamorphic relation: when no exact oracle exists, transform equivalent inputs and require equivalent
+  meaning across outputs. Candidate execution is required; otherwise record named residual risk.
+
+For prod issues that do not reproduce exactly in dev, derive synthetic or similar data from prod evidence
+(logs, stack, read-only schema/rows via `reference/db-access.md`) while preserving failure-triggering
+properties such as null/boundary/scale/ordering/timing/concurrency. Scrub PII. Do not call one fabricated
+green case conclusive; record reproduction fidelity and post-deploy confirmation in the proof.
+
 ## Always use the `qa-tester` subagent
 
 Browser dumps, screenshots, and console logs stay in `qa-tester` context. The conductor receives only

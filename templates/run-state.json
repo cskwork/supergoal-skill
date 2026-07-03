@@ -25,6 +25,7 @@
   "phase": "Frame",
   "iteration": 0,
   "unresolved_gates": [],
+  "regression_ledger": [],
   "blockers": [],
   "last_proof_command": "",
   "next_action": "",
@@ -33,6 +34,7 @@
     "what_keeps_failing": "",
     "likely_root_cause": "",
     "unproven_requirement": "",
+    "regressed_previously_green": "",
     "smallest_next_action": ""
   },
   "updated_at": "YYYY-MM-DDTHH:MM:SSZ"

@@ -16,8 +16,12 @@ Required fields:
 
 - `eval_intent`: the user's goal in their words, plus constraints, tradeoffs, and rejected approaches.
 - `completion_promise`: promised outcome, required proof, stop condition, and `max_iterations` (default 8).
+- `requirement_trace`: numbered user requirements, implementing changes, verifying checks, status, and
+  `Backward-trace: clean` when no diff hunk is orphan scope.
 - `before_state`: observed current behavior before the change.
 - `after_target`: falsifiable expected behavior after the change.
+- `reproduction_fidelity`: for DEBUG/prod issues, exact/proxy data level, failure-triggering properties,
+  prod-vs-test deltas, residual risk, and post-deploy confirmation plan.
 - `command_manifest`: exact commands used for proof, with source:
   - `frozen_repo` - repo-owned command from AGENTS.md, package scripts, Makefile, CI, docs, or config.
   - `evaluator_owned` - command authored by the evaluator outside either arm's solution.
@@ -35,9 +39,13 @@ Required fields:
   route returns 404, command missing, or UI screen unavailable. If the project is new, the before state can
   be "no implementation exists" plus the first failing acceptance check.
 - **DEBUG:** reproduce the live symptom first. Record the failing command, request, screenshot, log line, or
-  data state before fixing.
+  data state before fixing. If exact dev reproduction is unavailable, use synthetic/similar data only when
+  it preserves the failure-triggering properties; fill `## Reproduction Fidelity`, and treat done as
+  conditional on residual risk plus a post-deploy confirmation plan.
 - **LEGACY / brownfield:** preserve the current behavior before changing it. Capture exact API calls,
   screenshots, CLI output, DB rows, or tests for surrounding behavior that must not drift.
+- **Shared code/state past very easy:** in any mode, capture neighbor characterization baseline snapshots
+  before Build (`reference/qa.md`), not only refactors.
 
 If no meaningful before proof exists, say why and mark the run `Not proven` until another proof source is
 available.
@@ -47,9 +55,10 @@ available.
 Run the repo's real verification commands, then compare against the before state:
 
 - New behavior works.
-- Required old behavior still works.
+- Required old behavior still works: captured neighbor snapshots re-run with no unnamed drift.
 - Intended drift is named.
 - Unintended drift is fixed or reported.
+- Requirement Trace rows are met, and Backward-trace is clean.
 - Browser UI changes include browser evidence from `qa-gate.sh <vault> browser`.
 - Data-backed behavior past very easy includes read-only DB evidence when available.
 
@@ -76,6 +85,8 @@ Done means `delivery-proof.md` shows:
 - trusted commands run with outputs or artifacts,
 - decision gates resolved,
 - residual risk named,
+- requirement trace closed in both directions,
+- reproduction fidelity recorded for DEBUG/prod issues,
 - `run-state.json` updated with the final phase, completion-promise status, and no hidden blockers,
 - changelog updated with accepted and rejected alternatives,
 - commit gate passed (`## Commit gate`).
@@ -84,8 +95,10 @@ Done means `delivery-proof.md` shows:
 
 Commit or merge into the target/integration branch only when the proof above is green and the user has
 accepted. Block the commit while any holds: REAL tests or prose spec not green; QA verdict FAIL or PARTIAL
-(incomplete); an open requirement in `surfaced-requirements.md`; an unresolved `ask-user` decision gate; or
-the requirement's fulfillment is uncertain.
+(incomplete); an open requirement in `surfaced-requirements.md`; an unmet/open/blocked row in
+`## Requirement Trace`; a missing or non-clean `Backward-trace` (scope-creep orphan); an unresolved
+`ask-user` decision gate; non-exact reproduction fidelity without residual risk and post-deploy
+confirmation plan; or the requirement's fulfillment is uncertain.
 
 Blocked is fix-first: the role-loop resolves it (fix the red, finish QA, close the requirement). Ask the
 user about the requirement only when it is requirement-level (ambiguous or unmet), genuinely uncertain, or

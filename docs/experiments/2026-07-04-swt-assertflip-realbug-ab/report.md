@@ -61,5 +61,26 @@ base_cls: error 34 / collection 16 / assertion 14. → 대부분 버그가 **예
 
 **확증에 필요한 것:** headroom-선별(wrong-value, mid-난이도 = ceiling도 floor도 아닌) 인스턴스로 n 확대. 현재 mix는 대부분 issue 본문에 완성 repro가 있어(ceiling) 또는 너무 어려워(floor) lever 표면이 없음. wrong-value 버그 10~15개에서 A>B가 유지되면 유의성 도달 가능.
 
+---
+
+## 확증 시도 — wrong-value 버그 n 확대 (headroom-selected)
+
+test 3의 유일한 win(21612)이 wrong-value 버그였으므로, 메커니즘 예측대로 **wrong-value 버그만 선별해 n을 키우면** 유의성에 도달하는지 검정(pre-registered 가설: A>B). SWE-bench_Lite에서 base가 assertion으로 재현되는(=진짜 wrong-value) sympy 버그 7개를 추가 검증·선별, 기존 21612·23262와 합쳐 **9개 wrong-value 인스턴스**에 execution-loop A/B(sonnet) 실행(wf_b8e3ab86-bcc).
+
+**결과 (결정적):** **arm A 24/26(92%) vs arm B 24/27(89%), stratified permutation p = 1.000.** 9개 중 **7개 ceiling**(양 arm 3/3=3/3), 판별된 2개가 **정반대로 상쇄**: 21612(A 3/3 > B 1/3) vs **23191(A 0/2 < B 2/3)**. test 3의 21612 win은 **재현되지 않음** — wrong-value를 더 모으자 효과가 완전히 소멸.
+
+**결정적 메커니즘 결론:** execution feedback이 있으면 **arm B(direct)도 테스트를 실행·refine해 arm A와 같은 지점에 도달**한다. invert trick은 execution feedback 위에 **아무것도 더하지 않는다.** 진짜 lever는 "테스트를 실행한다"는 것 자체이고, 그건 assertflip-특유가 아니라 두 arm 모두에 동등하게 있다. 그래서 wrong-value regime에서도 tie. (21612가 이긴 건 arm B가 우연히 symbolic `==`를 써서 틀린 것; 23191에선 arm A의 characterize-current 단계가 복잡한 CoordSys3D 식에서 어긋나 B가 이김 — 양쪽 다 arm-내 분산, 체계적 invert 우위 아님.)
+
+## 최종 종합 판정 (4개 A/B)
+
+| # | 테스트 | A vs B | p |
+|---|---|---|---|
+| 1 | toy (Haiku) | 24/24 = 24/24 | tie(ceiling) |
+| 2 | real, one-shot 지시 (Haiku) | 72% vs 69% | 1.000 |
+| 3 | real, execution-loop, random mix (Sonnet) | 75% vs 67% | 0.397 |
+| 4 | real, execution-loop, **wrong-value n=9** (Sonnet) | 92% vs 89% | **1.000** |
+
+**assertflip lever는 의미 있는 개선을 주지 못한다 — 4개 A/B 전부 null.** real 버그로 escalate하고, faithful execution-loop을 구현하고, 메커니즘의 이상적 regime을 선별해 n을 키워도 유의성 없음. **변경 ①은 revert 유지(미채택).** 스킬-vs-무스킬에서 이 후보로는 lift 없음 확정. (skill의 실제 headroom이 있다면 repro trick이 아니라 implicit·non-public 도메인 지식 surfacing 또는 독립 critic 쪽 — corpus의 미검증 niche.)
+
 ## provenance
-research wf_e0566bbe-c6c · toy A/B wf_f9ebfc43-92a · real-bug one-shot wf_b530155e-957 · **real-bug execloop wf_4c500627-145** · harness `swt/{lib,validate_all,grade_swt,produce_wf,execloop_wf,setup_worktrees}` · data princeton-nlp/SWE-bench_Lite · AssertFlip arXiv:2507.17542.
+research wf_e0566bbe-c6c · toy wf_f9ebfc43-92a · real one-shot wf_b530155e-957 · real execloop wf_4c500627-145 · **wrong-value confirmatory wf_b8e3ab86-bcc** · harness `swt/{lib,validate_all,validate2,grade_swt,produce_wf,execloop_wf,execloop_wf2,setup_worktrees}` · data princeton-nlp/SWE-bench_Lite · AssertFlip arXiv:2507.17542.

@@ -27,12 +27,12 @@ external_task:
   benchmark_url: "https://deepswe.datacurve.ai/"
   benchmark_repo: "https://github.com/datacurve-ai/deep-swe"
   benchmark_ref: "<immutable benchmark commit>"
-  task_id: "happy-dom-abort-pending-body-reads"
-  task_url: "https://deepswe.datacurve.ai/data/v1/tasks/happy-dom-abort-pending-body-reads"
-  upstream_repo: "https://github.com/capricorn86/happy-dom"
-  base_commit: "82a0888cb2c87a6123e05424b528f8e8c9b3e426"
-  language: typescript
-  category: bugfix
+  task_id: "etree-xml-diff-patch"
+  task_url: "https://deepswe.datacurve.ai/data/v1/tasks/etree-xml-diff-patch"
+  upstream_repo: "https://github.com/beevik/etree"
+  base_commit: "4032e04c8f2e2f35e43ce5d772fcef14a5df4d74"
+  language: go
+  category: feature_request
   stop_policy:
     timeout_seconds: 900
     manual_interrupt: invalid_paired_correctness

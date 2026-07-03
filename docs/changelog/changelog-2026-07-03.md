@@ -20,10 +20,10 @@ Result:
 
 Follow-up contract change:
 
-- `happy-dom-abort-pending-body-reads` is now the default public DeepSWE harness pilot in
+- `happy-dom-abort-pending-body-reads` is recorded as the first public DeepSWE setup/smoke task in
   `templates/harness-eval-external/deepswe/task-set.yaml` and `reference/harness-eval.md`.
-- Reason: it is a real open-source TypeScript bugfix with a narrower low-effort domain surface than the
-  earlier Cliffy feature task, and it can be replayed through public DeepSWE verifier artifacts.
+- Reason: it is a real open-source TypeScript bugfix that can be replayed through public DeepSWE verifier
+  artifacts, but it is not enough to prove effectiveness after a completed run saturated both arms.
 - Guardrail: the default only counts under a predeclared stop policy. Manual post-hoc interruption after
   observing elapsed time invalidates paired correctness; the artifact can be diagnostic only.
 
@@ -61,7 +61,8 @@ What changed:
   preserve pass-to-pass behavior, run focused repo-native checks where feasible, avoid verifier/solution
   files, and commit final code when the environment permits.
 - `reference/harness-eval.md`, `task-set.yaml`, and the external README now make the full-cycle runner
-  the default executable path for Happy DOM public A/B runs.
+  the default executable path for public DeepSWE A/B runs; Happy DOM is smoke-only after the completed
+  no-headroom result.
 - The runner classifies completed ties with perfect baseline score as `not_proven_no_headroom`, so a
   saturated task is kept as full-cycle reliability evidence instead of being misread as a harness win.
 
@@ -76,12 +77,25 @@ Completed no-interrupt check:
   validates the no-interrupt public runner path, but it does not prove harness effectiveness because the
   baseline already hit the verifier ceiling.
 
+Current scoring default:
+
+- `etree-xml-diff-patch` is now the default DeepSWE public effectiveness task in the runner, manifest,
+  case template, result template, README, and harness-eval reference.
+- Reason: the task is a larger Go feature request covering XML diff, patch, reverse patch, three-way
+  merge, and summaries. It has a better chance of showing baseline headroom than the saturated Happy DOM
+  smoke task.
+- Guardrail: `etree-xml-diff-patch` is a scoring candidate, not a proven discriminator yet. A completed
+  paired run still needs baseline headroom or a nonzero harness-vs-baseline reward/partial-reward delta.
+
 Rejected alternatives:
 
 - Keep using hand-run Pier/Codex commands: rejected because the user explicitly required no manual
   interruption and a full cycle.
 - Claim the prompt-prefix change is a proven benchmark improvement: rejected until a completed paired run
   shows positive DeepSWE reward or partial-reward delta.
+- Keep Happy DOM as the scoring default: rejected because the no-interrupt run produced the same perfect
+  score for baseline and harness, so it cannot show a meaningful effectiveness difference under the
+  current low-effort Codex setting.
 - Leave Codex at Pier's high-effort adapter default: rejected because the requested test needs a harder,
   lower-cost setting where harness behavior can create a meaningful difference.
 - Assume `OPENAI_API_KEY` exists in local Pier runs: rejected after the first full-cycle Codex attempt

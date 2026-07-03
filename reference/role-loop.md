@@ -1,20 +1,22 @@
 # ROLE-LOOP - the default loop for GREENFIELD / DEBUG / LEGACY
 
-The default loop's mandatory core is build, then FORCED VERIFICATION: re-read the WHOLE prose spec from
-scratch and fix every gap - especially each input's degenerate values (null/undefined/empty/boundary)
-and error/edge paths - re-running the project's REAL tests until stable, even when the visible tests are
-already green. That forced whole-spec re-reading is the active ingredient that lifts correctness on
-false-GREEN-prone work.
+The default loop's mandatory core is Build -> Improve full spec -> Improve edge cases -> Final Verify.
+That equal-compute shape is the active ingredient that lifts correctness on false-GREEN-prone work: after
+the initial build, a fresh-context improver re-reads the WHOLE prose spec and fixes full-spec gaps, a
+separate fresh-context edge pass attacks degenerate values (null/undefined/empty/boundary), error/recovery
+paths, state/protocol, concurrency, compatibility, and security side effects, then a fresh-context
+verifier/QA role tries to disprove the result with real evidence.
 
 Use for any non-trivial feature/bug/refactor. Skip for a trivial single edit - edit directly. Layer an
 independent critic (a reviewer that did NOT write the code, classifying inferred requirements before any
 new failing tests, then a fixer that clears accepted REDs) as an OPT-IN escalation for genuinely
 under-specified / latent-correctness work, where surfacing requirements absent from the prompt is the
 lever. The critic classifies inferred behavior before testing it: required `must` behavior can become a
-RED; ambiguous or product-changing
-semantics become `ask-user` gates. Measured caveat: on explicit-spec tasks that role separation did NOT
-beat equal-compute forced verification, so it is an escalation for the under-specified frontier, not an
-always-on default.
+RED; ambiguous or product-changing semantics become `ask-user` gates. Production/domain behavior-changing
+ambiguity needs user feedback. Generic coding-task ambiguity with no user available uses the most
+conservative, reversible default and records the choice. Measured caveat: on explicit-spec tasks critic
+role separation did NOT beat equal-compute improve passes, so it is an escalation for the
+under-specified frontier, not an always-on default.
 
 ## Run setup - before any file mutation
 
@@ -27,12 +29,12 @@ for example:
 git worktree add -b <run_branch> <worktree_path> <source/base branch>
 ```
 
-Run Build, Critic, Fixer, Verify, tests, and run-vault writes inside that worktree; never edit the
-original checkout. Treat dirty files in the original checkout as user work. After green verification and
-user acceptance, commit or merge only into the verified target/integration branch - and only once the
-commit gate passes (`reference/delivery-gate.md`; `bash templates/commit-gate.sh <vault> <browser|cli|none>`
-exits 0). A non-green run blocks the commit: resolve it in the loop first, escalate to the user only when
-stuck (see stop condition below).
+Run Build, Improve, optional Critic/Fixer, Final Verify/QA, tests, and run-vault writes inside that
+worktree; never edit the original checkout. Treat dirty files in the original checkout as user work.
+After green verification and user acceptance, commit or merge only into the verified target/integration
+branch - and only once the commit gate passes (`reference/delivery-gate.md`;
+`bash templates/commit-gate.sh <vault> <browser|cli|none>` exits 0). A non-green run blocks the commit:
+resolve it in the loop first, escalate to the user only when stuck (see stop condition below).
 
 Before any file mutation, create the run vault's `delivery-proof.md` from
 `templates/delivery-proof.md`, create `run-state.json` from `templates/run-state.json`, and start the
@@ -55,15 +57,15 @@ Before/After Eval (`reference/delivery-gate.md`):
 
 ## Completion promise + loop cap
 
-Frame writes the completion promise before Build. Build -> Forced Verify loops only while the promise is
-not yet proven and a fresh, actionable gap remains. Default `max_iterations` is 8 for the Build/Verify
-loop; the opt-in critic->fixer escalation keeps its 3-cycle cap below. When the next pass would exceed
-the cap, stop and write a forced reflection in `run-state.json`: what keeps failing, the likely root
-cause, which requirement is still unproven, whether a previously green check regressed, and the smallest
-next action. Each iteration re-runs `regression_ledger`; if a previously green check turns red, stop,
-fix that regression, and record `forced_reflection.regressed_previously_green`. Then ask only if the
-blocker is requirement-level or needs user consent; otherwise recut the plan and continue only after the
-reflection identifies new evidence.
+Frame writes the completion promise before Build. Build -> Improve -> Final Verify loops only while the
+promise is not yet proven and a fresh, actionable gap remains. Default `max_iterations` is 8 for the
+Build/Verify loop; the opt-in critic->fixer escalation keeps its 3-cycle cap below. When the next pass
+would exceed the cap, stop and write a forced reflection in `run-state.json`: what keeps failing, the
+likely root cause, which requirement is still unproven, whether a previously green check regressed, and
+the smallest next action. Each iteration re-runs `regression_ledger`; if a previously green check turns
+red, stop, fix that regression, and record `forced_reflection.regressed_previously_green`. Then ask only
+if the blocker is requirement-level or needs user consent; otherwise recut the plan and continue only
+after the reflection identifies new evidence.
 
 ## Roles (each role = a fresh-context subagent by default)
 
@@ -72,17 +74,17 @@ so the role's heavy references (this file, `reference/domain-context.md`, `refer
 and the like) load inside the subagent and never accumulate in the conductor's window. The subagent
 returns only a short structured result - status, what changed, test output, concerns - not its transcript.
 Run independent units in parallel (QA scenario shards, review dimensions, multi-file builds); keep
-dependent roles ordered. A trivial single edit skips the loop and edits inline. Build (1) and Verify (4)
-are the mandatory core; Critic (2) and Fixer (3) are the OPT-IN escalation for under-specified /
-latent-correctness work - otherwise go straight from Build to a forced Verify.
+dependent roles ordered. A trivial single edit skips the loop and edits inline. Build (1), Improve full
+spec (2), Improve edge cases (3), and Final Verify (4) are the mandatory core. Critic/Fixer are optional
+escalation for under-specified / latent-correctness work, usually inserted after the edge pass or when
+Final Verify finds a requirement gap the improve passes did not explain.
 
 0. **Adversarial plan attack (conditional, no src edits)** - only for under-specified, wide-blast-radius,
    security/data/concurrency, or latent-correctness work. Before Build, dispatch independent critics for
    security, scope, correctness, performance, and operability. Each critic tries to break the plan from
    one angle. Accept only findings grounded in the prose spec, current code/data, or known platform
    rules; convert accepted required risks into failing tests, decision gates, or explicit residual risk.
-   Skip this on explicit-spec or tiny work because equal-compute forced verification is the cheaper
-   default.
+   Skip this on explicit-spec or tiny work because equal-compute improve passes are the cheaper default.
 
 1. **Build** - before the first edit, confirm any blast-radius reaching past the change's explicit
    target has cleared its interview confirm (`reference/interview.md`: approved, AFK-proceeded, or
@@ -92,7 +94,57 @@ latent-correctness work - otherwise go straight from Build to a forced Verify.
    integrate an existing API: capture its exact-behavior baseline FIRST with the API behavior baseline.
    Capture the run-setup before proof in `delivery-proof.md` and `run-state.json` before the first edit.
 
-2. **Critic** (`agents/code-reviewer.md`; OPT-IN escalation for under-specified / latent-correctness work) - DO NOT edit src or weaken/delete existing tests.
+2. **Improve full spec** (`agents/executor.md`; fresh-context improver)
+   - Re-read the FULL prose spec, current code, existing tests, `## Requirement Trace`, and repo/data
+     rules. Confirm every stated-or-implied behavior is implemented; fix the smallest full-spec gap even
+     when visible tests are green.
+   - If production/source-code domain ambiguity would change user-visible behavior, data semantics,
+     permissions, migrations, or API compatibility, stop and record an `ask-user` decision gate. Do not
+     guess business meaning.
+   - If the task is a generic coding utility or eval fixture with no user available, choose the most
+     conservative, reversible default, record the choice in `delivery-proof.md`, and prefer preserving
+     existing values/no-op behavior over surprising throws unless the spec or safety requires strictness.
+   - Add or adjust tests only for grounded `must` behavior. Do not turn silence into stricter semantics.
+
+3. **Improve edge cases** (`agents/executor.md`; fresh-context improver)
+   - Attack degenerate inputs (null/undefined/empty/boundary), missing/extra fields, duplicate input,
+     ordering, idempotency, error/recovery paths, state/protocol transitions, concurrency, compatibility,
+     security side effects, and resource cleanup.
+   - For each gap, apply the same threshold: production/domain behavior-changing ambiguity needs user
+     feedback; generic no-user coding ambiguity gets a conservative, reversible default and a recorded
+     rationale.
+   - Re-run the targeted tests after every fix. Keep the diff minimal; no padding, rewrites, or unrelated
+     cleanup.
+
+4. **Final Verify/QA vs ground truth (mandatory core)** (`agents/qa-auditor.md` / `security-reviewer.md`)
+   - Fresh-context adversarial verify: re-read the FULL prose spec and try to disprove the change against
+     stated requirements, implied `must` behavior, edge cases, and execution evidence. Re-run the
+     project's REAL tests and report command output. If a fresh gap appears, route back to Improve full
+     spec or Improve edge cases instead of self-approving.
+   - Code-change scenarios use `reference/qa.md` "Scenario stencil (code changes)", including regression
+     scenarios and metamorphic relations when no exact oracle exists.
+   - Browser UI changes require `reference/qa.md` browser evidence: `Tool: playwright-cli`,
+     fixed-route as-is/to-be captures, and a passing `bash templates/qa-gate.sh <vault> browser`.
+     Lint, typecheck, unit tests, build, and a visual guess are not browser QA.
+   - Re-run every captured neighbor characterization baseline; unnamed drift is red. API refactor:
+     re-capture the same call and diff against the pre-refactor baseline; unintended drift is a red to
+     resolve.
+   - Close `## Requirement Trace`: every forward row is `met` with a verifying check, and
+     `Backward-trace: clean` proves no diff hunk is orphan scope.
+   - The mandatory core Final Verify for neighbor baselines and Requirement Trace closure is
+     fresh-context: the code writer's self-review is not a regression gate. Open requirements, unresolved
+     REVISE items, and stub/placeholder implementations block done; do not drop them to make the run
+     green.
+   - Update the run vault's `surfaced-requirements.md`: mark each surfaced requirement fixed, or note why
+     it stays open.
+   - Update `delivery-proof.md`: after evidence, command outputs/artifact paths, decision gates
+     (`auto-fix`, `no-op`, `ask-user`), intentional drift, and residual risk. Unresolved `ask-user`
+     findings or missing trusted commands block a final done claim and the commit
+     (`reference/delivery-gate.md` Commit gate).
+   - Update `run-state.json`: phase, iteration, gate status, last proof command, blockers, next action,
+     and completion-promise status.
+
+5. **Critic** (`agents/code-reviewer.md`; OPT-IN escalation for under-specified / latent-correctness work) - DO NOT edit src or weaken/delete existing tests.
    - Re-read the prose spec and repo/data rules. Enumerate REQUIRED behaviors the existing tests do not
      exercise - especially edges (boundary inputs, error/recovery paths, scoping/precedence, prefix/
      filter behavior, incremental update, concurrency, protocol/state).
@@ -110,7 +162,7 @@ latent-correctness work - otherwise go straight from Build to a forced Verify.
      covers it (status: open). This is the durable, human-readable trail of what the prompt left implicit.
    - Leave the failing tests red.
 
-3. **Fixer** (`agents/executor.md`) - DO NOT edit test files.
+6. **Fixer** (`agents/executor.md`) - DO NOT edit test files.
    - Read NOTES + run the suite. Make the failing tests pass with the SMALLEST change.
    - If a critic-authored test appears to encode an `ask-user` choice, contradict current/API behavior, or
      harden semantics not required by the spec or safety, stop and report the decision gate instead of
@@ -118,49 +170,25 @@ latent-correctness work - otherwise go straight from Build to a forced Verify.
    - No padding: add no code that is not required by a failing test or a listed defect. Do not break
      passing tests.
 
-4. **Verify vs ground truth (mandatory core)** (`agents/qa-auditor.md` / `security-reviewer.md`)
-   - Forced whole-spec sweep: re-read the FULL prose spec from scratch and, for every stated-or-implied
-     behavior - especially each input's degenerate values (null/undefined/empty/boundary) and error/edge
-     paths - confirm the code is correct and fix the smallest gap, even when the visible tests are green.
-     Re-run the project's REAL tests and loop until no fresh gap appears; report what was verified with
-     command output.
-   - Code-change scenarios use `reference/qa.md` "Scenario stencil (code changes)", including regression
-     scenarios and metamorphic relations when no exact oracle exists.
-   - Browser UI changes require `reference/qa.md` browser evidence: `Tool: playwright-cli`,
-     fixed-route as-is/to-be captures, and a passing `bash templates/qa-gate.sh <vault> browser`.
-     Lint, typecheck, unit tests, build, and a visual guess are not browser QA.
-   - Re-run every captured neighbor characterization baseline; unnamed drift is red. API refactor:
-     re-capture the same call and diff against the pre-refactor baseline; unintended drift is a red to
-     resolve.
-   - Close `## Requirement Trace`: every forward row is `met` with a verifying check, and
-     `Backward-trace: clean` proves no diff hunk is orphan scope.
-   - The mandatory core Verify for neighbor baselines and Requirement Trace closure is fresh-context:
-     the code writer's self-review is not a regression gate. Open requirements, unresolved REVISE items,
-     and stub/placeholder implementations block done; do not drop them to make the run green.
-   - Update the run vault's `surfaced-requirements.md`: mark each surfaced requirement fixed, or note why it stays open.
-   - Update `delivery-proof.md`: after evidence, command outputs/artifact paths, decision gates
-     (`auto-fix`, `no-op`, `ask-user`), intentional drift, and residual risk. Unresolved `ask-user`
-     findings or missing trusted commands block a final done claim and the commit
-     (`reference/delivery-gate.md` Commit gate).
-   - Update `run-state.json`: phase, iteration, gate status, last proof command, blockers, next action,
-     and completion-promise status.
-
-The forced Verify is the mandatory core - drop it only for *very easy* issues; past that, the whole-spec
-re-read + re-running the project's REAL tests is REQUIRED, plus DB evidence for data-backed bugs
-(`reference/db-access.md`) - DB proves data state but does not replace the red-green test. Loop the
-opt-in critic->fixer escalation only while a fresh red appears.
+The improve-pass core is mandatory - drop it only for *very easy* issues; past that, the whole-spec
+improve pass, edge-case improve pass, and re-running the project's REAL tests are REQUIRED, plus DB
+evidence for data-backed bugs (`reference/db-access.md`) - DB proves data state but does not replace the
+red-green test. Loop the opt-in critic->fixer escalation only while a fresh red appears.
 
 Board (optional): if the Supergoal Board is enabled (`reference/observability.md`), the conductor may
-call `sg-emit --phase <P>` at each transition (Frame/Build/Critic/Fixer/Verify/Done). Opt-in and
-best-effort - it observes only, never blocks or gates the loop.
+call `sg-emit --phase <P>` at each transition
+(Frame/Build/ImproveFullSpec/ImproveEdgeCases/Critic/Fixer/Verify/Done). Opt-in and best-effort - it
+observes only, never blocks or gates the loop.
 
 ## Guardrails (keep it baseline-first, not Goodhart)
 
 - The critic's generated tests are a SIGNAL to surface hidden requirements - NOT the acceptance oracle.
   Final verification is always the project's REAL tests + prose spec. Never weaken/delete a real test,
   never declare done because self-written tests pass while real tests/spec do not.
-- Ambiguous edges are not REDs. If a behavior has multiple reasonable interpretations, classify it as
-  `ask-user` or residual risk; do not invent stricter semantics just because the prompt is silent.
+- Ambiguous edges are not REDs. If a production/domain behavior change has multiple reasonable
+  interpretations, classify it as `ask-user` or residual risk; do not invent stricter semantics just
+  because the prompt is silent. If a generic coding task has no user available, choose a conservative,
+  reversible default and record it.
 - Characterization baseline is a regression signal, not a correctness oracle. A known-bug snapshot changes
   only when the bug fix is intentional and named.
 - Self-review is not a regression gate: generated explanations can approve behavior drift. Require

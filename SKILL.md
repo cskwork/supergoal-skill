@@ -19,13 +19,17 @@ weaken safety gates. Create or edit it only when the user explicitly asks (`refe
 - Smallest correct change; match surrounding code; never rewrite a whole file for a few lines.
   Scope-minimalism governs code surface area, NOT visual quality: for user-facing UI a polished result is
   baseline correctness, not padding.
-- Default to forced whole-spec verification: after Build, re-read every stated-or-implied requirement
-  (each input's degenerate values null/undefined/empty/boundary, error/edge paths) and fix the smallest
-  gap even when the visible tests pass. Non-trivial code runs seed numbered requirements in
-  `## Requirement Trace`; done requires every row met and `Backward-trace: clean` (no orphan scope).
-  Opt-in escalation for under-specified / latent-correctness work: an independent critic classifies
-  inferred requirements; only grounded must-behaviors become FAILING tests, while ambiguous or
-  product-changing semantics become `ask-user` decision gates.
+- Default to the equal-compute improve loop: Build -> Improve full spec -> Improve edge cases -> Final
+  Verify. After Build, a fresh-context improver re-reads every stated-or-implied requirement, fixes the
+  smallest full-spec gap, then a separate fresh-context edge pass attacks degenerate values
+  (null/undefined/empty/boundary), error paths, recovery, state/protocol, concurrency, and compatibility.
+  Non-trivial code runs seed numbered requirements in `## Requirement Trace`; done requires every row met
+  and `Backward-trace: clean` (no orphan scope). Production/source-code domain ambiguity that changes
+  user-visible behavior becomes an `ask-user` decision gate; generic coding-task ambiguity with no user
+  available uses the most conservative, reversible default and records it. Opt-in escalation for
+  under-specified / latent-correctness work: an independent critic classifies inferred requirements; only
+  grounded must-behaviors become FAILING tests, while ambiguous or product-changing semantics become
+  `ask-user` decision gates.
 - For non-trivial code changes, run a Before/After Eval before Build: prove the before state, the after
   target, and the delta with trusted repo/evaluator commands (`reference/delivery-gate.md`).
 - Ask only when genuinely ambiguous; resolve code-answerable questions by reading the code.
@@ -89,9 +93,9 @@ phase transition; it observes only, never gates (`reference/observability.md`).
 Work runs in fresh-context subagents by default (the dispatching agent is the "conductor"); a trivial
 single edit skips the loop and edits inline. Independent units (QA scenario shards, review dimensions) run
 in parallel. Difficulty gate: *very easy* -> skip; harder -> red-green is REQUIRED, plus DB evidence when
-persisted data is load-bearing. The mandatory core is Build -> Forced Verify; the independent-critic
-escalation is opt-in (a measured lever for under-specified work, not always on). Full contract:
-`reference/role-loop.md`.
+persisted data is load-bearing. The mandatory core is Build -> Improve full spec -> Improve edge cases ->
+Final Verify; the independent-critic escalation is opt-in (a measured lever for under-specified work, not
+always on). Full contract: `reference/role-loop.md`.
 
 1. **Frame.** Restate goal + falsifiable acceptance criteria in one line. Seed numbered requirements in
    `## Requirement Trace`. Write a completion promise:
@@ -105,18 +109,24 @@ escalation is opt-in (a measured lever for under-specified work, not always on).
 2. **Build.** Smallest correct change, test-first; match surrounding style; minimal diff. Bug: reproduce
    with a failing test first (`reference/debugging.md`). Shared code/state changes past *very easy*:
    capture neighbor characterization baseline before editing.
-3. **Forced Verify vs ground truth (mandatory core).** Re-read the WHOLE prose spec from scratch and, for
-   every stated-or-implied behavior - especially each input's degenerate values (null/undefined/empty/
-   boundary) and error/edge paths - confirm the code is correct and fix the smallest gap, even when the
-   visible tests are green (they are not the spec). Re-run the project's REAL tests and loop Build->Verify
-   until no fresh gap appears. Browser UI: complete browser app verification with
-   `qa-gate.sh <vault> browser` (lint, typecheck, build, and screenshots do not substitute). Data
-   load-bearing past *very easy*: DB evidence too. Re-run captured neighbor baselines, close
-   `## Requirement Trace`, and keep `Backward-trace: clean`. DEBUG prod issue: record reproduction
-   fidelity; if not exact, done is conditional on residual risk + post-deploy confirmation plan. Stop on
-   green only after updating `delivery-proof.md` with after evidence, resolved decision gates, and
-   residual risk; report what was verified, with command output.
-4. **Critic escalation (opt-in; independent, no src edits).** For under-specified / latent-correctness
+3. **Improve full spec (mandatory core).** A fresh-context improver re-reads the WHOLE prose spec from
+   scratch and, for every stated-or-implied behavior, confirms the code is correct and fixes the smallest
+   gap even when visible tests are green (they are not the spec). Production/source-code domain ambiguity
+   that changes behavior stops as `ask-user`; generic coding-task ambiguity with no user available uses a
+   conservative, reversible default and records the choice.
+4. **Improve edge cases (mandatory core).** A separate fresh-context improver attacks degenerate inputs
+   (null/undefined/empty/boundary), error/recovery paths, state/protocol, concurrency, compatibility, and
+   security side effects. Add or adjust tests only for grounded `must` behavior; route ambiguous
+   product/domain choices to the user instead of inventing stricter semantics.
+5. **Final Verify/QA (mandatory core).** Re-run the project's REAL tests and verify no fresh full-spec or
+   edge-case gap remains; if a gap appears, route back to the relevant improve pass. Browser UI: complete
+   browser app verification with `qa-gate.sh <vault> browser` (lint, typecheck, build, and screenshots do
+   not substitute). Data load-bearing past *very easy*: DB evidence too. Re-run captured neighbor
+   baselines, close `## Requirement Trace`, and keep `Backward-trace: clean`. DEBUG prod issue: record
+   reproduction fidelity; if not exact, done is conditional on residual risk + post-deploy confirmation
+   plan. Stop on green only after updating `delivery-proof.md` with after evidence, resolved decision
+   gates, and residual risk; report what was verified, with command output.
+6. **Critic escalation (opt-in; independent, no src edits).** For under-specified / latent-correctness
    work - where the lever is surfacing requirements ABSENT from the prompt - escalate to an independent
    critic that did not write the code: re-read the prose spec + repo/data rules
    (`reference/domain-context.md`, `domain-rules.md`), classify inferred behavior as `must`, `should`, or
@@ -128,8 +138,8 @@ escalation is opt-in (a measured lever for under-specified work, not always on).
    plan attack before Build: security, scope, correctness, performance, and operability critics may attack
    the plan, but only accepted required risks become tests or decision gates.
 
-Roles -> personas: critic=`agents/code-reviewer.md`, fixer=`agents/executor.md`,
-verify=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role>.md`).
+Roles -> personas: builder/improver/fixer=`agents/executor.md`, critic=`agents/code-reviewer.md`,
+verify/QA=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role>.md`).
 
 ## Reference map (load only what the current phase needs)
 

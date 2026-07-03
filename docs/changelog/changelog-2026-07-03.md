@@ -1,5 +1,46 @@
 # Changelog 2026-07-03
 
+## Public DeepSWE harness A/B pilot
+
+Decision: record the first public-source harness A/B attempt as invalid for paired correctness.
+
+Why: the user asked for a meaningful public open-source issue/feature benchmark instead of private LMS
+code or synthetic local fixtures. `happy-dom-abort-pending-body-reads` gave a real TypeScript bugfix with
+independent DeepSWE hidden tests, but the harness arm was manually interrupted after running longer than
+baseline. That makes the harness verifier score diagnostic only, not a clean paired correctness result.
+
+Result:
+
+- Baseline: DeepSWE `reward=0`, `f2p=1/14`, `p2p=165/165`, `partial=0.9273743017`, `176,591` tokens,
+  `328s`.
+- Harness diagnostic partial patch: DeepSWE `reward=0`, `f2p=1/14`, `p2p=165/165`,
+  `partial=0.9273743017`, `213,917` tokens, `589s` before manual interruption.
+- Correctness lift: not valid to claim because the harness arm did not complete and no fixed timeout was
+  declared before execution.
+
+Follow-up contract change:
+
+- `happy-dom-abort-pending-body-reads` is now the default public DeepSWE harness pilot in
+  `templates/harness-eval-external/deepswe/task-set.yaml` and `reference/harness-eval.md`.
+- Reason: it is a real open-source TypeScript bugfix with public verifier headroom and a narrower
+  low-effort domain surface than the earlier Cliffy feature task.
+- Guardrail: the default only counts under a predeclared stop policy. Manual post-hoc interruption after
+  observing elapsed time invalidates paired correctness; the artifact can be diagnostic only.
+
+Rejected alternatives:
+
+- Claim the `u3` authz-cache result as a harness win: rejected because it only proves hidden-test
+  discrimination, not paired with/without lift.
+- Use the Cliffy config-file task as the primary result: rejected because both arms exceeded the low-turn
+  budget and produced no patch under the Claude adapter.
+- Score only committed `HEAD`: rejected for this host Codex run because the inner workspace sandbox made
+  `.git` read-only. Both arms were instead scored from working-tree diffs, and the adapter caveat is
+  recorded in the report.
+- Treat a predeclared budget timeout and a manual interrupt as equivalent: rejected because benchmark
+  comparability requires the stop/capture policy before the run starts.
+
+Evidence: `docs/experiments/2026-07-03-deepswe-happy-dom-codex-ab/report.md`.
+
 ## Public docs synced to lean loop + production-adoption plan
 
 Decision: update README EN/KO, landing copy, SUGGESTIONS, and older design/research docs so the public
@@ -77,6 +118,38 @@ Rejected alternatives:
   equal-compute forced verification is leaner on explicit-spec work.
 - Use overlapping confidence intervals as the A/B winner gate: rejected because paired tests are the
   correct fit for same-task binary outcomes.
+
+## Low-effort HARNESS-EVAL discriminator case
+
+Decision: add `underspec-003-authz-cache` as a runnable low-effort discriminator for harness A/B tests.
+
+Why: the existing hard async-race case ceilings out under low effort: both baseline and harness can pass,
+while the harness pays roughly 4x token and wall-clock cost. A better signal needs a latent correctness
+surface where visible-green is easy but missing verification creates a real security/concurrency bug.
+
+What changed:
+
+- `docs/experiments/2026-06-07-harness-eval-medium-hard-skill-vs-baseline/run.mjs` now supports
+  `SG_EVAL_CASE=u3`.
+- `templates/harness-eval-cases/fixtures/underspec-003-authz-cache/` contains the executable starter,
+  visible tests, and hidden tests for an authorization decision cache.
+- `templates/harness-eval-cases/authored/authored-underspec-003-authz-cache.yaml` records the authored
+  case spec.
+- `reference/harness-eval.md` documents the low-effort command and keeps `u3` out of the default
+  RevFactory coding pair.
+
+Rejected alternatives:
+
+- Make `revfactory-case-002` harder: rejected because the current baseline already solved it, so this
+  would tune around one result rather than add a clearer signal.
+- Use the expert LSP script: rejected because it mostly measures large-generation stamina and high cost.
+- Only lower model effort: rejected because lowering effort without a discriminating fixture can still
+  produce a no-signal tie.
+
+Proof commands:
+
+- `SG_EVAL_VALIDATE=1 SG_EVAL_CASE=u3 SG_EVAL_RUN_ROOT=/tmp/sg-eval-u3-validate node docs/experiments/2026-06-07-harness-eval-medium-hard-skill-vs-baseline/run.mjs`
+- `bash tests/harness-eval-contract.test.sh`
 
 ## QA regression scope and requirement trace hardening
 

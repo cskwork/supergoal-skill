@@ -1,0 +1,38 @@
+id: authored-underspec-003
+title: Authorization decision cache with tenant/user/action/version isolation
+case_type: implementation
+difficulty: hard
+source_url: "authored-local"
+runnable_fixture: "templates/harness-eval-cases/fixtures/underspec-003-authz-cache/"
+origin_experiment: "docs/experiments/2026-06-07-harness-eval-medium-hard-skill-vs-baseline/ (case u3)"
+eval_intent:
+  goal: "Expose low-effort false-green behavior on latent security/concurrency requirements."
+  constraints:
+    - "Visible tests cover ordinary cache behavior only."
+    - "Hidden tests encode requirements a verification loop should derive from the task prose."
+  tradeoffs:
+    - "This is not the default RevFactory coding pair; it is a low-effort discriminator probe."
+  rejected_approaches:
+    - "Making case-002 harder after a bare baseline already solved it."
+task: |
+  Fix DecisionCache.can(request) without changing the public API.
+  It must memoize authorization decisions safely across tenant, user, resource, action, and policy version.
+machine_checks:
+  - "node --check src/authorizer.mjs"
+  - "node --test test/authorizer.visible.test.mjs"
+hidden_checks:
+  - "node --test test/authorizer.hidden.test.mjs"
+quality_score:
+  max: 100
+  dimensions:
+    - feature_completeness
+    - test_coverage
+    - code_quality
+    - error_handling
+    - efficiency
+    - correctness
+    - architecture
+    - extensibility
+    - documentation
+    - dev_environment
+persist_path: "docs/changelog/<YYYY-MM>/<DD-harness-eval>/cases/authored-underspec-003-authz-cache.yaml"

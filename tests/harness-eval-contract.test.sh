@@ -448,6 +448,14 @@ require_file "harness eval result template exists" "templates/harness-eval-resul
 require_file "harness eval report template exists" "templates/harness-eval-report.md"
 require_file "harness eval runner template exists" "templates/harness-eval-runner.mjs"
 require_file "harness eval stats helper exists" "templates/harness-eval-stats.mjs"
+require_file "DeepSWE external README exists" "templates/harness-eval-external/deepswe/README.md"
+require_file "DeepSWE external task set exists" "templates/harness-eval-external/deepswe/task-set.yaml"
+require_file "DeepSWE harness arm preparer exists" "templates/harness-eval-external/deepswe/prepare-supergoal-arm.mjs"
+require_file "authz cache fixture package exists" "templates/harness-eval-cases/fixtures/underspec-003-authz-cache/package.json"
+require_file "authz cache fixture source exists" "templates/harness-eval-cases/fixtures/underspec-003-authz-cache/src/authorizer.mjs"
+require_file "authz cache visible tests exist" "templates/harness-eval-cases/fixtures/underspec-003-authz-cache/test/authorizer.visible.test.mjs"
+require_file "authz cache hidden tests exist" "templates/harness-eval-cases/fixtures/underspec-003-authz-cache/test/authorizer.hidden.test.mjs"
+require_file "authz cache authored spec exists" "templates/harness-eval-cases/authored/authored-underspec-003-authz-cache.yaml"
 require_text "route hook names HARNESS-EVAL" "SKILL.md" "HARNESS-EVAL"
 require_text "route hook points at eval reference" "SKILL.md" "reference/harness-eval.md"
 require_text "route hook catches skill-lift use case" "SKILL.md" "measure skill lift"
@@ -491,10 +499,13 @@ require_text "eval requires command manifest" "reference/harness-eval.md" "deter
 require_text "eval requires decision gate ledger" "reference/harness-eval.md" "decision-gate ledger"
 require_text "eval requires adapter fixture replay" "reference/harness-eval.md" "adapter fixture replay"
 require_text "eval records current fixtures" "reference/harness-eval.md" "templates/harness-eval-cases/fixtures/"
+require_text "eval records authz low-effort fixture" "reference/harness-eval.md" "underspec-003-authz-cache/"
+require_text "eval records u3 low effort command" "reference/harness-eval.md" "SG_EVAL_CASE=u3 SG_EVAL_EFFORT=low"
 require_text "eval defines default coding A/B pair" "reference/harness-eval.md" "Default coding A/B pair"
 require_text "eval defaults async race first" "reference/harness-eval.md" "revfactory-case-002-async-race/"
 require_text "eval defaults refactoring second" "reference/harness-eval.md" "revfactory-case-003-refactoring/"
 require_text "eval rejects underspec default substitution" "reference/harness-eval.md" 'Do not substitute `underspec-001-deepmerge/`'
+require_text "eval excludes authz from default pair" "reference/harness-eval.md" '`underspec-003-authz-cache/` for this default'
 require_text "eval records default tie as not proven" "reference/harness-eval.md" 'If both default cases tie, report `Not proven`'
 require_text "eval requires runtime preflight + fallback" "reference/harness-eval.md" "pick the runtime adapter by PREFLIGHTING it on the host"
 require_text "eval cites reusable runner template" "reference/harness-eval.md" "templates/harness-eval-runner.mjs"
@@ -505,6 +516,10 @@ require_text "eval requires four-axis accounting" "reference/harness-eval.md" "f
 require_text "eval requires routing probe" "reference/harness-eval.md" "should-trigger / should-not-trigger"
 require_text "eval requires McNemar" "reference/harness-eval.md" "paired McNemar"
 require_text "eval rejects overlapping CI winner gate" "reference/harness-eval.md" "overlapping confidence intervals"
+require_text "eval defaults public benchmark to Happy DOM" "reference/harness-eval.md" "Default public pilot candidate"
+require_text "eval names Happy DOM default task" "reference/harness-eval.md" "happy-dom-abort-pending-body-reads"
+require_text "eval requires predeclared stop policy" "reference/harness-eval.md" "stop policy is declared before launch"
+require_text "eval invalidates manual interrupts" "reference/harness-eval.md" "manual interruption is invalid"
 require_text "eval serializes nested passes by default" "reference/harness-eval.md" "serialize nested agent passes by default"
 require_text "eval retries transient crashes" "reference/harness-eval.md" "Retry a transient (rate-limit) crash with"
 require_text "eval requires shipped role fidelity" "reference/harness-eval.md" "shipped skill role files"
@@ -514,6 +529,7 @@ require_text "report records trajectory telemetry" "templates/harness-eval-repor
 require_text "report records mutation contract" "templates/harness-eval-report.md" "## Harness Mutation Contract"
 require_text "report records case selection" "templates/harness-eval-report.md" "## Case Selection"
 require_text "report records default coding pair" "templates/harness-eval-report.md" "Default coding A/B pair"
+require_text "report records u3 discriminator" "templates/harness-eval-report.md" "SG_EVAL_CASE=u3"
 require_text "report records eval intent" "templates/harness-eval-report.md" "## Eval Intent"
 require_text "report records command manifest" "templates/harness-eval-report.md" "## Command Manifest"
 require_text "report records decision gates" "templates/harness-eval-report.md" "## Decision Gates"
@@ -532,9 +548,15 @@ require_text "case template records command manifest" "templates/harness-eval-ca
 require_text "case template records decision gates" "templates/harness-eval-case.yaml" "decision_gates"
 require_text "case template records adapter fixture replay" "templates/harness-eval-case.yaml" "adapter_fixture_replay"
 require_text "case template records default coding pair" "templates/harness-eval-case.yaml" "default_coding_ab"
+require_text "case template excludes u3 from default pair" "templates/harness-eval-case.yaml" "underspec-003-authz-cache/"
 require_text "case template records routing probe" "templates/harness-eval-case.yaml" "routing_probe"
 require_text "case template records duration metric" "templates/harness-eval-case.yaml" "duration_ms"
+require_text "case template defaults external task to Happy DOM" "templates/harness-eval-case.yaml" "happy-dom-abort-pending-body-reads"
+require_text "case template records external stop policy" "templates/harness-eval-case.yaml" "manual_interrupt: invalid_paired_correctness"
 require_text "result template records default coding pair" "templates/harness-eval-result.json" "default_coding_ab"
+require_text "result template excludes u3 from default pair" "templates/harness-eval-result.json" "underspec-003-authz-cache/"
+require_text "result template defaults external task to Happy DOM" "templates/harness-eval-result.json" "happy-dom-abort-pending-body-reads"
+require_text "result template records external stop policy" "templates/harness-eval-result.json" "invalid_paired_correctness"
 require_text "result template records axis metrics" "templates/harness-eval-result.json" "axis_metrics"
 require_text "result template records routing accuracy" "templates/harness-eval-result.json" "routing_accuracy"
 require_text "result template records runtime preflight" "templates/harness-eval-result.json" "runtime_preflight"
@@ -546,6 +568,10 @@ require_text "result template records McNemar" "templates/harness-eval-result.js
 require_text "result template records SNR filter" "templates/harness-eval-result.json" "snr_filter"
 require_text "result template records crash accounting" "templates/harness-eval-result.json" "recorded_loss"
 require_text "stats helper exports paired binary stats" "templates/harness-eval-stats.mjs" "pairedBinaryStats"
+require_text "DeepSWE README defaults Happy DOM" "templates/harness-eval-external/deepswe/README.md" 'Primary task: `happy-dom-abort-pending-body-reads`'
+require_text "DeepSWE README rejects manual interrupt" "templates/harness-eval-external/deepswe/README.md" "Manual post-hoc interruption invalidates paired"
+require_text "DeepSWE manifest records default task" "templates/harness-eval-external/deepswe/task-set.yaml" "default_task_id: happy-dom-abort-pending-body-reads"
+require_text "DeepSWE manifest records stop policy" "templates/harness-eval-external/deepswe/task-set.yaml" "manual_interrupt: invalid_paired_correctness"
 
 mkresult "$T/ok.json" "harness" "$PASS_CHECKS" "proven" "harness"
 run_case "gate accepts complete eval" 0 "HARNESS-EVAL PASS" node "$GATE" "$T/ok.json"
@@ -559,6 +585,8 @@ cat > "$T/pairs.json" <<'EOF'
 ]
 EOF
 run_case "stats helper emits McNemar table" 0 "discordant_harness_only" node "$ROOT/templates/harness-eval-stats.mjs" "$T/pairs.json"
+
+run_case "u3 fixture discriminates starter/reference/lazy" 0 "reference:" env SG_EVAL_VALIDATE=1 SG_EVAL_CASE=u3 SG_EVAL_RUN_ROOT="$T/u3-validate" node "$ROOT/docs/experiments/2026-06-07-harness-eval-medium-hard-skill-vs-baseline/run.mjs"
 
 mkresult "$T/bad-claim-status.json" "harness" "$PASS_CHECKS" "maybe" "harness"
 run_case "gate blocks unknown claim_status" 1 "claim_status" node "$GATE" "$T/bad-claim-status.json"

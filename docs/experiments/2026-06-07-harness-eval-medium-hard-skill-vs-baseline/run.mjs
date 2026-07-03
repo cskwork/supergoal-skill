@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // HARNESS-EVAL: does the supergoal skill beat a plain baseline?
-// Two cases (SG_EVAL_CASE): revfactory-case-003 (refactoring, medium) and
-// revfactory-case-002 (async race bug-fix, hard). Two arms, same model+effort:
+// Cases (SG_EVAL_CASE): revfactory-case-003 (refactoring, medium),
+// revfactory-case-002 (async race bug-fix, hard), u1 (deepMerge latent-security
+// discriminator), and u3 (authz-cache no-signal pilot). Two arms, same model+effort:
 //   baseline : single bare codex pass, no skill, told not to use it.
 //   harness  : the skill's now-default role-separated loop -
 //              build (consults the stripped, approved SKILL.md) -> critic
@@ -31,12 +32,94 @@ const TIMEOUT_MS = Number(process.env.SG_EVAL_TIMEOUT_MS || 720000);
 const BASELINE_SEEDS = Number(process.env.SG_EVAL_BASELINE_SEEDS || 2);
 const HARNESS_SEEDS = Number(process.env.SG_EVAL_HARNESS_SEEDS || 2);
 
+function fixtureText(fixture, file) {
+  return fs.readFileSync(path.join(REPO, "templates", "harness-eval-cases", "fixtures", fixture, file), "utf8");
+}
+
 // ----------------------------------------------------------------------------
 // Cases. Each is clean-slate, runnable with `node --test`, dependency-free.
 // `files` is written into every sandbox; `hidden` is injected only into the
 // scoring copy. `dump`-captured expected values are baked in.
 // ----------------------------------------------------------------------------
 const CASES = {
+  "u1": {
+    id: "underspec-deepmerge",
+    difficulty: "under-specified-low-effort",
+    title: "deepMerge latent security correctness",
+    source: "src/merge.mjs",
+    visibleTest: "test/merge.visible.test.mjs",
+    hiddenTest: "test/merge.hidden.test.mjs",
+    task: [
+      "Implement deepMerge(target, source) in src/merge.mjs.",
+      "It merges the source object into the target object and returns the merged result.",
+      "Export deepMerge.",
+    ].join("\n"),
+    files: {
+      "package.json": fixtureText("underspec-001-deepmerge", "package.json"),
+      "src/merge.mjs": fixtureText("underspec-001-deepmerge", "src/merge.mjs"),
+      "test/merge.visible.test.mjs": fixtureText("underspec-001-deepmerge", "test/merge.visible.test.mjs"),
+    },
+    hidden: fixtureText("underspec-001-deepmerge", "test/merge.hidden.test.mjs"),
+    validation: {
+      starter: { visible: [0, 1], hidden: [0, 4] },
+      reference: { visible: [1, 1], hidden: [4, 4] },
+      lazy: { visible: [1, 1], hidden: [2, 4] },
+    },
+    referenceSource: [
+      "export function deepMerge(target, source) {",
+      "  if (source == null) {",
+      "    return target;",
+      "  }",
+      "",
+      "  for (const [key, value] of Object.entries(source)) {",
+      "    if (isUnsafeMergeKey(key)) {",
+      "      continue;",
+      "    }",
+      "",
+      "    if (isPlainObject(value) && isPlainObject(target[key])) {",
+      "      deepMerge(target[key], value);",
+      "    } else {",
+      "      target[key] = value;",
+      "    }",
+      "  }",
+      "",
+      "  return target;",
+      "}",
+      "",
+      "function isPlainObject(value) {",
+      "  if (value === null || typeof value !== 'object') {",
+      "    return false;",
+      "  }",
+      "",
+      "  const prototype = Object.getPrototypeOf(value);",
+      "  return prototype === Object.prototype || prototype === null;",
+      "}",
+      "",
+      "function isUnsafeMergeKey(key) {",
+      "  return key === '__proto__' || key === 'constructor' || key === 'prototype';",
+      "}",
+      "",
+    ].join("\n"),
+    lazySource: [
+      "export function deepMerge(target, source) {",
+      "  for (const [key, value] of Object.entries(source)) {",
+      "    if (isPlainObject(value) && isPlainObject(target[key])) {",
+      "      deepMerge(target[key], value);",
+      "    } else {",
+      "      target[key] = value;",
+      "    }",
+      "  }",
+      "",
+      "  return target;",
+      "}",
+      "",
+      "function isPlainObject(value) {",
+      "  return value !== null && typeof value === 'object' && !Array.isArray(value);",
+      "}",
+      "",
+    ].join("\n"),
+  },
+
   "003": {
     id: "revfactory-case-003",
     difficulty: "medium",
@@ -350,6 +433,129 @@ const CASES = {
       "  assert.equal(calls, 1);",
       "  assert.equal(cache.has('a'), false);",
       "});",
+      "",
+    ].join("\n"),
+  },
+
+  "u3": {
+    id: "underspec-003-authz-cache",
+    difficulty: "hard-low-effort",
+    title: "Authorization decision cache isolation",
+    source: "src/authorizer.mjs",
+    visibleTest: "test/authorizer.visible.test.mjs",
+    hiddenTest: "test/authorizer.hidden.test.mjs",
+    task: [
+      "Fix src/authorizer.mjs WITHOUT changing the public API",
+      "(class DecisionCache with constructor(fetchPolicy), async can(request),",
+      "clear(), and size()).",
+      "",
+      "DecisionCache protects a multi-tenant application. can(request) receives:",
+      "{ tenantId, userId, resourceId, action, policyVersion }. fetchPolicy(request)",
+      "returns an object like { allow: ['read', 'write'] } or throws.",
+      "",
+      "Requirements:",
+      "- Cache only ALLOWED decisions. A denied decision must be rechecked later because",
+      "  policy can be granted after a denial.",
+      "- The cache key must include tenantId, userId, resourceId, action, and",
+      "  policyVersion. Do not leak an allowed decision across tenants, users,",
+      "  actions, or policy versions.",
+      "- Concurrent can() calls for the exact same cache key must share one in-flight",
+      "  fetchPolicy call and all resolve to the same boolean.",
+      "- Different cache keys must still fetch concurrently; do not globally serialize.",
+      "- A rejected fetchPolicy call must not be cached. All callers waiting on the",
+      "  same in-flight fetch reject, and a later can() retries fetchPolicy.",
+      "- clear() must drop both cached allowed decisions and any internal state; size()",
+      "  reports the count of cached allowed decisions.",
+      "Keep the change minimal and dependency-free.",
+    ].join("\n"),
+    files: {
+      "package.json": fixtureText("underspec-003-authz-cache", "package.json"),
+      "src/authorizer.mjs": fixtureText("underspec-003-authz-cache", "src/authorizer.mjs"),
+      "test/authorizer.visible.test.mjs": fixtureText("underspec-003-authz-cache", "test/authorizer.visible.test.mjs"),
+    },
+    hidden: fixtureText("underspec-003-authz-cache", "test/authorizer.hidden.test.mjs"),
+    validation: {
+      starter: { visible: [3, 3], hidden: [1, 8] },
+      reference: { visible: [3, 3], hidden: [8, 8] },
+      lazy: { visible: [3, 3], hidden: [1, 8] },
+    },
+    referenceSource: [
+      "function keyOf(request) {",
+      "  return JSON.stringify([",
+      "    request.tenantId,",
+      "    request.userId,",
+      "    request.resourceId,",
+      "    request.action,",
+      "    request.policyVersion,",
+      "  ]);",
+      "}",
+      "",
+      "export class DecisionCache {",
+      "  constructor(fetchPolicy) {",
+      "    this.fetchPolicy = fetchPolicy;",
+      "    this.values = new Map();",
+      "    this.inflight = new Map();",
+      "  }",
+      "",
+      "  async can(request) {",
+      "    const key = keyOf(request);",
+      "    if (this.values.has(key)) {",
+      "      return this.values.get(key);",
+      "    }",
+      "    if (this.inflight.has(key)) {",
+      "      return this.inflight.get(key);",
+      "    }",
+      "    const promise = Promise.resolve()",
+      "      .then(() => this.fetchPolicy(request))",
+      "      .then((policy) => {",
+      "        const allowed = Array.isArray(policy?.allow) && policy.allow.includes(request.action);",
+      "        if (allowed) this.values.set(key, true);",
+      "        return allowed;",
+      "      })",
+      "      .finally(() => {",
+      "        this.inflight.delete(key);",
+      "      });",
+      "    this.inflight.set(key, promise);",
+      "    return promise;",
+      "  }",
+      "",
+      "  clear() {",
+      "    this.values.clear();",
+      "    this.inflight.clear();",
+      "  }",
+      "",
+      "  size() {",
+      "    return this.values.size;",
+      "  }",
+      "}",
+      "",
+    ].join("\n"),
+    lazySource: [
+      "export class DecisionCache {",
+      "  constructor(fetchPolicy) {",
+      "    this.fetchPolicy = fetchPolicy;",
+      "    this.values = new Map();",
+      "  }",
+      "",
+      "  async can(request) {",
+      "    const key = request.resourceId;",
+      "    if (this.values.has(key)) {",
+      "      return this.values.get(key);",
+      "    }",
+      "    const policy = await this.fetchPolicy(request);",
+      "    const allowed = Array.isArray(policy.allow) && policy.allow.includes(request.action);",
+      "    this.values.set(key, allowed);",
+      "    return allowed;",
+      "  }",
+      "",
+      "  clear() {",
+      "    this.values.clear();",
+      "  }",
+      "",
+      "  size() {",
+      "    return this.values.size;",
+      "  }",
+      "}",
       "",
     ].join("\n"),
   },
@@ -710,19 +916,52 @@ function main() {
 }
 
 // Starter self-check (no codex): confirm the fixture discriminates as designed.
-function validateStarter() {
-  const dir = path.join(RUN_ROOT, "validate-starter");
+function validateSnapshot(label, sourceOverride = "") {
+  const dir = path.join(RUN_ROOT, `validate-${label}`);
   ensureCleanDir(dir);
   for (const [name, body] of Object.entries(caseDef.files)) writeFile(path.join(dir, name), body);
+  if (sourceOverride) writeFile(path.join(dir, caseDef.source), sourceOverride);
   injectHiddenTest(dir);
   const g = granularChecks(dir);
   const vis = g.filter((c) => c.kind === "visible");
   const hid = g.filter((c) => c.kind === "hidden");
-  console.log(`[validate ${caseDef.id} (${caseDef.difficulty})] on UNMODIFIED starter:`);
+  console.log(`[validate ${caseDef.id} (${caseDef.difficulty})] ${label}:`);
   console.log(`  visible: ${vis.filter((c) => c.status === "pass").length}/${vis.length} pass`);
   for (const c of vis) console.log(`    [${c.status}] ${c.name}`);
   console.log(`  hidden:  ${hid.filter((c) => c.status === "pass").length}/${hid.length} pass`);
   for (const c of hid) console.log(`    [${c.status}] ${c.name}`);
+  return {
+    visible: [vis.filter((c) => c.status === "pass").length, vis.length],
+    hidden: [hid.filter((c) => c.status === "pass").length, hid.length],
+  };
+}
+
+function assertCount(label, actual, expected, failures) {
+  if (!expected) return;
+  if (actual[0] !== expected[0] || actual[1] !== expected[1]) {
+    failures.push(`${label} expected ${expected[0]}/${expected[1]} but got ${actual[0]}/${actual[1]}`);
+  }
+}
+
+function validateStarter() {
+  const failures = [];
+  const starter = validateSnapshot("starter");
+  assertCount("starter visible", starter.visible, caseDef.validation?.starter?.visible, failures);
+  assertCount("starter hidden", starter.hidden, caseDef.validation?.starter?.hidden, failures);
+  if (caseDef.referenceSource) {
+    const reference = validateSnapshot("reference", caseDef.referenceSource);
+    assertCount("reference visible", reference.visible, caseDef.validation?.reference?.visible, failures);
+    assertCount("reference hidden", reference.hidden, caseDef.validation?.reference?.hidden, failures);
+  }
+  if (caseDef.lazySource) {
+    const lazy = validateSnapshot("lazy", caseDef.lazySource);
+    assertCount("lazy visible", lazy.visible, caseDef.validation?.lazy?.visible, failures);
+    assertCount("lazy hidden", lazy.hidden, caseDef.validation?.lazy?.hidden, failures);
+  }
+  if (failures.length > 0) {
+    for (const failure of failures) console.error(`[validate fail] ${failure}`);
+    process.exitCode = 1;
+  }
 }
 
 if (process.env.SG_EVAL_VALIDATE === "1") validateStarter(); else main();

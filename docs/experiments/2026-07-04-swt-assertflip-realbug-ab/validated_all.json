@@ -1,0 +1,108 @@
+[
+ {
+  "id": "sympy__sympy-21612",
+  "testfile": "sympy/printing/tests/test_str.py",
+  "f2p": [
+   "test_Mul"
+  ]
+ },
+ {
+  "id": "sympy__sympy-21627",
+  "testfile": "sympy/functions/elementary/tests/test_complexes.py",
+  "f2p": [
+   "test_Abs"
+  ]
+ },
+ {
+  "id": "sympy__sympy-22005",
+  "testfile": "sympy/solvers/tests/test_polysys.py",
+  "f2p": [
+   "test_solve_poly_system"
+  ]
+ },
+ {
+  "id": "sympy__sympy-22714",
+  "testfile": "sympy/geometry/tests/test_point.py",
+  "f2p": [
+   "test_issue_22684"
+  ]
+ },
+ {
+  "id": "sympy__sympy-23262",
+  "testfile": "sympy/utilities/tests/test_lambdify.py",
+  "f2p": [
+   "test_issue_14941"
+  ]
+ },
+ {
+  "id": "sympy__sympy-24066",
+  "testfile": "sympy/physics/units/tests/test_quantities.py",
+  "f2p": [
+   "test_issue_24062"
+  ]
+ },
+ {
+  "id": "sympy__sympy-24102",
+  "testfile": "sympy/parsing/tests/test_mathematica.py",
+  "f2p": [
+   "test_mathematica",
+   "test_parser_mathematica_tokenizer"
+  ]
+ },
+ {
+  "id": "sympy__sympy-24213",
+  "testfile": "sympy/physics/units/tests/test_quantities.py",
+  "f2p": [
+   "test_issue_24211"
+  ]
+ },
+ {
+  "id": "sympy__sympy-20212",
+  "testfile": "sympy/core/tests/test_power.py",
+  "f2p": [
+   "test_zero"
+  ]
+ },
+ {
+  "id": "sympy__sympy-20442",
+  "testfile": "sympy/physics/units/tests/test_quantities.py",
+  "f2p": [
+   "test_convert_to"
+  ]
+ },
+ {
+  "id": "sympy__sympy-21055",
+  "testfile": "sympy/assumptions/tests/test_refine.py",
+  "f2p": [
+   "test_arg"
+  ]
+ },
+ {
+  "id": "sympy__sympy-21847",
+  "testfile": "sympy/polys/tests/test_monomials.py",
+  "f2p": [
+   "test_monomials"
+  ]
+ },
+ {
+  "id": "sympy__sympy-23191",
+  "testfile": "sympy/vector/tests/test_printing.py",
+  "f2p": [
+   "test_issue_23058"
+  ]
+ },
+ {
+  "id": "sympy__sympy-24152",
+  "testfile": "sympy/physics/quantum/tests/test_tensorproduct.py",
+  "f2p": [
+   "test_tensor_product_expand"
+  ]
+ },
+ {
+  "id": "sympy__sympy-24909",
+  "testfile": "sympy/physics/units/tests/test_prefixes.py",
+  "f2p": [
+   "test_prefix_operations"
+  ]
+ }
+]

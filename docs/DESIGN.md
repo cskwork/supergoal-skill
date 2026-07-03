@@ -4,11 +4,16 @@ Why each part is built the way it is. Sources: the local autopilot/ultrawork/ult
 skills (reusable mechanisms) and a fact-checked web research brief (`docs/research-brief.md`,
 18 agents, adversarially verified).
 
-Status note (2026-06-24): the active executable contract is `SKILL.md`, `reference/role-loop.md`,
-`templates/qa-gate.sh`, `templates/qa-only-gate.sh`, `templates/harness-eval-gate.mjs`,
-`templates/skill-frontmatter-gate.mjs`, and `tests/run-all.sh`. References below to
-`delivery-gate.sh` and `human-feedback-gate.mjs` are historical validation records from earlier
-revisions, not live gates in the current skill.
+Status note (2026-07-03): the active executable contract is `SKILL.md`, `reference/role-loop.md`,
+`reference/delivery-gate.md`, `templates/commit-gate.sh`, `templates/qa-gate.sh`,
+`templates/qa-only-gate.sh`, `templates/harness-eval-gate.mjs`,
+`templates/skill-frontmatter-gate.mjs`, and `tests/run-all.sh`. The live loop is now Build ->
+Forced Verify as the mandatory core; Critic/Fixer is an opt-in escalation for under-specified or
+latent-correctness work. The current evidence frontier is the production-adoption plan in
+`docs/changelog/2026-07/02-production-adoption/plan.md`, not another automatic rewrite of the
+historical design below. References below to removed gates such as `delivery-gate.sh` and
+`human-feedback-gate.mjs` are historical validation records from earlier revisions, not live gates in
+the current skill.
 
 ## Core design (gated lanes over a shared vault)
 

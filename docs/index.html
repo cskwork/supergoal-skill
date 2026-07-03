@@ -4,9 +4,9 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>/supergoal - the smallest correct change, verified</title>
-<meta name="description" content="/supergoal is a baseline-first delivery skill: surface the requirements your prompt left out as failing tests from an independent critic, make the smallest correct change, and verify it against your project's real tests and spec - never a generated proxy. English and Korean." />
+<meta name="description" content="/supergoal is a baseline-first delivery skill: make the smallest correct change, force a whole-spec verification pass against your project's real tests, and escalate to critic/fixer only for under-specified work. English and Korean." />
 <meta property="og:title" content="/supergoal - the smallest correct change, verified" />
-<meta property="og:description" content="One objective in, a verified result out. Baseline-first: surface hidden requirements, make the smallest correct change, verify against your real tests. English and Korean." />
+<meta property="og:description" content="One objective in, a verified result out. Baseline-first: smallest change, forced whole-spec verification, real tests, no generated proxy. English and Korean." />
 <meta property="og:type" content="website" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%2305070a'/%3E%3Cpath d='M15 34 27 46 49 18' fill='none' stroke='%235cff9a' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
 <style>
@@ -909,8 +909,8 @@
       <h1><span>/</span>supergoal</h1>
       <p class="hero-sub en">The smallest correct change, verified.</p>
       <p class="hero-sub ko">필요한 만큼만 고치고, 테스트와 스펙으로 확인합니다.</p>
-      <p class="hero-copy en">Hand `/supergoal` one objective. It surfaces the requirements your prompt left out - as failing tests from an independent critic - makes the smallest correct change, and verifies it against your project's real tests and spec. Then it stops.</p>
-      <p class="hero-copy ko">`/supergoal`에 목표 하나를 맡기세요. 프롬프트에 빠진 요구사항을 독립 검토자(Critic)의 실패 테스트로 먼저 드러냅니다. 그다음 필요한 만큼만 고치고, 프로젝트 테스트와 스펙으로 확인한 뒤 멈춥니다.</p>
+      <p class="hero-copy en">Hand `/supergoal` one objective. It makes the smallest correct change, then distrusts visible green: re-read the whole spec, check edge paths, run the real tests, and escalate to Critic/Fixer only when hidden requirements are the risk.</p>
+      <p class="hero-copy ko">`/supergoal`에 목표 하나를 맡기세요. 필요한 만큼만 고친 뒤 겉 green을 그대로 믿지 않습니다. 전체 스펙을 다시 읽고, 엣지 경로를 확인하고, 프로젝트 테스트를 돌립니다. 숨은 요구사항 위험이 클 때만 Critic/Fixer로 확장합니다.</p>
       <div class="cta-row">
         <a class="btn primary" href="#install"><span class="en">Install</span><span class="ko">설치</span></a>
         <a class="btn" href="#workflow"><span class="en">The loop</span><span class="ko">루프</span></a>
@@ -928,22 +928,22 @@
         <div class="console-top"><i></i><i></i><i></i><span>verify.real.suite</span></div>
 <pre class="en"><span class="c-cyan">/supergoal</span> add SSO to legacy app
 <span class="c-soft">mode</span> LEGACY
-<span class="c-red">critic</span> RED: 2 spec rules
-<span class="c-green">fixer</span> minimal patch
-<span class="c-green">verify</span> real suite green
+<span class="c-green">build</span> minimal patch
+<span class="c-red">forced_verify</span> caught 2 spec gaps
+<span class="c-green">verify</span> real suite stable
 <span class="c-green">done</span> exit 0</pre>
 <pre class="ko"><span class="c-cyan">/supergoal</span> 레거시 앱에 SSO 추가
 <span class="c-soft">mode</span> LEGACY
-<span class="c-red">critic</span> RED: 스펙 규칙 2개
-<span class="c-green">fixer</span> 필요한 만큼만 패치
-<span class="c-green">verify</span> 프로젝트 테스트 green
+<span class="c-green">build</span> 필요한 만큼만 패치
+<span class="c-red">forced_verify</span> 스펙 틈 2개 발견
+<span class="c-green">verify</span> 프로젝트 테스트 stable
 <span class="c-green">done</span> exit 0</pre>
       </div>
       <div class="signal-card">
         <h3><span class="en">Run telemetry</span><span class="ko">실행 신호</span></h3>
-        <div class="signal-row"><span><span class="en">hidden reqs</span><span class="ko">숨은 요구사항</span></span><div class="track"><span></span></div><b><span class="en">surfaced</span><span class="ko">드러남</span></b></div>
+        <div class="signal-row"><span><span class="en">spec sweep</span><span class="ko">스펙 재검증</span></span><div class="track"><span></span></div><b><span class="en">forced</span><span class="ko">필수</span></b></div>
         <div class="signal-row"><span><span class="en">diff</span><span class="ko">변경량</span></span><div class="track"><span></span></div><b><span class="en">minimal</span><span class="ko">최소</span></b></div>
-        <div class="signal-row"><span><span class="en">real suite</span><span class="ko">프로젝트 테스트</span></span><div class="track"><span></span></div><b>green</b></div>
+        <div class="signal-row"><span><span class="en">real suite</span><span class="ko">프로젝트 테스트</span></span><div class="track"><span></span></div><b>stable</b></div>
       </div>
     </div>
   </div>
@@ -953,13 +953,13 @@
   <div class="ticker-track">
     <span><b>smallest correct change</b></span>
     <span>verify against ground truth</span>
-    <span>hidden requirements as failing tests</span>
+    <span>forced whole-spec verification</span>
     <span>never optimize to a generated proxy</span>
     <span>the real test suite is the oracle</span>
     <span>stop on green, report with output</span>
     <span><b>smallest correct change</b></span>
     <span>verify against ground truth</span>
-    <span>hidden requirements as failing tests</span>
+    <span>forced whole-spec verification</span>
     <span>never optimize to a generated proxy</span>
     <span>the real test suite is the oracle</span>
     <span>stop on green, report with output</span>
@@ -976,9 +976,9 @@
       </div>
       <div class="metric-grid">
         <div class="metric reveal"><strong>11</strong><span class="en">modes; the objective picks the lane.</span><span class="ko">가지 모드. 목표에 따라 경로가 정해집니다.</span></div>
-        <div class="metric reveal"><strong>1</strong><span class="en">independent critic writes the failing tests, not the builder.</span><span class="ko">독립 검토자(Critic)가 실패 테스트를 씁니다. 구현자가 직접 쓰지 않습니다.</span></div>
+        <div class="metric reveal"><strong>1</strong><span class="en">forced verify pass after Build before done can be claimed.</span><span class="ko">Build 뒤에는 완료 주장 전 강제 검증이 한 번 더 필요합니다.</span></div>
         <div class="metric reveal"><strong>0</strong><span class="en">generated-proxy verifiers; only your real tests grade the work.</span><span class="ko">생성된 proxy verifier를 쓰지 않습니다. 프로젝트 테스트로 결과를 판단합니다.</span></div>
-        <div class="metric reveal"><strong>&le;5</strong><span class="en">questions, asked only when genuinely ambiguous.</span><span class="ko">질문은 정말 모호할 때만 합니다. 최대 5개.</span></div>
+        <div class="metric reveal"><strong>10</strong><span class="en">production-pilot rows planned: metrics only, no private code.</span><span class="ko">프로덕션 파일럿 10행 계획: 지표만 기록하고 회사 코드는 넣지 않습니다.</span></div>
       </div>
     </div>
   </section>
@@ -987,9 +987,9 @@
     <div class="wrap split">
       <div class="copy-stack">
         <div class="claim reveal">
-          <h3><span class="en">It surfaces what the prompt left out.</span><span class="ko">프롬프트에 빠진 요구사항을 드러냅니다.</span></h3>
-          <p class="en">An independent critic re-reads the spec and repo rules, then writes a failing test for each required behavior your existing tests don't exercise.</p>
-          <p class="ko">독립 검토자(Critic)가 스펙과 레포 규칙을 다시 읽고, 기존 테스트가 놓친 필수 동작마다 실패 테스트를 씁니다.</p>
+          <h3><span class="en">It distrusts visible green.</span><span class="ko">겉 green을 그대로 믿지 않습니다.</span></h3>
+          <p class="en">After Build, it re-reads the whole spec, checks degenerate values and edge/error paths, and fixes the smallest fresh gap even when the visible tests already pass.</p>
+          <p class="ko">Build 뒤에 전체 스펙을 다시 읽고, null/빈 값/경계값과 에러 경로를 확인합니다. 겉 테스트가 이미 통과해도 새로 찾은 틈은 가장 작게 고칩니다.</p>
         </div>
         <div class="claim reveal">
           <h3><span class="en">It keeps the change minimal.</span><span class="ko">변경을 필요한 만큼만 유지합니다.</span></h3>
@@ -1005,9 +1005,9 @@
       <div class="route-map reveal" aria-label="Supergoal loop">
         <div class="route-step pass"><b>01 Frame</b><span>goal + criteria</span></div>
         <div class="route-step pass"><b>02 Build</b><span>smallest change</span></div>
-        <div class="route-step red"><b>03 Critic</b><span>failing tests</span></div>
-        <div class="route-step pass"><b>04 Fixer</b><span>minimal patch</span></div>
-        <div class="route-step pass"><b>05 Verify</b><span>real suite green</span></div>
+        <div class="route-step red"><b>03 Forced Verify</b><span>whole-spec sweep</span></div>
+        <div class="route-step pass"><b>04 Escalate</b><span>Critic/Fixer if needed</span></div>
+        <div class="route-step pass"><b>05 Done</b><span>evidence recorded</span></div>
       </div>
     </div>
   </section>
@@ -1025,21 +1025,21 @@
           <h3><span class="en">Build and ship a new thing.</span><span class="ko">새 제품을 만들고 출시합니다.</span></h3>
           <p class="en">Smallest correct change, test-first, verified against the real suite.</p>
           <p class="ko">필요한 만큼만 바꾸고, 테스트를 먼저 작성한 뒤 프로젝트 테스트 스위트로 검증합니다.</p>
-          <div class="mode-pipe">Frame -> Build -> <b>Critic</b> -> Fixer -> Verify</div>
+          <div class="mode-pipe">Frame -> Build -> <b>Forced Verify</b></div>
         </article>
         <article class="mode-card debug reveal">
           <span class="mode-label">DEBUG</span>
           <h3><span class="en">Fix a hard failure.</span><span class="ko">까다로운 실패를 고칩니다.</span></h3>
           <p class="en">Reproduce with a failing test first, then make it pass with the smallest change.</p>
           <p class="ko">먼저 실패 테스트로 재현하고, 가장 작은 변경으로 통과시킵니다.</p>
-          <div class="mode-pipe">Frame -> <b>Reproduce</b> -> Critic -> Fixer -> Verify</div>
+          <div class="mode-pipe">Frame -> <b>Reproduce</b> -> Build -> Forced Verify</div>
         </article>
         <article class="mode-card legacy reveal">
           <span class="mode-label">LEGACY</span>
           <h3><span class="en">Add to existing code.</span><span class="ko">기존 코드에 기능을 더합니다.</span></h3>
           <p class="en">Map the touched area, then make the smallest accurate edit.</p>
           <p class="ko">영향 범위를 파악한 뒤 가장 작고 정확하게 수정합니다.</p>
-          <div class="mode-pipe">Frame -> <b>Map</b> -> Build -> Critic -> Verify</div>
+          <div class="mode-pipe">Frame -> <b>Map</b> -> Build -> Forced Verify</div>
         </article>
         <article class="mode-card spec reveal">
           <span class="mode-label">SPEC</span>
@@ -1111,7 +1111,7 @@
       <div class="gate-grid">
         <article class="gate-item reveal"><span class="gate-no">1</span><h3><span class="en">Verify against ground truth</span><span class="ko">테스트와 스펙으로 검증</span></h3><p class="en">Re-run the real tests; re-read the prose spec for rules they miss. Never optimize to a generated proxy.</p><p class="ko">프로젝트 테스트를 다시 돌리고, 테스트가 놓친 규칙은 글로 적힌 스펙을 다시 읽습니다. 생성된 proxy를 기준으로 삼지 않습니다.</p></article>
         <article class="gate-item reveal"><span class="gate-no">2</span><h3><span class="en">Smallest correct change</span><span class="ko">필요한 만큼만 변경</span></h3><p class="en">Match the surrounding code. No whole-file rewrite to change a few lines.</p><p class="ko">주변 코드 스타일을 따릅니다. 몇 줄 바꾸려고 파일 전체를 다시 쓰지 않습니다.</p></article>
-        <article class="gate-item reveal"><span class="gate-no">3</span><h3><span class="en">Surface hidden requirements</span><span class="ko">숨은 요구사항 먼저 드러내기</span></h3><p class="en">An independent critic writes them as failing tests - the one place a process beats a plain baseline.</p><p class="ko">독립 검토자(Critic)가 실패 테스트로 드러냅니다. 일반 실행보다 나아지는 핵심 차이입니다.</p></article>
+        <article class="gate-item reveal"><span class="gate-no">3</span><h3><span class="en">Escalate when hidden requirements matter</span><span class="ko">숨은 요구사항 위험이 클 때 확장</span></h3><p class="en">Critic/Fixer is available for under-specified work, but the default core is Build -> Forced Verify.</p><p class="ko">Critic/Fixer는 요구사항이 덜 명시된 작업에서 쓰는 확장입니다. 기본 핵심은 Build -> Forced Verify입니다.</p></article>
         <article class="gate-item reveal"><span class="gate-no">4</span><h3><span class="en">Ask only when ambiguous</span><span class="ko">모호할 때만 질문</span></h3><p class="en">Resolve code-answerable questions by reading the code. Interrupt only for genuine forks.</p><p class="ko">코드로 답할 수 있는 것은 먼저 코드를 읽어 해결합니다. 진짜 선택지가 갈릴 때만 멈춥니다.</p></article>
         <article class="gate-item reveal"><span class="gate-no">5</span><h3><span class="en">Hard stops</span><span class="ko">멈춰야 할 곳에서 멈춤</span></h3><p class="en">Destructive or irreversible steps need consent. If the real tests can't pass, report it - never fake a pass.</p><p class="ko">파괴적이거나 되돌릴 수 없는 단계는 동의를 구합니다. 프로젝트 테스트가 통과하지 못하면 그대로 보고합니다.</p></article>
       </div>
@@ -1127,7 +1127,7 @@
         <div class="file-list">
           <div class="file-chip"><code>SKILL.md</code><span class="en">baseline-first loop, modes, map</span><span class="ko">핵심 루프, 모드, 레퍼런스 맵</span></div>
           <div class="file-chip"><code>agents/&lt;role&gt;.md</code><span class="en">one persona per role</span><span class="ko">역할별 지침 파일</span></div>
-          <div class="file-chip"><code>reference/role-loop.md</code><span class="en">critic -> fixer -> verify</span><span class="ko">critic -> fixer -> verify</span></div>
+          <div class="file-chip"><code>reference/role-loop.md</code><span class="en">Build -> Forced Verify; Critic/Fixer opt-in</span><span class="ko">Build -> Forced Verify; Critic/Fixer는 선택 확장</span></div>
           <div class="file-chip"><code>reference/domain-context.md</code><span class="en">surface hidden requirements</span><span class="ko">숨은 요구사항 표면화</span></div>
           <div class="file-chip"><code>reference/debugging.md</code><span class="en">reproduce-first diagnose loop</span><span class="ko">재현 우선 진단 루프</span></div>
           <div class="file-chip"><code>.domain-agent/</code><span class="en">persisted wiki / QA suite</span><span class="ko">저장된 위키 / QA 스위트</span></div>
@@ -1136,9 +1136,9 @@
 <pre class="vault-ascii reveal">loop/
   frame    goal + criteria
   build    smallest change, test-first
-  critic   failing tests, independent
-  fixer    minimal patch
-  verify   real suite is the oracle
+  verify   forced whole-spec sweep
+  escalate critic/fixer only when needed
+  done     evidence + command output
 
 Stop on green. Report with output.</pre>
     </div>
@@ -1154,9 +1154,9 @@ Stop on green. Report with output.</pre>
       <div class="proof-grid">
         <article class="proof-item reveal">
           <span class="tag">GREENFIELD</span>
-          <h3><span class="en">Requirements the prompt skipped.</span><span class="ko">프롬프트에 빠진 요구사항</span></h3>
-          <p class="en">The critic re-reads the spec and writes failing tests for the behaviors a prompt leaves implicit - auth, input validation, error paths - before the change is accepted.</p>
-          <p class="ko">Critic이 스펙을 다시 읽고, 프롬프트에 명시되지 않은 동작(인증, 입력 검증, 에러 경로)마다 실패 테스트를 씁니다. 그 테스트를 통과해야 변경을 받아들입니다.</p>
+          <h3><span class="en">Visible green is not enough.</span><span class="ko">겉 green만으로는 부족합니다.</span></h3>
+          <p class="en">After the first build passes visible tests, the verifier re-reads the full spec and checks edge paths before the change is accepted.</p>
+          <p class="ko">첫 build가 보이는 테스트를 통과해도, Verifier가 전체 스펙과 엣지 경로를 다시 확인한 뒤에야 변경을 받아들입니다.</p>
         </article>
         <article class="proof-item debug reveal">
           <span class="tag">DEBUG</span>
@@ -1184,6 +1184,9 @@ git clone https://github.com/cskwork/supergoal-skill.git
 <span class="c-soft"># symlink keeps updates simple</span>
 ln -s "$(pwd)/supergoal-skill" &lt;your-agent-skills-dir&gt;/supergoal
 
+<span class="c-soft"># verify the active install is not drifting</span>
+node templates/skill-install-audit.mjs "$(pwd)/supergoal-skill"
+
 <span class="c-soft"># then, in your agent CLI</span>
 <span class="c-cyan">/supergoal</span> build a CLI todo app and ship it</pre>
 <pre class="ko"><span class="c-soft"># 스킬 클론</span>
@@ -1191,6 +1194,9 @@ git clone https://github.com/cskwork/supergoal-skill.git
 
 <span class="c-soft"># 업데이트하기 쉽게 연결</span>
 ln -s "$(pwd)/supergoal-skill" &lt;your-agent-skills-dir&gt;/supergoal
+
+<span class="c-soft"># active install이 드리프트하지 않는지 확인</span>
+node templates/skill-install-audit.mjs "$(pwd)/supergoal-skill"
 
 <span class="c-soft"># 그다음 사용하는 agent CLI에서</span>
 <span class="c-cyan">/supergoal</span> CLI 할 일 앱을 만들고 출시해줘</pre>
@@ -1290,9 +1296,9 @@ ln -s "$(pwd)/supergoal-skill" &lt;your-agent-skills-dir&gt;/supergoal
     var nodes = [
       { x: .12, y: .28, label: "Frame" },
       { x: .31, y: .19, label: "Build" },
-      { x: .50, y: .37, label: "Critic" },
-      { x: .69, y: .22, label: "Fixer" },
-      { x: .88, y: .33, label: "Verify" }
+      { x: .50, y: .37, label: "Verify" },
+      { x: .69, y: .22, label: "Escalate" },
+      { x: .88, y: .33, label: "Done" }
     ];
 
     function resize() {

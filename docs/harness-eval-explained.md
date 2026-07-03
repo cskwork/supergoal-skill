@@ -91,6 +91,18 @@
 프롬프트**로 돌아감(그래서 "강제검증 패턴"의 증명이지 byte 단위 최종 확정은 아님). 그래서 "proven" 딱지는
 붙이지 않았고, 실제 스킬 파일로 하는 확인 A/B는 후속 과제로 남김.
 
+### 2026-07-03 후속 결정
+
+확인 A/B를 바로 집행하지 않고, 먼저
+`docs/changelog/2026-07/02-production-adoption/plan.md`의 프로덕션 채택 계획으로 이동한다. 이유는
+합성 fixture가 "실제 업무에서 발동하는가", "설치본이 저장소와 드리프트하지 않는가", "프로덕션 과제에서
+Forced Verify·commit gate·Critic 확장이 실제로 기여하는가"를 답하지 못하기 때문이다.
+
+따라서 현재 순서는 `심링크 배포 -> trigger 정확도 측정 -> 10과제 또는 2주 production pilot -> 장치별 판정`이다.
+공개 저장소에는 회사 코드나 run vault 내용을 넣지 않고, 날짜·모드·격차 수·gate 결과·대략 오버헤드 같은
+지표만 `docs/experiments/production-pilot/LEDGER.md`에 남긴다. 파일럿으로 lean/no-critic 질문이 남으면
+그때 `docs/experiments/2026-07-02-lean-skill-confirmatory-ab/PLAN.md`를 집행한다.
+
 ---
 
 ## 7. 용어 사전

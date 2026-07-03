@@ -286,3 +286,41 @@ Proof commands:
 - `SG_EVAL_CASE=u1 SG_EVAL_BASELINE_SEEDS=3 SG_EVAL_HARNESS_SEEDS=0 SG_EVAL_NAIVE_SEEDS=0 SG_EVAL_RESULT_SUFFIX=-baseline-headroom SG_EVAL_RUN_ROOT=/tmp/sg-meaningful-skill-eval-LFyTmG/run-u1-baseline-headroom SG_EVAL_MODEL=gpt-5.5 SG_EVAL_EFFORT=low node /tmp/sg-meaningful-skill-eval-LFyTmG/docs/experiments/2026-06-07-harness-eval-underspecified-n3/run.mjs`
 - `SG_EVAL_CASE=u1 SG_EVAL_BASELINE_SEEDS=0 SG_EVAL_HARNESS_SEEDS=3 SG_EVAL_NAIVE_SEEDS=0 SG_EVAL_RESULT_SUFFIX=-harness-n3 SG_EVAL_RUN_ROOT=/tmp/sg-meaningful-skill-eval-LFyTmG/run-u1-harness-n3 SG_EVAL_MODEL=gpt-5.5 SG_EVAL_EFFORT=low node /tmp/sg-meaningful-skill-eval-LFyTmG/docs/experiments/2026-06-07-harness-eval-underspecified-n3/run.mjs`
 - `SG_EVAL_CASE=u1 SG_EVAL_BASELINE_SEEDS=0 SG_EVAL_HARNESS_SEEDS=0 SG_EVAL_NAIVE_SEEDS=3 SG_EVAL_RESULT_SUFFIX=-naive-n3 SG_EVAL_RUN_ROOT=/tmp/sg-meaningful-skill-eval-LFyTmG/run-u1-naive-n3 SG_EVAL_MODEL=gpt-5.5 SG_EVAL_EFFORT=low node /tmp/sg-meaningful-skill-eval-LFyTmG/docs/experiments/2026-06-07-harness-eval-underspecified-n3/run.mjs`
+
+## Equal-compute improve-pass role loop
+
+Decision: make the default GREENFIELD/DEBUG/LEGACY core
+`Build -> Improve full spec -> Improve edge cases -> Final Verify`, with each non-trivial role dispatched
+fresh-context by default. Keep Critic/Fixer as optional adversarial escalation, not the normal engine.
+
+Why: after the requirement-threshold update, the skill arm improved against single-pass baseline but still
+lost to the no-skill equal-compute loop. Updated skill seeds scored hidden `3/4`, `3/4`, `4/4` (avg 3.3,
+false-green count 2); single-pass baseline scored `3/4`, `2/4`, `2/4` (avg 2.3, false-green count 3);
+no-skill equal-compute scored `4/4`, `3/4`, `4/4` (avg 3.7, false-green count 1). The likely useful
+variable is not critic ritual; it is spending comparable compute on a full-spec improvement pass, an
+edge-case improvement pass, and fresh final verification.
+
+What changed:
+
+- `SKILL.md` now states the equal-compute improve-pass loop as the default mandatory core.
+- `reference/role-loop.md` now defines fresh-context Build, full-spec improve, edge-case improve, and
+  Final Verify/QA roles, with Critic/Fixer retained as optional under-specified escalation.
+- `agents/executor.md` now supports explicit full-spec and edge-case improve modes.
+- `agents/code-reviewer.md` now labels the critic as optional escalation, and `agents/qa-auditor.md`
+  verifies after the improve passes with an adversarial stance.
+- `tests/role-loop-contract.test.sh` now asserts the new loop, fresh improve roles, production/domain
+  user-feedback gate, and conservative no-user default.
+
+Rejected alternatives:
+
+- Keep Critic/Fixer as the primary default loop: rejected because the latest retest still underperformed
+  equal-compute no-skill on hidden tests.
+- Make all ambiguity conservative by default: rejected because production/source-code domain behavior may
+  need user feedback instead of an agent guess.
+- Remove adversarial critic/QA: rejected because fresh adversarial verification is still useful; the
+  change is where it sits in the loop and how it handles ambiguous requirements.
+
+Proof commands:
+
+- `rtk proxy bash tests/role-loop-contract.test.sh`
+- `rtk proxy bash tests/run-all.sh`

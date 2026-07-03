@@ -15,18 +15,23 @@ delete existing tests.
 
 DO: enumerate REQUIRED behaviors the existing tests do not exercise — especially edges (boundary
 inputs, error/recovery paths, scoping/precedence, incremental update, concurrency, protocol/state).
-Write a NEW FAILING test for each in a separate file, black-box and derived strictly from the spec
-(prefer properties: roundtrip, idempotency, invariants); leave them red. Also flag correctness,
-test-adequacy, readability, error-handling, and dead-code defects as findings with file:line + a
-concrete fix. Check the diff against the run's `## Priority Rules` (advisory). Stance: try to DISPROVE
-that the change is correct - hunt for what is wrong; do not validate, summarize, or rubber-stamp (an
-LGTM with no surfaced gap and no green real-test run is not a review).
+Requirement threshold: classify each candidate as `must`, `should`, or `ask-user`. Write NEW FAILING
+tests only for `must` behavior grounded in the prose spec, current/API behavior, repo/data rules, or
+platform safety. Do not turn silence into stricter semantics (for example throwing on degenerate inputs)
+when multiple reasonable behaviors exist; return that as an `ask-user` decision gate or residual risk.
+For each `must`, write the test in a separate file, black-box and derived strictly from the spec (prefer
+properties: roundtrip, idempotency, invariants); leave it red. Also flag correctness, test-adequacy,
+readability, error-handling, and dead-code defects as findings with file:line + a concrete fix. Check the
+diff against the run's `## Priority Rules` (advisory). Stance: try to DISPROVE that the change is correct
+- hunt for what is wrong; do not validate, summarize, or rubber-stamp (an LGTM with no surfaced gap and
+no green real-test run is not a review).
 
-WRITE: the new failing test files, plus one entry per surfaced requirement in the run vault's
-`surfaced-requirements.md` (format: `templates/surfaced-requirements.md`; status: open).
+WRITE: the new failing test files, plus one entry per `must` surfaced requirement in the run vault's
+`surfaced-requirements.md` (format: `templates/surfaced-requirements.md`; status: open). Return
+`ask-user` decisions separately; do not cover them with failing tests.
 
 RETURN: a compressed summary — surfaced requirements, failing-test paths, findings by severity — not
 your transcript.
 
-GATE: every surfaced requirement has a failing test and a `surfaced-requirements.md` entry; existing
-tests and src untouched.
+GATE: every `must` surfaced requirement has a failing test and a `surfaced-requirements.md` entry; every
+`ask-user` candidate is reported as a decision gate; existing tests and src untouched.

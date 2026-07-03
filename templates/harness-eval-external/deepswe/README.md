@@ -18,14 +18,45 @@ Primary task: `happy-dom-abort-pending-body-reads`
 - Base commit: `82a0888cb2c87a6123e05424b528f8e8c9b3e426`
 - Benchmark ref used for this manifest: `3cda4081fed96103a6395de39c85e9b20275e307`
 - Why this first: it is a real TypeScript async lifecycle bugfix with pending body reads, abort behavior,
-  multipart parsing, navigation cleanup, and preservation checks. The 2026-07-03 Codex pilot showed
-  public verifier headroom (`f2p=1/14`, `p2p=165/165`) without relying on private LMS code.
+  multipart parsing, navigation cleanup, and preservation checks. It uses public source and verifier
+  artifacts instead of private LMS code.
 
 Important: the 2026-07-03 Codex pilot is a setup artifact, not a valid paired correctness result. The
-harness arm was manually interrupted after elapsed time was observed. Use Happy DOM as the default public
-task because it has meaningful domain headroom; do not cite that interrupted run as proof of harness lift.
+harness arm was manually interrupted after elapsed time was observed. A later no-interrupt full-cycle run
+completed both arms, but current Codex `gpt-5.5` low reasoning saturated the task: baseline and harness
+both reached `reward=1`, `f2p=14/14`, `p2p=165/165`. Use Happy DOM as the default public full-cycle
+pilot, not as proof of harness lift under saturated settings.
 
 ## Protocol
+
+Preferred path: use the full-cycle runner. It pins the benchmark, prepares the harness arm, runs baseline
+then harness serially through Pier, enforces the declared stop policy, and writes `manifest.json`,
+`summary.json`, `report.md`, logs, and Pier job artifacts.
+
+```bash
+node templates/harness-eval-external/deepswe/run-full-cycle.mjs \
+  --task happy-dom-abort-pending-body-reads \
+  --agent codex \
+  --model gpt-5.5 \
+  --reasoning-effort low \
+  --codex-auth-json auto \
+  --timeout-seconds 900 \
+  --run-root /tmp/sg-deepswe-happy-dom-full-cycle
+```
+
+Use `--dry-run` first to inspect the exact commands without spending model time. Use `--force` only for a
+`/tmp/...` run root or a repo-local `docs/experiments/...` run root; the script refuses broader deletion
+targets.
+
+Codex runs default to `--reasoning-effort low` in this lane. That holds the compute budget equal across
+baseline and harness arms. If baseline reaches perfect public verifier score, the runner reports
+`not_proven_no_headroom` instead of a generic win/loss.
+The runner also defaults to `--codex-auth-json auto`: when `OPENAI_API_KEY` is absent and
+`~/.codex/auth.json` exists, it passes `CODEX_FORCE_AUTH_JSON=1` into Pier without logging the secret.
+It also records a non-secret `chatgpt.com` allowlist hint because Codex auth.json uses the ChatGPT Codex
+transport rather than the API-key transport.
+
+Manual path:
 
 1. Clone and pin DeepSWE.
 
@@ -92,6 +123,9 @@ pier run -p /tmp/deep-swe-supergoal/tasks/happy-dom-abort-pending-body-reads \
 - `harness-metadata.json`
 - stop policy and actual process outcome: `completed`, `budget_timeout`, `error`, or `invalid_manual_interrupt`
 
+The full-cycle runner records `runner_timeout` separately when the outer safety timeout kills Pier. That
+outcome is `Not proven`; it is not a valid completed or budget-timeout arm.
+
 ## Scoring
 
 Report:
@@ -111,6 +145,8 @@ Minimum language:
   McNemar for binary pass/fail and report the exact p-value.
 - Manual interruption after observing progress: invalid paired correctness. Report only diagnostic
   artifacts and rerun with a predeclared timeout.
+- Completed tie where baseline is already perfect: `not_proven_no_headroom`. Report it as a valid
+  full-cycle reliability check, then add harder public tasks before claiming harness effectiveness.
 
 ## Controls
 

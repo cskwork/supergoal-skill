@@ -22,8 +22,8 @@ Follow-up contract change:
 
 - `happy-dom-abort-pending-body-reads` is now the default public DeepSWE harness pilot in
   `templates/harness-eval-external/deepswe/task-set.yaml` and `reference/harness-eval.md`.
-- Reason: it is a real open-source TypeScript bugfix with public verifier headroom and a narrower
-  low-effort domain surface than the earlier Cliffy feature task.
+- Reason: it is a real open-source TypeScript bugfix with a narrower low-effort domain surface than the
+  earlier Cliffy feature task, and it can be replayed through public DeepSWE verifier artifacts.
 - Guardrail: the default only counts under a predeclared stop policy. Manual post-hoc interruption after
   observing elapsed time invalidates paired correctness; the artifact can be diagnostic only.
 
@@ -40,6 +40,56 @@ Rejected alternatives:
   comparability requires the stop/capture policy before the run starts.
 
 Evidence: `docs/experiments/2026-07-03-deepswe-happy-dom-codex-ab/report.md`.
+
+## DeepSWE full-cycle harness runner
+
+Decision: turn the public DeepSWE lane from a manual checklist into an executable full-cycle runner.
+
+Why: benchmark research says heterogeneous coding harnesses are only comparable under a fixed task,
+runtime budget, patch extraction procedure, and evaluator. Manual interruption after observing runtime is
+not a valid arm, and DeepSWE v1.1 grades committed repository code in a clean environment. The harness
+needs to optimize for that scoring contract without seeing verifier internals.
+
+What changed:
+
+- `templates/harness-eval-external/deepswe/run-full-cycle.mjs` now runs baseline and harness serially
+  through Pier, writes a predeclared stop-policy manifest, enforces an outer no-manual-interrupt timeout,
+  defaults Codex to low reasoning effort for both arms, auto-uses Codex `auth.json` when no
+  `OPENAI_API_KEY` is present, supplies the non-secret `chatgpt.com` egress allowlist hint required by
+  that auth path, and records `summary.json`, `report.md`, logs, rewards, and patch artifacts.
+- `prepare-supergoal-arm.mjs` now prepends a compact DeepSWE scoring contract: make repo code changes,
+  preserve pass-to-pass behavior, run focused repo-native checks where feasible, avoid verifier/solution
+  files, and commit final code when the environment permits.
+- `reference/harness-eval.md`, `task-set.yaml`, and the external README now make the full-cycle runner
+  the default executable path for Happy DOM public A/B runs.
+- The runner classifies completed ties with perfect baseline score as `not_proven_no_headroom`, so a
+  saturated task is kept as full-cycle reliability evidence instead of being misread as a harness win.
+
+Completed no-interrupt check:
+
+- Run root: `/tmp/sg-deepswe-happy-dom-full-cycle-auth-egress`.
+- Baseline: completed, `reward=1`, `f2p=14/14`, `p2p=165/165`, `partial=1`, `$2.736928`, `531s`,
+  patch `22,974` bytes.
+- Harness: completed, `reward=1`, `f2p=14/14`, `p2p=165/165`, `partial=1`, `$3.091722`, `884s`,
+  patch `15,707` bytes.
+- Raw runner decision: `not_proven`; updated taxonomy classification: `not_proven_no_headroom`. This
+  validates the no-interrupt public runner path, but it does not prove harness effectiveness because the
+  baseline already hit the verifier ceiling.
+
+Rejected alternatives:
+
+- Keep using hand-run Pier/Codex commands: rejected because the user explicitly required no manual
+  interruption and a full cycle.
+- Claim the prompt-prefix change is a proven benchmark improvement: rejected until a completed paired run
+  shows positive DeepSWE reward or partial-reward delta.
+- Leave Codex at Pier's high-effort adapter default: rejected because the requested test needs a harder,
+  lower-cost setting where harness behavior can create a meaningful difference.
+- Assume `OPENAI_API_KEY` exists in local Pier runs: rejected after the first full-cycle Codex attempt
+  produced paired 401 errors while `~/.codex/auth.json` was present.
+- Pass auth.json without extending Pier's filtered egress allowlist: rejected after the second attempt
+  reached ChatGPT auth transport but the proxy returned 403 for `chatgpt.com`.
+- Let the runner delete arbitrary output roots with `--force`: rejected; it refuses anything outside
+  `/tmp` or `docs/experiments`.
 
 ## Public docs synced to lean loop + production-adoption plan
 

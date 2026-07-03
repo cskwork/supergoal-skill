@@ -144,13 +144,17 @@ claiming a stronger harness win.
 When private/local fixtures are ceilinged out, not committable, or too synthetic for the user's question,
 switch to a public benchmark task instead of inventing another local case. Use
 `templates/harness-eval-external/deepswe/task-set.yaml` for the first approved public task set and
-`templates/harness-eval-external/deepswe/prepare-supergoal-arm.mjs` to build the harness arm.
+`templates/harness-eval-external/deepswe/run-full-cycle.mjs` as the default executable runner. That
+runner calls `prepare-supergoal-arm.mjs`, runs baseline then harness serially through Pier, enforces the
+declared stop policy, applies the same low Codex reasoning effort to both arms by default, auto-uses
+Codex auth.json when no `OPENAI_API_KEY` is present, records the required non-secret `chatgpt.com`
+egress hint for that auth mode, and writes a manifest/summary/report without manual interruption.
 
 Required external-task provenance:
 
 - benchmark name, public URL, repo URL, and immutable benchmark ref
 - upstream source repo and base commit
-- task id, task URL, language, category, and why it has baseline headroom
+- task id, task URL, language, category, and current baseline headroom status
 - declared stop policy: timeout, valid outcomes, whether patch capture after budget timeout/error is
   scored, and why manual interruption is invalid
 - verifier provenance and artifact paths, especially `verifier/reward.json`, `verifier/ctrf.json`,
@@ -164,9 +168,11 @@ Default public pilot candidate:
   `https://github.com/capricorn86/happy-dom`, base commit
   `82a0888cb2c87a6123e05424b528f8e8c9b3e426`, TypeScript bugfix. Use it first because it is a real
   async lifecycle task with pending body reads, abort semantics, multipart parsing, navigation cleanup,
-  and preservation checks. The 2026-07-03 Codex pilot showed verifier headroom (`f2p=1/14`,
-  `p2p=165/165`) but the harness arm was manually interrupted, so that run is setup evidence only, not a
-  valid correctness A/B. Rerun with the manifest stop policy before claiming lift.
+  and preservation checks. The interrupted 2026-07-03 Codex pilot showed only setup evidence. The later
+  no-interrupt full-cycle run completed both arms but saturated current Codex `gpt-5.5` low reasoning:
+  baseline and harness both reached `reward=1`, `f2p=14/14`, `p2p=165/165`. Treat this task as the
+  default public full-cycle/reliability pilot; do not claim effectiveness from it unless future settings
+  restore baseline headroom.
 - `cliffy-config-file-parsing` is now a secondary broad feature task, not the default low-effort public
   pilot, because the earlier low-turn Claude attempt exceeded budget and produced no patch.
 
@@ -181,6 +187,9 @@ External A/B scoring:
 - process outcome: `completed`, `budget_timeout`, `error`, or `invalid_manual_interrupt`. Only
   `completed` and predeclared `budget_timeout` outcomes are usable for paired correctness; manual
   interruption is diagnostic only.
+- headroom: if baseline and harness both complete with perfect public verifier score, report
+  `not_proven_no_headroom`, keep the artifact as a valid full-cycle check, and add harder held-out public
+  tasks before making an effectiveness claim.
 
 Do not claim a public benchmark win from `u3`. The authz-cache `u3` result only proves hidden-test
 discrimination: starter/lazy can pass visible 3/3 while hidden behavior fails 1/8, and the reference can

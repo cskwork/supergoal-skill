@@ -10,6 +10,23 @@ Quality winner:
 Overall winner:
 Claim status:
 
+## Four-Axis Metrics
+
+| Axis | Metric | Baseline | Harness | Delta | Source / reason |
+|---|---|---:|---:|---:|---|
+| Correctness |  |  |  |  |  |
+| Token/cost |  |  |  |  |  |
+| Wall-clock speed |  |  |  |  |  |
+| Routing accuracy |  |  |  |  |  |
+
+## Routing Accuracy
+
+| Prompt set | Count | Trials/prompt | Split | Should-trigger rate | Should-not-trigger rate | Held-out accuracy | Near-miss failures |
+|---|---:|---:|---|---:|---:|---:|---|
+
+Use at least 20 should-trigger / should-not-trigger near-miss prompts, 3 trials each, and select on the
+40% held-out split. If routing is not applicable, state why.
+
 ## Case Selection
 
 Default coding A/B pair:
@@ -99,6 +116,16 @@ Anchors:
 
 | Case | A | B | Winner | Confidence |
 |---|---|---|---|---|
+
+## Statistics
+
+| Method | Inputs | Result | Decision |
+|---|---|---|---|
+| Sign-flip + BCa | gradient score deltas |  |  |
+| McNemar | discordant binary pass/fail pairs after SNR filter |  |  |
+
+Record `discordant_baseline_only`, `discordant_harness_only`, exact two-sided `p`, matched pairs removed
+by the SNR filter, and the per-seed vector. Do not use overlapping confidence intervals as the winner gate.
 
 ## Cost
 

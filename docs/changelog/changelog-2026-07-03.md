@@ -42,3 +42,38 @@ rewritten as concrete Korean actions.
 
 Verification planned: run the contract test suite, docs whitespace checks, and local landing smoke check
 after the docs patch.
+
+## OmO/lazycodex parity improvements, tiers 1-3
+
+Decision: adopt the directly portable OmO mechanics as `supergoal` contract changes: IntentGate routing,
+four-axis HARNESS-EVAL accounting, paired McNemar/SNR statistics, completion-promise loop bounds,
+resumable run state, and conditional adversarial plan attack.
+
+Why: `supergoal` is a skill contract, not a runtime/model router. The portable value is better route
+selection, proof accounting, bounded self-correction, and resume state; provider routing and custom edit
+protocols belong outside the skill.
+
+What changed:
+
+- `SKILL.md` now classifies with IntentGate before the mode table and separates work category from
+  capability refs.
+- `reference/role-loop.md`, `reference/delivery-gate.md`, `templates/delivery-proof.md`, and
+  `templates/run-state.json` now carry a completion promise, default 8-iteration Build/Verify cap, forced
+  reflection at the cap, and resumable state fields.
+- `reference/harness-eval.md`, `templates/harness-eval-case.yaml`, `templates/harness-eval-result.json`,
+  `templates/harness-eval-report.md`, `templates/harness-eval-gate.mjs`, and
+  `templates/harness-eval-stats.mjs` now cover the four A/B axes, routing probes, McNemar, and SNR
+  filtering.
+- `README.md` and `README.ko.md` were synced so public docs mention IntentGate, run state, and the
+  four-axis HARNESS-EVAL standard.
+
+Rejected alternatives:
+
+- Port OmO model/provider routing: rejected because this skill runs inside the host agent and does not own
+  the model router.
+- Port hash-anchored editing: rejected because edit semantics are owned by the host tooling; the skill can
+  require post-edit verification but not replace the editor.
+- Turn adversarial plan attack on for every task: rejected because previous `supergoal` evals showed
+  equal-compute forced verification is leaner on explicit-spec work.
+- Use overlapping confidence intervals as the A/B winner gate: rejected because paired tests are the
+  correct fit for same-task binary outcomes.

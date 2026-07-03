@@ -1,7 +1,8 @@
 # SUGGESTIONS - remaining room for improvement
 
 Prioritized follow-ups from the 2026-07-02 best-practice audit
-(`docs/changelog/2026-07/02-workflow-optimization/plan.md`). Each entry: why it matters, what to do,
+(`docs/changelog/2026-07/02-workflow-optimization/plan.md`) and the production-adoption plan
+(`docs/changelog/2026-07/02-production-adoption/plan.md`). Each entry: why it matters, what to do,
 rough cost. None are regressions - the tree is green without them.
 
 ## 1. Symlink deploy (highest execution-reliability leverage)
@@ -12,14 +13,24 @@ rough cost. None are regressions - the tree is green without them.
 - Do: replace the copy with a symlink to this repo via sync-skill (one canonical dir, all agents).
 - Cost: minutes. Guard: check the skills-manager app tolerates symlinked skill dirs first.
 
-## 2. Execute the pending confirmatory A/B (already planned, not run)
+## 2. Run the production pilot before spending on more synthetic A/B
+
+- Why: synthetic fixtures do not answer whether `/supergoal` is actually invoked on real work, whether
+  installs drift, or which devices help in production sessions. The active plan moves evidence to real
+  tasks while keeping private code out of this public repo.
+- Do: run `docs/changelog/2026-07/02-production-adoption/plan.md`: symlink deploy, trigger accuracy,
+  then a 10-task or 2-week production pilot with only metrics in
+  `docs/experiments/production-pilot/LEDGER.md`.
+- Cost: several real tasks over time. Guard: no company code, repo names, secrets, or run-vault contents
+  go into this public repo.
+
+## 2b. Revisit the pending confirmatory A/B only after the pilot
 
 - Why: the lean-out (2c743d3) shipped on directional evidence measured with paraphrased prompts,
-  not the shipped files; and the critic keep-vs-remove decision needs a genuinely under-specified
-  fixture. Both questions are specced in
-  `docs/experiments/2026-07-02-lean-skill-confirmatory-ab/PLAN.md` with gate rules
-  (role_source=shipped_files, n>=6).
-- Do: run PLAN.md as written; commit the verdict (lean proven-or-revert, critic keep-or-remove).
+  not the shipped files; and the critic keep-vs-remove decision may still need a genuinely
+  under-specified fixture if production evidence cannot answer it.
+- Do: keep `docs/experiments/2026-07-02-lean-skill-confirmatory-ab/PLAN.md` ready, but spend the
+  ~$100-170 only if the production pilot leaves the lean/no-critic question unresolved.
 - Cost: ~$100-170 compute, several wall-clock hours (serial runner).
 
 ## 3. Measure description trigger accuracy

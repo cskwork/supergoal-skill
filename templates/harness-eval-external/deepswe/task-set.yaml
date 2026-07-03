@@ -12,7 +12,9 @@ benchmark:
     - "verifier/ctrf.json"
     - "verifier/test-stdout.txt"
     - "verifier/run.log"
-default_task_id: happy-dom-abort-pending-body-reads
+default_task_id: etree-xml-diff-patch
+default_effectiveness_task_id: etree-xml-diff-patch
+smoke_task_id: happy-dom-abort-pending-body-reads
 stop_policy:
   timeout_seconds: 900
   valid_outcomes:
@@ -65,6 +67,17 @@ decision_rule:
   proven_claim: "At least 6 paired seeds per arm across multiple tasks, paired McNemar p < 0.05 on binary task outcomes, and no unacceptable cost/time regression."
   no_signal: "If both arms pass every selected task, report not_proven_no_headroom and select harder held-out tasks."
 tasks:
+  - id: etree-xml-diff-patch
+    task_url: "https://deepswe.datacurve.ai/data/v1/tasks/etree-xml-diff-patch"
+    local_path: "tasks/etree-xml-diff-patch"
+    upstream_repo: "https://github.com/beevik/etree"
+    base_commit: "4032e04c8f2e2f35e43ce5d772fcef14a5df4d74"
+    category: feature_request
+    language: go
+    why_selected: "Default scoring task: XML diff, patch, reverse patch, three-way merge, and summaries require larger domain implementation breadth than the saturated Happy DOM smoke task."
+    public_headroom_note: "Selected after Happy DOM saturated current Codex gpt-5.5 low reasoning. Do not call it proven-discriminating until a completed paired run shows baseline headroom or a nonzero harness-vs-baseline delta."
+    effectiveness_default: true
+    minimum_pilot: true
   - id: happy-dom-abort-pending-body-reads
     task_url: "https://deepswe.datacurve.ai/data/v1/tasks/happy-dom-abort-pending-body-reads"
     local_path: "tasks/happy-dom-abort-pending-body-reads"
@@ -72,9 +85,10 @@ tasks:
     base_commit: "82a0888cb2c87a6123e05424b528f8e8c9b3e426"
     category: bugfix
     language: typescript
-    why_selected: "Default public pilot: async shutdown bugfix with pending body reads, formData parsing, timers, navigation cleanup, and preservation checks."
-    public_headroom_note: "The interrupted 2026-07-03 setup run showed only diagnostic headroom. The later no-interrupt Codex gpt-5.5 low run saturated both arms: baseline and harness reward=1, f2p=14/14, p2p=165/165. Keep this as the default public full-cycle pilot, but require harder held-out tasks for effectiveness claims."
-    minimum_pilot: true
+    why_selected: "Smoke/reliability task: async shutdown bugfix with pending body reads, formData parsing, timers, navigation cleanup, and preservation checks."
+    public_headroom_note: "The interrupted 2026-07-03 setup run showed only diagnostic headroom. The later no-interrupt Codex gpt-5.5 low run saturated both arms: baseline and harness reward=1, f2p=14/14, p2p=165/165. Keep this as a public smoke/full-cycle reliability task only."
+    smoke_only: true
+    minimum_pilot: false
   - id: cliffy-config-file-parsing
     task_url: "https://deepswe.datacurve.ai/data/v1/tasks/cliffy-config-file-parsing"
     local_path: "tasks/cliffy-config-file-parsing"
@@ -94,31 +108,24 @@ tasks:
     language: javascript
     why_selected: "CRDT-style map conflict detection requires domain reasoning about deterministic concurrent writes."
     minimum_pilot: false
-  - id: etree-xml-diff-patch
-    task_url: "https://deepswe.datacurve.ai/data/v1/tasks/etree-xml-diff-patch"
-    local_path: "tasks/etree-xml-diff-patch"
-    upstream_repo: "https://github.com/beevik/etree"
-    base_commit: "4032e04c8f2e2f35e43ce5d772fcef14a5df4d74"
-    category: feature_request
-    language: go
-    why_selected: "XML diff, patch, reverse patch, merge, and summaries test larger domain implementation breadth."
-    minimum_pilot: false
 commands:
   full_cycle_runner:
+    - "node templates/harness-eval-external/deepswe/run-full-cycle.mjs --task etree-xml-diff-patch --agent codex --model gpt-5.5 --reasoning-effort low --codex-auth-json auto --timeout-seconds 900 --run-root /tmp/sg-deepswe-etree-full-cycle"
+  smoke_full_cycle_runner:
     - "node templates/harness-eval-external/deepswe/run-full-cycle.mjs --task happy-dom-abort-pending-body-reads --agent codex --model gpt-5.5 --reasoning-effort low --codex-auth-json auto --timeout-seconds 900 --run-root /tmp/sg-deepswe-happy-dom-full-cycle"
   full_cycle_dry_run:
-    - "node templates/harness-eval-external/deepswe/run-full-cycle.mjs --dry-run --task happy-dom-abort-pending-body-reads --agent codex --model gpt-5.5 --reasoning-effort low --codex-auth-json auto --timeout-seconds 900 --run-root /tmp/sg-deepswe-happy-dom-full-cycle"
+    - "node templates/harness-eval-external/deepswe/run-full-cycle.mjs --dry-run --task etree-xml-diff-patch --agent codex --model gpt-5.5 --reasoning-effort low --codex-auth-json auto --timeout-seconds 900 --run-root /tmp/sg-deepswe-etree-full-cycle"
   clone_benchmark:
     - "git clone https://github.com/datacurve-ai/deep-swe /tmp/deep-swe"
     - "git -C /tmp/deep-swe checkout 3cda4081fed96103a6395de39c85e9b20275e307"
   install_runner:
     - "uv tool install datacurve-pier"
   prepare_harness_task:
-    - "node templates/harness-eval-external/deepswe/prepare-supergoal-arm.mjs /tmp/deep-swe /tmp/deep-swe-supergoal happy-dom-abort-pending-body-reads ."
+    - "node templates/harness-eval-external/deepswe/prepare-supergoal-arm.mjs /tmp/deep-swe /tmp/deep-swe-supergoal etree-xml-diff-patch ."
   baseline_example:
-    - "pier run -p /tmp/deep-swe/tasks/happy-dom-abort-pending-body-reads --agent mini-swe-agent --model openai/gpt-5.5"
+    - "pier run -p /tmp/deep-swe/tasks/etree-xml-diff-patch --agent mini-swe-agent --model openai/gpt-5.5"
   harness_example:
-    - "pier run -p /tmp/deep-swe-supergoal/tasks/happy-dom-abort-pending-body-reads --agent mini-swe-agent --model openai/gpt-5.5"
+    - "pier run -p /tmp/deep-swe-supergoal/tasks/etree-xml-diff-patch --agent mini-swe-agent --model openai/gpt-5.5"
 artifacts:
   required_per_run:
     - "Pier trajectory metadata"

@@ -162,17 +162,17 @@ Required external-task provenance:
 - original task body hash for the harness arm and source hashes for the approved harness reference
 - exact runner, agent, model, seed policy, token source, duration source, and environment
 
-Default public pilot candidate:
+Default public scoring candidate:
 
-- `happy-dom-abort-pending-body-reads` from DeepSWE v1.1: upstream
-  `https://github.com/capricorn86/happy-dom`, base commit
-  `82a0888cb2c87a6123e05424b528f8e8c9b3e426`, TypeScript bugfix. Use it first because it is a real
-  async lifecycle task with pending body reads, abort semantics, multipart parsing, navigation cleanup,
-  and preservation checks. The interrupted 2026-07-03 Codex pilot showed only setup evidence. The later
-  no-interrupt full-cycle run completed both arms but saturated current Codex `gpt-5.5` low reasoning:
-  baseline and harness both reached `reward=1`, `f2p=14/14`, `p2p=165/165`. Treat this task as the
-  default public full-cycle/reliability pilot; do not claim effectiveness from it unless future settings
-  restore baseline headroom.
+- `etree-xml-diff-patch` from DeepSWE v1.1: upstream `https://github.com/beevik/etree`, base commit
+  `4032e04c8f2e2f35e43ce5d772fcef14a5df4d74`, Go feature request. Use it first for public
+  effectiveness scoring because it requires XML diff, patch, reverse patch, three-way merge, and
+  summaries. It is a candidate, not proof: a completed paired run still has to show baseline headroom or
+  a nonzero harness-vs-baseline delta.
+- `happy-dom-abort-pending-body-reads` is smoke/reliability only under current Codex `gpt-5.5` low
+  settings. The no-interrupt full-cycle run completed both arms and saturated the verifier:
+  baseline and harness both reached `reward=1`, `f2p=14/14`, `p2p=165/165`. Do not use this task as the
+  default scoring test while it has no baseline headroom.
 - `cliffy-config-file-parsing` is now a secondary broad feature task, not the default low-effort public
   pilot, because the earlier low-turn Claude attempt exceeded budget and produced no patch.
 
@@ -189,7 +189,8 @@ External A/B scoring:
   interruption is diagnostic only.
 - headroom: if baseline and harness both complete with perfect public verifier score, report
   `not_proven_no_headroom`, keep the artifact as a valid full-cycle check, and add harder held-out public
-  tasks before making an effectiveness claim.
+  tasks before making an effectiveness claim. A scoring/effectiveness run must not count a no-headroom
+  task as signal.
 
 Do not claim a public benchmark win from `u3`. The authz-cache `u3` result only proves hidden-test
 discrimination: starter/lazy can pass visible 3/3 while hidden behavior fails 1/8, and the reference can

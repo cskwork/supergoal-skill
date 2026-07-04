@@ -1,23 +1,16 @@
 # Plan grounding - before plan freeze
 
-At the end of Frame, before Build, the planner grounds `plan.md` in the project's domain and
-architecture. The planner answers its own pressure test from explored docs/code; do not ask the human
-unless docs cannot decide a load-bearing choice (genuine ambiguity blocks the freeze - SKILL.md hard
-stops). One choice is always the user's, not the docs': if the grounded approach's blast radius reaches
-past its explicit target (changes another function/module or alters observed behavior), hand it to the
-blast-radius confirm in `reference/interview.md` before freezing.
-
-This file is the standalone contract.
+At Frame end, before Build, ground `plan.md` in current docs/code/domain. Ask the human only when current
+evidence cannot decide a load-bearing choice. If the grounded approach's blast radius reaches past its
+explicit target, run the blast-radius confirm in `reference/interview.md` before freeze.
 
 ## Required input
 
-Read the run `README.md` `## Domain Brief` first when present. It is the compact payload from
-`reference/domain-context.md`: selected knowledge files, terms, invariants, current-code verification,
-entry points, test commands, and gaps.
+Read the run `README.md` `## Domain Brief` first when present: selected knowledge files, terms,
+invariants, current-code verification, entry points, test commands, gaps.
 
-Use saved domain facts only as pointers. Any load-bearing plan choice must cite current docs/code or
-name the gap. If saved domain context conflicts with current code, current code wins and the conflict
-goes into `plan.md`.
+Saved domain facts are pointers. Load-bearing choices cite current docs/code or name the gap. Current
+code wins conflicts; record them in `plan.md`.
 
 ## Decision-tree pressure test
 
@@ -40,33 +33,29 @@ Use this for Track A and whenever Track B depends on domain language or system b
 
 ## Track A - feature / novel work
 
-1. Locate the Domain Brief, `brief.md`, the Explore map, and relevant repo docs or decision records
-   if present. Do not re-litigate settled decisions.
+1. Locate Domain Brief, `brief.md`, Explore map, repo docs/decisions. Do not re-litigate settled decisions.
 2. Walk the design tree. For each open question, choose the best option and justify it from docs/code.
    Escalate only unresolved load-bearing choices.
 3. Resolve vague or overloaded terms against the glossary. Cross-check every "how it works" claim
    against code.
-4. Update docs only when useful: add domain terms to the glossary; write decision notes only for
-   hard-to-reverse surprising tradeoffs.
+4. Update docs only when useful: glossary terms or hard-to-reverse surprising tradeoffs.
 5. Put resolved choices and definitions into `plan.md`.
-6. Put the Before/After Eval proof strategy into `plan.md`: what is absent or red before, which
-   repo/evaluator commands prove after, and what residual risk will remain.
+6. Put the Before/After Eval strategy into `plan.md`: before proof, after commands, residual risk.
 
 ## Track B - refactor / improve codebase
 
 Vocabulary (Module, Interface, Depth, Seam, Adapter, Leverage, Locality): defined once in
 `reference/arch.md` (`## Vocabulary`) - use those definitions; do not restate them here.
 
-1. Read the Domain Brief and relevant repo docs or decision records first.
+1. Read Domain Brief and relevant repo docs/decisions first.
 2. Find friction: shallow modules, cross-module bouncing, test-only extractions with no locality, leaky
    seams, untestable interfaces.
 3. Deletion-test suspected shallow code: does removing it concentrate complexity or merely move it?
 4. Rank by leverage. Pressure-test top candidates: what sits behind the seam, what tests survive. One
    adapter is hypothetical; two adapters make a real seam.
-5. Write chosen deepenings into `plan.md` with files, problem, solution, and locality/leverage benefit.
-   Surface decision conflicts only when the friction warrants reopening them.
-6. Write the brownfield Before/After Eval strategy into `plan.md`: exact behavior to preserve, baseline
-   capture command or artifact, after comparison, and intentional drift if any.
+5. Write chosen deepenings into `plan.md`: files, problem, solution, locality/leverage benefit.
+6. Write brownfield Before/After Eval strategy: behavior to preserve, baseline artifact, after comparison,
+   intentional drift.
 
 ## Exit
 

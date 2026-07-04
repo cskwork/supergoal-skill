@@ -125,3 +125,13 @@
 **변경:** `SKILL.md`, `reference/role-loop.md`, `tests/role-loop-contract.test.sh`에 “not default / use when / do not use when / bounded” contract를 추가.
 
 **기각한 대안:** critic/fixer 삭제. 삭제하면 noisy default는 줄지만, 스킬이 hidden requirements를 구조적으로 표면화하는 유일한 레버를 잃는다.
+
+## skill/router compression — succinct + DRY pass
+
+**결정:** `SKILL.md`는 router와 phase gate 중심으로 압축하고, 반복되던 default-loop·run-isolation·critic/escalation 세부 절차는 `reference/role-loop.md`가 소유하게 함. `delivery-gate`, `qa-only`, `learn-domain`, `debugging`, `domain-context`, `qa`, `spec`, `interview`, `plan-grounding`도 중복 설명과 rationale을 줄여 절차·gate 중심으로 정리.
+
+**이유:** agent가 매번 먼저 읽는 entrypoint는 route selection이 본업이고, 세부 gate는 route가 필요할 때만 reference에서 읽는 편이 context load가 작다. 각 reference는 자기 mode의 source of truth로 남겨 test anchor가 한 곳을 가리키게 했다.
+
+**테스트 변경:** `tests/delivery-gate-contract.test.sh`, `tests/role-loop-contract.test.sh`, `tests/workflow-contract.test.sh`를 DRY ownership에 맞춤. `SKILL.md`는 route/done hook만 검증하고, branch/worktree·delivery-proof·critic semantics는 해당 reference 파일에서 검증한다.
+
+**기각한 대안:** 모든 reference 파일을 기계적으로 단축하지 않음. `teach`, `harness-eval`, `taste-*`는 긴 파일이지만 각자 독립 route/reference data와 vendored contract를 담고 있어, 이번에는 명백한 중복 제거와 anchor ownership 정리에 한정.

@@ -37,16 +37,12 @@ require_file "delivery gate reference exists" "reference/delivery-gate.md"
 require_file "delivery proof template exists" "templates/delivery-proof.md"
 require_file "run state template exists" "templates/run-state.json"
 
-require_text "SKILL requires Before/After Eval" "SKILL.md" "Before/After Eval complete"
+# SKILL.md is the router/gate; the detailed delivery contract lives in reference files.
+require_text "SKILL keeps delivery done hook" "SKILL.md" "Before/After Eval complete"
 require_text "SKILL points at delivery gate" "SKILL.md" "reference/delivery-gate.md"
-require_text "SKILL starts delivery proof in Frame" "SKILL.md" 'start `delivery-proof.md`'
-require_text "SKILL starts run state in Frame" "SKILL.md" 'create `run-state.json`'
-require_text "SKILL records completion promise" "SKILL.md" "Write a completion promise"
-require_text "SKILL seeds requirement trace" "SKILL.md" "Seed numbered requirements in"
-require_text "SKILL requires clean backward trace" "SKILL.md" "Backward-trace: clean"
-require_text "SKILL requires neighbor characterization baseline" "SKILL.md" "capture neighbor characterization baseline"
-require_text "SKILL records reproduction fidelity" "SKILL.md" "record reproduction fidelity"
-require_text "SKILL requires after evidence before done" "SKILL.md" "after evidence, resolved decision gates, and residual risk"
+require_text "SKILL points at proof template" "SKILL.md" "templates/delivery-proof.md"
+require_text "SKILL points at run state template" "SKILL.md" "templates/run-state.json"
+require_text "SKILL keeps clean trace done hook" "SKILL.md" "no orphan scope"
 
 require_text "role loop starts proof before mutation" "reference/role-loop.md" "Before any file mutation"
 require_text "role loop starts run state before mutation" "reference/role-loop.md" 'create `run-state.json`'

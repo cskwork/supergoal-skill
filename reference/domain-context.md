@@ -1,19 +1,18 @@
 # Domain context - repo-local knowledge without prompt bloat
 
-Domain context is a durable, searchable knowledge pack at the target repo root. It is separate from
-the run vault and separate from model memory.
+Domain context is a durable, searchable knowledge pack at the target repo root. It stays separate from
+the run vault and model memory.
 
 - Vault: per-run evidence and decisions in `docs/changelog/<YYYY-MM>/<DD-topic>/` (one folder per
   run: `README.md`, `surfaced-requirements.md`, verification evidence).
 - Domain context: local reusable domain facts, stored by default in `.domain-agent/`.
 - Model memory: optional reminders only; never the source of truth for a fix.
 
-Current docs/code always win over saved domain context. Treat `.domain-agent/` as a routing index
-that helps agents find the right code, tests, and terms quickly.
+Current docs/code always win. Treat `.domain-agent/` as a routing index for code, tests, terms, and
+flows.
 
-Load this reference for GREENFIELD (new feature needs domain fit / first knowledge pack), DEBUG
-(before choosing a failing proof or root-cause path), and LEGACY (before the affected-code map). Not
-for pure TEACH unless the user asks about the target repo's domain.
+Load for GREENFIELD domain fit, DEBUG proof/root-cause routing, and LEGACY affected-code maps. Skip for
+pure TEACH unless the user asks about repo domain.
 
 ## First-run setup
 
@@ -24,11 +23,10 @@ not exist, ask one concise question:
 I do not see domain-agent knowledge for this repo. Should I create it at `.domain-agent/`, or use another path?
 ```
 
-Then: create the chosen folder from `templates/domain-agent/`; write `config.json` (repo, path,
-`language`, dates); add the chosen path to the repo root `.gitignore` if it is absent; record the path
-in the run vault `README.md`. This is the only allowed repo write before Build besides vault setup -
-knowledge scaffolding and `.gitignore` only, never product source code. If the user declines storage,
-run with an ephemeral Domain Brief in the vault only.
+Then create the chosen folder from `templates/domain-agent/`; write `config.json` (repo, path, `language`,
+dates); Add the chosen path to the repo root `.gitignore` if absent; record the path in the run vault
+`README.md`. Before Build, only knowledge scaffolding, `.gitignore`, and vault setup may write. If the
+user declines storage, use an ephemeral Domain Brief in the vault.
 
 Set `language` to the repo's docs language (SKILL.md), or `mixed` when no single one dominates.
 
@@ -37,8 +35,7 @@ Set `language` to the repo's docs language (SKILL.md), or `mixed` when no single
 Use these folder/file names even when the user chooses a different root path:
 
 - `config.json` - version, repo, language, knowledgePath, createdAt, lastUpdated.
-- `index.md` - router only: systems, feature areas, flow files, search keys; short enough to read
-  first on every run.
+- `index.md` - router only: systems, feature areas, flow files, search keys; short enough to read first.
 - `glossary.md` - domain terms as used in THIS repo (not generic industry meaning); pick one
   canonical term per concept and list avoided aliases.
 - `invariants.md` - business/safety rules; each with a source, confidence, and one way to verify it.
@@ -56,14 +53,13 @@ Use these folder/file names even when the user chooses a different root path:
   list, `Comparison:` type, named DB checks, saved baseline values, reproduction notes, coverage,
   uncovered areas, residual risks, and the re-run command / Playwright spec path; indexed in
   `index.md` under `## QA Suites`. No secrets, raw rows, or PII.
-- `qa/nav-map.md` - the single browser navigation map for this repo: entry/auth flow, `screen -> URL`
-  routes, popup/new-tab triggers and how to switch the driver to them, stable selectors, and each
-  screen's real API calls (method + path). Loaded before any browser QA/observe run and self-healed
-  on drift (`reference/qa.md` "Navigation map"). No secrets, raw rows, or PII.
+- `qa/nav-map.md` - one browser navigation map: entry/auth, `screen -> URL`, popup/new-tab handling,
+  stable selectors, real API calls. Load before browser QA/observe and self-heal on drift
+  (`reference/qa.md` "Navigation map"). No secrets, raw rows, or PII.
 
 ## Retrieval loop (every run; capped)
 
-The goal is a small working brief, not a domain encyclopedia in the prompt.
+Goal: a small working brief, not a domain encyclopedia.
 
 1. Read `config.json`, then `index.md` (keep it as the router).
 2. Extract ticket keywords: routes, errors, domain terms, DTO/entity names, external systems,
@@ -75,22 +71,21 @@ The goal is a small working brief, not a domain encyclopedia in the prompt.
    `codegraph_explore`, call paths) and find current entry points.
 6. Write a compact `## Domain Brief` to the run vault `README.md`.
 
-Hard caps: Select at most five domain files for a phase unless the human approves more - if more seem
-relevant, route through `index.md` again and name the exact uncertainty. Prefer one `flows/*.md`
-file; two is a warning the ticket may span domains. Keep the Domain Brief under 80 lines - only facts
-needed for the current ticket. If a file grows too broad, split it by feature area and update
-`index.md`.
+Hard caps: Select at most five domain files for a phase unless the human approves more. If more seem
+relevant, route through `index.md` again and name the uncertainty. Prefer one `flows/*.md`; two means the
+ticket may span domains. Keep the Domain Brief under 80 lines. Split broad files by feature area and
+update `index.md`.
 
 ## Freshness loop
 
-Do not refresh the whole pack every run; verify selected facts against current code instead.
+Do not refresh the whole pack every run; verify selected facts against current code.
 
 - Light refresh threshold: 5 days after `config.json.lastUpdated` - run CodeGraph status for affected
   repos, check docs/source changed since `lastUpdated`, re-read only selected + cited files, patch
   stale entries surgically.
-- Full review threshold: 30 days after `config.json.lastUpdated`, or major repo changes / repeated
-  stale-context misses - review the router, code map, test map, invariants, and high-traffic flows;
-  split broad files instead of appending more context.
+- Full review threshold: 30 days after `config.json.lastUpdated`, major repo changes, or repeated
+  stale-context misses - review router, code map, test map, invariants, high-traffic flows; split broad
+  files instead of appending context.
 - Triggered refresh: saved knowledge conflicts with current code, or a run proves a stable new
   routing fact. `qa/nav-map.md` is verified against the live site on every browser run; correct a
   drifted row (selector, route, popup target, API path) in place as a triggered refresh, not a
@@ -112,14 +107,13 @@ Do not refresh the whole pack every run; verify selected facts against current c
 - Gaps: <unknowns, or 'none'>
 ```
 
-The Domain Brief is the only domain-context payload passed to later phases by default.
+By default, later phases receive only the Domain Brief.
 
 ## Saving loop
 
-At the end of a run, save new knowledge only when ALL hold: stable across future tickets; verified
-against current code/tests/docs; no secrets, tokens, raw logs, customer data, or PII; improves
-routing, reproduction, planning, or verification for future agents. Ticket-specific evidence stays in
-the vault, not `.domain-agent/`.
+Save new knowledge only when ALL hold: stable across future tickets; verified against current
+code/tests/docs; no secrets/tokens/raw logs/customer data/PII; improves future routing, reproduction,
+planning, or verification. Ticket-specific evidence stays in the vault.
 
 Do not save: Raw investigation transcripts, long code excerpts, complete tickets, temporary
 hypotheses, or facts one current-code lookup finds just as fast.
@@ -131,11 +125,9 @@ browser navigation fact (route, popup/new-tab, stable selector, `screen -> API`)
 each save, update `index.md` search keys and `config.json.lastUpdated`; keep entries short and split
 files that accumulate unrelated content.
 
-Terminology updates: capture a resolved term once it is stable enough to help routing; challenge
-vague or overloaded words against the selected files, current repo docs, and the glossary before
-adding a synonym; keep implementation details in `code-map.md`/`flows/*.md`/`test-map.md`, not the
-glossary; if the user's wording conflicts with saved language, record the conflict in the Domain
-Brief - do not silently invent a new term.
+Terminology updates: capture a stable routing term; challenge vague/overloaded words against selected
+files, current docs, and glossary before adding a synonym; keep implementation details in
+`code-map.md`/`flows/*.md`/`test-map.md`, not glossary; record wording conflicts in the Domain Brief.
 
 Decision updates: prefer the repo's existing decision records; use `decisions/*.md` only for choices
 hard to reverse, surprising without context, and made between real alternatives - never ordinary

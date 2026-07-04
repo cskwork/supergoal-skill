@@ -5,49 +5,35 @@ description: supergoal - baseline-first delivery. Use for "/supergoal", "supergo
 
 # /supergoal - baseline-first
 
-One objective -> the smallest correct change -> verified against ground truth. Trivial single edit: skip
-this skill and edit directly. This file is a router; each phase loads only the reference it needs.
+One objective -> smallest correct change -> verified against ground truth. Trivial single edit: skip this
+skill and edit directly. `SKILL.md` is the router; `reference/` carries procedure.
 
-**Standing rules (read first, every mode).** Before classifying the mode, read `.supergoal/rules/RULES.md`
-in the project if present and honor it across all phases as the top-priority preferences - but rules never
-weaken safety gates. Create or edit it only when the user explicitly asks (`reference/rules.md`).
+**Standing rules (read first, every mode).** Before classifying the mode, read
+`.supergoal/rules/RULES.md` if present. Honor it across phases as top-priority preference, but rules never
+weaken safety gates. Create/edit it only when the user explicitly asks (`reference/rules.md`).
 
 ## Core principles
 
-- Verify against ground truth: re-run the project's REAL tests and re-read the prose spec for rules the
-  tests miss; never optimize to a self-graded proxy.
-- Smallest correct change; match surrounding code; never rewrite a whole file for a few lines.
-  Scope-minimalism governs code surface area, NOT visual quality: for user-facing UI a polished result is
-  baseline correctness, not padding.
-- Default to the equal-compute improve loop: Build -> Improve full spec -> Improve edge cases -> Final
-  Verify. After Build, a fresh-context improver re-reads every stated-or-implied requirement, fixes the
-  smallest full-spec gap, then a separate fresh-context edge pass attacks degenerate values
-  (null/undefined/empty/boundary), error paths, recovery, state/protocol, concurrency, and compatibility.
-  Non-trivial code runs seed numbered requirements in `## Requirement Trace`; done requires every row met
-  and `Backward-trace: clean` (no orphan scope). Production/source-code domain ambiguity that changes
-  user-visible behavior becomes an `ask-user` decision gate; generic coding-task ambiguity with no user
-  available uses the most conservative, reversible default and records it. Critic/Fixer is not part of
-  the default loop. Use it only as opt-in escalation for under-specified / latent-correctness work: an
-  independent critic classifies inferred requirements; only grounded must-behaviors become FAILING tests,
-  while ambiguous or product-changing semantics become `ask-user` decision gates.
-- For non-trivial code changes, run a Before/After Eval before Build: prove the before state, the after
-  target, and the delta with trusted repo/evaluator commands (`reference/delivery-gate.md`).
+- Ground truth beats proxy: re-run REAL tests, re-read the prose spec, and do not optimize to self-grading.
+- Smallest correct change; match surrounding code. Scope-minimalism governs code surface area, not UI
+  quality: polished user-facing UI is baseline correctness.
+- Non-trivial code changes use Before/After Eval before Build: prove before, target after, and delta with
+  trusted commands (`reference/delivery-gate.md`).
 - Ask only when genuinely ambiguous; resolve code-answerable questions by reading the code.
 - Docs language: for persistent repo docs (`docs/**`, run vaults, `.domain-agent/**`, ADR/spec/changelog),
-  match the target repo's dominant prose language; mixed or none -> the user's language. Keep identifiers,
+  match the target repo's dominant prose language; mixed/none -> the user's language. Keep identifiers,
   paths, commands, and machine-checked anchors in canonical English so checks keep matching.
 - Hard stops: a destructive or irreversible step (drop data, force-push, external publish) needs explicit
   consent; if the real tests cannot pass, report it - never fake a pass.
 
 ## Run isolation (GREENFIELD / DEBUG / LEGACY that edits code)
 
-Right after mode detection, resolve the source/base branch and target/integration branch (repo policy,
-else ask). Verify both refs before mutating files, then create a run worktree from the source/base branch
-and do all work there. Do not mutate the original checkout. Commit or merge only into the verified
+After mode detection, resolve the source/base branch and target/integration branch (repo policy, else
+ask). Verify both refs before mutating files, then create a run worktree from the source/base branch. Do
+all code work there. Do not mutate the original checkout. Commit or merge only into the verified
 target/integration branch after verification and user acceptance. Commit is hard-gated by the Commit gate
-(`reference/delivery-gate.md`, backstop `templates/commit-gate.sh`): a non-green run does not commit -
-resolve it in the loop or ask the user about the requirement, never commit on an assumption. Full contract:
-`reference/role-loop.md`.
+(`reference/delivery-gate.md`, backstop `templates/commit-gate.sh`): non-green means fix/ask, never commit
+on assumption. Full contract: `reference/role-loop.md`.
 
 ## IntentGate (classify before routing, state it in one line)
 
@@ -66,8 +52,8 @@ GREENFIELD/DEBUG/LEGACY only after the edit target is clear.
 | Signal in the objective | Mode | Route |
 |---|---|---|
 | build / make / ship a new app/tool | GREENFIELD | default loop |
-| fix / broken / failing / crash / why does | DEBUG | default loop; observe the live symptom boundary first, then reproduce with a failing test (`reference/debugging.md`); web: `reference/qa.md`, `reference/playwright-cli.md` |
-| add / integrate / refactor existing code | LEGACY | default loop; map first (`agents/explore.md`, `reference/domain-context.md`); optional DB evidence (`reference/db-access.md`); existing-API refactor: capture its exact behavior first as a preserve-baseline; shared code/state change past *very easy*: capture neighboring behavior first as a characterization baseline (`reference/qa.md`) |
+| fix / broken / failing / crash / why does | DEBUG | default loop; observe live symptom, then failing-test repro (`reference/debugging.md`); web: `reference/qa.md`, `reference/playwright-cli.md` |
+| add / integrate / refactor existing code | LEGACY | default loop; map first (`agents/explore.md`, `reference/domain-context.md`); optional DB evidence (`reference/db-access.md`); existing API: capture its exact behavior first as a preserve-baseline; shared code/state past *very easy*: characterization baseline (`reference/qa.md`) |
 | spec / requirements first / 스펙 문서로 구조화 | SPEC | spec-first prefix: requirements -> design -> tasks under `docs/spec/`, then tasks drive Build (`reference/spec.md`) |
 | explain / teach / how does X work (no code) | TEACH | stateful `teach/<topic>/` workspace (`reference/teach.md`); lessons must pass `teach-lesson-gate.mjs` |
 | learn / onboard / map this codebase (persist a wiki) | LEARN-DOMAIN | Survey -> Map -> Ground -> Onboard a `.domain-agent/` wiki (`reference/learn-domain.md`; gate `learn-grounding-gate.mjs`) |
@@ -90,54 +76,40 @@ phase transition; it observes only, never gates (`reference/observability.md`).
 
 ## Default loop (GREENFIELD / DEBUG / LEGACY) - verification-first, subagent-default
 
-Work runs in fresh-context subagents by default (the dispatching agent is the "conductor"); a trivial
-single edit skips the loop and edits inline. Independent units (QA scenario shards, review dimensions) run
-in parallel. Difficulty gate: *very easy* -> skip; harder -> red-green is REQUIRED, plus DB evidence when
-persisted data is load-bearing. The mandatory core is Build -> Improve full spec -> Improve edge cases ->
-Final Verify. Critic/Fixer is not part of the default loop; use it only when hidden requirements are the
-value being tested. Full contract: `reference/role-loop.md`.
+Work runs in fresh-context subagents by default; the dispatching agent is the conductor. Trivial single
+edit: skip and edit inline. Parallelize independent QA shards/review dimensions. *Very easy* can skip the
+loop; harder work requires red-green, plus DB evidence when persisted data is load-bearing. Full contract:
+`reference/role-loop.md`.
 
-1. **Frame.** Restate goal + falsifiable acceptance criteria in one line. Seed numbered requirements in
-   `## Requirement Trace`. Write a completion promise:
-   the promised outcome, required proof, stop condition, and `max_iterations` (default 8). If underspecified, ask <=5
-   high-leverage questions; and once the approach is grounded, if the fix's blast radius reaches past
-   its target, confirm it before Build - tiered, hard-gated when wide/destructive/behavior-changing
-   (`reference/interview.md`). Resolve code-answerable questions by reading code. UI work: load
-   `reference/ui-ux.md` now. Non-trivial code work: start `delivery-proof.md` from
-   `templates/delivery-proof.md`, create `run-state.json` from `templates/run-state.json`, and record
-   the Before/After Eval (`reference/delivery-gate.md`).
-2. **Build.** Smallest correct change, test-first; match surrounding style; minimal diff. Bug: reproduce
-   with a failing test first (`reference/debugging.md`). Shared code/state changes past *very easy*:
-   capture neighbor characterization baseline before editing.
-3. **Improve full spec (mandatory core).** A fresh-context improver re-reads the WHOLE prose spec from
-   scratch and, for every stated-or-implied behavior, confirms the code is correct and fixes the smallest
-   gap even when visible tests are green (they are not the spec). Production/source-code domain ambiguity
-   that changes behavior stops as `ask-user`; generic coding-task ambiguity with no user available uses a
-   conservative, reversible default and records the choice.
-4. **Improve edge cases (mandatory core).** A separate fresh-context improver attacks degenerate inputs
-   (null/undefined/empty/boundary), error/recovery paths, state/protocol, concurrency, compatibility, and
-   security side effects. Add or adjust tests only for grounded `must` behavior; route ambiguous
-   product/domain choices to the user instead of inventing stricter semantics.
-5. **Final Verify/QA (mandatory core).** Re-run the project's REAL tests and verify no fresh full-spec or
-   edge-case gap remains; if a gap appears, route back to the relevant improve pass. Browser UI: complete
-   browser app verification with `qa-gate.sh <vault> browser` (lint, typecheck, build, and screenshots do
-   not substitute). Data load-bearing past *very easy*: DB evidence too. Re-run captured neighbor
+Mandatory core: Build -> Improve full spec -> Improve edge cases -> Final Verify. Critic/Fixer is not part
+of the default loop; use it only when hidden requirements are the value being tested.
+
+1. **Frame.** Restate goal + falsifiable acceptance criteria. Seed numbered requirements in
+   `## Requirement Trace`. Write a completion promise: outcome, proof, stop condition, `max_iterations`
+   (default 8). Ask <=5 high-leverage questions only when needed; confirm wide/destructive/behavior-
+   changing blast radius after grounding (`reference/interview.md`). UI: load `reference/ui-ux.md`.
+   Non-trivial code: start `delivery-proof.md` from `templates/delivery-proof.md`, create
+   `run-state.json` from `templates/run-state.json`, and record the Before/After Eval.
+2. **Build.** Smallest correct change, test-first, surrounding style. Bug: failing test first
+   (`reference/debugging.md`). Shared code/state past *very easy*: capture neighbor characterization
+   baseline before editing.
+3. **Improve full spec.** Fresh-context improver re-reads the full prose spec, `## Requirement Trace`,
+   code, tests, and repo/data rules; fix the smallest stated-or-implied behavior gap.
+   Production/source-code domain ambiguity that changes behavior stops as `ask-user`; generic no-user
+   coding ambiguity uses a conservative, reversible default and records it.
+4. **Improve edge cases.** Separate fresh-context improver attacks degenerate values, error/recovery,
+   state/protocol, concurrency, compatibility, security, and cleanup. Test only grounded `must` behavior;
+   route product/domain choices to the user.
+5. **Final Verify/QA.** Re-run REAL tests and disprove against spec; route fresh gaps back to Improve.
+   Browser UI: complete browser app verification with `qa-gate.sh <vault> browser`. Re-run neighbor
    baselines, close `## Requirement Trace`, and keep `Backward-trace: clean`. DEBUG prod issue: record
-   reproduction fidelity; if not exact, done is conditional on residual risk + post-deploy confirmation
-   plan. Stop on green only after updating `delivery-proof.md` with after evidence, resolved decision
-   gates, and residual risk; report what was verified, with command output.
-6. **Critic escalation (opt-in; independent, no src edits).** For under-specified / latent-correctness
-   work - where the lever is surfacing requirements ABSENT from the prompt - escalate to an independent
-   critic that did not write the code: re-read the prose spec + repo/data rules
-   (`reference/domain-context.md`, `domain-rules.md`), classify inferred behavior as `must`, `should`, or
-   `ask-user`, write FAILING tests only for grounded `must` requirements, and log them in the run vault's
-   `surfaced-requirements.md`; a fixer then clears the reds (no test edits). Ambiguous or
-   product-changing semantics are decision gates, not generated REDs. A signal, not the oracle. Measured
-   caveat: on explicit-spec tasks this role separation did NOT beat equal-compute forced verification, so
-   reserve it for the under-specified frontier and keep it bounded by the critic->fixer cap. For wide
-   under-specified plans, run a bounded adversarial plan attack before Build: security, scope,
-   correctness, performance, and operability critics may attack the plan, but only accepted required
-   risks become tests or decision gates.
+   reproduction fidelity. Stop only after `delivery-proof.md` has after evidence, resolved decision gates,
+   and residual risk; report command output.
+6. **Critic escalation (opt-in; no src edits).** For under-specified / latent-correctness work, an
+   independent critic classifies inferred behavior as `must`, `should`, or `ask-user`; only grounded
+   `must` becomes FAILING tests. Log each in the run vault's `surfaced-requirements.md`; fixer clears reds
+   without editing tests. Ambiguous/product-changing semantics are decision gates, not generated REDs.
+   Reserve for the under-specified frontier and keep within the critic->fixer cap.
 
 Roles -> personas: builder/improver/fixer=`agents/executor.md`, critic=`agents/code-reviewer.md`,
 verify/QA=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role>.md`).
@@ -167,11 +139,10 @@ verify/QA=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role
 | `reference/market-research.md` | GREENFIELD: validate demand (optional) |
 | `reference/observability.md`, `tui/` | Board: opt-in live dashboard |
 
-**Done =** mode stated; smallest diff in surrounding style; Before/After Eval complete for non-trivial
-code changes; REAL tests + prose spec green (not a proxy) - a runtime MUST is proven only by exercising its real behavior, never by a test that just checks a method was called or re-asserts current behavior;
-past *very easy* -> red-green test + DB evidence if data load-bearing; captured neighbor snapshots
-re-run green with unnamed drift resolved; all requirements met and traced, with no orphan scope; DEBUG
-prod issue has reproduction fidelity recorded, and non-exact reproduction has conditional done plus a
-post-deploy confirmation plan; user-facing UI at the Expressive baseline; destructive steps consented;
-commit/merge only after the commit gate passes (`reference/delivery-gate.md`); report what was verified
-with command output.
+**Done =** mode stated; smallest diff; Before/After Eval complete for non-trivial code changes; REAL
+tests + prose spec green (not proxy); runtime MUST proven by real behavior; past *very easy* -> red-green
+test + DB evidence if data load-bearing; neighbor snapshots re-run with unnamed drift resolved; all
+requirements met and traced, with no orphan scope; DEBUG prod issue has reproduction fidelity and, if
+non-exact, residual risk + post-deploy confirmation plan; user-facing UI at the Expressive baseline;
+destructive steps consented; commit/merge only after the commit gate passes (`reference/delivery-gate.md`);
+verified commands reported.

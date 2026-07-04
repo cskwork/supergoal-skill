@@ -1,25 +1,20 @@
 # Debugging - DEBUG mode
 
-DEBUG is deep-and-narrow work. Use one driving `debugger`/`tracer` so the causal model stays coherent.
-Spawn helpers only for independent probes, and put their summaries in the vault.
+DEBUG is deep-and-narrow. Use one driving `debugger`/`tracer`; spawn helpers only for independent probes
+and save summaries in the vault.
 
-Reproduce's exit gate is a trusted feedback loop: a deterministic repro you can re-run cheaply after
-every probe. No trusted loop, no fix - if one cannot be built, STOP and report that, never "fix"
-against an unverifiable signal. For web/UI bugs, drive the loop through `qa-tester` and
-`reference/qa.md` so browser dumps stay out of the conductor context.
+Reproduce exit gate: deterministic repro, cheap to re-run after every probe. No trusted loop, no fix. If
+none can be built, STOP and report. For web/UI bugs, drive through `qa-tester` and `reference/qa.md`.
 
 ## Read-only until the cause is confirmed
 
-Through Reproduce and Diagnose, analyze only. No speculative edits - they corrupt the repro state.
-The first source-tree write waits until one root cause is confirmed by direct evidence and the fix
-plan is written.
+Through Reproduce and Diagnose, analyze only. First source write waits until one root cause has direct
+evidence and a written fix plan.
 
 ## Observe-first triage - live evidence before code
 
-For any bug that manifests in a RUNNING system (wrong UI behavior, bad API response, data stopped
-flowing, auth failures, perf regressions), do NOT start with code reading or git archaeology.
-History (deploys, diffs) narrows WHEN it broke; only live observation narrows WHERE. Do WHERE
-first, then use WHEN to pick the responsible diff.
+For a RUNNING-system bug (UI/API/data/auth/perf), do NOT start with code reading or git archaeology.
+History narrows WHEN; live observation narrows WHERE. Do WHERE first.
 
 1. **Observe the failing flow at the symptom's boundary.** Reproduce it in the real environment
    and capture actual artifacts: devtools Network tab / Playwright HAR (call ORDER + payloads),
@@ -38,31 +33,26 @@ first, then use WHEN to pick the responsible diff.
    "stopped accumulating" symptoms compare each hop's last-seen timestamp against the incident
    start. The first boundary where actual != expected is the locus - only then open the code that
    owns it.
-3. **Early report checkpoint.** Once the broken boundary + one piece of direct evidence is in
-   hand (e.g., "payload missing field X since deploy D"), REPORT to the user before deep
-   root-causing. Continue into the deeper why only if the user asks or the fix requires it.
+3. **Early report checkpoint.** Once broken boundary + direct evidence are in hand, REPORT before deep
+   root-causing. Continue deeper only if the user asks or the fix requires it.
 
 ## Single-driver default, escalate on breadth
 
-DEBUG defaults to one driver, and a simple Reproduce -> Localize -> Fix -> Verify loop beats sprawl on
-most bugs. Single-driver is a default, not a rule: when the fix spans many files or several services
-(diff likely touches more than ~5 files, or the failing path crosses more than one service boundary),
-split into separate contexts — one agent localizes (returns location + a structural preview only, not
-whole files), another fixes — so the search-and-edit trace does not overflow one context.
+Default: one driver and Reproduce -> Localize -> Fix -> Verify. Escalate only when the fix spans many
+files/services (roughly >5 files or cross-service path): one agent localizes, another fixes.
 
 ## Distributed triage (cross-boundary bugs)
 
-When the failure spans DB, API, network, or message-queue boundaries, map before you dig:
+For DB/API/network/queue failures, map before digging:
 
 1. **Golden signals first.** Frame the symptom in latency, traffic, errors, saturation (RED =
    rate/errors/duration is the request-side subset; USE is the resource side). State *what* is broken
    before guessing *why*; chase only causes that are definite and imminent.
 2. **Correlation ID is a precondition.** Cross-service RCA needs a trace/request/correlation ID
-   propagated across every boundary (HTTP headers, RPC metadata, queue properties). If none exists,
-   say so and make establishing it the first task; do not guess causation across services without it.
+   propagated across every boundary. If none exists, say so and make establishing it the first task.
 3. **Known-good vs known-bad.** Compare a passing request/trace against a failing one. Find the
-   tag/value (env, version, route, dependency) *unusually* correlated with failures, not ones always
-   present. Recent clustering points to cause; always-clustered is baseline noise.
+   tag/value *unusually* correlated with failures, not ones always present. Recent clustering matters;
+   always-clustered is baseline noise.
 4. **Failure-pattern checklist.** Before blaming app logic, rule out common distributed traps:
    cascading overload (grows by positive feedback; secondary symptoms mimic the cause), retry storms
    (retries multiply load across layers — needs jittered backoff + per-request limit + retry budget),
@@ -73,12 +63,10 @@ When the failure spans DB, API, network, or message-queue boundaries, map before
 
 1. **Reproduce red (fail-to-pass).** Create a deterministic failing test or scripted repro in a clean
    sandbox (fresh `git worktree` at HEAD). The repro must FAIL on current code and PASS after the fix
-   with no new failures (F->P). Reproduction is its own skill, not free with fix-capability: scaffold
-   it explicitly. Pin intermittent bugs first — flaky/timing/concurrency repros must fail consistently
-   over N repeated runs before you trust them. Record `run-to-prove`.
-2. **Localize.** Narrow the smallest region. Use `git bisect`, input/state binary search, the
-   distributed triage above, and focused instrumentation instead of guessing. Read structure/skeleton
-   first; load full code only for the few suspects that survive.
+   with no new failures (F->P). Scaffold repro explicitly. Flaky/timing/concurrency repros must fail
+   consistently over N repeats before trust. Record `run-to-prove`.
+2. **Localize.** Narrow the smallest region. Use `git bisect`, input/state binary search, distributed
+   triage, and focused instrumentation. Read structure first; load full code only for surviving suspects.
 3. **Compete hypotheses (symptom vs cause).** Put 2-3 root causes in `README.md` using a hypothesis
    ledger format: symptom, candidate cause, evidence-for, evidence-against,
    and "definite & imminent?". Phrase each candidate as a falsifiable prediction (if cause C, then
@@ -89,10 +77,8 @@ When the failure spans DB, API, network, or message-queue boundaries, map before
    (`reference/interview.md` DEBUG variant owns the mechanics: non-blocking, AFK-proceed, never abandon
    evidence for preference). Then back one hypothesis with direct evidence at the boundary. Write the
    fix plan in `README.md`.
-   If that fix's blast radius reaches past the cause site (other functions/modules or observed
-   behavior), present it with the re-ranking and apply the tiered blast-radius confirm
-   (`reference/interview.md`) before the first edit. Stop and ask the user only on SKILL.md hard stops
-   (destructive/irreversible fix, or the cause stays genuinely ambiguous) - otherwise proceed.
+   If fix blast radius reaches past the cause site, present it with the re-ranking and apply
+   `reference/interview.md` before the first edit. Ask only on SKILL.md hard stops or genuine ambiguity.
 5. **Fix root cause (minimal diff, checkpoint per step).** Smallest change that addresses cause, not
    symptom. No silencing, fake success, broad refactor, or unrelated cleanup. Checkpoint after each
    plan step so every change traces to one observed outcome; do not free-form edit until green.

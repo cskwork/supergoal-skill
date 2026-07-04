@@ -1,25 +1,19 @@
 # Clarifying interview - before plan freeze
 
-After context-gathering and before the plan freezes, run a conditional interview so the plan targets
-the user's real intent. It fires on two triggers, one mechanism:
+After context gathering and before plan freeze, interview only on two triggers:
 
 - **Ambiguity** (resolve *what* to build/fix): the request is underspecified, so clarify intent;
   *how* is then settled by grounding the plan in docs/code (`reference/plan-grounding.md`).
-- **Blast radius beyond target** (confirm the approach): the grounded fix reaches past its explicit
-  target - changes another function/module or alters existing observed behavior - so surface that
-  impact and confirm the approach, even when the request itself is unambiguous. Explore already
-  mapped these side effects (`agents/explore.md`); this is confirmation, not discovery.
+- **Blast radius beyond target** (confirm approach): grounded fix reaches past its explicit target -
+  another function/module or observed behavior - so surface the impact and confirm. Explore already
+  mapped side effects (`agents/explore.md`); this is confirmation, not discovery.
 
-Applies to GREENFIELD, DEBUG, and LEGACY only. LEARN and LEARN-DOMAIN skip it (LEARN already asks one
-scope question; see `reference/teach.md`).
-
-This file is the standalone contract.
+Applies to GREENFIELD, DEBUG, LEGACY only. LEARN/LEARN-DOMAIN skip.
 
 ## Where it runs
 
-Two insertion points, by trigger. Ambiguity runs before grounding (it shapes *what* to build);
-blast-radius confirm runs after grounding sets the approach but before freeze/Build (the impact is
-only concrete once the approach is chosen).
+Ambiguity runs before grounding. Blast-radius confirm runs after grounding chooses the approach but
+before freeze/Build.
 
 | Mode | Ambiguity - before grounding | Blast-radius confirm - after grounding, before freeze/Build |
 |---|---|---|
@@ -27,8 +21,8 @@ only concrete once the approach is chosen).
 | LEGACY | End of Frame (Explore map in hand) | once plan-grounding fixes the approach |
 | DEBUG | End of Diagnose, after ranked hypotheses, before Confirm | folded into Confirm, with the hypothesis re-ranking |
 
-Context in hand: GREENFIELD `brief.md` / `## Validation` / Domain Brief; LEGACY Explore affected-code
-map + Domain Brief; DEBUG hypothesis ledger + current code.
+Context: GREENFIELD `brief.md` / `## Validation` / Domain Brief; LEGACY Explore map + Domain Brief;
+DEBUG hypothesis ledger + current code.
 
 ## Gate - when to interview vs skip
 
@@ -49,20 +43,17 @@ Skip when **any** holds (and log the skip in `README.md`):
   asking), or
 - The mode is LEARN / LEARN-DOMAIN.
 
-Do not rely on model default: LLMs default to not asking and misjudge underspecification, so this gate
-is mandatory, not optional. But asking when sufficient information already exists is a failure too -
-unnecessary questions burden the user. Detect ambiguity against three triggers: missing goal, missing
-premises, ambiguous terminology.
+Do not rely on model default. Asking with enough information is also failure. Detect missing goal,
+missing premises, ambiguous terminology.
 
 ## Code-first rule
 
-Before asking the user anything, resolve every code-answerable question by reading current docs/code -
-reuse `reference/plan-grounding.md`'s decision-tree pressure test. Only unresolved, load-bearing,
-user-only choices reach the interview. Saved domain facts are pointers; current code wins on conflict.
+Before asking, resolve every code-answerable question by reading current docs/code. Only unresolved,
+load-bearing, user-only choices reach the interview. Saved domain facts are pointers; current code wins.
 
 ## Coverage dimensions (selection menu, not a checklist to exhaust)
 
-Draw the questions from these six axes. Pick the few that matter for this task; do not ask all six.
+Pick from these axes; do not ask all six.
 
 1. **Objective** - what changes vs what must stay the same.
 2. **Definition of done** - acceptance criteria, concrete examples, edge cases.
@@ -71,18 +62,14 @@ Draw the questions from these six axes. Pick the few that matter for this task; 
 5. **Environment** - language/runtime versions, OS, build/test runner.
 6. **Safety / reversibility** - data migration, rollout/rollback, blast radius, risk.
 
-DEBUG leans on objective + definition-of-done + reproducibility/safety. GREENFIELD and LEGACY lean on
-scope + constraints + environment. When the blast-radius trigger fired, dimension 6 (safety /
-reversibility) is REQUIRED, not optional: name the functions/modules touched and the behavior that
-could change.
+When blast-radius fired, Safety / reversibility is REQUIRED: name touched functions/modules and behavior
+that could change.
 
 ## Question selection
 
 - **Cap at <=5 questions, one clarification round.** Ask only as many as the ambiguity requires; one
   or two questions are enough when they settle the load-bearing choice.
-- **Maximize information gain.** Prefer the question that most narrows the space of viable plans -
-  one that eliminates a whole branch of work. Reason about which plans survive each answer, not about
-  the questions in isolation.
+- **Maximize information gain.** Prefer the question that eliminates a whole branch of work.
 - **Drop redundant questions.** If `brief.md`, the Domain Brief, or the Explore map already answers an
   aspect, do not ask it.
 - **One at a time, recommend an answer.** Ask serially, wait for each reply before the next, and give
@@ -91,23 +78,16 @@ could change.
 
 ## DEBUG variant - ranked hypothesis re-ranking
 
-DEBUG does not ask abstract requirement questions. After Diagnose produces its competing-hypothesis
-ledger (`reference/debugging.md` step 3), present 3-5 ranked root-cause hypotheses to the user for
-re-ranking before confirming and writing the fix plan. This is a cheap checkpoint, **non-blocking**:
-if the user is AFK, proceed with your own ranking. If the user re-ranks, advance the hypothesis they
-favor only when direct evidence still supports it; never abandon evidence for preference. Record the
-presented ranking and any user re-rank in `README.md`.
+After Diagnose produces its hypothesis ledger, present 3-5 ranked root-cause hypotheses to the user for
+re-ranking before confirming and writing the fix plan. **Non-blocking**: if AFK, proceed with your own
+ranking. If re-ranked, advance the favored hypothesis only when direct evidence still supports it.
 
-When the chosen fix's blast radius reaches past the cause site - other functions/modules, or observed
-behavior - present that impact alongside the re-ranking and apply the tiered strength below before the
-first source edit.
+If chosen fix blast radius reaches past the cause site, present impact with the re-ranking before edit.
 
 ## Hard gate - block plan freeze
 
-Do not freeze the plan (GREENFIELD/LEGACY) or confirm the root cause and write the fix plan (DEBUG -
-blocking only for must-have answers, the re-ranking itself stays non-blocking) until must-have
-questions are answered, or the user explicitly approves proceeding on stated assumptions. Unanswered
-must-haves either get an explicit user-approved assumption or block.
+Do not freeze plan or confirm DEBUG root cause until must-have questions are answered or the user approves
+stated assumptions. Unanswered must-haves block.
 
 **Blast-radius confirm - strength by risk (tiered).** Default is non-blocking: present the impact
 summary and proceed on your own best judgment if the user is AFK. Escalate to a hard gate - no Build
@@ -118,8 +98,7 @@ until the user explicitly approves, AFK or not - when **any** holds:
   publish, migration), or
 - **Behavior change:** alters an existing public contract or observed behavior callers depend on.
 
-A user approval here confirms *intent* only; it never substitutes for the Critic's independent *spec*
-check. Both the user and the agent can be wrong - the Critic is the separate signal.
+Approval confirms intent only; it never substitutes for independent spec/verification checks.
 
 ## Recording
 

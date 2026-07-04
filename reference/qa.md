@@ -1,24 +1,20 @@
 # QA - black-box exercise of the running app
 
-QA drives the real app like a user and records user-observable evidence. It applies to
-GREENFIELD/LEGACY and web-bug checks in DEBUG.
+QA drives the real app like a user and records observable evidence. Applies to GREENFIELD/LEGACY and
+web-bug DEBUG checks.
 
 UI changes are browser app verification: if product code changes a user-facing browser surface, the run
 must drive that surface with `playwright-cli` and pass `bash templates/qa-gate.sh <vault> browser`.
-Lint, typecheck, build, unit tests, or static screenshots can support the result but cannot replace this
-browser evidence.
+Lint/typecheck/build/unit/static screenshots can support but not replace browser evidence.
 
-QA-ONLY is the detailed regression lane. When the user asks for "QA only", broad verification, or a
-post-change impact sweep, use `reference/qa-only.md`'s Impact Matrix to cover direct behavior, adjacent
-surfaces, complex multi-step scenarios, before/during/after actions, and explicit `## Not covered`
-residual risk. GREENFIELD/LEGACY/DEBUG browser QA stays lean by default but may borrow that matrix for
-high-blast-radius changes.
+QA-ONLY is the broad regression lane. For "QA only", broad verification, or post-change impact sweep, use
+`reference/qa-only.md`'s Impact Matrix. GREENFIELD/LEGACY/DEBUG browser QA stays lean by default, but may
+borrow the matrix for high-blast-radius changes.
 
 ## Characterization baseline (non-UI code changes)
 
-Use when the change is past *very easy* and touches code/state shared by another feature: function,
-module, global state, DB row/schema, config, cache, or integration contract. Skip for narrow *very easy*
-edits and log the reason in the proof.
+Use when work is past *very easy* and touches shared code/state: function, module, global state, DB
+row/schema, config, cache, integration contract. Skip narrow *very easy* edits and log why.
 
 1. Pick reachable neighbor behavior the change could break.
 2. Before editing, put that behavior under a check and save current output to
@@ -26,8 +22,7 @@ edits and log the reason in the proof.
 3. After editing, re-run the same check and diff against the snapshot.
 
 Unnamed drift is red. Intentional drift must be named in `delivery-proof.md`. Characterization is a
-regression signal, not a correctness oracle: it can preserve a known bug, so update that snapshot only
-when the bug fix is intentional.
+regression signal, not a correctness oracle; update snapshots only for intentional bug fixes.
 
 ## Scenario stencil (code changes)
 
@@ -47,14 +42,13 @@ green case conclusive; record reproduction fidelity and post-deploy confirmation
 
 ## Always use the `qa-tester` subagent
 
-Browser dumps, screenshots, and console logs stay in `qa-tester` context. The conductor receives only
-the summary and evidence paths. Do not run browser QA from the conductor.
+Browser dumps/screenshots/logs stay in `qa-tester`. Conductor receives summary + evidence paths only.
 
 ## Browser context capture - the single driver stage
 
-One stage, one driver, for all three browser uses: QA black-box (GREENFIELD/LEGACY), DEBUG observe-first
-(`screen -> API`), and LEGACY preserve-baseline. They differ only in what they capture, never in how they
-drive. `playwright-cli` is the ONLY driver - command surface and install in `reference/playwright-cli.md`.
+One stage, one driver: QA black-box, DEBUG observe-first (`screen -> API`), LEGACY preserve-baseline.
+They differ in captured evidence, not driver. `playwright-cli` is the ONLY driver
+(`reference/playwright-cli.md`).
 
 1. **Serve.** Start the app from the working tree (or the Verify worktree when one is used), poll
    until ready, record URL, tear down at end. Static/single HTML opens via `file://` from that tree.
@@ -63,8 +57,8 @@ drive. `playwright-cli` is the ONLY driver - command surface and install in `ref
    `npx playwright install chromium`. If install is genuinely blocked, STOP and ask the user to install
    it - never substitute a headless render or any other tool (`reference/playwright-cli.md`).
 3. **Drive flows.** `open`/`goto`, `snapshot` (get `ref`s), `click`/`type`/`fill`, `screenshot`. Golden
-   path, edge cases, and a11y must pass. UI/UX jobs also run `reference/ui-ux.md` pre-flight (Expressive or
-   Functional tier), record a `UI-tier: Expressive|Functional` line in `## QA`, and enumerate the
+   path, edge cases, and a11y must pass. UI/UX jobs also run `reference/ui-ux.md` pre-flight, record a
+   `UI-tier: Expressive|Functional` line in `## QA`, and enumerate the
    text/background pairs to `qa/contrast-pairs.json` — `qa-gate.sh` runs the contrast gate and blocks on FAIL.
 4. **Capture the network.** `playwright-cli requests` lists every call; `request <index>` shows
    method + path + status + payload for one. This is the shared evidence for DEBUG `screen -> API` and
@@ -75,12 +69,9 @@ drive. `playwright-cli` is the ONLY driver - command surface and install in `ref
 
 ## Navigation map (load first; build on first entry; self-heal on drift)
 
-Complex apps (auth gates, popups, new tabs, deep routes) burn QA budget re-discovering how to reach a
-screen. The repo's `.domain-agent/qa/nav-map.md` is the durable map that makes navigation cheap and
-repeatable, gives DEBUG observe-first the `screen -> API` routing it needs, and routes LEGACY to the
-exact screen whose API it must baseline before a refactor. It is
-repo-local and gitignored (`reference/domain-context.md`); no app-specific selector, route, or
-credential ever lives in this skill.
+Use `.domain-agent/qa/nav-map.md` to avoid rediscovering auth gates, popups, new tabs, and deep routes.
+It also gives DEBUG `screen -> API` routing and LEGACY the exact screen/API to baseline. Repo-local and
+gitignored; no app-specific selector, route, or credential lives in this skill.
 
 1. **Load first.** Before driving, read `.domain-agent/qa/nav-map.md` if present and navigate by its
    entry/auth flow, route list, popup/new-tab triggers, tab-switch notes, and stable selectors.
@@ -102,7 +93,7 @@ to that target and re-`snapshot` before interacting, then record `trigger -> tar
 ## API behavior baseline (LEGACY preserve)
 
 Before refactoring or integrating against an existing API, capture its exact behavior so the refactor
-preserves it (preserve the contract; DEBUG's `screen -> endpoint` only localizes). Save to the run vault
+preserves it. DEBUG's `screen -> endpoint` only localizes. Save to the run vault
 `<vault>/qa/api-baseline-<endpoint>.md`: method + path + status + a representative request and the
 response shape (the contract, not every value).
 
@@ -112,9 +103,8 @@ response shape (the contract, not every value).
 - **Backend-only (no UI)** - capture at the HTTP level: a recorded curl/HAR or an HTTP probe (e.g. the
   `verify` skill) against the running endpoint.
 
-After the refactor, re-capture the same call and diff against the baseline; unintended drift is a red to
-resolve (role-loop Verify). Baselines are per-run vault evidence, never the domain pack - strip secrets,
-tokens, and PII from saved bodies.
+After refactor, re-capture the same call and diff; unintended drift is red (role-loop Verify). Baselines
+are per-run vault evidence, never domain pack; strip secrets, tokens, PII.
 
 ## Authenticated sessions (native playwright-cli)
 

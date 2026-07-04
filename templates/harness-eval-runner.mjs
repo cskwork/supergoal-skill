@@ -52,8 +52,10 @@
 //   const results = await runUnits(seeds, async (seed) => {
 //     const cwd = writeFixture(seed);            // YOUR fixture (case is an input)
 //     const passes = await runPasses(sel.adapter, cwd, [
-//       { prompt: buildPrompt(refDir), addDir: refDir }, // build consults the skill ref
-//       criticPrompt(), fixerPrompt(), verifyPrompt(),   // ordered role passes
+//       { prompt: buildPrompt(refDir), addDir: refDir }, // build consults shipped skill ref
+//       improveFullSpecPrompt(refDir),                   // current forced-verify core
+//       improveEdgeCasesPrompt(refDir),
+//       finalVerifyPrompt(refDir),
 //     ]);
 //     return { seed, score: scoreArm(cwd), passes }; // YOUR scorer; hidden tests
 //   });                                              // never live inside `cwd`
@@ -292,9 +294,12 @@ export async function selectAdapter(preferred = DEFAULT_ADAPTER, { adapters = AD
 // --------------------------------------------------------------------------
 // execution helpers
 // --------------------------------------------------------------------------
-// Run one arm's ORDERED role passes (build -> critic -> fixer -> verify). Always
-// serial: each pass depends on the previous edit. Each item is a prompt string
-// or { prompt, addDir }; a per-item addDir overrides the shared one.
+// Run one arm's ORDERED passes. For the current supergoal skill this is usually
+// Build -> Improve full spec -> Improve edge cases -> Final Verify. Use a
+// critic/fixer pass only when the experiment is explicitly testing the
+// surface-hidden-requirements lever. Always serial: each pass depends on the
+// previous edit. Each item is a prompt string or { prompt, addDir }; a per-item
+// addDir overrides the shared one.
 export async function runPasses(adapter, cwd, passes, { addDir } = {}) {
   const out = [];
   for (const p of passes) {

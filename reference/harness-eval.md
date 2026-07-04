@@ -277,9 +277,11 @@ explicit-spec task a capable baseline already passes - expect a TIE at 2-3x cost
   extra passes?" 2026-06-07: the skill beat (a) but NOT (b) (naive 4/4 >= role-loop 3.3/4), so the value
   was the forced passes, not role-separation - useful, but the mechanism could be leaner. Report the win
   as (a) "skill vs default" or (b) "mechanism vs compute"; never imply (b) when you only showed (a).
-- Harness arm design: use the role-loop (build->critic->fixer->verifier) when testing the
-  surface-hidden-requirements lever; the critic is that lever. Use single-pass skill-ref to A/B the
-  SKILL text itself. State which, and keep both arms in the same runtime profile.
+- Harness arm design: default to the shipped skill's current forced-verification core:
+  Build -> Improve full spec -> Improve edge cases -> Final Verify. Use a critic/fixer loop only when
+  the experiment is explicitly testing the surface-hidden-requirements lever; the critic is that lever.
+  Use single-pass skill-ref to A/B the SKILL text itself. State which, and keep both arms in the same
+  runtime profile.
 
 ## Validate the fixture discriminates BEFORE spending compute
 

@@ -98,3 +98,30 @@
 **결과 (n=15):** no-skill 24/45=53% vs **supergoal 27/45=60%**. **S vs 0 diff=+0.067, p=0.572 → NULL.** per-instance 상쇄: 어려운 버그엔 도움(22005 1→3, 23191 0→1, 23262 0→1), 이미 bare가 맞히던 것엔 오히려 해침(21055 3→1, 21627 3→1) — 비평자 재작성이 멀쩡한 테스트를 깨뜨림 = net wash.
 
 **판정: 도메인 일반 critic-loop도 이 explicit-spec 작업에선 유의미 lift 없음.** `SKILL.md` line 136 caveat("explicit-spec 작업에선 이 role separation이 equal-compute forced verification를 못 이김")를 **독립 구현으로 실증 재확인** → supergoal 변경 없음(critic escalation은 지금처럼 opt-in / under-specified 전용이 옳음). **메타결론:** 이 task class(버그 리포트가 정답 거동을 명시 = explicit-spec)는 스킬 lever가 물릴 헤드룸이 없음. "유의미 차이"를 실증하려면 스킬을 더 손보는 게 아니라 **testbed를 under-specified/latent-correctness로 바꿔야** 함. 산출물: `supergoal_wf.js`, `grade_supergoal.py`, `analyze_supergoal.py`, `graded_supergoal.json`. provenance: wf_7cbf4d3d-2df(정정본), 오염본 wf_f7716420-9a2는 중단·폐기.
+
+## HARNESS-EVAL runner guidance — force the measured skill core, not obsolete critic-default
+
+**요청:** `98aa17a` 상태에서 supergoal skill vs no-skill 효과를 다시 확인하고, 하네스가 실제 개선을 만들도록 인사이트를 반영.
+
+**재검증:** `templates/harness-eval-runner.mjs --selftest` 4/4 통과, real adapter preflight `claude-p` on darwin = `edit ok, tests pass`. 기존 n=6 under-specified latent-correctness 결과를 `stats.mjs`로 재계산:
+- `harness_v2` vs one-shot no-skill baseline: hidden avg 4.0/4 vs 2.1667/4, false-GREEN 0/6 vs 6/6, delta +1.833, BCa [1.167, 2.0], permutation p=0.031 → **significant win**.
+- `harness_v2` vs equal-compute no-skill naive: 4.0/4 vs 3.8333/4, p=1.0 → **not proven**.
+- `harness_v2` vs old role-loop v1: 4.0/4 vs 3.5/4, p=0.25 → directional only.
+
+**결정:** 하네스의 기본 skill arm은 shipped skill의 현재 강제검증 코어인 `Build -> Improve full spec -> Improve edge cases -> Final Verify`를 측정해야 한다. critic/fixer는 `surface-hidden-requirements` 자체를 시험할 때만 켠다. 이유: 측정된 개선은 role separation이 아니라 forced verification이 one-shot no-skill의 false-GREEN을 잡는 데서 나왔다.
+
+**변경:** `reference/harness-eval.md`의 harness-arm 설계를 forced-verification default로 고정하고, `templates/harness-eval-runner.mjs` usage/comment를 같은 4-pass core로 교체. `tests/harness-eval-contract.test.sh`에 drift 방지 literal checks 추가.
+
+**기각한 대안:** old `build->critic->fixer->verifier`를 기본으로 유지하지 않음. 그 경로는 explicit-spec에서 null, under-specified u1에서도 equal-compute naive보다 약했고, single-process runtime에서 context/crash 리스크가 이미 관측됐다.
+
+## supergoal critic/fixer contract — keep, gate, cap
+
+**요청:** critic/fixer를 제거할지 판단하고, 하네스 목표(간결·신뢰·실효)를 해치지 않게 최적화.
+
+**결정:** 제거하지 않음. 기본은 `Build -> Improve full spec -> Improve edge cases -> Final Verify`로 고정하고, Critic/Fixer는 hidden requirement를 시험할 때만 켜는 opt-in escalation으로 명시.
+
+**이유:** 측정된 lift는 forced verification이 one-shot false-GREEN을 잡은 효과다. critic/fixer는 explicit-spec/equal-compute 비교에서 proven win이 아니지만, under-specified/latent-correctness 작업의 요구사항 표면화 장치로는 가치가 있다.
+
+**변경:** `SKILL.md`, `reference/role-loop.md`, `tests/role-loop-contract.test.sh`에 “not default / use when / do not use when / bounded” contract를 추가.
+
+**기각한 대안:** critic/fixer 삭제. 삭제하면 noisy default는 줄지만, 스킬이 hidden requirements를 구조적으로 표면화하는 유일한 레버를 잃는다.

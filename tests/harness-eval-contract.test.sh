@@ -516,6 +516,8 @@ require_text "eval justifies n>=6 with permutation min-p" "reference/harness-eva
 require_text "eval requires four-axis accounting" "reference/harness-eval.md" "four-axis accounting"
 require_text "eval requires routing probe" "reference/harness-eval.md" "should-trigger / should-not-trigger"
 require_text "eval requires McNemar" "reference/harness-eval.md" "paired McNemar"
+require_text "eval defaults harness arm to forced verification" "reference/harness-eval.md" "Build -> Improve full spec -> Improve edge cases -> Final Verify"
+require_text "eval keeps critic loop explicit" "reference/harness-eval.md" "experiment is explicitly testing the surface-hidden-requirements lever"
 require_text "eval rejects overlapping CI winner gate" "reference/harness-eval.md" "overlapping confidence intervals"
 require_text "eval defaults public scoring to etree" "reference/harness-eval.md" "Default public scoring candidate"
 require_text "eval names etree default task" "reference/harness-eval.md" "etree-xml-diff-patch"
@@ -572,6 +574,8 @@ require_text "result template records McNemar" "templates/harness-eval-result.js
 require_text "result template records SNR filter" "templates/harness-eval-result.json" "snr_filter"
 require_text "result template records crash accounting" "templates/harness-eval-result.json" "recorded_loss"
 require_text "stats helper exports paired binary stats" "templates/harness-eval-stats.mjs" "pairedBinaryStats"
+require_text "runner example uses forced verification core" "templates/harness-eval-runner.mjs" "Improve full spec -> Improve edge cases -> Final Verify"
+require_text "runner keeps critic as explicit lever" "templates/harness-eval-runner.mjs" "surface-hidden-requirements lever"
 require_text "DeepSWE README defaults etree scoring" "templates/harness-eval-external/deepswe/README.md" 'Primary scoring task: `etree-xml-diff-patch`'
 require_text "DeepSWE README keeps Happy DOM smoke only" "templates/harness-eval-external/deepswe/README.md" 'Smoke task: `happy-dom-abort-pending-body-reads`'
 require_text "DeepSWE README rejects manual interrupt" "templates/harness-eval-external/deepswe/README.md" "Manual post-hoc interruption invalidates paired"

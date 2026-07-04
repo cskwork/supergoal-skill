@@ -26,10 +26,10 @@ weaken safety gates. Create or edit it only when the user explicitly asks (`refe
   Non-trivial code runs seed numbered requirements in `## Requirement Trace`; done requires every row met
   and `Backward-trace: clean` (no orphan scope). Production/source-code domain ambiguity that changes
   user-visible behavior becomes an `ask-user` decision gate; generic coding-task ambiguity with no user
-  available uses the most conservative, reversible default and records it. Opt-in escalation for
-  under-specified / latent-correctness work: an independent critic classifies inferred requirements; only
-  grounded must-behaviors become FAILING tests, while ambiguous or product-changing semantics become
-  `ask-user` decision gates.
+  available uses the most conservative, reversible default and records it. Critic/Fixer is not part of
+  the default loop. Use it only as opt-in escalation for under-specified / latent-correctness work: an
+  independent critic classifies inferred requirements; only grounded must-behaviors become FAILING tests,
+  while ambiguous or product-changing semantics become `ask-user` decision gates.
 - For non-trivial code changes, run a Before/After Eval before Build: prove the before state, the after
   target, and the delta with trusted repo/evaluator commands (`reference/delivery-gate.md`).
 - Ask only when genuinely ambiguous; resolve code-answerable questions by reading the code.
@@ -94,8 +94,8 @@ Work runs in fresh-context subagents by default (the dispatching agent is the "c
 single edit skips the loop and edits inline. Independent units (QA scenario shards, review dimensions) run
 in parallel. Difficulty gate: *very easy* -> skip; harder -> red-green is REQUIRED, plus DB evidence when
 persisted data is load-bearing. The mandatory core is Build -> Improve full spec -> Improve edge cases ->
-Final Verify; the independent-critic escalation is opt-in (a measured lever for under-specified work, not
-always on). Full contract: `reference/role-loop.md`.
+Final Verify. Critic/Fixer is not part of the default loop; use it only when hidden requirements are the
+value being tested. Full contract: `reference/role-loop.md`.
 
 1. **Frame.** Restate goal + falsifiable acceptance criteria in one line. Seed numbered requirements in
    `## Requirement Trace`. Write a completion promise:
@@ -134,9 +134,10 @@ always on). Full contract: `reference/role-loop.md`.
    `surfaced-requirements.md`; a fixer then clears the reds (no test edits). Ambiguous or
    product-changing semantics are decision gates, not generated REDs. A signal, not the oracle. Measured
    caveat: on explicit-spec tasks this role separation did NOT beat equal-compute forced verification, so
-   reserve it for the under-specified frontier. For wide under-specified plans, run a bounded adversarial
-   plan attack before Build: security, scope, correctness, performance, and operability critics may attack
-   the plan, but only accepted required risks become tests or decision gates.
+   reserve it for the under-specified frontier and keep it bounded by the critic->fixer cap. For wide
+   under-specified plans, run a bounded adversarial plan attack before Build: security, scope,
+   correctness, performance, and operability critics may attack the plan, but only accepted required
+   risks become tests or decision gates.
 
 Roles -> personas: builder/improver/fixer=`agents/executor.md`, critic=`agents/code-reviewer.md`,
 verify/QA=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role>.md`).

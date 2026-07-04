@@ -1,6 +1,7 @@
 # ROLE-LOOP - the default loop for GREENFIELD / DEBUG / LEGACY
 
 The default loop's mandatory core is Build -> Improve full spec -> Improve edge cases -> Final Verify.
+Critic/Fixer is not part of the default loop.
 That equal-compute shape is the active ingredient that lifts correctness on false-GREEN-prone work: after
 the initial build, a fresh-context improver re-reads the WHOLE prose spec and fixes full-spec gaps, a
 separate fresh-context edge pass attacks degenerate values (null/undefined/empty/boundary), error/recovery
@@ -18,6 +19,11 @@ conservative, reversible default and records the choice. Measured caveat: on exp
 role separation did NOT beat equal-compute improve passes, so it is an escalation for the
 under-specified frontier, not an always-on default.
 
+Use it when the task is under-specified, latent-correctness-heavy, security/edge/domain-rule-sensitive, or
+Final Verify exposes a requirement gap the improve passes did not explain. Do not use it when the spec is
+explicit, the expected behavior is already stated, the harness is single-process/context-limited, or the
+eval compares equal-compute vanilla unless critic/fixer is the tested lever.
+
 ## Run setup - before any file mutation
 
 For any non-trivial GREENFIELD / DEBUG / LEGACY run that edits code, first resolve the source/base branch
@@ -29,7 +35,7 @@ for example:
 git worktree add -b <run_branch> <worktree_path> <source/base branch>
 ```
 
-Run Build, Improve, optional Critic/Fixer, Final Verify/QA, tests, and run-vault writes inside that
+Run Build, Improve, optional gated Critic/Fixer, Final Verify/QA, tests, and run-vault writes inside that
 worktree; never edit the original checkout. Treat dirty files in the original checkout as user work.
 After green verification and user acceptance, commit or merge only into the verified target/integration
 branch - and only once the commit gate passes (`reference/delivery-gate.md`;
@@ -75,9 +81,9 @@ and the like) load inside the subagent and never accumulate in the conductor's w
 returns only a short structured result - status, what changed, test output, concerns - not its transcript.
 Run independent units in parallel (QA scenario shards, review dimensions, multi-file builds); keep
 dependent roles ordered. A trivial single edit skips the loop and edits inline. Build (1), Improve full
-spec (2), Improve edge cases (3), and Final Verify (4) are the mandatory core. Critic/Fixer are optional
-escalation for under-specified / latent-correctness work, usually inserted after the edge pass or when
-Final Verify finds a requirement gap the improve passes did not explain.
+spec (2), Improve edge cases (3), and Final Verify (4) are the mandatory core. Critic/Fixer is optional
+gated escalation for under-specified / latent-correctness work, usually inserted after the edge pass or
+when Final Verify finds a requirement gap the improve passes did not explain.
 
 0. **Adversarial plan attack (conditional, no src edits)** - only for under-specified, wide-blast-radius,
    security/data/concurrency, or latent-correctness work. Before Build, dispatch independent critics for

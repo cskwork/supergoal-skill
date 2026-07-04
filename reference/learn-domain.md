@@ -9,32 +9,26 @@ LEARN-DOMAIN learns *for the agent* and writes the repo-local `.domain-agent/` p
 production code and uses no implementation gates; its only writes are the knowledge pack plus throwaway
 grounding probes in a sandbox.
 
-## Why this design (research-grounded)
+## Technique contract
 
-The technique choices below are deliberate, not defaults. One-clause rationale each:
-
-- **Agentic discovery, not embeddings/RAG.** Read structure, read files, follow imports, grep. Vector
-  indexing fragments call/definition coherence, doubles the security surface, and goes stale on every
-  edit; leading agent teams abandoned it for code.
-- **Markdown-first persistence.** A concise repo map of key symbols + signatures (Aider repo-map
-  pattern) is lightweight, git-friendly, and harness-agnostic across Claude Code, Codex, agy.
+- **Agentic discovery, not embeddings/RAG.** Read structure, files, imports, and grep results. No vector
+  index as authority.
+- **Markdown-first persistence.** Keep a concise repo map of key symbols + signatures (Aider repo-map
+  pattern), flows, invariants, tests, and glossary in git-friendly markdown.
 - **Bottom-up hierarchy.** Summarize symbol -> file -> package -> bounded context -> repo, grounded in
-  business meaning; direct whole-file summarization measurably drops functions/variables.
-- **Optional structural index only.** A local tree-sitter/ctags graph (no vectors) may speed lookup,
-  but graph scaffolding does not reliably beat a grep baseline (ContextBench), so it is a cache, never
-  the source of truth and never required.
-- **Balanced budget.** Moderate retrieval rounds and moderate chunks beat both whole-file dumps and
-  hyper-fragmentation.
-- **Execution-grounded verification.** Each load-bearing summary is proven by a probe that runs;
-  ~1/5 of even the best LLM's code descriptions are inaccurate and static self-checks do not correlate
-  with accuracy.
+  business meaning.
+- **Optional structural index only.** Tree-sitter/ctags graphs may speed lookup, but are cache only:
+  never the source of truth and never required.
+- **Balanced budget.** Start with routing index + top-N contexts, not "learn everything."
+- **Execution-grounded verification.** Prove load-bearing summaries with probes that run; static
+  self-checks do not count.
 
 ## Pipeline
 
 `Intake -> Survey -> Scope checkpoint -> Map -> Deepen -> Ground -> Persist -> Onboard -> Freshness loop`
 
-Read-only except the knowledge pack and sandbox probes. No production source changes. No
-implementation gates (nothing ships), but the Scope checkpoint pauses for the user before deep fan-out.
+Read-only except the knowledge pack and sandbox probes. No production source changes. No implementation
+gates; the Scope checkpoint pauses before deep fan-out.
 
 | Phase | Goal | Writes | Exit gate |
 |---|---|---|---|
@@ -54,10 +48,8 @@ implementation gates (nothing ships), but the Scope checkpoint pauses for the us
 2. Run the `domain-context.md` first-run setup if `<knowledgePath>/config.json` is absent (default
    `.domain-agent/`; ask once for an alternate path; add it to `.gitignore`). This is the only allowed
    pre-existing-knowledge write besides the run note.
-3. Set a **balanced budget**: a per-pass file/token cap and a first-round target of the routing index
-   plus the top-N highest-traffic bounded contexts - never "learn everything" in one pass. Record the
-   budget and N in the run note. Over-engineering (learning the whole repo, building a graph up front)
-   is a known failure mode; start small and let later runs deepen.
+3. Set a **balanced budget**: per-pass file/token cap plus top-N highest-traffic bounded contexts.
+   Record budget and N. Never "learn everything" in one pass.
 
 ## Step 1 - Survey (agentic discovery, not RAG)
 
@@ -71,9 +63,8 @@ Mirror a senior engineer joining the team:
 3. Follow imports across one or two layers to see how entry points reach data and external systems.
 4. Draft `index.md`: systems, feature areas, common entry points, search keys. Keep it a router.
 
-Do not build an embedding index. A local structural index (CodeGraph/Graphify, tree-sitter, ctags) may
-be used if already present in the repo or trivially available, but only as a lookup cache that is
-re-derived from current code; never persist it as the source of truth.
+Do not build embeddings. A local structural index (CodeGraph/Graphify, tree-sitter, ctags) may be used
+only if already present or trivial to derive from current code; never persist it as the source of truth.
 
 ## Step 2 - Scope checkpoint
 
@@ -83,12 +74,11 @@ State to the user, in one short message:
 - the proposed bounded-context list (top-N this pass) and what is deferred,
 - the learning budget.
 
-Proceed with that scope unless the user narrows or defers it. This replaces a heavy approval gate:
-LEARN-DOMAIN ships nothing, so the only real risk is spending tokens on the wrong scope.
+Proceed unless the user narrows or defers. LEARN-DOMAIN ships nothing; the real risk is wrong scope.
 
 ## Step 3 - Map (Aider repo-map pattern)
 
-Build a concise map of the most important symbols, not full files:
+Build a concise map of important symbols, not full files:
 
 - Extract classes/functions/methods with their **signatures** (params + return), one line of purpose.
 - Rank by reference frequency / dependency centrality (PageRank-style if a structural index exists,
@@ -96,8 +86,7 @@ Build a concise map of the most important symbols, not full files:
 - Write to `code-map.md` under `## Key Symbols (signatures)` using
   `path :: Owner.symbol(sig) -> ret    # one-line purpose`.
 
-Sending whole files wastes the context window; signatures plus purpose are enough to route. Stay inside
-the per-pass budget.
+Signatures plus purpose are enough to route. Stay inside the per-pass budget.
 
 ## Step 4 - Deepen (bounded-context fan-out, bottom-up)
 
@@ -146,49 +135,40 @@ Save under the existing `domain-context.md` saving loop - surgical appends only,
 
 ## Step 7 - Onboard (human handbook, HTML)
 
-After Persist, render the grounded pack into one self-contained HTML handbook **for humans only**:
+After Persist, render one self-contained HTML handbook **for humans only** at
 `<knowledgePath>/onboarding.html` (default `.domain-agent/onboarding.html`, gitignored with the pack).
-Agents keep reading the markdown pack, which stays the source of truth; the HTML is a derived snapshot,
-never a second source. It exists so a new engineer can grasp what the domain encompasses fast - simple
-to onboard with, yet comprehensive and carrying the discovered expertise.
+The markdown pack stays the source of truth; HTML is a derived snapshot. Clone
+`templates/domain-onboarding.html` and fill it **from the pack only** - no new facts, no upgraded
+`unverified` facts.
 
-Clone `templates/domain-onboarding.html` and fill it **from the pack only** - introduce no fact absent
-from the pack, and never upgrade an `unverified` fact to verified to make the page read better. Sections,
-plain summary first then expert detail:
+Sections, plain summary first then expert detail:
 
 1. Orientation - what this system is, who it serves, the one-paragraph mental model.
 2. Key terms - `glossary.md` in this repo's meaning, each in plain language (not generic industry meaning).
 3. Architecture - systems, bounded contexts, entry points, and how a request/data moves; one inline
    diagram (inline SVG or CSS boxes, no external scripts).
 4. Key flows - per `flows/<ctx>.md`, entry -> service -> data/external in human terms + invariants touched.
-5. Rules that must not break - `invariants.md`, each with its grounding status shown.
+5. Rules that must not break - `invariants.md`, each with grounding status.
 6. Get hands-on - the key `test-map.md` commands a newcomer runs to see the system work.
 7. Trust & freshness - a verified/unverified legend, `config.json.lastUpdated`, and a line stating the
    markdown pack is the source of truth and this page a derived snapshot.
 
 Constraints:
 
-- **Functional tier, not Expressive.** This is an internal documentation tool, so follow
-  `reference/functional-ui.md` as the visual authority: one accent + one type/spacing/radius scale,
-  computed WCAG-AA contrast (body AAA), information density, minimal motion honoring
-  `prefers-reduced-motion`, a declared `color-scheme` with light+dark tokens, and no empty decoration.
-  Because the handbook must stay self-contained and offline, implement that baseline with a small inline
-  token set rather than pulling a named external design system (Fluent/Carbon/shadcn) - the offline /
-  no-CDN constraint below overrides functional-ui's "adopt one named system" rule.
-- Single self-contained file: inline CSS only; **no external scripts, fonts, CDN, or network requests**
-  (works offline, adds no security surface). Use inline SVG for any diagram.
-- Carry each load-bearing fact's grounding as a visible badge (verified / unverified) so a reader is
-  never misled; put expert detail (signatures, file paths, probe commands) in `<details>` for
-  progressive disclosure - simple on the surface, expert underneath.
+- **Functional tier, not Expressive.** Follow `reference/functional-ui.md`: one accent, one
+  type/spacing/radius scale, computed WCAG-AA contrast (body AAA), dense layout, minimal motion,
+  `prefers-reduced-motion`, light+dark `color-scheme`, no empty decoration.
+- Single self-contained file: inline CSS only; **no external scripts, fonts, CDN, or network requests**.
+  Use inline SVG for diagrams.
+- Show every load-bearing fact's grounding as a visible verified/unverified badge; put expert detail
+  (signatures, file paths, probe commands) in `<details>`.
 - Accessible and responsive: semantic HTML, a table of contents with anchors, usable below 768px.
 - Docs language (SKILL.md): also keep signatures verbatim.
 - No secrets, tokens, raw logs, or PII (the pack already passed the secret scan; add no new content).
 - Committing exposes internal architecture: keep it in the gitignored knowledge path; ask before moving
-  it outside, exactly like publishing the pack.
+  it outside.
 
-LEARN-DOMAIN runs no implementation gates, so the Onboard render does not pull the product Designer
-dispatch or QA contrast-gate apparatus; the agent self-applies the functional-ui baseline.
-On a later Freshness run, regenerate the handbook from the refreshed pack so it never drifts from it.
+LEARN-DOMAIN runs no implementation gates. On Freshness, regenerate the handbook from the refreshed pack.
 
 ## Freshness loop (incremental, not full re-learn)
 

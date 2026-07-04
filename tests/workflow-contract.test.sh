@@ -25,22 +25,19 @@ echo "=================================================================="
 echo " /supergoal workflow contract   skill: $ROOT"
 echo "=================================================================="
 
-# Coding/debug branch isolation is required by default.
+# SKILL.md routes; reference/role-loop.md owns the branch/worktree procedure.
 require_text "SKILL classifies intent before routing" "SKILL.md" "IntentGate"
 require_text "SKILL separates category from capability refs" "SKILL.md" "Category is the work kind; capability refs"
 require_text "SKILL asks only on low confidence routing" "SKILL.md" "Low confidence or conflicting intent"
 require_text "SKILL matches repo docs language for docs" "SKILL.md" "match the target repo's dominant prose language"
-require_text "SKILL requires source/base and target refs" "SKILL.md" "source/base branch and target/integration branch"
-require_text "SKILL verifies refs before mutation" "SKILL.md" "verify both refs before mutating files"
-require_text "SKILL requires a run worktree" "SKILL.md" "create a run worktree from the source/base branch"
-require_text "SKILL forbids original checkout mutation" "SKILL.md" "Do not mutate the original checkout"
-require_text "SKILL commits only through target branch" "SKILL.md" "Commit or merge only into the verified target/integration branch"
+require_text "SKILL names run isolation hook" "SKILL.md" "Run isolation"
+require_text "SKILL points to role-loop contract" "SKILL.md" "reference/role-loop.md"
 
-# The role loop carries the same operational contract, not only the short spine.
 require_text "role-loop resolves source and target" "reference/role-loop.md" "resolve the source/base branch and target/integration branch"
 require_text "role-loop verifies both refs" "reference/role-loop.md" "verify both refs exist"
 require_text "role-loop creates branch-scoped worktree" "reference/role-loop.md" "git worktree add"
 require_text "role-loop protects original checkout" "reference/role-loop.md" "never edit the original checkout"
+require_text "role-loop commits only through target branch" "reference/role-loop.md" "verified target/integration branch"
 
 # Browser UI verification cannot end at lint/typecheck; playwright-cli evidence is a hard exit condition.
 require_text "SKILL sends UI work through browser QA gate" "SKILL.md" 'browser app verification with `qa-gate.sh <vault> browser`'

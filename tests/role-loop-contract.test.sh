@@ -46,11 +46,11 @@ require_text "fixer blocks ask-user generated tests" "reference/role-loop.md" "s
 # Verifier closes them out.
 require_text "verifier marks surfaced requirements fixed" "reference/role-loop.md" "mark each surfaced requirement fixed"
 
-# SKILL.md surfaces the behavior in the default loop.
-require_text "SKILL critic step logs surfaced requirements" "SKILL.md" 'run vault'\''s `surfaced-requirements.md`'
+# SKILL.md surfaces the route; reference/role-loop.md owns the detailed behavior.
 require_text "SKILL names equal-compute improve loop" "SKILL.md" "Build -> Improve full spec -> Improve edge cases -> Final Verify"
-require_text "SKILL keeps production ambiguity as ask-user" "SKILL.md" "Production/source-code domain ambiguity"
-require_text "SKILL allows conservative no-user default" "SKILL.md" "conservative, reversible default"
+require_text "role-loop critic step logs surfaced requirements" "reference/role-loop.md" 'run vault'\''s `surfaced-requirements.md`'
+require_text "role-loop keeps production ambiguity as ask-user" "reference/role-loop.md" "production/source-code domain ambiguity"
+require_text "role-loop allows conservative no-user default" "reference/role-loop.md" "conservative, reversible default"
 require_text "role-loop names mandatory improve passes" "reference/role-loop.md" "Build -> Improve full spec -> Improve edge cases -> Final Verify"
 require_text "role-loop excludes critic from default loop" "reference/role-loop.md" "Critic/Fixer is not part of the default loop"
 require_text "SKILL excludes critic from default loop" "SKILL.md" "Critic/Fixer is not part of the default loop"

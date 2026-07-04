@@ -77,7 +77,7 @@ commit gate passed (`## Commit gate`).
 ## Commit gate
 
 Commit or merge into the target/integration branch only when proof is green and the user has accepted.
-Block while any holds: REAL tests or prose spec not green; QA verdict FAIL or PARTIAL (incomplete); an
+Block while any holds: REAL tests or request/docs not satisfied; QA verdict FAIL or PARTIAL (incomplete); an
 open requirement in `surfaced-requirements.md`; an unmet/open/blocked row in `## Requirement Trace`; a
 missing or non-clean `Backward-trace` (scope-creep orphan); an unresolved `ask-user` decision gate;
 non-exact reproduction fidelity without residual risk and post-deploy confirmation plan; or fulfillment

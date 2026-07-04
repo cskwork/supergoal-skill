@@ -7,8 +7,8 @@ No extra install: clone the repo, symlink it into your skills directory, then `/
 Landing page: **[cskwork.github.io/supergoal-skill](https://cskwork.github.io/supergoal-skill/)**.
 
 An agent skill for heavy coding objectives where a normal "just edit it" pass is too easy to fool. It
-takes one objective, chooses the right workflow route, makes the smallest correct change, forces a
-whole-spec verification pass against the project's own tests and spec, then stops.
+takes one objective, chooses the right workflow route, makes the smallest correct change, checks the
+request and project docs against the real behavior, then stops.
 
 ## What `/supergoal` does
 
@@ -19,8 +19,10 @@ whole-spec verification pass against the project's own tests and spec, then stop
    eval, or skill mining.
 2. **Load only the needed playbook.** The root `SKILL.md` stays small; each route loads its own
    `reference/` and `agents/` files only when needed.
-3. **Keep contexts fresh.** Heavy work uses fresh-context subagents for build and verify. Critic/Fixer is
-   an opt-in escalation for under-specified work, not the always-on default.
+3. **Keep contexts fresh.** Non-trivial work runs Build, Improve full spec, Improve edge cases, and
+   Final Verify as separate fresh-context roles. The conductor passes the run vault and needed files,
+   then collects short status. Critic/Fixer is an opt-in escalation for under-specified work, not the
+   always-on default.
 4. **Run Before/After Eval.** Capture the before state, define the after target, write a completion
    promise, and keep a resumable run state plus command manifest so the final claim proves the delta
    instead of just saying "tests passed."
@@ -32,23 +34,25 @@ whole-spec verification pass against the project's own tests and spec, then stop
 ## What it adds over a plain baseline
 
 A strong model with the real spec is the bar. `/supergoal` adds the part a plain baseline skips under
-pressure: after the build, it forces a fresh whole-spec verification pass, checks degenerate inputs and
-edge/error paths, re-runs the project's real tests, and records the proof. For genuinely
-under-specified work, it can escalate to an independent critic that writes spec-derived failing tests
-before a fixer clears them. For a trivial single edit, skip the skill and edit directly.
+pressure: after Build, it runs the current core loop - Improve full spec, Improve edge cases, then Final
+Verify - and records the proof. For genuinely under-specified work, it can escalate to an independent
+critic that writes spec-derived failing tests before a fixer clears them. For a trivial single edit, skip
+the skill and edit directly.
 
 Each role is a bundled file in `agents/`, so dispatch stays harness-agnostic across Claude Code, Codex,
-agy, and other agent CLIs. Build and Verify are the mandatory core; Critic/Fixer stay available for the
-under-specified frontier. The conductor stays lean while heavy references load inside subagents, and
-independent units run in parallel; a trivial single edit stays inline.
+agy, and other agent CLIs. Build -> Improve full spec -> Improve edge cases -> Final Verify is the
+mandatory core; Critic/Fixer stays available for the under-specified frontier. The conductor stays lean:
+subagents load the heavy references for their phase, and independent units run in parallel. A trivial
+single edit stays inline.
 
 ## Principles
 
-- **Verify against ground truth.** Re-run the project's REAL tests and re-read the prose spec for rules
-  the tests miss. Never generate a proxy checklist/verifier and optimize to it.
+- **Verify against ground truth.** Re-run the project's REAL tests and re-read the request, ticket,
+  README, design/API docs, and repo rules for checks the tests miss. Never generate a proxy
+  checklist/verifier and optimize to it.
 - **Smallest correct change.** Match the surrounding code; no whole-file rewrites to change a few lines.
-- **Forced verification before trust.** Re-read the whole spec after Build, even when visible tests are
-  green; critic escalation is reserved for latent requirement risk.
+- **Forced verification before trust.** After Build, compare the request/docs with the current behavior,
+  even when visible tests are green; critic escalation is reserved for latent requirement risk.
 - **Before/After Eval for real code changes.** GREENFIELD proves what was absent or red before; DEBUG
   reproduces the symptom; LEGACY/brownfield captures behavior to preserve before changing it.
 - **Ask only when genuinely ambiguous.** Resolve code-answerable questions by reading the code.
@@ -79,7 +83,7 @@ flowchart TD
     C -->|"harness effectiveness"| HARNESS["HARNESS-EVAL<br/>baseline vs harness"]
     C -->|"make a reusable skill"| SKILLMINE["SKILL-MINE<br/>mine -> forge -> install"]
 
-    GREENFIELD --> LOOP["Default delivery loop<br/>Build -> Forced Verify<br/>(Critic/Fixer opt-in)"]
+    GREENFIELD --> LOOP["Default delivery loop<br/>Build -> Improve full spec<br/>-> Improve edge cases -> Final Verify<br/>(Critic/Fixer opt-in)"]
     DEBUG --> LOOP
     LEGACY --> LOOP
 
@@ -109,13 +113,16 @@ flowchart TD
 | "make a skill from history - no product code" | **SKILL-MINE** | Mine history -> rank -> you pick -> forge portable `SKILL.md` -> install |
 
 **Default loop (GREENFIELD / DEBUG / LEGACY):** 1) **Frame** the goal + acceptance criteria and start
-`delivery-proof.md` with Before/After Eval plus `run-state.json`; 2) **Build** the smallest correct change, test-first
-(bug -> failing test first); 3) **Forced Verify** by re-reading the whole prose spec, checking degenerate
-inputs and edge/error paths, fixing the smallest fresh gap, and re-running the real tests until stable;
-4) escalate to independent **Critic -> Fixer** only for genuinely under-specified or latent-correctness
-work where missing requirements need to become failing tests; 5) stop only after the completion promise,
-after-evidence, resolved decision gates, and residual risk are recorded with command output. The normal
-Build -> Verify loop has a default 8-iteration cap with forced reflection before continuing.
+`delivery-proof.md` with Before/After Eval plus `run-state.json`; 2) **Build** the smallest correct
+change, test-first (bug -> failing test first); 3) **Improve full spec** by re-reading the user's
+request, issue/ticket, README, design/API docs, and `## Requirement Trace`, then fixing the smallest
+gap between that intent and the current behavior; 4) **Improve edge cases** by checking degenerate
+inputs, edge/error paths, state/protocol, compatibility, and security side effects; 5) **Final Verify**
+by re-running the real tests until stable and closing the proof; 6) escalate to
+independent **Critic -> Fixer** only for genuinely under-specified or latent-correctness work where
+missing requirements need to become failing tests. Stop only after the completion promise, after-evidence,
+resolved decision gates, and residual risk are recorded with command output. The core loop has a default
+8-iteration cap with forced reflection before continuing.
 
 Coding/debug runs use a run worktree by default: resolve and verify the source/base branch plus the
 target/integration branch before editing, create the run worktree from source/base, and only commit or
@@ -142,9 +149,9 @@ They write no product code by default and confirm with you before installing any
 ## Board (optional live dashboard)
 
 Watch progress across concurrent agents in real time. `bash tui/launch.sh &` opens an in-browser
-dashboard (Textual) showing each agent's mode + workflow stage (Frame -> Build -> Verify, with
-Critic/Fixer only when escalated) and a Jira-like task board, grouped by repo / branch / worktree. Branch
-is advisory - never locked, so multiple agents can share a branch freely.
+dashboard (Textual) showing each agent's mode + workflow stage (Frame -> Build -> Improve -> Final Verify,
+with Critic/Fixer only when escalated) and a Jira-like task board, grouped by repo / branch / worktree.
+Branch is advisory - never locked, so multiple agents can share a branch freely.
 
 It is pure observability: opt-in, best-effort, and it never gates or blocks a run - if no agent emits,
 every mode still passes unchanged. When enabled, the conductor calls `sg-emit`
@@ -206,7 +213,7 @@ examples/url-shortener/   a worked example service exercised across the build / 
 The design is grounded in head-to-head evals - especially
 `docs/experiments/2026-07-01-roleloop-coverage-fix-claude-ab/FINDINGS.md` and
 `docs/harness-eval-explained.md`. The result that shapes the current skill: on explicit-spec tasks,
-forced whole-spec verification beat one-shot baseline and matched or beat role separation at lower
+the request/docs verification pass beat one-shot baseline and matched or beat role separation at lower
 ceremony, while generated-proxy verifiers can score worse via Goodhart. The next proof frontier is not
 more synthetic fixtures; it is the production-adoption plan in
 `docs/changelog/2026-07/02-production-adoption/plan.md`, which tracks symlink deployment, trigger

@@ -75,3 +75,14 @@
 **릴리스 결정 — 보류(NO release).** shipped가 raw 최고점이나 **통계적 확정 아님(p=0.102 > 0.05)**. 사용자 게이트 "명확하게 확정된 경우만" 미충족 → main 병합·minor release·태그 **하지 않음**. 또한 arm B(shipped)는 *이미 배포된* 디버그 스킬 = status quo라 릴리스할 신규 아티팩트도 없음. n=10(사용자 상한)이라 검정력 낮음 → +15.7pp가 15에서 교차/회귀 미상.
 
 **결정 근거 / 대안:** (1) p=0.10을 "win"으로 릴리스하면 캠페인 전체가 방지해온 confabulation([[proxy-fabricates-tool-output]], [[supergoal-baseline-first]])을 범함 → 거부. (2) 커밋/푸시는 데이터 캡처라 무조건 수행(dev). (3) 확정을 원하면 held-out 5 instance(worktree 이미 존재) 추가 또는 R↑ 재검증 — 사용자 결정(현재 "15는 많다"로 상한했으므로 미제안 기본). **baseline-first는 α=0.05에서 유지되나 "약한 모델=flat-zero"가 아니라 "sub-threshold pulse"로 정련.** provenance: wf_f53fc4e0-3d1.
+
+## 확증 — pre-registered n=15 재검정 (FINAL): 6번째 null, 릴리스 없음
+
+**요청:** n=10의 shipped +15.7pp(p=0.102)를 확정할지. 사용자 선택 = 확증 실험. 마침 워크플로우가 15개 전부의 에이전트를 이미 실행(130/135) → 남은 5개(24066·24102·24152·24213·24909)는 **채점만 추가(신규 에이전트 0)**. **결정 규칙을 채점 전 잠금**: shipped vs no-skill p<0.05 → minor release, 아니면 종결. 확증 1회로 끝(optional-stopping 차단).
+
+**결과 (n=15, 132 후보):** no-skill 24/45=53% · shipped 28/43=65% · assertflip 31/44=70%.
+- **shipped vs no-skill: diff=+0.118, p=0.124** (1차 검정)
+- assertflip vs no-skill: diff=+0.171, p=0.074
+- assertflip vs shipped: diff=+0.053, p=0.588
+
+**판정: 6번째 null 확정 — 릴리스/main 병합/태그 없음.** n=10의 "shipped 최고점·p=0.10"은 데이터가 늘자 **소멸**: shipped 72%→65% 하락, 서열마저 뒤집혀 assertflip 명목 최고(p=0.074, 유의 아님). **n=10 관측 우위는 노이즈였음 — 유의성 게이트의 존재 이유를 실증.** 셋 다 α=0.05 미달. [[supergoal-baseline-first]] 재확증: 약한 모델·헤드룸 regime에서도 debug-skill 유의 lift 없음 → **debug-skill lever 완전 종결.** graded_haiku.json은 n=15로 갱신 커밋. provenance: 확증 채점 = wf_f53fc4e0-3d1 산출물.

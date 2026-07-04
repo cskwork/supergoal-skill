@@ -1,7 +1,7 @@
 """Shared helpers: sympy from-source env, gold-patch apply, fail-to-pass grading."""
 import json, os, re, subprocess, sys, glob
 
-SCR = "/private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/9457cce6-054c-4818-bc0e-40c304fc2d06/scratchpad"
+SCR = os.environ.get("SWT_SCR", "/private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/9457cce6-054c-4818-bc0e-40c304fc2d06/scratchpad")
 SYMPY = os.path.join(SCR, "swt/sympy")
 INST_DIR = os.path.join(SCR, "swt/instances")
 ENV = dict(os.environ, PYTHONPATH=SYMPY, PYTHONDONTWRITEBYTECODE="1")

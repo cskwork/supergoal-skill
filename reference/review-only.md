@@ -18,7 +18,7 @@ against, and the depth the user asked for (quick pass vs thorough audit).
   behavior becomes a finding that names the missing test it would write (file, behavior, edge).
 - `agents/security-reviewer.md`: secrets, injection, SSRF/XSS, auth, unsafe crypto, input validation.
 
-Both read the prose spec and repo/data rules (`reference/domain-context.md`, `domain-rules.md`) so
+Both read request/docs and repo/data rules (`reference/domain-context.md`, `domain-rules.md`) so
 findings are judged against what the project requires, not generic style taste.
 
 ## Verify findings before reporting

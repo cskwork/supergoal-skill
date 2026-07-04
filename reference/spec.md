@@ -110,8 +110,8 @@ grill load-bearing decisions, and crystallize docs from answers.
 
 ## Guardrails
 
-- EARS criteria and spec documents strengthen the prose spec; they **never replace ground truth** -
-  final verification is the project's REAL tests + prose spec (SKILL.md core principles).
+- EARS criteria and spec documents strengthen request/docs; they **never replace ground truth** -
+  final verification is the project's REAL tests + request/docs (SKILL.md core principles).
 - Requirements stay what, not how; the how lives in design.md only.
 - Spec drift is a defect: when code and requirements.md disagree, fix the code or (with user consent)
   amend the spec - never leave them inconsistent.

@@ -4,8 +4,8 @@ Use for any non-trivial GREENFIELD / DEBUG / LEGACY feature, bug, or refactor. T
 directly.
 
 The mandatory core is Build -> Improve full spec -> Improve edge cases -> Final Verify. After Build, one
-fresh-context improver re-reads the whole spec; another attacks edge cases; Final Verify tries to disprove
-the result with real evidence. Critic/Fixer is not part of the default loop.
+fresh-context improver compares the request/docs with current behavior; another attacks edge cases; Final
+Verify tries to disprove the result with real evidence. Critic/Fixer is not part of the default loop.
 
 Use it when the task is under-specified, latent-correctness-heavy, security/edge/domain-rule-sensitive, or
 Final Verify exposes an unexplained requirement gap. Do not use it when the spec is explicit, behavior is
@@ -68,7 +68,7 @@ the edge pass or when Final Verify finds an unexplained gap.
 
 0. **Adversarial plan attack (conditional, no src edits)** - only for under-specified, wide-blast-radius,
    security/data/concurrency, or latent-correctness work. Before Build, dispatch critics for security,
-   scope, correctness, performance, and operability. Accept only findings grounded in prose spec, current
+   scope, correctness, performance, and operability. Accept only findings grounded in request/docs, current
    code/data, or platform rules; convert required risks into tests, decision gates, or residual risk.
 
 1. **Build** - before first edit, confirm blast-radius beyond the explicit target (`reference/interview.md`).
@@ -78,8 +78,9 @@ the edge pass or when Final Verify finds an unexplained gap.
    exact-behavior baseline FIRST. Capture run setup in `delivery-proof.md` and `run-state.json`.
 
 2. **Improve full spec** (`agents/executor.md`; fresh-context improver)
-   - Re-read the FULL prose spec, current code, existing tests, `## Requirement Trace`, and repo/data
-     rules. Confirm every stated-or-implied behavior; fix the smallest full-spec gap.
+   - Re-read the request/ticket, README, design/API docs, current code, existing tests,
+     `## Requirement Trace`, and repo/data rules. Fix the smallest gap between those requirements and
+     current behavior.
    - If production/source-code domain ambiguity would change user-visible behavior, data semantics,
      permissions, migrations, or API compatibility, stop and record an `ask-user` decision gate. Do not
      guess business meaning.
@@ -98,9 +99,9 @@ the edge pass or when Final Verify finds an unexplained gap.
      cleanup.
 
 4. **Final Verify/QA vs ground truth (mandatory core)** (`agents/qa-auditor.md` / `security-reviewer.md`)
-   - Fresh-context adversarial verify: re-read the FULL prose spec and try to disprove the change against
-     stated requirements, implied `must` behavior, edge cases, and execution evidence. Re-run REAL tests
-     and report output. Fresh gap -> route back to Improve full spec or Improve edge cases.
+   - Fresh-context adversarial verify: re-read the request/docs and try to disprove the change against
+     required behavior, edge cases, and execution evidence. Re-run REAL tests and report output. Fresh
+     gap -> route back to Improve full spec or Improve edge cases.
    - Code-change scenarios use `reference/qa.md` "Scenario stencil (code changes)", including regression
      scenarios and metamorphic relations when no exact oracle exists.
    - Browser UI changes require `reference/qa.md` browser evidence: `Tool: playwright-cli`,
@@ -122,19 +123,19 @@ the edge pass or when Final Verify finds an unexplained gap.
      and completion-promise status.
 
 5. **Critic** (`agents/code-reviewer.md`; OPT-IN escalation for under-specified / latent-correctness work) - DO NOT edit src or weaken/delete existing tests.
-   - Re-read prose spec and repo/data rules. Enumerate REQUIRED behaviors existing tests miss, especially
+   - Re-read request/docs and repo/data rules. Enumerate REQUIRED behaviors existing tests miss, especially
      boundary inputs, error/recovery, scoping/precedence, filters, incremental update, concurrency,
      protocol/state.
    - Requirement threshold: classify each candidate as `must`, `should`, or `ask-user`. Only `must`
-     requirements grounded in the prose spec, current/API behavior, repo/data rules, or platform safety
+     requirements grounded in request/docs, current/API behavior, repo/data rules, or platform safety
      get failing tests. Do not turn silence into stricter semantics (for example throwing on degenerate
      inputs) when multiple reasonable behaviors exist; record that as an `ask-user` decision gate or
      residual risk.
    - For each `must`, write a NEW FAILING black-box/property test in a separate file, derived strictly
-     from the spec.
+     from request/docs.
    - Record each surfaced requirement in the run vault's `surfaced-requirements.md`
      (`docs/changelog/<YYYY-MM>/<DD-topic>/surfaced-requirements.md`; create if absent; format in
-     `templates/surfaced-requirements.md`): dated heading, one bullet per `must` - what the spec implies,
+     `templates/surfaced-requirements.md`): dated heading, one bullet per `must` - what request/docs imply,
      why it is required though the prompt never stated it, and the failing test that now covers it
      (status: open).
    - Leave the failing tests red.
@@ -142,13 +143,13 @@ the edge pass or when Final Verify finds an unexplained gap.
 6. **Fixer** (`agents/executor.md`) - DO NOT edit test files.
    - Read NOTES + run the suite. Make the failing tests pass with the SMALLEST change.
    - If a critic-authored test appears to encode an `ask-user` choice, contradict current/API behavior, or
-     harden semantics not required by the spec or safety, stop and report the decision gate instead of
+     harden semantics not required by request/docs or safety, stop and report the decision gate instead of
      optimizing source to it.
    - No padding: add no code that is not required by a failing test or a listed defect. Do not break
      passing tests.
 
-The improve-pass core is mandatory except *very easy* issues. Past that: whole-spec improve, edge-case
-improve, REAL tests, and DB evidence for data-backed bugs (`reference/db-access.md`). DB proves data
+The improve-pass core is mandatory except *very easy* issues. Past that: docs-vs-behavior improve,
+edge-case improve, REAL tests, and DB evidence for data-backed bugs (`reference/db-access.md`). DB proves data
 state; it does not replace red-green. Loop the opt-in critic->fixer escalation only while a fresh red
 appears.
 
@@ -159,7 +160,7 @@ best-effort; observes only, never blocks or gates the loop.
 ## Guardrails (keep it baseline-first, not Goodhart)
 
 - Generated tests are a SIGNAL to surface hidden requirements, not the oracle. Final verification is REAL
-  tests + prose spec. Never weaken/delete a real test; never declare done because self-written tests pass.
+  tests + request/docs. Never weaken/delete a real test; never declare done because self-written tests pass.
 - Ambiguous edges are not REDs. If a production/domain behavior change has multiple reasonable meanings,
   classify it as `ask-user` or residual risk; do not invent stricter semantics. If generic/no-user, choose
   a conservative, reversible default and record it.
@@ -167,7 +168,7 @@ best-effort; observes only, never blocks or gates the loop.
   only when the bug fix is intentional and named.
 - Self-review is not a regression gate: generated explanations can approve behavior drift. Require
   execution evidence, fresh-context verification, and no stub done claims.
-- Derive every generated test from the prose spec, not from a guessed rubric; a wrong generated test the
+- Derive every generated test from request/docs, not from a guessed rubric; a wrong generated test the
   fixer optimizes to is the failure mode - keep them black-box and spec-anchored.
 - Stop condition: cap the Build->Verify loop at `max_iterations` (default 8) with forced reflection, and
   cap the critic->fixer loop at 3 cycles; if a 4th critic cycle would start, escalate to the user with

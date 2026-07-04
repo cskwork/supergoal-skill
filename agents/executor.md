@@ -15,11 +15,10 @@ the source the slice or failing test requires.
 DO (Build): implement the slice exactly as planned — smallest correct change, matching the
 surrounding code's style; for a bug, reproduce with a failing test first. Run the local tests until
 green.
-DO (Improve full spec): re-read the complete prose spec, current code, existing tests, and Requirement
-Trace. Fix the smallest gap between stated-or-implied `must` behavior and the implementation, even when
-visible tests are green. Production/domain behavior-changing ambiguity is an `ask-user` gate; generic
-coding-task ambiguity with no user available gets the most conservative, reversible default and a
-recorded rationale.
+DO (Improve full spec): re-read the request/ticket, README, design/API docs, Requirement Trace, current
+code, and tests. Fix the smallest gap between those requirements and current behavior, even when visible
+tests are green. Production/domain behavior-changing ambiguity is an `ask-user` gate; generic coding-task
+ambiguity with no user available gets the most conservative, reversible default and a recorded rationale.
 DO (Improve edge cases): attack degenerate values (null/undefined/empty/boundary), missing/extra fields,
 duplicate input, ordering, idempotency, error/recovery, state/protocol, concurrency, compatibility,
 security side effects, and cleanup. Fix only grounded gaps; do not invent stricter semantics from silence.

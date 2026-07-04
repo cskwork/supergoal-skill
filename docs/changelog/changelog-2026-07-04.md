@@ -137,3 +137,13 @@
 **번들 정리:** `SUGGESTIONS.md`는 runtime skill contract가 아니고 global skill copy에도 없어서 skill bundle에서 제거.
 
 **기각한 대안:** 모든 reference 파일을 기계적으로 단축하지 않음. `teach`, `harness-eval`, `taste-*`는 긴 파일이지만 각자 독립 route/reference data와 vendored contract를 담고 있어, 이번에는 명백한 중복 제거와 anchor ownership 정리에 한정.
+
+## public docs clarity polish — request/docs vs behavior
+
+**결정:** `Improve full spec` 단계 이름은 유지하되, 설명은 "문서화된 전체 스펙" 같은 추상 표현 대신 사용자 요청, 이슈/티켓, README, 설계/API 문서, `## Requirement Trace`, repo 규칙을 현재 코드 동작과 비교한다고 명시.
+
+**이유:** "명시되었거나 암시된 동작"만 쓰면 새 독자가 무엇을 읽고 무엇을 고쳐야 하는지 알기 어렵다. 단계명은 contract/test anchor로 남기고, 설명은 실제 입력 자료와 비교 대상을 적는 편이 더 DRY하고 오해가 적다.
+
+**변경:** `README.md`, `README.ko.md`, `docs/index.html`의 public copy를 current core loop(`Build -> Improve full spec -> Improve edge cases -> Final Verify`)와 맞추고, 각 단계가 fresh-context 역할로 분리된다는 점을 풀어 썼다. `SKILL.md`, `agents/executor.md`, `agents/code-reviewer.md`, `reference/role-loop.md`, `reference/review-only.md`, `reference/delivery-gate.md`, `reference/spec.md`도 같은 "request/docs vs behavior" 용어로 맞췄다.
+
+**테스트 변경:** `tests/role-loop-contract.test.sh`가 fresh-context role split과 concrete docs list를 검증하도록 추가했고, harness eval test labels에서 stale "forced verification" 표현을 제거했다.

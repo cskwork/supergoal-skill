@@ -14,7 +14,7 @@ weaken safety gates. Create/edit it only when the user explicitly asks (`referen
 
 ## Core principles
 
-- Ground truth beats proxy: re-run REAL tests, re-read the prose spec, and do not optimize to self-grading.
+- Ground truth beats proxy: re-run REAL tests, re-read request/docs, and do not optimize to self-grading.
 - Smallest correct change; match surrounding code. Scope-minimalism governs code surface area, not UI
   quality: polished user-facing UI is baseline correctness.
 - Non-trivial code changes use Before/After Eval before Build: prove before, target after, and delta with
@@ -93,8 +93,9 @@ of the default loop; use it only when hidden requirements are the value being te
 2. **Build.** Smallest correct change, test-first, surrounding style. Bug: failing test first
    (`reference/debugging.md`). Shared code/state past *very easy*: capture neighbor characterization
    baseline before editing.
-3. **Improve full spec.** Fresh-context improver re-reads the full prose spec, `## Requirement Trace`,
-   code, tests, and repo/data rules; fix the smallest stated-or-implied behavior gap.
+3. **Improve full spec.** Fresh-context improver re-reads the request/ticket, README, design/API docs,
+   `## Requirement Trace`, code, tests, and repo/data rules; fix the smallest gap between those
+   requirements and current behavior.
    Production/source-code domain ambiguity that changes behavior stops as `ask-user`; generic no-user
    coding ambiguity uses a conservative, reversible default and records it.
 4. **Improve edge cases.** Separate fresh-context improver attacks degenerate values, error/recovery,
@@ -140,7 +141,7 @@ verify/QA=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role
 | `reference/observability.md`, `tui/` | Board: opt-in live dashboard |
 
 **Done =** mode stated; smallest diff; Before/After Eval complete for non-trivial code changes; REAL
-tests + prose spec green (not proxy); runtime MUST proven by real behavior; past *very easy* -> red-green
+tests + request/docs green (not proxy); runtime MUST proven by real behavior; past *very easy* -> red-green
 test + DB evidence if data load-bearing; neighbor snapshots re-run with unnamed drift resolved; all
 requirements met and traced, with no orphan scope; DEBUG prod issue has reproduction fidelity and, if
 non-exact, residual risk + post-deploy confirmation plan; user-facing UI at the Expressive baseline;

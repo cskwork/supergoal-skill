@@ -86,3 +86,15 @@
 - assertflip vs shipped: diff=+0.053, p=0.588
 
 **판정: 6번째 null 확정 — 릴리스/main 병합/태그 없음.** n=10의 "shipped 최고점·p=0.10"은 데이터가 늘자 **소멸**: shipped 72%→65% 하락, 서열마저 뒤집혀 assertflip 명목 최고(p=0.074, 유의 아님). **n=10 관측 우위는 노이즈였음 — 유의성 게이트의 존재 이유를 실증.** 셋 다 α=0.05 미달. [[supergoal-baseline-first]] 재확증: 약한 모델·헤드룸 regime에서도 debug-skill 유의 lift 없음 → **debug-skill lever 완전 종결.** graded_haiku.json은 n=15로 갱신 커밋. provenance: 확증 채점 = wf_f53fc4e0-3d1 산출물.
+
+## supergoal(도메인 일반 critic-loop) vs no-skill — 마지막 미검증 lever(방향 2) 검정 (RESOLVED)
+
+**요청:** supergoal 스킬 vs no-skill 재실험, 동일 sympy env, "어떤 도메인에서든 유의미한 차이"를 낼 최적화 탐색.
+
+**오염 정정(사용자 지적):** 첫 critic 프롬프트에 sympy 특정 지식(`==`는 미평가 Eq, pretty-print 문자열 비교 등)을 하드코딩 → 이기더라도 메커니즘인지 주입 치트시트인지 구분 불가 + 도메인 일반 스킬로 일반화 불가. **실행 중 워크플로우 즉시 중단**, critic을 **도메인 무관 절차**로 재작성: (1) 독립성("이 라이브러리 특정 외부지식 반입 금지" 명시, sympy 토큰 0), (2) **실행으로 fail-to-pass 강제**(버그 소스에 돌려 clean 실패 확인 — 통과하면 비판별 assertion=무효), (3) 리포트만으로 정답 거동 재도출. fresh `abhS` 디렉터리.
+
+**arm S** = 생산자 → 독립 도메인일반 비평자 파이프라인(`wf_7cbf4d3d-2df`, 88 에이전트). **arm 0** = no-skill 재사용(동일 env·model·결정론 채점, $0).
+
+**결과 (n=15):** no-skill 24/45=53% vs **supergoal 27/45=60%**. **S vs 0 diff=+0.067, p=0.572 → NULL.** per-instance 상쇄: 어려운 버그엔 도움(22005 1→3, 23191 0→1, 23262 0→1), 이미 bare가 맞히던 것엔 오히려 해침(21055 3→1, 21627 3→1) — 비평자 재작성이 멀쩡한 테스트를 깨뜨림 = net wash.
+
+**판정: 도메인 일반 critic-loop도 이 explicit-spec 작업에선 유의미 lift 없음.** `SKILL.md` line 136 caveat("explicit-spec 작업에선 이 role separation이 equal-compute forced verification를 못 이김")를 **독립 구현으로 실증 재확인** → supergoal 변경 없음(critic escalation은 지금처럼 opt-in / under-specified 전용이 옳음). **메타결론:** 이 task class(버그 리포트가 정답 거동을 명시 = explicit-spec)는 스킬 lever가 물릴 헤드룸이 없음. "유의미 차이"를 실증하려면 스킬을 더 손보는 게 아니라 **testbed를 under-specified/latent-correctness로 바꿔야** 함. 산출물: `supergoal_wf.js`, `grade_supergoal.py`, `analyze_supergoal.py`, `graded_supergoal.json`. provenance: wf_7cbf4d3d-2df(정정본), 오염본 wf_f7716420-9a2는 중단·폐기.

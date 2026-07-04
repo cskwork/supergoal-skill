@@ -57,3 +57,21 @@
 **결정적 발견:** 진짜 AssertFlip은 **execution-feedback 루프**(passing test→실행→refine→invert)인데, 이 eval의 arm A와 PRD 변경 ①은 **one-shot 지시**라 메커니즘 미포함. → 검증된 것은 "assertflip을 지시로만 주면 real 하드 버그에서 lift 없음(p=1.0)"; **미검증은 execution-loop 구현**.
 
 **판정:** 변경 ①은 **두 번째 null**(토이 24/24 tie + real p=1.0) → **커밋 금지 유지**, **revert 권장**. 남은 avenue = 변경 ①을 execution-feedback 루프로 재설계 후 재검증(대형, 유저 결정). corpus baseline-first를 real·hard·non-saturated regime에서까지 재확증(최강 반증). provenance: wf_b530155e-957.
+
+## 약한 모델(haiku) 3-way skill-vs-no-skill — cold resume, 10-instance 상한 (RESOLVED)
+
+**산출물:** `docs/experiments/2026-07-04-swt-assertflip-realbug-ab/{grade_haiku.py, analyze_haiku.py, graded_haiku.json}`, `lib.py`(SWT_SCR env화), 계획서 `docs/plans/2026-07-04-haiku-3way-continuation.md` 결과 섹션.
+
+**요청:** 커밋 d697dce의 continuation plan 실행 — debug-skill이 *약한 모델(haiku)*에서 no-skill을 이기는지. sonnet 3-way는 baseline이 이미 82%라 스킬 여지 없었음(p=1.0). 약한 모델은 baseline이 허우적대 lift가 남은 유일한 셀.
+
+**방법:** scratchpad 휘발로 cold resume — sympy from-source 재클론 + 15 worktree(base_commit별) 재구축, 워크플로우 경로 치환, 재실행 `wf_f53fc4e0-3d1`(15 inst × 3 arm × R3 = 135 haiku 에이전트, execution-loop; 130/135 성공). 채점은 out-of-band 결정론적 fail-to-pass(base 실패 + gold fix 통과), grader 신뢰성은 수동 교차확인. **사용자 요청으로 15→10 instance 상한**(id 오름차순 앞 10개 사전고정 — 결과보고 선택 아님, p-hacking 방지).
+
+**결과 (10 inst / 89 후보):**
+- no-skill 17/30 = **57%**, shipped-skill 21/29 = **72%**, assertflip 20/30 = 67%.
+- stratified permutation: **shipped vs no-skill diff=+0.157 p=0.102** · assertflip vs no-skill +0.100 p=0.549 · assertflip vs shipped −0.057 p=0.756.
+
+**판정: 6번째 null (α=0.05 미달) — 단 질적으로 다름.** 앞 5개는 p 0.40~1.00 방향성 무. 이번은 **캠페인 최초의 방향성 pulse가 예측대로 약한 모델 niche에서 발생**(no-skill 57%로 헤드룸 생김 → shipped +15.7pp). 기전 per-instance 확인: shipped(실행루프+실패까지 반복)가 어려운 버그에서 weak 모델을 끌어올림(22005 1→3, 23191 0→1, 23262 0→1); assert-then-invert(A)는 위에 0~음(21055 3→1, 21627 3→1) → lesson "execution feedback이 lever, invert trick은 0" 재확인.
+
+**릴리스 결정 — 보류(NO release).** shipped가 raw 최고점이나 **통계적 확정 아님(p=0.102 > 0.05)**. 사용자 게이트 "명확하게 확정된 경우만" 미충족 → main 병합·minor release·태그 **하지 않음**. 또한 arm B(shipped)는 *이미 배포된* 디버그 스킬 = status quo라 릴리스할 신규 아티팩트도 없음. n=10(사용자 상한)이라 검정력 낮음 → +15.7pp가 15에서 교차/회귀 미상.
+
+**결정 근거 / 대안:** (1) p=0.10을 "win"으로 릴리스하면 캠페인 전체가 방지해온 confabulation([[proxy-fabricates-tool-output]], [[supergoal-baseline-first]])을 범함 → 거부. (2) 커밋/푸시는 데이터 캡처라 무조건 수행(dev). (3) 확정을 원하면 held-out 5 instance(worktree 이미 존재) 추가 또는 R↑ 재검증 — 사용자 결정(현재 "15는 많다"로 상한했으므로 미제안 기본). **baseline-first는 α=0.05에서 유지되나 "약한 모델=flat-zero"가 아니라 "sub-threshold pulse"로 정련.** provenance: wf_f53fc4e0-3d1.

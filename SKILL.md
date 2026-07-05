@@ -15,6 +15,7 @@ weaken safety gates. Create/edit it only when the user explicitly asks (`referen
 ## Core principles
 
 - Ground truth beats proxy: re-run REAL tests, re-read request/docs, and do not optimize to self-grading.
+- Exact proof beats review; non-trivial implementation is delegated to a builder subagent.
 - Smallest correct change; match surrounding code. Scope-minimalism governs code surface area, not UI
   quality: polished user-facing UI is baseline correctness.
 - Non-trivial code changes use Before/After Eval before Build: prove before, target after, and delta with
@@ -81,8 +82,10 @@ edit: skip and edit inline. Parallelize independent QA shards/review dimensions.
 loop; harder work requires red-green, plus DB evidence when persisted data is load-bearing. Full contract:
 `reference/role-loop.md`.
 
-Mandatory core: Build -> Improve full spec -> Improve edge cases -> Final Verify. Critic/Fixer is not part
-of the default loop; use it only when hidden requirements are the value being tested.
+Mandatory core: Build -> Improve full spec -> Improve edge cases -> Mandatory Adversarial Review ->
+Exact Verify/QA. Historical contract string: Build -> Improve full spec -> Improve edge cases -> Final
+Verify. Critic/Fixer is not part of the default loop; the mandatory adversarial review is. Use optional
+Critic/Fixer only when hidden requirements are the value being tested.
 
 1. **Frame.** Restate goal + falsifiable acceptance criteria. Seed numbered requirements in
    `## Requirement Trace`. Write a completion promise: outcome, proof, stop condition, `max_iterations`
@@ -90,9 +93,9 @@ of the default loop; use it only when hidden requirements are the value being te
    changing blast radius after grounding (`reference/interview.md`). UI: load `reference/ui-ux.md`.
    Non-trivial code: start `delivery-proof.md` from `templates/delivery-proof.md`, create
    `run-state.json` from `templates/run-state.json`, and record the Before/After Eval.
-2. **Build.** Smallest correct change, test-first, surrounding style. Bug: failing test first
-   (`reference/debugging.md`). Shared code/state past *very easy*: capture neighbor characterization
-   baseline before editing.
+2. **Build.** Non-trivial implementation runs in a separate fresh-context builder subagent. Smallest
+   correct change, test-first, surrounding style. Bug: failing test first (`reference/debugging.md`).
+   Shared code/state past *very easy*: capture neighbor characterization baseline before editing.
 3. **Improve full spec.** Fresh-context improver re-reads the request/ticket, README, design/API docs,
    `## Requirement Trace`, code, tests, and repo/data rules; fix the smallest gap between those
    requirements and current behavior.
@@ -101,12 +104,16 @@ of the default loop; use it only when hidden requirements are the value being te
 4. **Improve edge cases.** Separate fresh-context improver attacks degenerate values, error/recovery,
    state/protocol, concurrency, compatibility, security, and cleanup. Test only grounded `must` behavior;
    route product/domain choices to the user.
-5. **Final Verify/QA.** Re-run REAL tests and disprove against spec; route fresh gaps back to Improve.
-   Browser UI: complete browser app verification with `qa-gate.sh <vault> browser`. Re-run neighbor
-   baselines, close `## Requirement Trace`, and keep `Backward-trace: clean`. DEBUG prod issue: record
-   reproduction fidelity. Stop only after `delivery-proof.md` has after evidence, resolved decision gates,
-   and residual risk; report command output.
-6. **Critic escalation (opt-in; no src edits).** For under-specified / latent-correctness work, an
+5. **Mandatory Adversarial Review (no src edits).** Fresh reviewer re-reads request/docs,
+   `delivery-proof.md`, current diff, and tests to disprove completeness. Findings become fixes, decision
+   gates, or residual risk; reviewer approval alone never means done.
+6. **Exact Verify/QA.** Re-run REAL tests plus the proof layer promised in Frame. Runtime-facing or
+   user-expected proof: run the actual E2E/live/API/browser run; exact verification outranks reviewer
+   approval. Browser UI: complete browser app verification with `qa-gate.sh <vault> browser`. Re-run
+   neighbor baselines, close `## Requirement Trace`, keep `Backward-trace: clean`, and record command
+   output. If the exact layer
+   cannot run, mark it not proven with blocker/residual risk.
+7. **Critic escalation (opt-in; no src edits).** For under-specified / latent-correctness work, an
    independent critic classifies inferred behavior as `must`, `should`, or `ask-user`; only grounded
    `must` becomes FAILING tests. Log each in the run vault's `surfaced-requirements.md`; fixer clears reds
    without editing tests. Ambiguous/product-changing semantics are decision gates, not generated REDs.

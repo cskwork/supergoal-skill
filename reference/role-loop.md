@@ -3,9 +3,12 @@
 Use for any non-trivial GREENFIELD / DEBUG / LEGACY feature, bug, or refactor. Trivial single edit: edit
 directly.
 
-The mandatory core is Build -> Improve full spec -> Improve edge cases -> Final Verify. After Build, one
-fresh-context improver compares the request/docs with current behavior; another attacks edge cases; Final
-Verify tries to disprove the result with real evidence. Critic/Fixer is not part of the default loop.
+The mandatory core is Build -> Improve full spec -> Improve edge cases -> Mandatory Adversarial Review ->
+Exact Verify/QA. Historical contract string: Build -> Improve full spec -> Improve edge cases -> Final
+Verify. After Build, one fresh-context improver compares the request/docs with current behavior; another
+attacks edge cases; a separate fresh-context adversarial review always tries to disprove completeness;
+then Exact Verify/QA runs the real proof layer. Exact verification outranks reviewer approval.
+Critic/Fixer is not part of the default loop.
 
 Use it when the task is under-specified, latent-correctness-heavy, security/edge/domain-rule-sensitive, or
 Final Verify exposes an unexplained requirement gap. Do not use it when the spec is explicit, behavior is
@@ -25,8 +28,9 @@ verify both refs exist and create a branch-scoped run worktree:
 git worktree add -b <run_branch> <worktree_path> <source/base branch>
 ```
 
-Run Build, Improve, optional Critic/Fixer, Final Verify/QA, tests, and vault writes inside that worktree;
-never edit the original checkout. Treat dirty original-checkout files as user work. Commit or merge only
+Run Build, Improve, Mandatory Adversarial Review, Exact Verify/QA, optional Critic/Fixer, tests, and vault
+writes inside that worktree; never edit the original checkout. Treat dirty original-checkout files as user
+work. Commit or merge only
 into the verified target/integration branch after green verification, user acceptance, and only once the
 commit gate passes (`reference/delivery-gate.md`; `bash templates/commit-gate.sh <vault> <browser|cli|none>`).
 Non-green blocks commit: resolve in-loop; escalate only when stuck.
@@ -63,8 +67,8 @@ previously green check turns red, stop, fix it, and record
 Dispatch by default: conductor runs each role as a fresh-context subagent so heavy references load inside
 that role, not the conductor. Return short structured status only: changed files, proof output, concerns.
 Parallelize independent units; order dependent roles. Build (1), Improve full spec (2), Improve edge
-cases (3), and Final Verify (4) are mandatory. Critic/Fixer is optional gated escalation, usually after
-the edge pass or when Final Verify finds an unexplained gap.
+cases (3), Mandatory Adversarial Review (4), and Exact Verify/QA (5) are mandatory. Critic/Fixer is
+optional gated escalation, usually after the edge pass or when Exact Verify finds an unexplained gap.
 
 0. **Adversarial plan attack (conditional, no src edits)** - only for under-specified, wide-blast-radius,
    security/data/concurrency, or latent-correctness work. Before Build, dispatch critics for security,
@@ -72,7 +76,9 @@ the edge pass or when Final Verify finds an unexplained gap.
    code/data, or platform rules; convert required risks into tests, decision gates, or residual risk.
 
 1. **Build** - before first edit, confirm blast-radius beyond the explicit target (`reference/interview.md`).
-   Then smallest correct change; match surrounding style. Bug: failing test first. For any shared
+   Non-trivial implementation must run as a separate fresh-context builder subagent; the conductor should
+   not implement non-trivial code inline. Then smallest correct change; match surrounding style. Bug:
+   failing test first. For any shared
    code/state change past *very easy*, capture a neighbor characterization baseline FIRST
    (`reference/qa.md` "Characterization baseline"). Refactor/integrate an existing API: capture its
    exact-behavior baseline FIRST. Capture run setup in `delivery-proof.md` and `run-state.json`.
@@ -98,9 +104,18 @@ the edge pass or when Final Verify finds an unexplained gap.
    - Re-run the targeted tests after every fix. Keep the diff minimal; no padding, rewrites, or unrelated
      cleanup.
 
-4. **Final Verify/QA vs ground truth (mandatory core)** (`agents/qa-auditor.md` / `security-reviewer.md`)
-   - Fresh-context adversarial verify: re-read the request/docs and try to disprove the change against
-     required behavior, edge cases, and execution evidence. Re-run REAL tests and report output. Fresh
+4. **Mandatory Adversarial Review (mandatory core; no src edits)** (`agents/code-reviewer.md`)
+   - Fresh-context adversarial review: re-read the request/docs, `delivery-proof.md`, current diff, tests,
+     and repo/data rules. Try to disprove the change against required behavior, edge cases, and execution
+     evidence. Fresh gap -> route back to Improve full spec or Improve edge cases.
+   - The reviewer does not edit source, does not weaken tests, and does not declare done. Findings become
+     fixes, `ask-user` decision gates, or residual risk. Reviewer approval is not a substitute for exact
+     verification.
+
+5. **Exact Verify/QA vs ground truth (mandatory core; Final Verify/QA)** (`agents/qa-auditor.md` / `security-reviewer.md`)
+   - Re-run REAL tests and report output. Run the command/browser/API/E2E layer promised in
+     `delivery-proof.md`. If the user expected an actual E2E/live/API/browser run, run it; otherwise mark
+     that layer not proven with blocker/residual risk. Exact verification outranks reviewer approval. Fresh
      gap -> route back to Improve full spec or Improve edge cases.
    - Code-change scenarios use `reference/qa.md` "Scenario stencil (code changes)", including regression
      scenarios and metamorphic relations when no exact oracle exists.
@@ -122,7 +137,7 @@ the edge pass or when Final Verify finds an unexplained gap.
    - Update `run-state.json`: phase, iteration, gate status, last proof command, blockers, next action,
      and completion-promise status.
 
-5. **Critic** (`agents/code-reviewer.md`; OPT-IN escalation for under-specified / latent-correctness work) - DO NOT edit src or weaken/delete existing tests.
+6. **Critic** (`agents/code-reviewer.md`; OPT-IN escalation for under-specified / latent-correctness work) - DO NOT edit src or weaken/delete existing tests.
    - Re-read request/docs and repo/data rules. Enumerate REQUIRED behaviors existing tests miss, especially
      boundary inputs, error/recovery, scoping/precedence, filters, incremental update, concurrency,
      protocol/state.
@@ -140,7 +155,7 @@ the edge pass or when Final Verify finds an unexplained gap.
      (status: open).
    - Leave the failing tests red.
 
-6. **Fixer** (`agents/executor.md`) - DO NOT edit test files.
+7. **Fixer** (`agents/executor.md`) - DO NOT edit test files.
    - Read NOTES + run the suite. Make the failing tests pass with the SMALLEST change.
    - If a critic-authored test appears to encode an `ask-user` choice, contradict current/API behavior, or
      harden semantics not required by request/docs or safety, stop and report the decision gate instead of
@@ -149,12 +164,12 @@ the edge pass or when Final Verify finds an unexplained gap.
      passing tests.
 
 The improve-pass core is mandatory except *very easy* issues. Past that: docs-vs-behavior improve,
-edge-case improve, REAL tests, and DB evidence for data-backed bugs (`reference/db-access.md`). DB proves data
-state; it does not replace red-green. Loop the opt-in critic->fixer escalation only while a fresh red
-appears.
+edge-case improve, mandatory adversarial review, exact REAL tests/E2E evidence, and DB evidence for
+data-backed bugs (`reference/db-access.md`). DB proves data state; it does not replace red-green. Loop the
+opt-in critic->fixer escalation only while a fresh red appears.
 
 Board (optional): if enabled (`reference/observability.md`), conductor may call `sg-emit --phase <P>` at
-phase transitions (Frame/Build/ImproveFullSpec/ImproveEdgeCases/Critic/Fixer/Verify/Done). Opt-in,
+phase transitions (Frame/Build/ImproveFullSpec/ImproveEdgeCases/MandatoryAdversarialReview/ExactVerify/Critic/Fixer/Done). Opt-in,
 best-effort; observes only, never blocks or gates the loop.
 
 ## Guardrails (keep it baseline-first, not Goodhart)
@@ -167,7 +182,9 @@ best-effort; observes only, never blocks or gates the loop.
 - Characterization baseline is a regression signal, not a correctness oracle. A known-bug snapshot changes
   only when the bug fix is intentional and named.
 - Self-review is not a regression gate: generated explanations can approve behavior drift. Require
-  execution evidence, fresh-context verification, and no stub done claims.
+  mandatory adversarial review, execution evidence, exact verification, and no stub done claims.
+- Exact verification outranks reviewer approval: no critic, reviewer, summary, or self-grade can replace the
+  actual command/browser/API/E2E run promised for the task. Missing exact proof is `not_proven`, not done.
 - Derive every generated test from request/docs, not from a guessed rubric; a wrong generated test the
   fixer optimizes to is the failure mode - keep them black-box and spec-anchored.
 - Stop condition: cap the Build->Verify loop at `max_iterations` (default 8) with forced reflection, and

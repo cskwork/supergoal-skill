@@ -14,6 +14,11 @@ benchmark:
     - "verifier/run.log"
 default_task_id: etree-xml-diff-patch
 default_effectiveness_task_id: etree-xml-diff-patch
+default_forced_suite_id: forced-default-deepswe-difficult-swe
+default_forced_suite_task_ids:
+  - etree-xml-diff-patch
+  - cliffy-config-file-parsing
+  - yjs-map-conflict-detection
 smoke_task_id: happy-dom-abort-pending-body-reads
 stop_policy:
   timeout_seconds: 900
@@ -63,7 +68,8 @@ metrics:
   routing_accuracy:
     primary: "not applicable unless this run changes the supergoal trigger/router; otherwise reuse the 20-prompt routing probe."
 decision_rule:
-  directional_pilot: "At least 3 paired seeds per arm on the primary task; report per-seed vectors."
+  forced_default: "For difficult SWE or harness-effectiveness claims without a named task, run the three-task forced DeepSWE suite: etree-xml-diff-patch, cliffy-config-file-parsing, and yjs-map-conflict-detection."
+  directional_pilot: "At least 3 different paired tasks or 3 paired seeds per task; report per-task/per-seed vectors. One run per task is directional only."
   proven_claim: "At least 6 paired seeds per arm across multiple tasks, paired McNemar p < 0.05 on binary task outcomes, and no unacceptable cost/time regression."
   no_signal: "If both arms pass every selected task, report not_proven_no_headroom and select harder held-out tasks."
 tasks:
@@ -109,6 +115,8 @@ tasks:
     why_selected: "CRDT-style map conflict detection requires domain reasoning about deterministic concurrent writes."
     minimum_pilot: false
 commands:
+  default_forced_suite_runner:
+    - "node templates/harness-eval-external/deepswe/run-default-suite.mjs --agent codex --model gpt-5.5 --reasoning-effort low --codex-auth-json auto --timeout-seconds 900 --run-root /tmp/sg-deepswe-default-suite"
   full_cycle_runner:
     - "node templates/harness-eval-external/deepswe/run-full-cycle.mjs --task etree-xml-diff-patch --agent codex --model gpt-5.5 --reasoning-effort low --codex-auth-json auto --timeout-seconds 900 --run-root /tmp/sg-deepswe-etree-full-cycle"
   smoke_full_cycle_runner:

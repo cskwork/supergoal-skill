@@ -142,7 +142,7 @@ verify/QA=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role
 | `reference/arch.md` | ARCHITECTURE: friction survey -> route out |
 | `reference/teach.md`, `learn-domain.md` | teach a human / onboard the agent |
 | `reference/ui-ux.md`, `taste-skill-v2.md`, `functional-ui.md`, `taste-aesthetics.md`, `engagement.md` | user-facing UI tier |
-| `reference/harness-eval.md`, `templates/harness-eval-runner.mjs` | HARNESS-EVAL; the runner is the DEFAULT portable eval driver (adapters + preflight + fallback + retry, serial by default) - use it, don't hand-roll a single-CLI run.mjs |
+| `reference/harness-eval.md`, `templates/harness-eval-runner.mjs`, `templates/harness-eval-external/deepswe/run-default-suite.mjs` | HARNESS-EVAL; the runner is the DEFAULT portable eval driver (adapters + preflight + fallback + retry, serial by default). Difficult SWE/harness-effectiveness claims default to the forced three-task DeepSWE suite - use it, don't hand-roll a single-CLI run.mjs |
 | `reference/skill-mine.md` | SKILL-MINE |
 | `reference/market-research.md` | GREENFIELD: validate demand (optional) |
 | `reference/observability.md`, `tui/` | Board: opt-in live dashboard |

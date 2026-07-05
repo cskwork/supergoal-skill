@@ -9,6 +9,30 @@ containers, and verifier artifacts.
 Do not claim `u3` proves a harness win. `u3` proves the fixture discriminates: visible checks can pass
 while hidden authorization/cache checks fail. A harness win needs paired public benchmark artifacts.
 
+## Forced Default Suite
+
+For difficult SWE or harness-effectiveness claims, do not stop at a single public task unless the user
+explicitly names one. Run the forced default DeepSWE suite:
+
+1. `etree-xml-diff-patch`
+2. `cliffy-config-file-parsing`
+3. `yjs-map-conflict-detection`
+
+Use the suite runner so the same full-cycle baseline/harness protocol is applied to each task:
+
+```bash
+node templates/harness-eval-external/deepswe/run-default-suite.mjs \
+  --agent codex \
+  --model gpt-5.5 \
+  --reasoning-effort low \
+  --codex-auth-json auto \
+  --timeout-seconds 900 \
+  --run-root /tmp/sg-deepswe-default-suite
+```
+
+One paired run per task is directional only, but it is the minimum default for this lane because it catches
+single-task ceiling effects and regressions. A proven claim still needs repeated seeds.
+
 ## Default Public Tasks
 
 Primary scoring task: `etree-xml-diff-patch`

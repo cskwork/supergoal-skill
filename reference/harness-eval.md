@@ -162,6 +162,17 @@ Required external-task provenance:
 - original task body hash for the harness arm and source hashes for the approved harness reference
 - exact runner, agent, model, seed policy, token source, duration source, and environment
 
+Forced default public SWE suite:
+
+- For difficult SWE tasks, harness-effectiveness claims, or "does Supergoal help on coding" questions
+  without a named task, run the DeepSWE three-task suite by default: `etree-xml-diff-patch`,
+  `cliffy-config-file-parsing`, and `yjs-map-conflict-detection`.
+- Use `templates/harness-eval-external/deepswe/run-default-suite.mjs` unless the user explicitly asks for
+  a single named task. The suite runner serially invokes the full-cycle runner once per task and writes
+  `suite-summary.json` plus `suite-report.md`.
+- A one-run-per-task suite is directional only. Treat outcomes as mixed evidence unless repeated seeds
+  support the same direction. Do not call a 1-task result a default DeepSWE eval.
+
 Default public scoring candidate:
 
 - `etree-xml-diff-patch` from DeepSWE v1.1: upstream `https://github.com/beevik/etree`, base commit

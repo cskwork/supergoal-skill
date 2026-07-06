@@ -6,8 +6,7 @@ description: Use for "build X", "fix this bug", "add this feature", "spec this f
 # About
 
 One objective -> smallest correct change -> verified against ground truth. If invoked, run this skill's
-contract instead of downgrading to an inline shortcut. `SKILL.md` is the router; `reference/` carries
-procedure.
+contract instead of downgrading to an inline shortcut. `SKILL.md` is the router; `reference/` carries procedure.
 
 **Standing rules (read first, every mode).** Before classifying the mode, read
 `.supergoal/rules/RULES.md` if present. Honor it across phases as top-priority preference, but rules never
@@ -16,7 +15,7 @@ weaken safety gates. Create/edit it only when the user explicitly asks (`referen
 ## Core principles
 
 - Ground truth beats proxy: re-run REAL tests, re-read request/docs, and do not optimize to self-grading.
-- Exact proof beats review; GREENFIELD / DEBUG / LEGACY implementation is delegated to a builder subagent.
+- Exact proof beats review; implementation is delegated to a builder subagent.
 - Smallest correct change; match surrounding code. Scope-minimalism governs code surface area, not UI
   quality: polished user-facing UI is baseline correctness.
 - GREENFIELD / DEBUG / LEGACY code changes use Before/After Eval before Build: prove before, target after, and delta with

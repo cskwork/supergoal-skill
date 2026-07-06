@@ -21,7 +21,7 @@ row/schema, config, cache, integration contract. Skip narrow *very easy* edits a
    `<vault>/qa/baseline/<neighbor>.txt`.
 3. After editing, re-run the same check and diff against the snapshot.
 
-Unnamed drift is red. Intentional drift must be named in `delivery-proof.md`. Characterization is a
+Unnamed drift is red. Intentional drift must be named in `QA.md`. Characterization is a
 regression signal, not a correctness oracle; update snapshots only for intentional bug fixes.
 
 ## Scenario stencil (code changes)
@@ -122,7 +122,7 @@ known-good output.
 
 ## Vault record
 
-Put evidence under `<vault>/qa/` and summarize in `verification.md` `## QA`:
+Put evidence under `<vault>/qa/` and summarize in `QA.md` `## QA`:
 
 - `Tool: playwright-cli` (the only sanctioned driver).
 - Commands run and pass/fail per check.

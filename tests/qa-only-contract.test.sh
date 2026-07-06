@@ -37,6 +37,7 @@ require_text "skill maps qa-only reference"       "SKILL.md" "reference/qa-only.
 require_text "skill maps qa-only gate"            "SKILL.md" "templates/qa-only-gate.sh"
 require_text "readme lists QA-ONLY mode"          "README.md" "**QA-ONLY**"
 
+require_text "qa-only vault uses QA.md"           "reference/qa-only.md" '`QA.md` (`## QA` evidence)'
 require_text "qa-only writes no production code"  "reference/qa-only.md" "writes NO production code"
 require_text "qa-only is read-only"               "reference/qa-only.md" "read-only except the run folder"
 require_text "qa-only default cap is 100"         "reference/qa-only.md" "Default \`action_cap\` is **100**"
@@ -103,7 +104,7 @@ mkbrowser() {
   printf 'QA scope: checkout flow on staging\n' > "$v/brief.md"
   printf '# Scenario ledger\n\n## Impact Matrix\n- direct flow\n\n## Shards\n| Scenario | Status | Evidence |\n|---|---|---|\n| direct-flow | PASS | qa/to-be-1040.png |\n' > "$v/qa/scenario-ledger.md"
   printf '# QA report\n## Impact coverage\n- direct flow, adjacent totals, refresh/reopen\n## What worked\n- login -> PASS\n## What didn'"'"'t\n- none\n## What I discovered\n- nothing\n## Reproduction notes\n- No issues to reproduce.\n## Not covered\n- none\n## How to re-run\n- `.domain-agent/qa/checkout.md`\n' > "$v/report.md"
-  printf 'verdict: GREEN\n## QA\nTool: playwright-cli\n- as-is/to-be captured\n' > "$v/verification.md"
+  printf 'verdict: GREEN\n## QA\nTool: playwright-cli\n- as-is/to-be captured\n' > "$v/QA.md"
   printf 'as-is proof\n' > "$v/qa/as-is-1040.png"; printf 'to-be proof\n' > "$v/qa/to-be-1040.png"
   printf '{ "action_count": 12, "action_cap": 100 }\n' > "$v/state.json"
   echo "$v"
@@ -137,34 +138,34 @@ run_case "3.1 action_cap defaults to 100 -> PASS"  0 "within cap 100"     bash "
 
 # Authenticated session: native playwright-cli (named session / state-load / CDP attach), one driver.
 v=$(mkbrowser g3b)
-printf 'verdict: GREEN\n## QA\nTool: playwright-cli\n- auth via state-load; as-is/to-be captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\n- auth via state-load; as-is/to-be captured\n' > "$v/QA.md"
 run_case "3.2 native auth session -> PASS"         0 "QA-ONLY GATE PASS"  bash "$GATE" "$v" browser
 
 # DB read-only backstop.
 v=$(mkbrowser g4)
-printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: mysql (read-only via aidt-mysql-cli)\n- as-is/to-be captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: mysql (read-only via aidt-mysql-cli)\n- as-is/to-be captured\n' > "$v/QA.md"
 run_case "4.1 DB read-only, no writes -> PASS"     0 "every DB: line marked read-only" bash "$GATE" "$v" browser
 v=$(mkbrowser g4b)
-printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: mysql (via cli)\n- as-is/to-be captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: mysql (via cli)\n- as-is/to-be captured\n' > "$v/QA.md"
 run_case "4.2 DB line not read-only -> blocked"    1 "not marked read-only" bash "$GATE" "$v" browser
 v=$(mkbrowser g4c)
-printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: mysql (read-only via cli)\nran: UPDATE orders SET total=1\n- as-is/to-be captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: mysql (read-only via cli)\nran: UPDATE orders SET total=1\n- as-is/to-be captured\n' > "$v/QA.md"
 run_case "4.3 DB write SQL recorded -> blocked"    1 "DB write statement"  bash "$GATE" "$v" browser
 # Second DB line unmarked rides behind a first read-only line -> must be caught per-line.
 v=$(mkbrowser g4d)
-printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: postgres (read-only via psql)\nDB: mysql (via cli)\n- as-is/to-be captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: postgres (read-only via psql)\nDB: mysql (via cli)\n- as-is/to-be captured\n' > "$v/QA.md"
 run_case "4.4 mixed DB lines, one unmarked -> blocked" 1 "not marked read-only" bash "$GATE" "$v" browser
 # REPLACE INTO / GRANT are writes too.
 v=$(mkbrowser g4e)
-printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: mysql (read-only via cli)\nran: REPLACE INTO cache VALUES (1)\n- as-is/to-be captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: mysql (read-only via cli)\nran: REPLACE INTO cache VALUES (1)\n- as-is/to-be captured\n' > "$v/QA.md"
 run_case "4.5 REPLACE INTO -> blocked"             1 "DB write statement"  bash "$GATE" "$v" browser
 v=$(mkbrowser g4f)
-printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: mysql (read-only via cli)\nran: GRANT SELECT ON db.* TO qa\n- as-is/to-be captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: mysql (read-only via cli)\nran: GRANT SELECT ON db.* TO qa\n- as-is/to-be captured\n' > "$v/QA.md"
 run_case "4.6 GRANT -> blocked"                    1 "DB write statement"  bash "$GATE" "$v" browser
 
 # CLI app-type: qa-gate.sh needs only ## QA; everything else still enforced.
 v=$(mkbrowser g5)
-printf 'verdict: GREEN\n## QA\nintegration smoke: bin vs fixture snapshot matches\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nintegration smoke: bin vs fixture snapshot matches\n' > "$v/QA.md"
 run_case "5.1 CLI app + valid report -> PASS"      0 "QA-ONLY GATE PASS"  bash "$GATE" "$v" cli
 
 echo

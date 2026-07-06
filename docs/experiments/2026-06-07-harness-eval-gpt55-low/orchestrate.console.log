@@ -1,6 +1,0 @@
-[06:11:43] RUN#1 fixed-harness (current INLINE SKILL.md): baseline + harness on gpt-5.5 low
-[06:17:49] RUN#1 done exit=0
-[06:17:49] RUN#2 original-harness (pre-fix SKILL.md): baseline + harness on gpt-5.5 low
-[06:23:23] RUN#2 done exit=0
-[06:23:23] ALL DONE
-ORCH_EXIT=0 at 06:23:23

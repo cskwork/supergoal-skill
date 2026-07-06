@@ -1,6 +1,0 @@
-Fixed `slugify(input)` in [src/slug.mjs](/tmp/supergoal-harness-eval-3case/sandboxes/easy-slugify/harness/src/slug.mjs:1): lowercase, trim, collapse non-ASCII-alphanumeric runs to one hyphen, strip edge hyphens, and preserve `''` for no alphanumeric text.
-
-Recorded DEBUG route, approval assumption, and decision rationale in [docs/changelog/changelog-2026-06-06.md](/tmp/supergoal-harness-eval-3case/sandboxes/easy-slugify/harness/docs/changelog/changelog-2026-06-06.md:1).
-
-Verification:
-`npm test` passes: `1` passed, `0` failed. Pre-fix test was reproduced red first. No dependencies added; harness reference directory was not edited. CodeGraph was not initialized in this sandbox, so I used direct file reads under the noninteractive constraint.

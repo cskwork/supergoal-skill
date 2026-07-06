@@ -1,5 +1,0 @@
-Implemented `deepMerge` in [src/merge.mjs](/tmp/sg-eval-uspec-u1/sandboxes/baseline-s3/src/merge.mjs): recursive plain-object merge, source overrides target, arrays/non-plain values replace, and prototype-pollution keys are skipped.
-
-Added the required rationale note in [docs/changelog/changelog-2026-06-07.md](/tmp/sg-eval-uspec-u1/sandboxes/baseline-s3/docs/changelog/changelog-2026-06-07.md).
-
-Verification: `npm test` passed with 1/1 tests.

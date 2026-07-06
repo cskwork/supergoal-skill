@@ -1,5 +1,0 @@
-Implemented `deepMerge` in [src/merge.mjs](/private/tmp/sg-eval-uspec-u1/sandboxes/baseline-s2/src/merge.mjs): recursive merge for non-null non-array objects, source replacement for arrays/nulls/primitives, returns the mutated target.
-
-Added focused tests and the required changelog note.
-
-Verification: `npm test` passed, 4 tests passing.

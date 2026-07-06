@@ -4,7 +4,7 @@ case_type: implementation
 difficulty: hard
 source_url: "authored-local"
 runnable_fixture: "templates/harness-eval-cases/fixtures/underspec-003-authz-cache/"
-origin_experiment: "docs/experiments/2026-06-07-harness-eval-medium-hard-skill-vs-baseline/ (case u3)"
+origin_experiment: "2026-06-07 medium-hard skill-vs-baseline (case u3); raw dir removed 2026-07-06, runner: templates/harness-eval-cases/run-local-eval.mjs"
 eval_intent:
   goal: "Expose low-effort false-green behavior on latent security/concurrency requirements."
   constraints:

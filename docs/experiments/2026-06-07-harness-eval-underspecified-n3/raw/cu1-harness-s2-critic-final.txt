@@ -1,4 +1,0 @@
-Added the red-team black-box tests in [test/spec.gen.test.mjs](/tmp/sg-eval-uspec-u1/sandboxes/harness-s2/test/spec.gen.test.mjs:1) and appended open defects to [NOTES.md](/tmp/sg-eval-uspec-u1/sandboxes/harness-s2/NOTES.md:1). I did not modify `src/`.
-
-Verification:
-`npm test` fails as expected. The visible flat-object test passes, while the new spec tests expose that `deepMerge` drops enumerable symbol-keyed source properties and therefore cannot deep-merge nested objects under symbol keys.

@@ -10,10 +10,15 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
+// Forced default suite: measured-difficult tasks (DeepSWE leaderboard snapshot
+// 2026-07-06; see task-set.yaml difficulty_evidence). yjs/happy-dom demoted: no
+// baseline headroom.
 const DEFAULT_TASKS = [
   "etree-xml-diff-patch",
   "cliffy-config-file-parsing",
-  "yjs-map-conflict-detection",
+  "csstree-shorthand-expansion-compression",
+  "skrub-duration-encoding",
+  "termenv-preserve-ansi-resets",
 ];
 
 function usage() {
@@ -109,7 +114,7 @@ function writeSuiteArtifacts(options, taskSummaries) {
   }).join("\n");
   writeFileSync(join(options.runRoot, "suite-report.md"), `# DeepSWE Forced Default Suite
 
-This suite runs three different difficult SWE-style DeepSWE tasks through the same paired baseline/harness full-cycle runner.
+This suite runs five measured-difficult DeepSWE tasks through the same paired baseline/harness full-cycle runner.
 
 | Task | Exit | Decision | Baseline | Harness | Partial delta |
 |---|---:|---|---|---|---:|

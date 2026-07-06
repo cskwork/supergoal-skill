@@ -1,5 +1,0 @@
-Refactored `src/order.mjs` into small helpers for subtotal, coupon/VIP discount, tax, shipping, and cents rounding. Public API remains `calculateInvoice(order)` returning `{ subtotal, discount, tax, shipping, total }`.
-
-Also added `docs/changelog/changelog-2026-06-07.md` per repo instructions.
-
-Verification: `npm test` passed, 5/5 tests.

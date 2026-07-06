@@ -1,9 +1,0 @@
-Added red-team coverage in [test/spec.gen.test.mjs](/private/tmp/sg-eval-svb-002/sandboxes/harness-s1/test/spec.gen.test.mjs) and defect notes in [NOTES.md](/private/tmp/sg-eval-svb-002/sandboxes/harness-s1/NOTES.md). `src/` was not modified.
-
-Current state:
-- Initial `npm test`: passed 5/5 visible tests.
-- Final `npm test`: expected failure in new spec tests.
-- Defect exposed: `clear()` removes the in-flight entry, but the older pending loader can still resolve later and write a stale value into the cache. A `get()` after `clear()` can then be affected by work that should have been cleared.
-
-One environment note: this sandbox root is not a Git repo, so `git status` is unavailable here.
-

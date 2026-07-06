@@ -165,8 +165,15 @@ Required external-task provenance:
 Forced default public SWE suite:
 
 - For difficult SWE tasks, harness-effectiveness claims, or "does Supergoal help on coding" questions
-  without a named task, run the DeepSWE three-task suite by default: `etree-xml-diff-patch`,
-  `cliffy-config-file-parsing`, and `yjs-map-conflict-detection`.
+  without a named task, run the DeepSWE five-task suite by default: `etree-xml-diff-patch`,
+  `cliffy-config-file-parsing`, `csstree-shorthand-expansion-compression`, `skrub-duration-encoding`,
+  and `termenv-preserve-ansi-resets`.
+- Suite membership is measured, not labeled: tasks are picked from DeepSWE leaderboard pass rates
+  (snapshot 2026-07-06, 13k+ trials over 21 models) - low overall pass rate for difficulty, nonzero
+  gpt-5.5 passes so the codex low-effort lane is not a guaranteed floor, languages spread, rust excluded
+  for compile-budget risk. `yjs-map-conflict-detection` was demoted (rank 101/113, 55% overall, local
+  perfect baseline - no headroom). Evidence and a held-out escalation pool live in
+  `templates/harness-eval-external/deepswe/task-set.yaml`.
 - Use `templates/harness-eval-external/deepswe/run-default-suite.mjs` unless the user explicitly asks for
   a single named task. The suite runner serially invokes the full-cycle runner once per task and writes
   `suite-summary.json` plus `suite-report.md`.
@@ -229,7 +236,8 @@ Reusable seeded case specs (the approved corpus - pick from here, never invent n
 Default to the validated RevFactory corpus in `templates/harness-eval-cases/` for comparable, citable
 results; do NOT invent throwaway easy/medium cases. Note that underspecified tasks whose implicit
 requirements are PUBLIC domain knowledge also ceiling out - a strong baseline fills them unprompted
-(evidence: 2026-06-07 csv/lru/semver, 14/14 both arms, `docs/experiments/2026-06-07-harness-eval-underspecified/`).
+(evidence: 2026-06-07 csv/lru/semver run, 14/14 both arms; raw dir removed 2026-07-06, conclusion in
+`docs/experiments/README.md`).
 The one sanctioned reason to author a fresh fixture is probing the under-specified frontier with a
 LATENT-CORRECTNESS case (see "Pick a discriminating regime" + "Validate the fixture discriminates"); label
 it authored, not corpus, and never run it until the 3-way discrimination check passes.
@@ -260,11 +268,12 @@ explicit-spec task a capable baseline already passes - expect a TIE at 2-3x cost
   quote-handling tied (canonical, baseline does it unprompted). That gap is real value vs a one-shot
   default (the skill forces the verification that catches the vuln), but the active ingredient is the
   extra passes, not role-separation: an equal-compute naive loop (build+3 review, NO skill) scored 4/4 vs
-  the role-loop's 3.3/4 (`docs/experiments/2026-06-07-harness-eval-underspecified-n3/`). So the skill
+  the role-loop's 3.3/4 (2026-06-07 underspecified-n3 run; raw dir removed 2026-07-06, conclusion in
+  `docs/experiments/README.md`). So the skill
   helps vs not-invoking-it, not vs equal compute (see compute-confound below). Ambiguous choices are NOT
   fair hidden checks - test only what one reasonable reading MUST do.
 - If the default hard case ceilings out under low effort, run the authored low-effort discriminator:
-  `SG_EVAL_CASE=u3 SG_EVAL_EFFORT=low SG_EVAL_BASELINE_SEEDS=1 SG_EVAL_HARNESS_SEEDS=1 node docs/experiments/2026-06-07-harness-eval-medium-hard-skill-vs-baseline/run.mjs`.
+  `SG_EVAL_CASE=u3 SG_EVAL_EFFORT=low SG_EVAL_BASELINE_SEEDS=1 SG_EVAL_HARNESS_SEEDS=1 node templates/harness-eval-cases/run-local-eval.mjs`.
   This authorization-cache case is intentionally security/concurrency-heavy: starter and lazy
   implementations pass visible 3/3 but hidden 1/8, while the reference implementation passes hidden
   8/8. Treat n=1 as directional only; scale to n >= 6 before claiming statistical proof.

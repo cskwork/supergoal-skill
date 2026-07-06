@@ -12,6 +12,10 @@ knowledge files, terms, invariants, current-code verification, entry points, tes
 Saved domain facts are pointers. Load-bearing choices cite current docs/code or name the gap. Current
 code wins conflicts; record them in `PLAN.md`.
 
+No Explore map yet and grounding needs more than a handful of files or unfamiliar code: dispatch a
+fresh-context explore subagent (`agents/explore.md`) to write the map into `PLAN.md` grounding notes
+before freeze. Small or well-known scope grounds inline.
+
 ## Decision-tree pressure test
 
 Use this for Track A and whenever Track B depends on domain language or system boundaries.

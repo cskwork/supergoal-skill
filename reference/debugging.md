@@ -67,7 +67,7 @@ For DB/API/network/queue failures, map before digging:
    consistently over N repeats before trust. Record `run-to-prove`.
 2. **Localize.** Narrow the smallest region. Use `git bisect`, input/state binary search, distributed
    triage, and focused instrumentation. Read structure first; load full code only for surviving suspects.
-3. **Compete hypotheses (symptom vs cause).** Put 2-3 root causes in `README.md` using a hypothesis
+3. **Compete hypotheses (symptom vs cause).** Put 2-3 root causes in `PLAN.md` using a hypothesis
    ledger format: symptom, candidate cause, evidence-for, evidence-against,
    and "definite & imminent?". Phrase each candidate as a falsifiable prediction (if cause C, then
    probe P flips the result) so the most discriminating probe is obvious. Pick the next probe that
@@ -76,7 +76,8 @@ For DB/API/network/queue failures, map before digging:
 4. **Confirm.** Before locking the cause, present the 3-5 ranked hypotheses to the user for re-ranking
    (`reference/interview.md` DEBUG variant owns the mechanics: non-blocking, AFK-proceed, never abandon
    evidence for preference). Then back one hypothesis with direct evidence at the boundary. Write the
-   fix plan in `README.md`.
+   fix plan in `PLAN.md`; the plan approval gate (`reference/role-loop.md`) clears before the first
+   fix edit.
    If fix blast radius reaches past the cause site, present it with the re-ranking and apply
    `reference/interview.md` before the first edit. Ask only on SKILL.md hard stops or genuine ambiguity.
 5. **Fix root cause (minimal diff, checkpoint per step).** Smallest change that addresses cause, not
@@ -87,10 +88,10 @@ For DB/API/network/queue failures, map before digging:
 
 ## Circuit breaker
 
-Same error signature 3 times: stop. Record attempts + leading hypothesis in `README.md`, then escalate
+Same error signature 3 times: stop. Record attempts + leading hypothesis in `PLAN.md`, then escalate
 with evidence.
 
 ## Vault
 
-Every probe result goes to `README.md`. The vault prevents fresh contexts from re-investigating solved
-ground.
+Every probe result goes to the `PLAN.md` hypothesis ledger. The vault prevents fresh contexts from
+re-investigating solved ground.

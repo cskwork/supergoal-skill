@@ -4,7 +4,8 @@ Domain context is a durable, searchable knowledge pack at the target repo root. 
 the run vault and model memory.
 
 - Vault: per-run evidence and decisions in `docs/changelog/<YYYY-MM>/<DD-topic>/` (one folder per
-  run: `README.md`, `surfaced-requirements.md`, verification evidence).
+  run: `GOAL.md`, `PLAN.md`, `QA.md`, `R-LOOP.md`, `run-state.json`, `qa/` evidence, and `Z-<date>.md`
+  on completion).
 - Domain context: local reusable domain facts, stored by default in `.domain-agent/`.
 - Model memory: optional reminders only; never the source of truth for a fix.
 
@@ -25,7 +26,7 @@ I do not see domain-agent knowledge for this repo. Should I create it at `.domai
 
 Then create the chosen folder from `templates/domain-agent/`; write `config.json` (repo, path, `language`,
 dates); Add the chosen path to the repo root `.gitignore` if absent; record the path in the run vault
-`README.md`. Before Build, only knowledge scaffolding, `.gitignore`, and vault setup may write. If the
+`PLAN.md`. Before Build, only knowledge scaffolding, `.gitignore`, and vault setup may write. If the
 user declines storage, use an ephemeral Domain Brief in the vault.
 
 Set `language` to the repo's docs language (SKILL.md), or `mixed` when no single one dominates.
@@ -69,7 +70,7 @@ Goal: a small working brief, not a domain encyclopedia.
    `flows/*.md`.
 5. Verify load-bearing saved facts against current code with structural tools (`codegraph_context`,
    `codegraph_explore`, call paths) and find current entry points.
-6. Write a compact `## Domain Brief` to the run vault `README.md`.
+6. Write a compact `## Domain Brief` to the run vault `PLAN.md` (beside the grounding ledger).
 
 Hard caps: Select at most five domain files for a phase unless the human approves more. If more seem
 relevant, route through `index.md` again and name the uncertainty. Prefer one `flows/*.md`; two means the

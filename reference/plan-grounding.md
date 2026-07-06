@@ -1,16 +1,16 @@
 # Plan grounding - before plan freeze
 
-At Frame end, before Build, ground `plan.md` in current docs/code/domain. Ask the human only when current
+At Frame end, before Build, ground `PLAN.md` in current docs/code/domain. Ask the human only when current
 evidence cannot decide a load-bearing choice. If the grounded approach's blast radius reaches past its
 explicit target, run the blast-radius confirm in `reference/interview.md` before freeze.
 
 ## Required input
 
-Read the run `README.md` `## Domain Brief` first when present: selected knowledge files, terms,
-invariants, current-code verification, entry points, test commands, gaps.
+Read the `## Domain Brief` recorded in `PLAN.md`'s grounding ledger first when present: selected
+knowledge files, terms, invariants, current-code verification, entry points, test commands, gaps.
 
 Saved domain facts are pointers. Load-bearing choices cite current docs/code or name the gap. Current
-code wins conflicts; record them in `plan.md`.
+code wins conflicts; record them in `PLAN.md`.
 
 ## Decision-tree pressure test
 
@@ -24,23 +24,24 @@ Use this for Track A and whenever Track B depends on domain language or system b
    they exist. If a term conflicts, choose a canonical term or name the conflict.
 4. Stress concrete scenarios: normal case, boundary case, failure case, and cross-context ownership
    case when relevant.
-5. Cross-check every "how it works" claim against code. Contradictions go into `plan.md` as gaps or
+5. Cross-check every "how it works" claim against code. Contradictions go into `PLAN.md` as gaps or
    corrected assumptions.
 6. Update docs only after a decision is resolved. Glossary entries define domain terms only;
    `decisions/*.md` entries are for hard-to-reverse, surprising tradeoffs with real alternatives.
-7. Record a compact grounding ledger in `plan.md`: question, answer/source, decision, and remaining
+7. Record a compact grounding ledger in `PLAN.md`: question, answer/source, decision, and remaining
    gap. Do not paste the whole interview.
 
 ## Track A - feature / novel work
 
-1. Locate Domain Brief, `brief.md`, Explore map, repo docs/decisions. Do not re-litigate settled decisions.
+1. Locate Domain Brief, `GOAL.md`, Explore map, repo docs/decisions. Do not re-litigate settled decisions.
 2. Walk the design tree. For each open question, choose the best option and justify it from docs/code.
    Escalate only unresolved load-bearing choices.
 3. Resolve vague or overloaded terms against the glossary. Cross-check every "how it works" claim
    against code.
 4. Update docs only when useful: glossary terms or hard-to-reverse surprising tradeoffs.
-5. Put resolved choices and definitions into `plan.md`.
-6. Put the Before/After Eval strategy into `plan.md`: before proof, after commands, residual risk.
+5. Put resolved choices and definitions into `PLAN.md`.
+6. Put the Before/After Eval strategy into `PLAN.md` `## Verification strategy`: before proof, after
+   commands, step -> `GOAL.md` criterion mapping, residual risk.
 
 ## Track B - refactor / improve codebase
 
@@ -53,12 +54,15 @@ Vocabulary (Module, Interface, Depth, Seam, Adapter, Leverage, Locality): define
 3. Deletion-test suspected shallow code: does removing it concentrate complexity or merely move it?
 4. Rank by leverage. Pressure-test top candidates: what sits behind the seam, what tests survive. One
    adapter is hypothetical; two adapters make a real seam.
-5. Write chosen deepenings into `plan.md`: files, problem, solution, locality/leverage benefit.
+5. Write chosen deepenings into `PLAN.md`: files, problem, solution, locality/leverage benefit.
 6. Write brownfield Before/After Eval strategy: behavior to preserve, baseline artifact, after comparison,
    intentional drift.
 
 ## Exit
 
-`plan.md` is now grounded; run the blast-radius confirm (`reference/interview.md`) if the approach
-reaches past its target, ensure the Before/After Eval strategy (`reference/delivery-gate.md`) is explicit,
-then freeze. Build implements the frozen plan.
+`PLAN.md` is now grounded and must be self-sufficient - steps, tools & skills, verification strategy - so
+a fresh-context implementer can build from it alone. Run the blast-radius confirm
+(`reference/interview.md`) if the approach reaches past its target, ensure the Before/After Eval strategy
+(`reference/delivery-gate.md`) is explicit, then freeze and clear the plan approval gate
+(`reference/role-loop.md`: interactive = the user's explicit OK; autonomous = auto-approved, recorded in
+`## Approval`). Build implements the approved frozen plan.

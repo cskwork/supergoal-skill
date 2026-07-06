@@ -35,28 +35,38 @@ into the verified target/integration branch after green verification, user accep
 commit gate passes (`reference/delivery-gate.md`; `bash templates/commit-gate.sh <vault> <browser|cli|none>`).
 Non-green blocks commit: resolve in-loop; escalate only when stuck.
 
-Before any file mutation, create the run vault's `delivery-proof.md` from
-`templates/delivery-proof.md`, create `run-state.json` from `templates/run-state.json`, and start the
-Before/After Eval (`reference/delivery-gate.md`):
+Before any file mutation, create the run vault's `GOAL.md` from `templates/GOAL.md`, `PLAN.md` from
+`templates/PLAN.md`, `QA.md` from `templates/QA.md`, and `run-state.json` from
+`templates/run-state.json`, and start the Before/After Eval (`reference/delivery-gate.md`):
 
-- record eval intent: user goal, constraints, tradeoffs, rejected approaches;
-- seed `## Requirement Trace` with numbered requirements in the user's words;
-- record the completion promise: promised outcome, required proof, stop condition, and `max_iterations`
-  (default 8);
-- record the before state: absent feature/red acceptance check for GREENFIELD, reproduced symptom for
-  DEBUG, preserve-baseline capture for LEGACY/brownfield, plus neighbor characterization baseline for any
-  shared code/state change past *very easy*;
+- `GOAL.md` is written FIRST: `## Original Request` quotes the user's prompt verbatim; `## Spec` refines
+  it into a detailed spec; `## Success Criteria` seeds falsifiable checkboxes, each naming its
+  verification method; web apps also seed `## QA Cases` (browser scenarios for playwright-cli);
+- record eval intent in `PLAN.md` `## Intent`: user goal, constraints, tradeoffs, rejected approaches;
+- record the completion promise in `PLAN.md` `## Intent`: promised outcome, required proof, stop
+  condition, and `max_iterations` (default 8);
+- `PLAN.md` `## Steps` + `## Tools & Skills` must be self-sufficient: a fresh-context implementer reads
+  ONLY `PLAN.md` and builds it;
+- **Plan approval gate (blocking, unlike the interview's confirms):** after `PLAN.md` freezes and before
+  Build is dispatched — interactive session: present `PLAN.md` and WAIT for the user's explicit OK;
+  record it in `## Approval` and set `run-state.json` `plan_approval: "user"`. Autonomous run
+  (harness-eval arm, scheduled/background, pre-authorized autonomy): set `Status: auto-approved` with the
+  reason and `plan_approval: "auto"`, then proceed;
+- record the before state in `QA.md` `## Before`: absent feature/red acceptance check for GREENFIELD,
+  reproduced symptom for DEBUG, preserve-baseline capture for LEGACY/brownfield, plus neighbor
+  characterization baseline for any shared code/state change past *very easy*;
 - DEBUG first tries exact live reproduction. If exact reproduction is unavailable, preserve the
-  failure-triggering properties in synthetic/similar data and fill `## Reproduction Fidelity` with
+  failure-triggering properties in synthetic/similar data and fill `QA.md` `## Reproduction Fidelity` with
   fidelity level, data source, prod-vs-test deltas, residual risk, and post-deploy confirmation plan;
-- record the after target and command manifest from repo-owned or evaluator-owned proof commands.
-- keep `run-state.json` current: phase, iteration, unresolved gates, blockers, next action,
-  regression_ledger, last proof command.
+- record the after target and the command manifest (`QA.md` `## Commands`) from repo-owned or
+  evaluator-owned proof commands.
+- keep `run-state.json` current: phase, iteration, plan_approval, unresolved gates, blockers, next
+  action, regression_ledger, last proof command.
 
 ## Completion promise + loop cap
 
-Frame writes the completion promise before Build. Loop only while the promise is unproven and a fresh,
-actionable gap remains. Default `max_iterations`: 8 for Build/Verify; critic->fixer cap below. At cap,
+Frame writes the completion promise (`PLAN.md` `## Intent`) before Build. Loop only while the promise is
+unproven and a fresh, actionable gap remains. Default `max_iterations`: 8 for Build/Verify; critic->fixer cap below. At cap,
 write forced reflection in `run-state.json`: failing check, likely root cause, unproven requirement,
 previous-green regression status, smallest next action. Each iteration re-runs `regression_ledger`; if a
 previously green check turns red, stop, fix it, and record
@@ -77,22 +87,24 @@ optional gated escalation, usually after the edge pass or when Exact Verify find
 
 1. **Build** - before first edit, confirm blast-radius beyond the explicit target (`reference/interview.md`).
    Non-trivial implementation must run as a separate fresh-context builder subagent; the conductor should
-   not implement non-trivial code inline. Then smallest correct change; match surrounding style. Bug:
+   not implement non-trivial code inline. The builder is briefed by the approved `PLAN.md` alone (on an
+   R-LOOP re-entry, also the LATEST `R-LOOP.md` section); Build does not start before the plan approval
+   gate clears. Then smallest correct change; match surrounding style. Bug:
    failing test first. For any shared
    code/state change past *very easy*, capture a neighbor characterization baseline FIRST
    (`reference/qa.md` "Characterization baseline"). Refactor/integrate an existing API: capture its
-   exact-behavior baseline FIRST. Capture run setup in `delivery-proof.md` and `run-state.json`.
+   exact-behavior baseline FIRST. Capture run setup in `QA.md` `## Before` and `run-state.json`.
 
 2. **Improve full spec** (`agents/executor.md`; fresh-context improver)
    - Re-read the request/ticket, README, design/API docs, current code, existing tests,
-     `## Requirement Trace`, and repo/data rules. Fix the smallest gap between those requirements and
-     current behavior.
+     `GOAL.md` `## Success Criteria`, and repo/data rules. Fix the smallest gap between those requirements
+     and current behavior.
    - If production/source-code domain ambiguity would change user-visible behavior, data semantics,
      permissions, migrations, or API compatibility, stop and record an `ask-user` decision gate. Do not
      guess business meaning.
    - Generic no-user coding utility/eval fixture: choose the most conservative, reversible default,
-     record the choice in `delivery-proof.md`, and prefer preserving existing values/no-op behavior unless
-     spec or safety requires strictness.
+     record the choice in `GOAL.md` `## Decision Gates` (resolved), and prefer preserving existing
+     values/no-op behavior unless spec or safety requires strictness.
    - Add or adjust tests only for grounded `must` behavior. Do not turn silence into stricter semantics.
 
 3. **Improve edge cases** (`agents/executor.md`; fresh-context improver)
@@ -105,18 +117,21 @@ optional gated escalation, usually after the edge pass or when Exact Verify find
      cleanup.
 
 4. **Mandatory Adversarial Review (mandatory core; no src edits)** (`agents/code-reviewer.md`)
-   - Fresh-context adversarial review: re-read the request/docs, `delivery-proof.md`, current diff, tests,
-     and repo/data rules. Try to disprove the change against required behavior, edge cases, and execution
-     evidence. Fresh gap -> route back to Improve full spec or Improve edge cases.
+   - Fresh-context adversarial review: re-read the request/docs, `GOAL.md`, `PLAN.md`, `QA.md`, current
+     diff, tests, and repo/data rules. Try to disprove the change against required behavior, edge cases,
+     and execution evidence. Fresh gap -> route back to Improve full spec or Improve edge cases.
    - The reviewer does not edit source, does not weaken tests, and does not declare done. Findings become
      fixes, `ask-user` decision gates, or residual risk. Reviewer approval is not a substitute for exact
      verification.
 
 5. **Exact Verify/QA vs ground truth (mandatory core; Final Verify/QA)** (`agents/qa-auditor.md` / `security-reviewer.md`)
    - Re-run REAL tests and report output. Run the command/browser/API/E2E layer promised in
-     `delivery-proof.md`. If the user expected an actual E2E/live/API/browser run, run it; otherwise mark
+     `PLAN.md` `## Intent`. If the user expected an actual E2E/live/API/browser run, run it; otherwise mark
      that layer not proven with blocker/residual risk. Exact verification outranks reviewer approval. Fresh
      gap -> route back to Improve full spec or Improve edge cases.
+   - Diff the implementer's changes (git diff in the run worktree) against `GOAL.md`: tick each Success
+     Criterion / QA Case proven met (only the verifier ticks); untick a regressed previously-green
+     criterion with the regression evidence.
    - Code-change scenarios use `reference/qa.md` "Scenario stencil (code changes)", including regression
      scenarios and metamorphic relations when no exact oracle exists.
    - Browser UI changes require `reference/qa.md` browser evidence: `Tool: playwright-cli`,
@@ -124,16 +139,22 @@ optional gated escalation, usually after the edge pass or when Exact Verify find
    - Re-run every captured neighbor characterization baseline; unnamed drift is red. API refactor:
      re-capture the same call and diff against the pre-refactor baseline; unintended drift is a red to
      resolve.
-   - Close `## Requirement Trace`: every forward row is `met` with a verifying check, and
-     `Backward-trace: clean` proves no diff hunk is orphan scope.
+   - Close `GOAL.md`: every Success Criterion checkbox is ticked with a verifying check, and
+     `Backward-trace: clean` in `QA.md` proves no diff hunk is orphan scope.
    - Final Verify for neighbor baselines and trace closure is fresh-context: self-review is not a
-     regression gate. Open requirements, unresolved REVISE items, and stub/placeholder implementations
+     regression gate. Unchecked criteria, unresolved REVISE items, and stub/placeholder implementations
      block done.
-   - Update the run vault's `surfaced-requirements.md`: mark each surfaced requirement fixed, or note why
-     it stays open.
-   - Update `delivery-proof.md`: after evidence, outputs/artifact paths, decision gates, intentional
-     drift, residual risk. Unresolved `ask-user` findings or missing trusted commands block a final done
-     claim and commit (`reference/delivery-gate.md` Commit gate).
+   - Tick each surfaced criterion in `GOAL.md`, or leave it unchecked with why.
+   - Any criterion still unchecked: APPEND a timestamped section to the vault's `R-LOOP.md`
+     (`templates/R-LOOP.md`) - checklist of missing/broken items (criterion #, expected vs actual,
+     evidence path), regression note, smallest next fix - then the conductor relaunches the implementer,
+     which reads `PLAN.md` plus the LATEST `R-LOOP.md` section. This is the Improve loop-back, still
+     capped by `max_iterations`.
+   - Update `QA.md`: `## Results` checklist sentences (succinct, plain language), `## Commands`, decision
+     gates, intentional drift, residual risk, `Verdict:`. Unresolved `ask-user` findings or missing
+     trusted commands block a final done claim and commit (`reference/delivery-gate.md` Commit gate).
+   - Every `GOAL.md` box checked: write `Z-<YYYY-MM-DD>.md` (`templates/Z-DONE.md`) with the run branch
+     and completion timestamp - never earlier.
    - Update `run-state.json`: phase, iteration, gate status, last proof command, blockers, next action,
      and completion-promise status.
 
@@ -148,11 +169,11 @@ optional gated escalation, usually after the edge pass or when Exact Verify find
      residual risk.
    - For each `must`, write a NEW FAILING black-box/property test in a separate file, derived strictly
      from request/docs.
-   - Record each surfaced requirement in the run vault's `surfaced-requirements.md`
-     (`docs/changelog/<YYYY-MM>/<DD-topic>/surfaced-requirements.md`; create if absent; format in
-     `templates/surfaced-requirements.md`): dated heading, one bullet per `must` - what request/docs imply,
-     why it is required though the prompt never stated it, and the failing test that now covers it
-     (status: open).
+   - Record each surfaced requirement by APPENDING an unchecked criterion to the run vault's `GOAL.md`
+     `## Success Criteria` (`docs/changelog/<YYYY-MM>/<DD-topic>/GOAL.md`; format in
+     `templates/GOAL.md`): one row per `must` - what request/docs imply,
+     why it is required though the prompt never stated it (`(surfaced: ...)` tag), and the failing test
+     that now covers it (unchecked box = open; only the verifier ticks it).
    - Leave the failing tests red.
 
 7. **Fixer** (`agents/executor.md`) - DO NOT edit test files.

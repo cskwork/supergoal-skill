@@ -27,12 +27,13 @@ diff against the run's `## Priority Rules` (advisory). Stance: try to DISPROVE t
 - hunt for what is wrong; do not validate, summarize, or rubber-stamp (an LGTM with no surfaced gap and
 no green real-test run is not a review).
 
-WRITE: the new failing test files, plus one entry per `must` surfaced requirement in the run vault's
-`surfaced-requirements.md` (format: `templates/surfaced-requirements.md`; status: open). Return
+WRITE: the new failing test files, plus one APPENDED unchecked criterion per `must` surfaced requirement
+in the run vault's `GOAL.md` `## Success Criteria` (format: `templates/GOAL.md`; `(surfaced: ...)` tag;
+unchecked box = open, only the verifier ticks it). Return
 `ask-user` decisions separately; do not cover them with failing tests.
 
 RETURN: a compressed summary — surfaced requirements, failing-test paths, findings by severity — not
 your transcript.
 
-GATE: every `must` surfaced requirement has a failing test and a `surfaced-requirements.md` entry; every
+GATE: every `must` surfaced requirement has a failing test and an appended `GOAL.md` criterion; every
 `ask-user` candidate is reported as a decision gate; existing tests and src untouched.

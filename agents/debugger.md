@@ -25,9 +25,10 @@ diagnosis. Use any saved invariants/flows/terms in the Domain Brief to rank hypo
 against current code — saved knowledge can be stale and current code wins; do not bulk-read the
 `.domain-agent/` pack. Honor any Priority Rules the conductor injects (advisory).
 
-WRITE: hypotheses + evidence into `README.md`; the confirmed root cause + minimal-fix plan into
-`plan.md` (frozen), with a short plain-language summary for the user.
+WRITE: hypotheses + evidence into the `PLAN.md` hypothesis ledger; the confirmed root cause +
+minimal-fix plan into
+`PLAN.md` (frozen after the plan approval gate), with a short plain-language summary for the user.
 
 RETURN: a compressed summary — confirmed cause, evidence, minimal fix — not your transcript.
 
-GATE: one hypothesis confirmed by evidence; a minimal-fix `plan.md` written.
+GATE: one hypothesis confirmed by evidence; a minimal-fix `PLAN.md` written.

@@ -87,17 +87,21 @@ Exact Verify/QA. Historical contract string: Build -> Improve full spec -> Impro
 Verify. Critic/Fixer is not part of the default loop; the mandatory adversarial review is. Use optional
 Critic/Fixer only when hidden requirements are the value being tested.
 
-1. **Frame.** Restate goal + falsifiable acceptance criteria. Seed numbered requirements in
-   `## Requirement Trace`. Write a completion promise: outcome, proof, stop condition, `max_iterations`
-   (default 8). Ask <=5 high-leverage questions only when needed; confirm wide/destructive/behavior-
-   changing blast radius after grounding (`reference/interview.md`). UI: load `reference/ui-ux.md`.
-   Non-trivial code: start `delivery-proof.md` from `templates/delivery-proof.md`, create
-   `run-state.json` from `templates/run-state.json`, and record the Before/After Eval.
-2. **Build.** Non-trivial implementation runs in a separate fresh-context builder subagent. Smallest
+1. **Frame.** Write `GOAL.md` FIRST from `templates/GOAL.md`: `## Original Request` (user prompt
+   verbatim), refined `## Spec`, falsifiable `## Success Criteria` checkboxes each naming its
+   verification, and web apps' `## QA Cases`. Write a completion promise in `PLAN.md` `## Intent`:
+   outcome, proof, stop condition, `max_iterations` (default 8). Ask <=5 high-leverage questions only
+   when needed; confirm wide/destructive/behavior-changing blast radius after grounding
+   (`reference/interview.md`). UI: load `reference/ui-ux.md`. Non-trivial code: create `QA.md` and
+   `run-state.json` from templates and record the Before/After Eval. Freeze `PLAN.md` (self-sufficient:
+   steps, tools & skills, verification strategy), then clear the plan approval gate - interactive:
+   the user's explicit OK; autonomous run: auto-approved, recorded in `## Approval`.
+2. **Build.** Non-trivial implementation runs in a separate fresh-context builder subagent briefed by the
+   approved `PLAN.md` alone (on an R-LOOP re-entry, also the latest `R-LOOP.md` section). Smallest
    correct change, test-first, surrounding style. Bug: failing test first (`reference/debugging.md`).
    Shared code/state past *very easy*: capture neighbor characterization baseline before editing.
 3. **Improve full spec.** Fresh-context improver re-reads the request/ticket, README, design/API docs,
-   `## Requirement Trace`, code, tests, and repo/data rules; fix the smallest gap between those
+   `GOAL.md` `## Success Criteria`, code, tests, and repo/data rules; fix the smallest gap between those
    requirements and current behavior.
    Production/source-code domain ambiguity that changes behavior stops as `ask-user`; generic no-user
    coding ambiguity uses a conservative, reversible default and records it.
@@ -105,17 +109,21 @@ Critic/Fixer only when hidden requirements are the value being tested.
    state/protocol, concurrency, compatibility, security, and cleanup. Test only grounded `must` behavior;
    route product/domain choices to the user.
 5. **Mandatory Adversarial Review (no src edits).** Fresh reviewer re-reads request/docs,
-   `delivery-proof.md`, current diff, and tests to disprove completeness. Findings become fixes, decision
-   gates, or residual risk; reviewer approval alone never means done.
+   `GOAL.md`, `PLAN.md`, `QA.md`, current diff, and tests to disprove completeness. Findings become fixes,
+   decision gates, or residual risk; reviewer approval alone never means done.
 6. **Exact Verify/QA.** Re-run REAL tests plus the proof layer promised in Frame. Runtime-facing or
    user-expected proof: run the actual E2E/live/API/browser run; exact verification outranks reviewer
-   approval. Browser UI: complete browser app verification with `qa-gate.sh <vault> browser`. Re-run
-   neighbor baselines, close `## Requirement Trace`, keep `Backward-trace: clean`, and record command
-   output. If the exact layer
-   cannot run, mark it not proven with blocker/residual risk.
+   approval. Browser UI: complete browser app verification with `qa-gate.sh <vault> browser`. Diff the
+   implementer's changes against `GOAL.md` and tick each criterion proven met; re-run neighbor baselines,
+   keep `Backward-trace: clean`, and record results as plain checklist sentences in `QA.md`. Criteria
+   still unmet: append a timestamped checklist section to `R-LOOP.md` and relaunch the implementer
+   (reads `PLAN.md` + latest section; capped by `max_iterations`). If the exact layer
+   cannot run, mark it not proven with blocker/residual risk. Every `GOAL.md` box checked: write
+   `Z-<YYYY-MM-DD>.md` (run branch + completion timestamp) - never earlier.
 7. **Critic escalation (opt-in; no src edits).** For under-specified / latent-correctness work, an
    independent critic classifies inferred behavior as `must`, `should`, or `ask-user`; only grounded
-   `must` becomes FAILING tests. Log each in the run vault's `surfaced-requirements.md`; fixer clears reds
+   `must` becomes FAILING tests. Append each as an unchecked `(surfaced: ...)` criterion to the run
+   vault's `GOAL.md`; fixer clears reds
    without editing tests. Ambiguous/product-changing semantics are decision gates, not generated REDs.
    Reserve for the under-specified frontier and keep within the critic->fixer cap.
 
@@ -133,7 +141,7 @@ verify/QA=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role
 | `reference/domain-context.md` | repo-local Domain Brief |
 | `reference/debugging.md` | DEBUG: hypothesis-ledger diagnose loop |
 | `reference/interview.md` | interview: ambiguity (what) + blast-radius confirm (approach, tiered) |
-| `reference/delivery-gate.md`, `templates/delivery-proof.md`, `templates/run-state.json`, `templates/commit-gate.sh` | Before/After Eval + resumable run state + commit gate for non-trivial GREENFIELD / DEBUG / LEGACY code changes |
+| `reference/delivery-gate.md`, `templates/GOAL.md`, `templates/PLAN.md`, `templates/QA.md`, `templates/R-LOOP.md`, `templates/Z-DONE.md`, `templates/run-state.json`, `templates/commit-gate.sh` | run vault file set + Before/After Eval + resumable run state + commit gate for non-trivial GREENFIELD / DEBUG / LEGACY code changes |
 | `reference/spec.md`, `templates/spec/` | SPEC: requirements -> design -> tasks |
 | `reference/plan-grounding.md` | ground the approach before committing |
 | `reference/db-access.md`, `templates/db-access/` | read-only DB evidence (required past *very easy* when data load-bearing) |
@@ -149,8 +157,9 @@ verify/QA=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role
 
 **Done =** mode stated; smallest diff; Before/After Eval complete for non-trivial code changes; REAL
 tests + request/docs green (not proxy); runtime MUST proven by real behavior; past *very easy* -> red-green
-test + DB evidence if data load-bearing; neighbor snapshots re-run with unnamed drift resolved; all
-requirements met and traced, with no orphan scope; DEBUG prod issue has reproduction fidelity and, if
+test + DB evidence if data load-bearing; neighbor snapshots re-run with unnamed drift resolved; every
+`GOAL.md` Success Criterion checked, with no orphan scope; `Z-<date>.md` written with run branch +
+completion timestamp; DEBUG prod issue has reproduction fidelity and, if
 non-exact, residual risk + post-deploy confirmation plan; user-facing UI at the Expressive baseline;
 destructive steps consented; commit/merge only after the commit gate passes (`reference/delivery-gate.md`);
 verified commands reported.

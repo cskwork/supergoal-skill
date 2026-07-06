@@ -15,6 +15,7 @@
     "worktree_path": "",
     "refs_verified": false
   },
+  "plan_approval": "pending|user|auto",
   "completion_promise": {
     "promised_outcome": "",
     "required_proof": [],

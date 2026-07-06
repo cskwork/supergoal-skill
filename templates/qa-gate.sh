@@ -12,11 +12,11 @@
 #   browser|cli  app type under test: a browser app (drives a real browser) or a CLI/library
 #
 # Exit 0 only if:
-#   browser: verification.md has a '## QA' section; qa/as-is-* and qa/to-be-* evidence files
+#   browser: QA.md has a '## QA' section; qa/as-is-* and qa/to-be-* evidence files
 #            exist (the user-observable proof, same framing); and the driver is named on a
 #            'Tool:' line that is playwright-cli (a silent headless-Chrome render, agent-browser,
 #            or any other tool fails here).
-#   cli:     verification.md has a '## QA' section recording an integration smoke (no browser
+#   cli:     QA.md has a '## QA' section recording an integration smoke (no browser
 #            evidence required — CLI/library has no browser).
 
 set -euo pipefail
@@ -24,7 +24,7 @@ set -euo pipefail
 usage() { echo "usage: qa-gate.sh <vault-dir> <browser|cli>" >&2; exit 2; }
 [ $# -ge 2 ] || usage
 VAULT="$1"; APPTYPE="$2"
-VERIF="$VAULT/verification.md"
+VERIF="$VAULT/QA.md"
 QA="$VAULT/qa"
 fail() { echo "QA-GATE FAIL: $*" >&2; exit 1; }
 
@@ -33,9 +33,9 @@ case "$APPTYPE" in browser|cli) ;; *) usage ;; esac
 echo "== /supergoal QA gate =="
 echo "vault: $VAULT  app-type: $APPTYPE"
 
-[ -s "$VERIF" ] || fail "verification.md missing/empty — QA recorded nothing"
+[ -s "$VERIF" ] || fail "QA.md missing/empty — QA recorded nothing"
 grep -qiE '^##[[:space:]]+QA([[:space:]]|$)' "$VERIF" \
-  || fail "verification.md has no '## QA' section — QA evidence was never recorded"
+  || fail "QA.md has no '## QA' section — QA evidence was never recorded"
 QA_SECTION="$(awk '
   /^[[:space:]]*##[[:space:]]+QA([[:space:]]|$)/ { in_qa = 1; next }
   /^[[:space:]]*##[[:space:]]+/ { if (in_qa) exit }

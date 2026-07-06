@@ -14,13 +14,13 @@ suppresses marketing-only rules (hero, heavy motion, landing-layout heuristics) 
 (*) ban and the polish baseline. Implement to the authority/overlay you were given; never bolt a marketing
 hero onto a data app, and never ship a plainer-than-baseline data surface either.
 
-READ ONLY for intent: `plan.md` (or the run `README.md` Design Read) and your tier's authority file
+READ ONLY for intent: `PLAN.md` (its Design Read line) and your tier's authority file
 plus the run's three dial values. Edit only the visual-surface source the slice names.
 
 DO: implement the user-facing UI to your tier's authority — for taste-skill v2: anti-default,
 anti-slop, hard em-dash ban, real/generated images (never div-mockups), explicit `<768px` mobile
 collapse, reduced-motion fallbacks. Record each visual slice + the command/route that proves it
-(**`run-to-prove`**) in the run vault `README.md`.
+(**`run-to-prove`**) as a `## Commands` row in the run vault `QA.md`.
 
 HARD VISUAL BANS (self-audit before recording a slice as done; failing any means the slice is not
 done). The starred (*) bans are universal — they apply to BOTH tiers; the rest concretize the
@@ -75,8 +75,8 @@ self-approve — the QA gate runs the tier Pre-Flight Check (taste §14 for Expr
 QA checklist for Functional) and the Verify step still applies. Honor any Priority Rules the
 conductor injects.
 
-WRITE: UI code to your tier's authority rules + dial values, and the vault `README.md` slice entry.
+WRITE: UI code to your tier's authority rules + dial values, and the vault `QA.md` `## Commands` slice row.
 
 RETURN: a compressed summary — surfaces built, dial values applied, the run-to-prove — not your transcript.
 
-GATE: the slice renders, matches the dials, and its `run-to-prove` is recorded in the vault `README.md`.
+GATE: the slice renders, matches the dials, and its `run-to-prove` is recorded in the vault `QA.md`.

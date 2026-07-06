@@ -1,7 +1,7 @@
 # ROLE-LOOP - the default loop for GREENFIELD / DEBUG / LEGACY
 
-Use for any non-trivial GREENFIELD / DEBUG / LEGACY feature, bug, or refactor. Trivial single edit: edit
-directly.
+Use when the user invokes `supergoal` for GREENFIELD / DEBUG / LEGACY feature, bug, or refactor
+work. Once invoked, use this loop; do not downgrade to an inline shortcut.
 
 The mandatory core is Build -> Improve full spec -> Improve edge cases -> Mandatory Adversarial Review ->
 Exact Verify/QA. Historical contract string: Build -> Improve full spec -> Improve edge cases -> Final
@@ -20,7 +20,7 @@ records the choice.
 
 ## Run setup - before any file mutation
 
-For any non-trivial GREENFIELD / DEBUG / LEGACY code edit, first resolve the source/base branch and
+For any GREENFIELD / DEBUG / LEGACY code edit, first resolve the source/base branch and
 target/integration branch. Prefer repo policy or user-provided refs; ask if either is ambiguous. Then
 verify both refs exist and create a branch-scoped run worktree:
 
@@ -54,7 +54,7 @@ Before any file mutation, create the run vault's `GOAL.md` from `templates/GOAL.
   reason and `plan_approval: "auto"`, then proceed;
 - record the before state in `QA.md` `## Before`: absent feature/red acceptance check for GREENFIELD,
   reproduced symptom for DEBUG, preserve-baseline capture for LEGACY/brownfield, plus neighbor
-  characterization baseline for any shared code/state change past *very easy*;
+  characterization baseline for any shared code/state change;
 - DEBUG first tries exact live reproduction. If exact reproduction is unavailable, preserve the
   failure-triggering properties in synthetic/similar data and fill `QA.md` `## Reproduction Fidelity` with
   fidelity level, data source, prod-vs-test deltas, residual risk, and post-deploy confirmation plan;
@@ -67,7 +67,7 @@ Before any file mutation, create the run vault's `GOAL.md` from `templates/GOAL.
 
 1. Map first (`agents/explore.md`, `reference/domain-context.md`).
 2. Existing API touched: capture its preserve-baseline (`reference/qa.md` "API behavior baseline").
-3. Shared code/state past *very easy*: capture the neighbor characterization baseline (`reference/qa.md`).
+3. Shared code/state changes: capture the neighbor characterization baseline (`reference/qa.md`).
 4. Proceed with the default loop; the before state lands in `QA.md` `## Before` (`reference/delivery-gate.md`).
 
 ## Completion promise + loop cap
@@ -82,11 +82,15 @@ previously green check turns red, stop, fix it, and record
 ## Roles (each role = a fresh-context subagent by default)
 
 Dispatch by default: conductor runs each role as a fresh-context subagent so heavy references load inside
-that role, not the conductor. Return short structured status only: changed files, proof output, concerns.
-Parallelize independent units; order dependent roles. Each dispatch's model tier is the conductor's
-choice at dispatch time (stronger tier for novel/algorithmic slices). Build (1), Improve full spec (2),
-Improve edge cases (3), Mandatory Adversarial Review (4), and Exact Verify/QA (5) are mandatory. Critic/Fixer is
-optional gated escalation, usually after the edge pass or when Exact Verify finds an unexplained gap.
+that role, not the conductor. A user invoking `supergoal` for GREENFIELD, DEBUG, or LEGACY work is
+explicit authorization to spawn the role-loop subagents described here. Do not ask a second "may I use
+subagents?" question unless the user limited delegation, tooling is unavailable, or a normal
+safety/permission gate requires consent. Return short structured status only:
+changed files, proof output, concerns. Parallelize independent units; order dependent roles. Each dispatch's
+model tier is the conductor's choice at dispatch time (stronger tier for novel/algorithmic slices).
+Build (1), Improve full spec (2), Improve edge cases (3), Mandatory Adversarial Review (4), and Exact
+Verify/QA (5) are mandatory. Critic/Fixer is optional gated escalation, usually after the edge pass or
+when Exact Verify finds an unexplained gap.
 
 0. **Adversarial plan attack (conditional, no src edits)** - only for under-specified, wide-blast-radius,
    security/data/concurrency, or latent-correctness work. Before Build, dispatch critics for security,
@@ -94,12 +98,12 @@ optional gated escalation, usually after the edge pass or when Exact Verify find
    code/data, or platform rules; convert required risks into tests, decision gates, or residual risk.
 
 1. **Build** - before first edit, confirm blast-radius beyond the explicit target (`reference/interview.md`).
-   Non-trivial implementation must run as a separate fresh-context builder subagent; the conductor should
-   not implement non-trivial code inline. The builder is briefed by the approved `PLAN.md` alone (on an
+   Implementation must run as a separate fresh-context builder subagent; the conductor should not
+   implement code inline. The builder is briefed by the approved `PLAN.md` alone (on an
    R-LOOP re-entry, also the LATEST `R-LOOP.md` section); Build does not start before the plan approval
    gate clears. Then smallest correct change; match surrounding style. Bug:
    failing test first. For any shared
-   code/state change past *very easy*, capture a neighbor characterization baseline FIRST
+   code/state change, capture a neighbor characterization baseline FIRST
    (`reference/qa.md` "Characterization baseline"). Refactor/integrate an existing API: capture its
    exact-behavior baseline FIRST. Capture run setup in `QA.md` `## Before` and `run-state.json`.
 
@@ -194,10 +198,10 @@ optional gated escalation, usually after the edge pass or when Exact Verify find
    - No padding: add no code that is not required by a failing test or a listed defect. Do not break
      passing tests.
 
-The improve-pass core is mandatory except *very easy* issues. Past that: docs-vs-behavior improve,
-edge-case improve, mandatory adversarial review, exact REAL tests/E2E evidence, and DB evidence for
-data-backed bugs (`reference/db-access.md`). DB proves data state; it does not replace red-green. Loop the
-opt-in critic->fixer escalation only while a fresh red appears.
+The improve-pass core is mandatory for invoked GREENFIELD / DEBUG / LEGACY runs: docs-vs-behavior
+improve, edge-case improve, mandatory adversarial review, exact REAL tests/E2E evidence, and DB evidence
+for data-backed bugs (`reference/db-access.md`). DB proves data state; it does not replace red-green. Loop
+the opt-in critic->fixer escalation only while a fresh red appears.
 
 Board (optional): if enabled (`reference/observability.md`), conductor may call `sg-emit --phase <P>` at
 phase transitions (Frame/Build/ImproveFullSpec/ImproveEdgeCases/MandatoryAdversarialReview/ExactVerify/Critic/Fixer/Done). Opt-in,

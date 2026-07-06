@@ -63,7 +63,7 @@ require_text "spec allows pre-approval" "reference/spec.md" "pre-approve"
 
 # anti-ceremony gate
 require_text "spec is opt-in, not default" "reference/spec.md" "Gate - when to spec vs skip"
-require_text "spec skips trivial work" "reference/spec.md" "trivial"
+require_text "spec keeps clear changes compact" "reference/spec.md" "keep the spec compact"
 
 # grill protocol - middle ground between autonomous drafting and rubber-stamp approval
 require_text "spec grills instead of drafting autonomously" "reference/spec.md" "Grill - crystallize, don't rubber-stamp"

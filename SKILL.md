@@ -5,8 +5,9 @@ description: Use for "build X", "fix this bug", "add this feature", "spec this f
 
 # About
 
-One objective -> smallest correct change -> verified against ground truth. Trivial single edit: skip this
-skill and edit directly. `SKILL.md` is the router; `reference/` carries procedure.
+One objective -> smallest correct change -> verified against ground truth. If invoked, run this skill's
+contract instead of downgrading to an inline shortcut. `SKILL.md` is the router; `reference/` carries
+procedure.
 
 **Standing rules (read first, every mode).** Before classifying the mode, read
 `.supergoal/rules/RULES.md` if present. Honor it across phases as top-priority preference, but rules never
@@ -15,10 +16,10 @@ weaken safety gates. Create/edit it only when the user explicitly asks (`referen
 ## Core principles
 
 - Ground truth beats proxy: re-run REAL tests, re-read request/docs, and do not optimize to self-grading.
-- Exact proof beats review; non-trivial implementation is delegated to a builder subagent.
+- Exact proof beats review; GREENFIELD / DEBUG / LEGACY implementation is delegated to a builder subagent.
 - Smallest correct change; match surrounding code. Scope-minimalism governs code surface area, not UI
   quality: polished user-facing UI is baseline correctness.
-- Non-trivial code changes use Before/After Eval before Build: prove before, target after, and delta with
+- GREENFIELD / DEBUG / LEGACY code changes use Before/After Eval before Build: prove before, target after, and delta with
   trusted commands (`reference/delivery-gate.md`).
 - Ask only when genuinely ambiguous; resolve code-answerable questions by reading the code.
 - Docs language: for persistent repo docs (`docs/**`, run vaults, `.domain-agent/**`, ADR/spec/changelog),
@@ -42,7 +43,7 @@ on assumption. Full contract: `reference/role-loop.md`.
 |---|---|---|
 | build / make / ship a new app/tool | GREENFIELD | default loop |
 | fix / broken / failing / crash / why does | DEBUG | default loop; observe live symptom, then failing-test repro (`reference/debugging.md`, driver persona `agents/debugger.md`); web: `reference/qa.md`, `reference/playwright-cli.md` |
-| add / integrate / refactor existing code | LEGACY | default loop; map first (`agents/explore.md`, `reference/domain-context.md`); optional DB evidence (`reference/db-access.md`); existing API: capture its exact behavior first as a preserve-baseline; shared code/state past *very easy*: characterization baseline (`reference/qa.md`) |
+| add / integrate / refactor existing code | LEGACY | default loop; map first (`agents/explore.md`, `reference/domain-context.md`); optional DB evidence (`reference/db-access.md`); existing API: capture its exact behavior first as a preserve-baseline; shared code/state changes: characterization baseline (`reference/qa.md`) |
 | spec / requirements first / 스펙 문서로 구조화 | SPEC | spec-first prefix: requirements -> design -> tasks under `docs/spec/`, then tasks drive Build (`reference/spec.md`) |
 | explain / teach / how does X work (no code) | TEACH | stateful `teach/<topic>/` workspace (`reference/teach.md`); lessons must pass `node templates/teach-lesson-gate.mjs` |
 | learn / onboard / map this codebase (persist a wiki) | LEARN-DOMAIN | Survey -> Map -> Ground -> Onboard a `.domain-agent/` wiki (`reference/learn-domain.md`; gate `learn-grounding-gate.mjs`) |
@@ -65,10 +66,12 @@ phase transition; it observes only, never gates (`reference/observability.md`).
 
 ## Default loop (GREENFIELD / DEBUG / LEGACY) - verification-first, subagent-default
 
-Work runs in fresh-context subagents by default; the dispatching agent is the conductor. Trivial single
-edit: skip and edit inline. Parallelize independent QA shards/review dimensions. *Very easy* can skip the
-loop; harder work requires red-green, plus DB evidence when persisted data is load-bearing. Full contract:
-`reference/role-loop.md`.
+Work runs in fresh-context subagents by default; the dispatching agent is the conductor. When the user
+invokes `supergoal` for GREENFIELD, DEBUG, or LEGACY work, that invocation is explicit authorization
+to use the role-loop subagents. Do not ask a second "may I spawn agents?" question unless the user
+limited delegation, tooling is unavailable, or a safety/permission gate requires consent. Parallelize
+independent QA shards/review dimensions. Implementation/debug/legacy runs require red-green, plus DB
+evidence when persisted data is load-bearing. Full contract: `reference/role-loop.md`.
 
 Mandatory core: Build -> Improve full spec -> Improve edge cases -> Mandatory Adversarial Review ->
 Exact Verify/QA. Historical contract string: Build -> Improve full spec -> Improve edge cases -> Final
@@ -81,14 +84,14 @@ Critic/Fixer only when hidden requirements are the value being tested.
    outcome, proof, stop condition, `max_iterations` (default 8). Ask <=5 high-leverage questions only
    when needed; confirm wide/destructive/behavior-changing blast radius after grounding
    (`reference/interview.md`); deep requirements interviews may dispatch `agents/analyst.md`, and
-   architecture calls `agents/architect.md`. UI: load `reference/ui-ux.md`. Non-trivial code: create `QA.md` and
+   architecture calls `agents/architect.md`. UI: load `reference/ui-ux.md`. Code-mode runs: create `QA.md` and
    `run-state.json` from templates and record the Before/After Eval. Freeze `PLAN.md` (self-sufficient:
    steps, tools & skills, verification strategy), then clear the plan approval gate - interactive:
    the user's explicit OK; autonomous run: auto-approved, recorded in `## Approval`.
-2. **Build.** Non-trivial implementation runs in a separate fresh-context builder subagent briefed by the
-   approved `PLAN.md` alone (on an R-LOOP re-entry, also the latest `R-LOOP.md` section). Smallest
+2. **Build.** Implementation runs in a separate fresh-context builder subagent briefed by the approved
+   `PLAN.md` alone (on an R-LOOP re-entry, also the latest `R-LOOP.md` section). Smallest
    correct change, test-first, surrounding style. Bug: failing test first (`reference/debugging.md`).
-   Shared code/state past *very easy*: capture neighbor characterization baseline before editing.
+   Shared code/state changes: capture neighbor characterization baseline before editing.
 3. **Improve full spec.** Fresh-context improver re-reads the request/ticket, README, design/API docs,
    `GOAL.md` `## Success Criteria`, code, tests, and repo/data rules; fix the smallest gap between those
    requirements and current behavior.
@@ -131,10 +134,10 @@ security=`agents/security-reviewer.md` (others in `agents/<role>.md`).
 | `reference/domain-context.md` | repo-local Domain Brief |
 | `reference/debugging.md` | DEBUG: hypothesis-ledger diagnose loop |
 | `reference/interview.md` | interview: ambiguity (what) + blast-radius confirm (approach, tiered) |
-| `reference/delivery-gate.md`, `templates/GOAL.md`, `templates/PLAN.md`, `templates/QA.md`, `templates/R-LOOP.md`, `templates/Z-DONE.md`, `templates/run-state.json`, `templates/commit-gate.sh` | run vault file set + Before/After Eval + resumable run state + commit gate for non-trivial GREENFIELD / DEBUG / LEGACY code changes |
+| `reference/delivery-gate.md`, `templates/GOAL.md`, `templates/PLAN.md`, `templates/QA.md`, `templates/R-LOOP.md`, `templates/Z-DONE.md`, `templates/run-state.json`, `templates/commit-gate.sh` | run vault file set + Before/After Eval + resumable run state + commit gate for GREENFIELD / DEBUG / LEGACY code changes |
 | `reference/spec.md`, `templates/spec/` | SPEC: requirements -> design -> tasks |
 | `reference/plan-grounding.md` | ground the approach before committing |
-| `reference/db-access.md`, `templates/db-access/` | read-only DB evidence (required past *very easy* when data load-bearing) |
+| `reference/db-access.md`, `templates/db-access/` | read-only DB evidence (required when persisted data is load-bearing) |
 | `reference/qa.md`, `qa-only.md`, `playwright-cli.md` | QA / no-code verify; single browser driver = playwright-cli |
 | `reference/review-only.md` | REVIEW-ONLY: findings, no fixes |
 | `reference/arch.md` | ARCHITECTURE: friction survey -> route out |
@@ -145,9 +148,9 @@ security=`agents/security-reviewer.md` (others in `agents/<role>.md`).
 | `reference/market-research.md` | GREENFIELD: validate demand (optional) |
 | `reference/observability.md`, `tui/` | Board: opt-in live dashboard |
 
-**Done =** mode stated; smallest diff; Before/After Eval complete for non-trivial code changes; REAL
-tests + request/docs green (not proxy); runtime MUST proven by real behavior; past *very easy* -> red-green
-test + DB evidence if data load-bearing; neighbor snapshots re-run with unnamed drift resolved; every
+**Done =** mode stated; smallest diff; Before/After Eval complete for code-mode changes; REAL
+tests + request/docs green (not proxy); runtime MUST proven by real behavior; code-mode runs use
+red-green test + DB evidence if data load-bearing; neighbor snapshots re-run with unnamed drift resolved; every
 `GOAL.md` Success Criterion checked, with no orphan scope; `Z-<date>.md` written with run branch +
 completion timestamp; DEBUG prod issue has reproduction fidelity and, if
 non-exact, residual risk + post-deploy confirmation plan; user-facing UI at the Expressive baseline;

@@ -5,7 +5,7 @@ and residual risk.
 
 ## Contract
 
-Before/After Eval is required for every non-trivial code-project change. Before Build mutates files, the
+Before/After Eval is required for every GREENFIELD / DEBUG / LEGACY code-project change. Before Build mutates files, the
 run vault must contain `GOAL.md` (from `templates/GOAL.md`), an approved `PLAN.md`
 (from `templates/PLAN.md`), `QA.md` with `## Before` filled (from `templates/QA.md`), and
 `run-state.json` from `templates/run-state.json`. Keep all compact: proof/resume ledgers, not transcripts.
@@ -45,8 +45,8 @@ Required fields and where each lives:
   confirmation plan.
 - **LEGACY / brownfield:** preserve current behavior before changing it. Capture exact API calls,
   screenshots, CLI output, DB rows, or tests for behavior that must not drift.
-- **Shared code/state past very easy:** in any mode, capture neighbor characterization baseline snapshots
-  before Build (`reference/qa.md`), not only refactors.
+- **Shared code/state:** in any code mode, capture neighbor characterization baseline snapshots before
+  Build (`reference/qa.md`), not only refactors.
 
 No meaningful before proof -> say why and mark `Not proven` until another proof source exists.
 
@@ -60,7 +60,7 @@ Run real verification commands, then compare against before state:
 - Unintended drift is fixed or reported.
 - Every `GOAL.md` Success Criterion and QA Case is checked, and Backward-trace is clean.
 - Browser UI changes include browser evidence from `qa-gate.sh <vault> browser`.
-- Data-backed behavior past very easy includes read-only DB evidence when available.
+- Data-backed behavior includes read-only DB evidence when available.
 
 Done requires at least one trusted command (`frozen_repo` or `evaluator_owned`) in `QA.md`.
 Agent-detected commands can supplement proof, but cannot be the whole proof.

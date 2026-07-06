@@ -7,16 +7,16 @@
 랜딩 페이지: **[cskwork.github.io/supergoal-skill](https://cskwork.github.io/supergoal-skill/)**.
 
 `/supergoal`은 단순히 "바로 수정"하기에는 놓칠 것이 많은 무거운 코딩 목표를 위한 스킬입니다. 목표 하나를
-받아 알맞은 작업 경로를 고르고, 필요한 만큼만 고친 뒤, 요청/문서와 현재 동작을 다시 비교하고 실제
-테스트로 확인한 다음 멈춥니다.
+받아 알맞은 작업 경로를 고르고, 코드 delivery에서는 새 컨텍스트 역할을 사용해 필요한 만큼만 고친 뒤,
+요청/문서와 현재 동작을 다시 비교하고 실제 테스트로 확인한 다음 멈춥니다.
 
 ## `/supergoal`이 하는 일
 
 `/supergoal`은 에이전트 실행에 붙는 라우팅과 검증 래퍼입니다. 쉽게 보면 이렇게 움직입니다:
 
-1. **목표를 분류합니다.** 먼저 IntentGate가 실제 작업 종류와 확신도를 판단하고, 그다음 build, debug,
-   legacy 변경, spec, QA, review, architecture, teaching, domain onboarding, harness eval, skill mining
-   중 하나로 보냅니다.
+1. **목표를 분류합니다.** Mode table이 실제 작업 종류를 판단하고, 그다음 build, debug, legacy 변경,
+   spec, QA, review, architecture, teaching, domain onboarding, harness eval, skill mining 중 하나로
+   보냅니다.
 2. **필요한 playbook만 읽습니다.** 루트 `SKILL.md`는 작게 유지하고, 각 경로가 필요한 `reference/`와
    `agents/` 파일만 로드합니다.
 3. **컨텍스트를 새로 유지합니다.** 무거운 작업은 Build, Improve full spec, Improve edge cases,
@@ -35,14 +35,14 @@
 강한 모델이 실제 스펙을 읽고 작업하는 것이 기준입니다. `/supergoal`은 여기서 일반 실행이 바쁜 작업 중에
 건너뛰기 쉬운 부분을 더합니다. Build 뒤에 현재 핵심 루프인 Improve full spec, Improve edge cases,
 Final Verify를 거쳐 증거를 남깁니다. 요구사항이 덜 명시된 작업은 독립 검토자(Critic)가 스펙 기반
-실패 테스트를 쓰고 Fixer가 가장 작은 변경으로 통과시키는 방식으로 확장할 수 있습니다. 단순 문구
-수정처럼 아주 작은 작업이면 스킬 없이 바로 고치는 편이 낫습니다.
+실패 테스트를 쓰고 Fixer가 가장 작은 변경으로 통과시키는 방식으로 확장할 수 있습니다. 코드 delivery로
+호출된 `/supergoal`은 inline shortcut으로 낮추지 않고 role-loop를 사용합니다.
 
 각 역할은 `agents/`에 파일로 들어 있습니다. 그래서 Claude Code, Codex, agy 같은 여러 agent CLI에서 특정
 harness에 묶이지 않고 역할을 나눠 실행할 수 있습니다. Build -> Improve full spec -> Improve edge cases ->
 Final Verify가 필수 핵심이고, Critic/Fixer는 요구사항이 충분히 드러나지 않은 작업에서만 쓰는 확장입니다.
 진행 에이전트는 가볍게 유지되고, 역할별 상세 가이드는 서브에이전트 안에서만 로드됩니다. 독립적인 작업
-단위는 병렬로 돌리고, 아주 단순한 단일 편집은 바로 처리합니다.
+단위는 병렬로 돌립니다.
 
 ## 원칙
 

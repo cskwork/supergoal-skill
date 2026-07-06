@@ -7,19 +7,19 @@ No extra install: clone the repo, symlink it into your skills directory, then `/
 Landing page: **[cskwork.github.io/supergoal-skill](https://cskwork.github.io/supergoal-skill/)**.
 
 An agent skill for heavy coding objectives where a normal "just edit it" pass is too easy to fool. It
-takes one objective, chooses the right workflow route, makes the smallest correct change, checks the
-request and project docs against the real behavior, then stops.
+takes one objective, chooses the right workflow route, uses fresh-context roles for code delivery, makes
+the smallest correct change, checks the request and project docs against the real behavior, then stops.
 
 ## What `/supergoal` does
 
 `/supergoal` is a routing and verification wrapper around an agent. The useful mental model:
 
-1. **Route the objective.** IntentGate first classifies the real work kind with confidence, then routes
-   as build, debug, legacy change, spec, QA, review, architecture, teaching, domain onboarding, harness
-   eval, or skill mining.
+1. **Route the objective.** The mode table classifies the real work kind, then routes as build,
+   debug, legacy change, spec, QA, review, architecture, teaching, domain onboarding, harness eval, or
+   skill mining.
 2. **Load only the needed playbook.** The root `SKILL.md` stays small; each route loads its own
    `reference/` and `agents/` files only when needed.
-3. **Keep contexts fresh.** Non-trivial work runs Build, Improve full spec, Improve edge cases, and
+3. **Keep contexts fresh.** Code delivery runs Build, Improve full spec, Improve edge cases, and
    Final Verify as separate fresh-context roles. The conductor passes the run vault and needed files,
    then collects short status. Critic/Fixer is an opt-in escalation for under-specified work, not the
    always-on default.
@@ -36,14 +36,13 @@ request and project docs against the real behavior, then stops.
 A strong model with the real spec is the bar. `/supergoal` adds the part a plain baseline skips under
 pressure: after Build, it runs the current core loop - Improve full spec, Improve edge cases, then Final
 Verify - and records the proof. For genuinely under-specified work, it can escalate to an independent
-critic that writes spec-derived failing tests before a fixer clears them. For a trivial single edit, skip
-the skill and edit directly.
+critic that writes spec-derived failing tests before a fixer clears them. Once invoked for code delivery,
+`/supergoal` uses the role-loop instead of downgrading to an inline shortcut.
 
 Each role is a bundled file in `agents/`, so dispatch stays harness-agnostic across Claude Code, Codex,
 agy, and other agent CLIs. Build -> Improve full spec -> Improve edge cases -> Final Verify is the
 mandatory core; Critic/Fixer stays available for the under-specified frontier. The conductor stays lean:
-subagents load the heavy references for their phase, and independent units run in parallel. A trivial
-single edit stays inline.
+subagents load the heavy references for their phase, and independent units run in parallel.
 
 ## Principles
 

@@ -13,8 +13,8 @@ borrow the matrix for high-blast-radius changes.
 
 ## Characterization baseline (non-UI code changes)
 
-Use when work is past *very easy* and touches shared code/state: function, module, global state, DB
-row/schema, config, cache, integration contract. Skip narrow *very easy* edits and log why.
+Use when GREENFIELD / DEBUG / LEGACY work touches shared code/state: function, module, global state,
+DB row/schema, config, cache, integration contract.
 
 1. Pick reachable neighbor behavior the change could break.
 2. Before editing, put that behavior under a check and save current output to

@@ -18,8 +18,20 @@ default_forced_suite_id: forced-default-deepswe-difficult-swe
 default_forced_suite_task_ids:
   - etree-xml-diff-patch
   - cliffy-config-file-parsing
-  - yjs-map-conflict-detection
+  - csstree-shorthand-expansion-compression
+  - skrub-duration-encoding
+  - termenv-preserve-ansi-resets
 smoke_task_id: happy-dom-abort-pending-body-reads
+difficulty_evidence:
+  source: "DeepSWE public leaderboard trial records scraped per task page, snapshot 2026-07-06"
+  method: "13108 included-in-score trials across 21 models and 113 tasks; per-task overall pass rate plus gpt-5.5 (mini-swe-agent, medium/high/xhigh) pass count. Suite tasks need low overall pass rate (difficult) AND nonzero gpt-5.5 passes (not a guaranteed floor for the codex gpt-5.5 lane); etree stays as the locally proven-headroom anchor."
+  suite_rule: "Prefer overall pass <= 20 percent with gpt-5.5 between 1/12 and 9/12; spread languages; avoid rust tasks in the 900s low-effort lane (compile budget risk)."
+held_out_escalation_pool:
+  - updo-policy-alerting
+  - happy-dom-deterministic-intersectionobserver
+  - testem-bail-on-test-failure
+  - koota-deferred-mutation-buffer
+  - dateutil-rfc5545-timezone-interop
 stop_policy:
   timeout_seconds: 900
   valid_outcomes:
@@ -45,6 +57,9 @@ eval_intent:
     - "Using private LMS code that cannot be committed or independently replayed."
     - "Treating the 2026-07-03 Happy DOM interrupted harness arm as a valid correctness result."
     - "Treating a completed Happy DOM tie with perfect baseline score as meaningful harness lift."
+    - "Keeping yjs-map-conflict-detection in the difficult suite after leaderboard data (rank 101/113) and a local perfect-baseline run both showed no headroom."
+    - "Selecting suite tasks by category label instead of measured pass rates."
+    - "Rust tasks in the 900s low-effort lane; compile time eats the agent budget."
 arms:
   baseline:
     prompt_condition: "Original DeepSWE instruction only."
@@ -68,7 +83,7 @@ metrics:
   routing_accuracy:
     primary: "not applicable unless this run changes the supergoal trigger/router; otherwise reuse the 20-prompt routing probe."
 decision_rule:
-  forced_default: "For difficult SWE or harness-effectiveness claims without a named task, run the three-task forced DeepSWE suite: etree-xml-diff-patch, cliffy-config-file-parsing, and yjs-map-conflict-detection."
+  forced_default: "For difficult SWE or harness-effectiveness claims without a named task, run the five-task forced DeepSWE suite: etree-xml-diff-patch, cliffy-config-file-parsing, csstree-shorthand-expansion-compression, skrub-duration-encoding, and termenv-preserve-ansi-resets."
   directional_pilot: "At least 3 different paired tasks or 3 paired seeds per task; report per-task/per-seed vectors. One run per task is directional only."
   proven_claim: "At least 6 paired seeds per arm across multiple tasks, paired McNemar p < 0.05 on binary task outcomes, and no unacceptable cost/time regression."
   no_signal: "If both arms pass every selected task, report not_proven_no_headroom and select harder held-out tasks."
@@ -113,6 +128,38 @@ tasks:
     category: feature_request
     language: javascript
     why_selected: "CRDT-style map conflict detection requires domain reasoning about deterministic concurrent writes."
+    public_headroom_note: "Demoted from the forced suite 2026-07-06: leaderboard rank 101/113 (55.2 percent overall, gpt-5.5 11/12), and the local Spark-low paired run had a perfect baseline that the harness regressed by one preservation check. Too easy for a difficult-SWE suite; no baseline headroom."
+    suite_default: false
+    minimum_pilot: false
+  - id: csstree-shorthand-expansion-compression
+    task_url: "https://deepswe.datacurve.ai/data/v1/tasks/csstree-shorthand-expansion-compression"
+    local_path: "tasks/csstree-shorthand-expansion-compression"
+    upstream_repo: "https://github.com/csstree/csstree"
+    base_commit: "88e3d965c0b1628642a30a841745b410d6835052"
+    category: feature_request
+    language: javascript
+    why_selected: "Shorthand expansion/compression in a CSS lexer: many property grammars and edge interactions. Leaderboard rank 15/113 (11.2 percent overall); gpt-5.5 6/12 (high 2/4, xhigh 4/4) so the codex gpt-5.5 lane has headroom without a guaranteed floor."
+    suite_default: true
+    minimum_pilot: false
+  - id: skrub-duration-encoding
+    task_url: "https://deepswe.datacurve.ai/data/v1/tasks/skrub-duration-encoding"
+    local_path: "tasks/skrub-duration-encoding"
+    upstream_repo: "https://github.com/skrub-data/skrub"
+    base_commit: "24c4466fea94f551fb73d21eba54038dc5b346d3"
+    category: feature_request
+    language: python
+    why_selected: "Duration encoding inside TableVectorizer: dataframe-library edge behavior plus API integration. Leaderboard rank 14/113 (10.3 percent overall); gpt-5.5 4/12 (all at xhigh) - hard but solvable by the model family, and it adds python coverage."
+    suite_default: true
+    minimum_pilot: false
+  - id: termenv-preserve-ansi-resets
+    task_url: "https://deepswe.datacurve.ai/data/v1/tasks/termenv-preserve-ansi-resets"
+    local_path: "tasks/termenv-preserve-ansi-resets"
+    upstream_repo: "https://github.com/muesli/termenv"
+    base_commit: "368a3572b8146cc038b3f240da6792003d7e42c5"
+    category: feature_request
+    language: go
+    why_selected: "ANSI reset preservation during truncation/styling: stateful escape-sequence tracking with subtle correctness edges. Leaderboard rank 11/113 (9.5 percent overall); gpt-5.5 5/12 spread across efforts. Small repo, fast test cycle - fits the 900s low-effort budget."
+    suite_default: true
     minimum_pilot: false
 commands:
   default_forced_suite_runner:

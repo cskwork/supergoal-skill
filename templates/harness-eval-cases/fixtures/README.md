@@ -20,15 +20,19 @@ and ships its visible + hidden suites. Validated to DISCRIMINATE before use (see
   (`{...t,...s}` / `split(',')`) fails the discriminating hidden checks.
 - authz-cache (u3): starter and lazy impl pass visible 3/3 but hidden 1/8; reference passes hidden 8/8.
 
-Re-validate any case with the no-codex path in its origin runner:
+Re-validate any case with the no-codex path in its runner:
 
-    SG_EVAL_VALIDATE=1 SG_EVAL_CASE=<002|003|u1|u2|u3> node <origin run.mjs>
+    SG_EVAL_VALIDATE=1 SG_EVAL_CASE=<002|003|u1|u3> node templates/harness-eval-cases/run-local-eval.mjs
+    SG_EVAL_VALIDATE=1 SG_EVAL_CASE=<u1|u2> node templates/harness-eval-cases/run-underspec-n3.mjs
 
-## Origins
+## Runners
 
-- 002, 003: `docs/experiments/2026-06-07-harness-eval-medium-hard-skill-vs-baseline/run.mjs`
-- u3:      `docs/experiments/2026-06-07-harness-eval-medium-hard-skill-vs-baseline/run.mjs`
-- u1, u2:   `docs/experiments/2026-06-07-harness-eval-underspecified-n3/run.mjs`
+- 002, 003, u1, u3: `templates/harness-eval-cases/run-local-eval.mjs`
+- u1, u2 (+ equal-compute naive-loop arm): `templates/harness-eval-cases/run-underspec-n3.mjs`
+
+Both runners originated in the 2026-06-07 experiments (medium-hard skill-vs-baseline and
+underspecified-n3); the raw experiment dirs were removed 2026-07-06 - conclusions live in
+`docs/experiments/README.md`.
 
 Authored case specs (yaml) for the under-spec cases live in `../authored/`. The RevFactory case
 specs stay at the corpus root; `revfactory-case-002/003` specs point here via `runnable_fixture:`.
@@ -37,4 +41,4 @@ specs stay at the corpus root; `revfactory-case-002/003` specs point here via `r
 
 Only `underspec-001-deepmerge` separated baseline from harness: the baseline shipped a
 prototype-pollution vuln as a false-GREEN; the harness critic caught it (3/3 seeds). All other
-cases tied. See the experiments' `results.md` and `reference/harness-eval.md`.
+cases tied. See `docs/experiments/README.md` and `reference/harness-eval.md`.

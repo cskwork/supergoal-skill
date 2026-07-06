@@ -1,7 +1,0 @@
-Implemented the minimal cache fix in [src/cache.mjs](/tmp/sg-eval-svb-002/sandboxes/harness-s2/src/cache.mjs:15): resolved values and cleanup now only apply when the promise is still the active in-flight load for that key.
-
-Updated [NOTES.md](/tmp/sg-eval-svb-002/sandboxes/harness-s2/NOTES.md:1) and [docs/changelog/changelog-2026-06-07.md](/tmp/sg-eval-svb-002/sandboxes/harness-s2/docs/changelog/changelog-2026-06-07.md:1).
-
-Verification:
-- Initial `npm test`: failed on `clear() during in-flight load`
-- Final `npm test`: passed, `8/8` tests.

@@ -1,5 +1,0 @@
-Implemented the MiniLang LSP server in [src/server.mjs](/private/tmp/sg-gpt55-low-orig/sandboxes/revfactory-case-015-lsp/baseline/src/server.mjs): Content-Length JSON-RPC framing, message buffering, lifecycle handling, parser with recovery diagnostics, symbol tracking, completion, definition, hover, and `didOpen`/`didChange` updates.
-
-Added the required reasoning note in [docs/changelog/changelog-2026-06-07.md](/private/tmp/sg-gpt55-low-orig/sandboxes/revfactory-case-015-lsp/baseline/docs/changelog/changelog-2026-06-07.md).
-
-Verification: `npm test` passes, 5/5 tests.

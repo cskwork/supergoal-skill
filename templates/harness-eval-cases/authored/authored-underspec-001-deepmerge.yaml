@@ -5,7 +5,7 @@ category: code-generation
 source: "authored (supergoal under-specified frontier)"
 runtime_adapter: portable
 runnable_fixture: "templates/harness-eval-cases/fixtures/underspec-001-deepmerge/"
-origin_experiment: "docs/experiments/2026-06-07-harness-eval-underspecified-n3/ (case u1)"
+origin_experiment: "2026-06-07 underspecified-n3 (case u1); raw dir removed 2026-07-06, runner: templates/harness-eval-cases/run-underspec-n3.mjs"
 discriminates: true
 task: |-
   Implement deepMerge(target, source) in src/merge.mjs. It merges the source object

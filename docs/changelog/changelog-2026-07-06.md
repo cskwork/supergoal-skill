@@ -1,3 +1,57 @@
+# 2026-07-06 - harness eval: measured-difficult DeepSWE suite + stale experiment removal
+
+## Decision
+
+1. The forced DeepSWE default suite grows from three to five tasks and is now selected by MEASURED
+   difficulty, not category labels: `etree-xml-diff-patch` (anchor), `cliffy-config-file-parsing`,
+   `csstree-shorthand-expansion-compression`, `skrub-duration-encoding`, `termenv-preserve-ansi-resets`.
+   `yjs-map-conflict-detection` is demoted out of the suite.
+2. 23 experiment dirs (2026-05-30 through 2026-06-28) are removed from `docs/experiments/`; their
+   conclusions are preserved in a new `docs/experiments/README.md` index.
+3. The two live fixture eval drivers that lived inside removed experiment dirs move to
+   `templates/harness-eval-cases/run-local-eval.mjs` (002/003/u1/u3) and
+   `templates/harness-eval-cases/run-underspec-n3.mjs` (u1/u2 + naive-loop arm), with outputs
+   redirected under `SG_EVAL_RUN_ROOT` so templates/ stays clean.
+
+## Why
+
+- Difficulty evidence (new): scraped the DeepSWE public leaderboard per-task trial records on
+  2026-07-06 - 13,108 included-in-score trials, 21 models, all 113 tasks at the pinned benchmark ref.
+  `yjs` ranks 101/113 (55.2% overall pass, gpt-5.5 11/12): a near-saturated task that cannot show
+  harness lift, matching the local Spark-low run where a perfect baseline was regressed by one
+  preservation check. `happy-dom` ranks 112/113 (73.7%), confirming smoke-only. The three new tasks
+  rank 15/14/11 of 113 (11.2%/10.3%/9.5% overall) with nonzero gpt-5.5 passes (6/12, 4/12, 5/12), so
+  the codex gpt-5.5 low lane gets difficulty WITH headroom instead of a guaranteed floor or ceiling.
+  Selection rule + held-out escalation pool are recorded in
+  `templates/harness-eval-external/deepswe/task-set.yaml` (`difficulty_evidence`,
+  `held_out_escalation_pool`).
+- Experiment removal (user request): every removed run predates the 2026-07-05 forced-DeepSWE default
+  and the 2026-07-06 vault restructure, so its harness arm exercised skill text that no longer ships;
+  raw runs are no longer valid evidence about the current skill. Conclusions (baseline-first,
+  equal-compute forced verification as the only proven lever, gated ceremony/HARNESS-MAKE rejection)
+  stay binding via `docs/experiments/README.md` and `reference/harness-eval.md`.
+
+## Rejected alternatives
+
+- Keeping a 3-task suite by swapping only yjs: five paired tasks give a usable directional vector in
+  one suite run and cover go/ts/js/python; three do not.
+- Picking replacement tasks by "hard" category labels: the leaderboard shows label difficulty and
+  measured difficulty disagree (a "hard" label with 55% pass is a ceiling case).
+- Rust tasks in the suite: compile time inside the 900s low-effort agent budget is a crash/timeout
+  risk, recorded as a rejected approach in task-set.yaml.
+- Deleting the fixture drivers with their experiment dirs: the u3 discriminator and the contract test
+  depend on them; they are live tools, so they moved to templates/ instead.
+
+## Verification
+
+- `bash tests/run-all.sh`: all suites green (harness-eval contract grew to 303 checks, 0 failed).
+- Relocated drivers re-validated: u3 starter/reference/lazy 3-way discrimination and u2 starter-fails
+  both reproduce from the new paths.
+- `run-default-suite.mjs --dry-run` emits paired baseline/harness Pier commands for all five tasks.
+- Dangling-reference sweep over SKILL.md, README(.ko).md, reference/, templates/, tests/, agents/,
+  teach/, tui/, examples/, docs/ live surfaces: no references to removed dirs remain (changelogs and
+  kept-experiment FINDINGS keep their historical mentions by design).
+
 # 2026-07-06 - run vault restructured to GOAL / PLAN / QA / R-LOOP / Z-<date>
 
 ## Decision

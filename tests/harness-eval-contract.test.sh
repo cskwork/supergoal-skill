@@ -448,6 +448,8 @@ require_file "harness eval result template exists" "templates/harness-eval-resul
 require_file "harness eval report template exists" "templates/harness-eval-report.md"
 require_file "harness eval runner template exists" "templates/harness-eval-runner.mjs"
 require_file "harness eval stats helper exists" "templates/harness-eval-stats.mjs"
+require_file "local fixture eval driver exists" "templates/harness-eval-cases/run-local-eval.mjs"
+require_file "underspec n3 eval driver exists" "templates/harness-eval-cases/run-underspec-n3.mjs"
 require_file "DeepSWE external README exists" "templates/harness-eval-external/deepswe/README.md"
 require_file "DeepSWE external task set exists" "templates/harness-eval-external/deepswe/task-set.yaml"
 require_file "DeepSWE harness arm preparer exists" "templates/harness-eval-external/deepswe/prepare-supergoal-arm.mjs"
@@ -463,7 +465,7 @@ require_text "route hook points at eval reference" "SKILL.md" "reference/harness
 require_text "route hook catches skill-lift use case" "SKILL.md" "measure skill lift"
 require_text "route hook names the reusable runner" "SKILL.md" "templates/harness-eval-runner.mjs"
 require_text "route hook marks runner as default driver" "SKILL.md" "DEFAULT portable eval driver"
-require_text "route hook names DeepSWE forced suite" "SKILL.md" "forced three-task DeepSWE suite"
+require_text "route hook names DeepSWE forced suite" "SKILL.md" "forced five-task DeepSWE suite"
 require_text "README states RevFactory case reference" "README.md" "https://github.com/revfactory/claude-code-harness/"
 require_text "eval requires same snapshot" "reference/harness-eval.md" "same repo snapshot"
 require_text "eval requires blind grading" "reference/harness-eval.md" "blind or label-swapped grading"
@@ -477,7 +479,7 @@ require_text "eval points at reusable case directory" "reference/harness-eval.md
 require_text "eval names ten dimensions" "reference/harness-eval.md" "feature_completeness"
 require_text "eval avoids inflated claims" "reference/harness-eval.md" "Not proven"
 case_count=$(find "$ROOT/templates/harness-eval-cases" -maxdepth 1 -name 'revfactory-case-*.yaml' | wc -l | tr -d ' ')
-all_case_count=$(find "$ROOT/templates/harness-eval-cases" -maxdepth 1 -type f | wc -l | tr -d ' ')
+all_case_count=$(find "$ROOT/templates/harness-eval-cases" -maxdepth 1 -name '*.yaml' | wc -l | tr -d ' ')
 if [ "$case_count" = "15" ] && [ "$all_case_count" = "15" ]; then
   pass "reusable case set is RevFactory-only 15"
 else
@@ -530,7 +532,11 @@ require_text "eval points at DeepSWE full-cycle runner" "reference/harness-eval.
 require_text "eval forces default DeepSWE suite" "reference/harness-eval.md" "Forced default public SWE suite"
 require_text "eval names DeepSWE suite runner" "reference/harness-eval.md" "run-default-suite.mjs"
 require_text "eval names cliffy suite task" "reference/harness-eval.md" "cliffy-config-file-parsing"
-require_text "eval names yjs suite task" "reference/harness-eval.md" "yjs-map-conflict-detection"
+require_text "eval names csstree suite task" "reference/harness-eval.md" "csstree-shorthand-expansion-compression"
+require_text "eval names skrub suite task" "reference/harness-eval.md" "skrub-duration-encoding"
+require_text "eval names termenv suite task" "reference/harness-eval.md" "termenv-preserve-ansi-resets"
+require_text "eval demotes yjs from suite" "reference/harness-eval.md" '`yjs-map-conflict-detection` was demoted'
+require_text "eval suite is measured not labeled" "reference/harness-eval.md" "Suite membership is measured, not labeled"
 require_text "eval records no-headroom DeepSWE outcome" "reference/harness-eval.md" "not_proven_no_headroom"
 require_text "eval serializes nested passes by default" "reference/harness-eval.md" "serialize nested agent passes by default"
 require_text "eval retries transient crashes" "reference/harness-eval.md" "Retry a transient (rate-limit) crash with"
@@ -584,6 +590,8 @@ require_text "runner example uses improve core" "templates/harness-eval-runner.m
 require_text "runner keeps critic as explicit lever" "templates/harness-eval-runner.mjs" "surface-hidden-requirements lever"
 require_text "DeepSWE README defaults etree scoring" "templates/harness-eval-external/deepswe/README.md" 'Primary scoring task: `etree-xml-diff-patch`'
 require_text "DeepSWE README forces default suite" "templates/harness-eval-external/deepswe/README.md" "Forced Default Suite"
+require_text "DeepSWE README records selection method" "templates/harness-eval-external/deepswe/README.md" "Selection method (snapshot 2026-07-06)"
+require_text "DeepSWE README demotes yjs" "templates/harness-eval-external/deepswe/README.md" "was demoted from this suite on 2026-07-06"
 require_text "DeepSWE README documents suite runner" "templates/harness-eval-external/deepswe/README.md" "run-default-suite.mjs"
 require_text "DeepSWE README keeps Happy DOM smoke only" "templates/harness-eval-external/deepswe/README.md" 'Smoke task: `happy-dom-abort-pending-body-reads`'
 require_text "DeepSWE README rejects manual interrupt" "templates/harness-eval-external/deepswe/README.md" "Manual post-hoc interruption invalidates paired"
@@ -592,7 +600,12 @@ require_text "DeepSWE README records no-headroom result" "templates/harness-eval
 require_text "DeepSWE manifest records scoring default task" "templates/harness-eval-external/deepswe/task-set.yaml" "default_task_id: etree-xml-diff-patch"
 require_text "DeepSWE manifest records forced suite id" "templates/harness-eval-external/deepswe/task-set.yaml" "default_forced_suite_id: forced-default-deepswe-difficult-swe"
 require_text "DeepSWE manifest records cliffy suite task" "templates/harness-eval-external/deepswe/task-set.yaml" "cliffy-config-file-parsing"
-require_text "DeepSWE manifest records yjs suite task" "templates/harness-eval-external/deepswe/task-set.yaml" "yjs-map-conflict-detection"
+require_text "DeepSWE manifest records csstree suite task" "templates/harness-eval-external/deepswe/task-set.yaml" "csstree-shorthand-expansion-compression"
+require_text "DeepSWE manifest records skrub suite task" "templates/harness-eval-external/deepswe/task-set.yaml" "skrub-duration-encoding"
+require_text "DeepSWE manifest records termenv suite task" "templates/harness-eval-external/deepswe/task-set.yaml" "termenv-preserve-ansi-resets"
+require_text "DeepSWE manifest records difficulty evidence" "templates/harness-eval-external/deepswe/task-set.yaml" "difficulty_evidence"
+require_text "DeepSWE manifest records held-out pool" "templates/harness-eval-external/deepswe/task-set.yaml" "held_out_escalation_pool"
+require_text "DeepSWE manifest demotes yjs from suite" "templates/harness-eval-external/deepswe/task-set.yaml" "Demoted from the forced suite 2026-07-06"
 require_text "DeepSWE manifest records smoke task" "templates/harness-eval-external/deepswe/task-set.yaml" "smoke_task_id: happy-dom-abort-pending-body-reads"
 require_text "DeepSWE manifest records stop policy" "templates/harness-eval-external/deepswe/task-set.yaml" "manual_interrupt: invalid_paired_correctness"
 require_text "DeepSWE manifest records no-headroom decision" "templates/harness-eval-external/deepswe/task-set.yaml" "not_proven_no_headroom"
@@ -626,7 +639,7 @@ cat > "$T/pairs.json" <<'EOF'
 EOF
 run_case "stats helper emits McNemar table" 0 "discordant_harness_only" node "$ROOT/templates/harness-eval-stats.mjs" "$T/pairs.json"
 
-run_case "u3 fixture discriminates starter/reference/lazy" 0 "reference:" env SG_EVAL_VALIDATE=1 SG_EVAL_CASE=u3 SG_EVAL_RUN_ROOT="$T/u3-validate" node "$ROOT/docs/experiments/2026-06-07-harness-eval-medium-hard-skill-vs-baseline/run.mjs"
+run_case "u3 fixture discriminates starter/reference/lazy" 0 "reference:" env SG_EVAL_VALIDATE=1 SG_EVAL_CASE=u3 SG_EVAL_RUN_ROOT="$T/u3-validate" node "$ROOT/templates/harness-eval-cases/run-local-eval.mjs"
 
 mkresult "$T/bad-claim-status.json" "harness" "$PASS_CHECKS" "maybe" "harness"
 run_case "gate blocks unknown claim_status" 1 "claim_status" node "$GATE" "$T/bad-claim-status.json"

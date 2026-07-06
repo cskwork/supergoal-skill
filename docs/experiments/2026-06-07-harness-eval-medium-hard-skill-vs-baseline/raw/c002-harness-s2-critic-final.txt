@@ -1,9 +1,0 @@
-Added the red-team artifacts without touching `src/`:
-
-- Created [test/spec.gen.test.mjs](/tmp/sg-eval-svb-002/sandboxes/harness-s2/test/spec.gen.test.mjs:1)
-- Created [NOTES.md](/tmp/sg-eval-svb-002/sandboxes/harness-s2/NOTES.md:1)
-- Appended rationale to [docs/changelog/changelog-2026-06-07.md](/tmp/sg-eval-svb-002/sandboxes/harness-s2/docs/changelog/changelog-2026-06-07.md:6)
-
-Final `npm test` result: expected failure.
-
-The exposed defect is `clear()` during an in-flight load: after `clear()`, the old pending loader still resolves and repopulates the cache, so `has('a')` becomes `true` when the spec-preserving behavior should remain cleared. The generated suite also adds a same-key concurrent guard where later callers pass different loader functions.

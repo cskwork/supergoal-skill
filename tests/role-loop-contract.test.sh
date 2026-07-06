@@ -29,6 +29,17 @@ require_file() {
   fi
 }
 
+reject_text() {
+  local label="$1" file="$2" text="$3"
+  local normalized
+  normalized="$(tr '\n\t\r' '   ' < "$ROOT/$file" | tr -s ' ')"
+  if printf '%s' "$normalized" | grep -Fqi -- "$text"; then
+    FAIL=$((FAIL + 1)); printf '  FAIL  %s\n' "$label"; printf '        forbidden in %s: %s\n' "$file" "$text"
+  else
+    PASS=$((PASS + 1)); printf '  PASS  %s\n' "$label"
+  fi
+}
+
 echo "=================================================================="
 echo " /supergoal ROLE-LOOP contract   skill: $ROOT"
 echo "=================================================================="
@@ -55,8 +66,21 @@ require_text "role-loop names mandatory improve passes" "reference/role-loop.md"
 require_text "role-loop excludes critic from default loop" "reference/role-loop.md" "Critic/Fixer is not part of the default loop"
 require_text "SKILL excludes critic from default loop" "SKILL.md" "Critic/Fixer is not part of the default loop"
 require_text "role-loop dispatches fresh-context roles" "reference/role-loop.md" "fresh-context subagent"
-require_text "SKILL requires separate builder subagent" "SKILL.md" "Non-trivial implementation runs in a separate fresh-context builder subagent"
+require_text "SKILL requires separate builder subagent" "SKILL.md" "Implementation runs in a separate fresh-context builder subagent"
 require_text "role-loop requires separate builder subagent" "reference/role-loop.md" "separate fresh-context builder subagent"
+require_text "SKILL treats supergoal invocation as subagent authorization" "SKILL.md" "explicit authorization to use the role-loop subagents"
+require_text "role-loop treats supergoal invocation as subagent authorization" "reference/role-loop.md" "explicit authorization to spawn the role-loop subagents"
+require_text "role-loop avoids second subagent permission question" "reference/role-loop.md" 'Do not ask a second "may I use subagents?" question'
+require_text "SKILL says invoked supergoal does not downgrade" "SKILL.md" "instead of downgrading to an inline shortcut"
+require_text "role-loop says invoked supergoal uses loop" "reference/role-loop.md" "Once invoked, use this loop"
+reject_text "SKILL has no trivial-inline shortcut" "SKILL.md" "Trivial single"
+reject_text "SKILL has no very-easy shortcut" "SKILL.md" "Very easy"
+reject_text "SKILL has no direct-edit shortcut" "SKILL.md" "edit directly"
+reject_text "role-loop has no trivial-inline shortcut" "reference/role-loop.md" "Trivial single"
+reject_text "role-loop has no very-easy shortcut" "reference/role-loop.md" "very easy"
+reject_text "role-loop has no inline edit shortcut" "reference/role-loop.md" "edit inline"
+reject_text "qa has no very-easy skip" "reference/qa.md" "very easy"
+reject_text "delivery gate has no very-easy threshold" "reference/delivery-gate.md" "very easy"
 require_text "SKILL requires mandatory adversarial review" "SKILL.md" "Mandatory Adversarial Review"
 require_text "role-loop requires mandatory adversarial review" "reference/role-loop.md" "Mandatory Adversarial Review"
 require_text "SKILL exact verification outranks review" "SKILL.md" "exact verification outranks reviewer approval"
@@ -87,7 +111,7 @@ require_text "role-loop Build captures the baseline first" "reference/role-loop.
 require_text "role-loop Verify diffs the re-capture" "reference/role-loop.md" "re-capture the same call and diff against the pre-refactor baseline"
 require_text "explore flags existing API for capture" "agents/explore.md" "flag it for a preserve-baseline capture"
 require_text "qa.md defines characterization baseline" "reference/qa.md" "## Characterization baseline (non-UI code changes)"
-require_text "role-loop generalizes baseline to shared code" "reference/role-loop.md" "shared code/state change past *very easy*"
+require_text "role-loop generalizes baseline to shared code" "reference/role-loop.md" "any shared code/state change"
 require_text "role-loop reruns neighbor characterization baseline" "reference/role-loop.md" "Re-run every captured neighbor characterization baseline"
 require_text "role-loop says characterization is not oracle" "reference/role-loop.md" "Characterization baseline is a regression signal, not a correctness oracle"
 require_text "qa.md says characterization is not oracle" "reference/qa.md" "not a correctness oracle"

@@ -22,7 +22,7 @@ Fire when **either** holds:
 
 Skip when **any** holds (default loop without spec; log the skip in the run `PLAN.md`):
 
-- Trivial single edit or clear single-interpretation change - a spec here is ceremony, not signal.
+- Clear single-interpretation change - keep the spec compact; avoid ceremony that adds no signal.
 - Urgent hotfix - fix first; backfill the spec only if the user asks.
 
 ## Documents (in order; one file each under `docs/spec/<feature-slug>/`)

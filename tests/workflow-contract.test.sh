@@ -21,14 +21,26 @@ require_text() {
   fi
 }
 
+reject_text() {
+  local label="$1" file="$2" text="$3"
+  local normalized
+  normalized="$(tr '\n\t\r' '   ' < "$ROOT/$file" | tr -s ' ')"
+  if printf '%s' "$normalized" | grep -Fqi -- "$text"; then
+    FAIL=$((FAIL + 1)); printf '  FAIL  %s\n' "$label"
+    printf '        forbidden in %s: %s\n' "$file" "$text"
+  else
+    PASS=$((PASS + 1)); printf '  PASS  %s\n' "$label"
+  fi
+}
+
 echo "=================================================================="
 echo " /supergoal workflow contract   skill: $ROOT"
 echo "=================================================================="
 
 # SKILL.md routes; reference/role-loop.md owns the branch/worktree procedure.
-require_text "SKILL classifies intent before routing" "SKILL.md" "IntentGate"
-require_text "SKILL separates category from capability refs" "SKILL.md" "Category is the work kind; capability refs"
-require_text "SKILL asks only on low confidence routing" "SKILL.md" "Low confidence or conflicting intent"
+require_text "SKILL keeps mode router" "SKILL.md" "## Mode (classify, state it in one line)"
+reject_text "SKILL has no IntentGate section" "SKILL.md" "IntentGate"
+reject_text "SKILL has no capability_refs contract" "SKILL.md" "capability_refs"
 require_text "SKILL matches repo docs language for docs" "SKILL.md" "match the target repo's dominant prose language"
 require_text "SKILL names run isolation hook" "SKILL.md" "Run isolation"
 require_text "SKILL points to role-loop contract" "SKILL.md" "reference/role-loop.md"

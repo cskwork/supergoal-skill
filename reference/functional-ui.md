@@ -1,11 +1,13 @@
-# Functional UI baseline - design authority for dense/admin surfaces
+# Functional UI - density + states overlay for dense/admin surfaces
 
-Load when the deliverable is a dashboard, data table, admin panel, internal tool, settings, wizard, or
-CRUD form. These need design discipline, not marketing aesthetic. For landing/portfolio/marketing
-surfaces use `reference/taste-skill-v2.md` instead. Mixed product: apply each file to its own surface.
+Load when the surface is a dashboard, data table, admin panel, internal tool, settings, wizard, or
+CRUD form. Layered on top of the Expressive baseline (`reference/taste-skill-v2.md` stays the polish
+authority); never an alternative tier, never lowers polish. Mixed product: Expressive everywhere,
+this overlay only on the dense surfaces.
 
-Lighter than taste-skill-v2: no hero, marquee, scroll-choreography, anti-slop landing rules. Phases,
-gates, vault, topology unchanged. One Designer driver per surface.
+Relative to taste-skill-v2 it suppresses landing-only rules (hero, marquee, scroll-choreography,
+anti-slop landing) and adds density discipline plus complete UI states. Phases, gates, vault, topology
+unchanged. One Designer driver per surface.
 
 ## Non-negotiable baseline
 

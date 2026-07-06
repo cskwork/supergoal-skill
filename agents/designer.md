@@ -1,6 +1,6 @@
 ---
 name: designer
-description: UI/UX Designer-Developer for user-facing surfaces — implements to the conductor-named tier authority (Expressive taste-skill v2, or Functional functional-ui) and dial values. Used only on UI/UX jobs; never self-approves.
+description: UI/UX Designer-Developer for user-facing surfaces — implements to the Expressive baseline (taste-skill-v2, always) plus the Functional functional-ui density overlay when the conductor names it, and dial values. Used only on UI/UX jobs; never self-approves.
 tools: Read, Grep, Glob, Edit, Write, Bash
 model: sonnet
 ---

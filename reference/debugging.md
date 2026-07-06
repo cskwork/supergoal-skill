@@ -1,6 +1,6 @@
 # Debugging - DEBUG mode
 
-DEBUG is deep-and-narrow. Use one driving `debugger`/`tracer`; spawn helpers only for independent probes
+DEBUG is deep-and-narrow. Use one driving `debugger` (`agents/debugger.md`); spawn helpers only for independent probes
 and save summaries in the vault.
 
 Reproduce exit gate: deterministic repro, cheap to re-run after every probe. No trusted loop, no fix. If
@@ -85,6 +85,9 @@ For DB/API/network/queue failures, map before digging:
    plan step so every change traces to one observed outcome; do not free-form edit until green.
 6. **Verify regression.** The red repro now passes in a clean sandbox and the full suite stays green.
    This failing-before/passing-after proof is DEBUG's literal delivery evidence.
+
+After Fix, the shared mandatory core still applies: Mandatory Adversarial Review then Exact Verify
+(`reference/role-loop.md`).
 
 ## Circuit breaker
 

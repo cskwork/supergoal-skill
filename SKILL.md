@@ -1,9 +1,9 @@
 ---
 name: supergoal
-description: supergoal - baseline-first delivery. Use for "/supergoal", "supergoal", "build X", "fix this bug", "add this feature", "spec this feature", "QA / verify only", "review this code/PR", "improve the architecture", "learn this codebase", "make a skill", or "eval a harness".
+description: Use for "build X", "fix this bug", "add this feature", "spec this feature", "QA / verify", "code review", "improve the architecture", "learn this codebase", "make a skill", or "eval a harness".
 ---
 
-# /supergoal - baseline-first
+# About
 
 One objective -> smallest correct change -> verified against ground truth. Trivial single edit: skip this
 skill and edit directly. `SKILL.md` is the router; `reference/` carries procedure.
@@ -35,18 +35,6 @@ all code work there. Do not mutate the original checkout. Commit or merge only i
 target/integration branch after verification and user acceptance. Commit is hard-gated by the Commit gate
 (`reference/delivery-gate.md`, backstop `templates/commit-gate.sh`): non-green means fix/ask, never commit
 on assumption. Full contract: `reference/role-loop.md`.
-
-## IntentGate (classify before routing, state it in one line)
-
-Before the mode table, write: `IntentGate: intent=<work kind>; confidence=<high|medium|low>;
-mode=<route>; capability_refs=<refs/tools needed>`. Category is the work kind; capability refs are the
-skill files/tools to load after routing. High confidence -> route immediately. Medium confidence -> route
-to the safest narrow mode and name the uncertainty. Low confidence or conflicting intent -> ask one
-blocking question. Do not load a heavy reference just to classify.
-
-Near-miss rule: if the words mention a capability but the real task is no-code, route to the no-code mode
-first (QA-ONLY/REVIEW-ONLY/TEACH/LEARN/HARNESS-EVAL/SKILL-MINE). If the user asks to edit code, route to
-GREENFIELD/DEBUG/LEGACY only after the edit target is clear.
 
 ## Mode (classify, state it in one line)
 

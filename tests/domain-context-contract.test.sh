@@ -48,7 +48,7 @@ require_text "reference defaults to repo-local path" "reference/domain-context.m
 require_text "reference requires first-run storage prompt" "reference/domain-context.md" "or use another path?"
 require_text "reference requires gitignore protection" "reference/domain-context.md" 'Add the chosen path to the repo root `.gitignore`'
 require_text "reference detects docs language" "reference/domain-context.md" "docs language (SKILL.md)"
-require_text "plan grounding consumes Domain Brief" "reference/plan-grounding.md" 'Read the run `README.md` `## Domain Brief` first'
+require_text "plan grounding consumes Domain Brief" "reference/plan-grounding.md" 'Read the `## Domain Brief` recorded in `PLAN.md`'
 require_text "plan grounding walks design tree" "reference/plan-grounding.md" "Build the decision tree"
 require_text "plan grounding challenges terms" "reference/plan-grounding.md" "Challenge terminology"
 require_text "domain context keeps code authoritative" "reference/domain-context.md" "Current docs/code always win"

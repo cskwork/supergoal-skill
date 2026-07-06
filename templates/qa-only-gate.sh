@@ -16,7 +16,7 @@ set -euo pipefail
 usage() { echo "usage: qa-only-gate.sh <vault-dir> <browser|cli>" >&2; exit 2; }
 [ $# -ge 2 ] || usage
 VAULT="$1"; APPTYPE="$2"
-VERIF="$VAULT/verification.md"
+VERIF="$VAULT/QA.md"
 REPORT="$VAULT/report.md"
 STATE="$VAULT/state.json"
 LEDGER="$VAULT/qa/scenario-ledger.md"
@@ -76,7 +76,7 @@ cnt="${counts%% *}"; cap="${counts##* }"
 echo "  ok: action_count $cnt within cap $cap"
 
 # 4) DB read-only backstop: if a DB was used, EVERY 'DB:' line must be marked read-only and no write
-#    statement (DML/DDL/DCL/stored-proc) may be recorded anywhere in verification.md.
+#    statement (DML/DDL/DCL/stored-proc) may be recorded anywhere in QA.md.
 if [ -s "$VERIF" ] && grep -qiE '^[[:space:]]*[-*]?[[:space:]]*DB:' "$VERIF"; then
   # Per-line, so a second DB connection cannot ride in unmarked behind a first read-only one.
   while IFS= read -r dbline; do

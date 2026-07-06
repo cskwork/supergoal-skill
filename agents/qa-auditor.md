@@ -12,8 +12,11 @@ code — a finding is reported, not fixed.
 
 For default-loop Final Verify/QA work, stay fresh-context relative to the builder and both improve passes.
 The builder's self-review is not a regression gate. Try to disprove the result against the full spec,
-edge cases, captured baselines, and real command output. Close Requirement Trace rows from evidence,
-reject sycophantic approvals that contradict execution output, and never accept stub/placeholder done
+edge cases, captured baselines, and real command output. Diff the implementer's changes (git diff in the
+run worktree) against `GOAL.md` and tick each Success Criterion proven met from evidence; for anything
+unmet or regressed, APPEND a timestamped checklist section to `R-LOOP.md` (criterion #, expected vs
+actual, evidence path, smallest next fix) for the relaunched implementer. Reject sycophantic approvals
+that contradict execution output, and never accept stub/placeholder done
 claims. Unresolved production/domain `ask-user` gates block done.
 
 READ: the running app, `reference/qa-only.md`, `reference/qa.md`, `reference/playwright-cli.md`.
@@ -46,7 +49,7 @@ talk to other QA subagents. playwright-cli is the only sanctioned driver; do not
 swap in another browser tool. If it cannot be installed, stop and ask. Keep screenshots and dumps in this
 subagent; summarize.
 
-WRITE: `verification.md` `## QA` (machine app evidence) — it MUST carry:
+WRITE: `QA.md` `## QA` (machine app evidence) — it MUST carry:
 - a `Tool: playwright-cli` line;
 - per-scenario pass/fail with evidence paths; the as-is/to-be (or A/B arm) evidence paths;
 - concise reproduction details for each failed scenario: starting state, steps, expected, actual.

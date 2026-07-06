@@ -18,14 +18,10 @@ weaken safety gates. Create/edit it only when the user explicitly asks (`referen
 - Exact proof beats review; implementation is delegated to a builder subagent.
 - Smallest correct change; match surrounding code. Scope-minimalism governs code surface area, not UI
   quality: polished user-facing UI is baseline correctness.
-- GREENFIELD / DEBUG / LEGACY code changes use Before/After Eval before Build: prove before, target after, and delta with
-  trusted commands (`reference/delivery-gate.md`).
+- GREENFIELD / DEBUG / LEGACY code changes use Before/After Eval before Build: prove before, target after, and delta with trusted commands (`reference/delivery-gate.md`).
 - Ask only when genuinely ambiguous; resolve code-answerable questions by reading the code.
-- Docs language: for persistent repo docs (`docs/**`, run vaults, `.domain-agent/**`, ADR/spec/changelog),
-  match the target repo's dominant prose language; mixed/none -> the user's language. Keep identifiers,
-  paths, commands, and machine-checked anchors in canonical English so checks keep matching.
-- Hard stops: a destructive or irreversible step (drop data, force-push, external publish) needs explicit
-  consent; if the real tests cannot pass, report it - never fake a pass.
+- Docs language: for persistent repo docs (`docs/**`, run vaults, `.domain-agent/**`, ADR/spec/changelog), match the target repo's dominant prose language; mixed/none -> the user's language. Keep identifiers, paths, commands, and machine-checked anchors in canonical English so checks keep matching.
+- Hard stops: a destructive or irreversible step (drop data, force-push, external publish) needs explicit consent; if the real tests cannot pass, report it - never fake a pass.
 
 ## Run isolation (GREENFIELD / DEBUG / LEGACY that edits code)
 

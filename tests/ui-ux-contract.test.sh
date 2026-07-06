@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # /supergoal UI/UX tier contract.
-# Fails if the two-tier UI/UX overlay (Expressive=taste-skill-v2, Functional=functional-ui) regresses:
-# the dispatcher, the Functional authority, the tier-aware Designer, or their gate wiring.
+# Fails if the UI/UX overlay (Expressive=taste-skill-v2 baseline, always; Functional=functional-ui
+# density overlay on dense surfaces) regresses: the dispatcher, the overlay, the Designer, or gate wiring.
 
 set -u
 

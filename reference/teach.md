@@ -6,16 +6,16 @@ and records persist in a workspace they return to across sessions.
 
 TEACH runs as a **stateful, multi-session teaching workspace**: it fuses supergoal's decomposition +
 process-trace pedagogy with the workspace model from mattpocock/skills `teach` (Knowledge / Skills /
-Wisdom, missions, beautiful HTML lessons, learning records). It still skips the default loop (no
+Wisdom, missions, beautiful HTML lessons, learning records). It skips the default loop (no
 Build/Critic/Fixer/Verify) and all implementation gates. Flow:
 
-`Intake -> Preference -> Mission -> Resources -> ZPD -> Core question -> Bridge -> Teach loop (lesson) -> Check -> Records -> Journal`
+`Preference -> Mission -> Resources -> ZPD -> Core question -> Bridge -> Teach loop (lesson) -> Check -> Records -> Journal`
 
 Sections (jump, don't rescan): Goal-tool boundary | Teaching workspace | Philosophy (K/S/W) |
 The mission | Resources | Zone of proximal development | Decomposition | Textbook depth | Process
 explanation gate | Flow | Interview check | Lessons | Reference documents & glossary | Wisdom &
 communities | Assets | Opening output format | Human-to-Code bridge | Prerequisite scaffolding |
-Difficulty ladder | Difficulty tuning | User preference profile.
+Difficulty ladder | Difficulty tuning | User preference profile | Tutor contract.
 
 ## Goal-tool boundary
 
@@ -48,33 +48,22 @@ Per-topic files hold personal learning data and are git-ignored; only the `*-FOR
 
 ## Philosophy: Knowledge / Skills / Wisdom
 
-Deep learning needs three things (adapted from mattpocock/skills `teach`):
-
-- **Knowledge** - captured from high-quality, high-trust resources, never from parametric guessing.
-- **Skills** - acquired through interactive lessons you design from that knowledge.
-- **Wisdom** - earned by testing skills against real practitioners (a community).
-
-Some topics lean knowledge-heavy (theory), others skills-heavy (a codebase walk, a craft). Weight the
-workspace accordingly.
-
-**Fluency vs storage strength.** In-the-moment retrieval (fluency) feels like mastery but is illusory;
-the goal is long-term retention (storage strength). Build it with *desirable difficulty*:
-
-- **Retrieval practice** - recall from memory, not re-reading (this is what the interview check does).
-- **Spacing** - distribute practice over sessions; learning records tell you what to space.
-- **Interleaving** - mix related skills in practice (skills only, not first-time knowledge).
-
-For acquiring *knowledge*, difficulty is the enemy - it eats the working memory needed to understand.
-For making *skills* durable, difficulty is the tool - effortful retrieval is what builds storage. Tune
-the difficulty ladder accordingly.
+- **Knowledge** is captured from high-quality, high-trust resources, never from parametric guessing.
+  **Skills** are acquired through interactive lessons designed from that knowledge. **Wisdom** is
+  earned by testing skills against real practitioners (a community). Weight the workspace by the
+  topic's lean (theory vs craft).
+- **Fluency vs storage strength.** Design for long-term retention, not in-the-moment fluency, via
+  *desirable difficulty*: retrieval practice (the interview check), spacing over sessions (learning
+  records say what to space), interleaving (skills only, never first-time knowledge). Difficulty is
+  the enemy while acquiring knowledge and the tool while making skills durable - tune the difficulty
+  ladder accordingly.
 
 ## The mission
 
 Every lesson ties back to the mission - the real-world reason the user is learning this. If
-`MISSION.md` is empty or vague, interview the user on *why* before teaching anything; a bad mission is
-worse than none. Without it, knowledge is ungrounded, lessons feel abstract, and you cannot judge what
-to teach next. Missions drift as the user grows - update `MISSION.md` and add a learning record when
-they do, after confirming with the user. Format: `teach/MISSION-FORMAT.md`.
+`MISSION.md` is empty or vague, interview the user on *why* before teaching anything. Missions drift
+as the user grows - update `MISSION.md` and add a learning record when they do, after confirming with
+the user. Format: `teach/MISSION-FORMAT.md`.
 
 ## Resources (never trust parametric knowledge)
 
@@ -91,7 +80,6 @@ that. Otherwise compute the ZPD from `learning-records/` (what they already know
 they need next), and teach the most mission-relevant thing that just fits. A lesson should be short and
 completable fast - working memory is small - yet give one tangible win to build on.
 
-
 ## Decomposition
 
 Split composite ideas into the smallest useful pieces before the Bridge or Teach loop output. A
@@ -106,45 +94,34 @@ Mandatory visible order:
 4. **Process trace:** connect the pieces in execution order: trigger -> read/derive -> decide -> write/call -> fallback/stop -> result.
 5. **Composed explanation:** explain the full concept or code path only after the map and trace.
 
-Glossary alone is not enough. Definitions tell what each piece is; the process trace tells what
-happens, when, and why. If a term bundles multiple ideas, split it. Example: "LMS display area
-mapping" becomes source code, source table, display code, relation row, textbook filter, fallback,
-and final label.
+Glossary alone is not enough: definitions tell what each piece is; the process trace tells what
+happens, when, and why. If a term bundles multiple ideas, split it ("LMS display area mapping"
+becomes source code, source table, display code, relation row, textbook filter, fallback, final label).
 
 ## Textbook depth, not abstraction
 
-Decomposition splits a topic into small pieces; this rule governs how *deeply* you teach each piece.
-The goal of TEACH is not to pack a topic into the fewest abstractions - it is for the user to
-genuinely understand each concept. Teach like a textbook or a guided manual, not like a summary. The
-test of understanding is whether the user can rebuild the idea from its parts, not whether they can
-recite a tidy label.
+Decomposition splits a topic into small pieces; this rule governs how *deeply* each piece is taught.
+Teach like a textbook or a guided manual, not like a summary: the user must be able to rebuild the
+idea from its parts, not just recite a tidy label.
 
-- **A key-terms map is an index, not the teaching.** The glossary table and the one-line definition
-  only *locate* a concept; they do not explain it. After the map, give each concept that matters its
-  own unhurried development: a plain definition, *why* it exists (what breaks without it), *how* it
-  works step by step, at least one concrete worked example the user can follow by hand, and the common
-  misconception or trap. A page that states a concept in one line and moves on has not taught it.
+- **A key-terms map is an index, not the teaching.** After the map, develop each concept that matters:
+  plain definition, *why* it exists (what breaks without it), *how* it works step by step, one concrete
+  worked example the user can follow by hand, and the common misconception or trap. A page that states
+  a concept in one line and moves on has not taught it.
 - **Do not compress several concepts into one abstract label.** If a term bundles ideas, split it
-  (Decomposition) and develop each part - never paper over the parts with a single neat abstraction the
-  user cannot unpack. An abstraction the learner cannot rebuild from its pieces is memorized, not
-  understood.
-- **Narrow the scope, not the depth.** "Short" means a lesson covers *few* concepts (working memory is
-  small), never that each concept is explained thinly. Teach fewer things, each one fully. When a topic
-  is large, cut the scope into more lessons; never cut a concept's explanation down to a slogan.
-- **Build understanding bottom-up, like a chapter.** Lead with the concrete - an example the user can
-  hold - then generalize to the rule, then name the abstraction. Reaching the abstraction is the
-  *reward* for understanding the parts, not a substitute for it.
+  (Decomposition) and develop each part.
+- **Narrow the scope, not the depth.** "Short" means few concepts per lesson (working memory is
+  small), never thin explanations. When a topic is large, cut the scope into more lessons.
+- **Build bottom-up, like a chapter.** Concrete example first, then the rule, then the abstraction's
+  name - the abstraction is the reward for understanding the parts, not a substitute.
 - **Prefer a real worked scenario to an analogy.** The most dependable "concrete" is one *real* case
-  traced end-to-end with values pulled from the code, data, or sources - not an invented metaphor. For a
-  process, pick one real input and follow it through every step ("for this case: ..."), showing how it
-  changes; for a concept, show real example values from the data, never placeholders you made up. An
-  analogy may *open* a page, but a domain reader anchors on the real instance - and an invented label or
-  code shatters trust the moment they recognize it. This is "never trust parametric knowledge" applied
-  to examples: source them. When the user pushes back on an analogy ("그 비유는 별로야"), replace it
-  with a real traced scenario, not another metaphor.
+  traced end-to-end with values pulled from the code, data, or sources - never placeholders you made
+  up ("never trust parametric knowledge" applies to examples too). An analogy may *open* a page; when
+  the user pushes back on an analogy ("그 비유는 별로야"), replace it with a real traced scenario, not
+  another metaphor.
 
 This does not loosen the process trace or the working-memory limit: keep the trace, keep the lesson
-scoped small, but make the explanation of each scoped concept as full as a textbook section.
+scoped small, but make each scoped concept's explanation as full as a textbook section.
 
 ## Process explanation gate
 
@@ -164,70 +141,58 @@ the final output for that input (the actual result the user would see), so the c
 
 ## Flow
 
-0. **Preference first.** Read `<skill>/teach/USER_PREFERENCE.md`. It stores difficulty (1-10, default 5) and
-   1-3 interests.
-   - If present: use silently.
-   - If missing/empty: seed from `teach/USER_PREFERENCE.template.md`, ask once for 1-3 interests, save, then
-     continue.
-   - Difficulty controls register and chunk size. Interests drive analogies/examples.
-   - Difficulty changes automatically on tuning; interests change only on request.
-1. **Mission + Source.** Ground first. If `MISSION.md` is empty, interview the user on *why* they want
-   this before teaching anything, then write `MISSION.md` (`teach/MISSION-FORMAT.md`). Gather before
-   teaching: codebase topics use read-only `explore`/`architect`; concepts come from the high-trust
-   sources in `RESOURCES.md`. **Never trust parametric knowledge** - cite sources and record them. Do
-   not guess. Then pick the lesson in the user's zone of proximal development.
+0. **Preference first.** Read `<skill>/teach/USER_PREFERENCE.md`: difficulty (1-10, default 5) and
+   1-3 interests. If present, use silently. If missing/empty, seed from
+   `teach/USER_PREFERENCE.template.md`, ask once for 1-3 interests, save, continue. Difficulty
+   controls register and chunk size; interests drive analogies/examples. Difficulty changes
+   automatically on tuning; interests change only on request.
+1. **Mission + Source.** Ground first. If `MISSION.md` is empty, interview the user on *why* they
+   want this before teaching anything, then write it (**The mission**). Source per **Resources** -
+   never trust parametric knowledge; cite sources and record them. Then pick the lesson in the
+   user's zone of proximal development.
 2. **Bridge + core question.** Open with one short core question - what problem does the topic
-   solve - and do not wait for the answer; the lesson answers it (a thinking hook, not a test).
-   Then connect the topic to the user's world in one vivid line using a saved interest. No separate
-   calibration question. Terms may lead only with plain-language definitions. For coding, algorithm, or codebase
-   mechanics, add the Human-to-Code bridge:
-   `human words -> tiny worked example -> explicit rules -> state/variables -> flow/code -> trace`.
-   The point is not to dump code; it is to show how an intuitive human move becomes a mechanical step.
-3. **Teach loop.** Use Feynman + Socratic style via `grill-me`.
-   - First turn uses the Output format below.
-   - Every turn matches saved difficulty.
-   - Define terms first, then why it matters, flow, example, takeaway.
-   - End each turn with an interview-style check (see "Interview check"): a short, difficulty-scaled
-     set of questions that probe the just-taught piece from different angles, not one flat recap. The
-     opening adds the core-question hook on top.
-   - Explain existing code first; name bugs separately, after - never silently rewrite it.
-   - Fill gaps and re-ask. Park edge cases under "later."
-   - End every teaching turn with the difficulty menu.
-4. **Check gate.** User restates each key term and the whole idea unaided. Gaps return to Teach loop.
+   solve - and do not wait for the answer (a thinking hook, not a test). Then connect the topic to
+   the user's world in one vivid line using a saved interest; no separate calibration question. For
+   coding, algorithm, or codebase mechanics, add the **Human-to-Code bridge** (below).
+3. **Teach loop.** Feynman + Socratic style via `grill-me`. First turn uses the Opening output
+   format below; every turn matches saved difficulty. Define terms first, then why it matters, flow,
+   example, takeaway. Explain existing code first; name bugs separately, after - never silently
+   rewrite it. Fill gaps and re-ask; park edge cases under "later." End every teaching turn with the
+   interview check (see **Interview check**) and the difficulty menu.
+4. **Check gate.** User restates each key term and the whole idea unaided; an atom is known only when
+   the user can define its role and place in the process plainly. Gaps return to Teach loop.
 5. **Records + journal.** When the user demonstrates genuine, non-trivial understanding (not mere
    coverage), write a learning record `teach/<topic>/learning-records/NNNN-slug.md`
-   (`teach/LEARNING-RECORD-FORMAT.md`) - these set the next ZPD and survive sessions. Promote settled
-   terms into `GLOSSARY.md`. Then append the live chat journal to
-   `teach/<topic>/<topic>-YYYY-MM-DD.md` with the question, bridge, terms, user explanation, and open
-   questions; create the workspace if missing and follow `teach/README.md`. Write the interactive HTML
-   lesson by default (see **Lessons**), run `teach-lesson-gate.mjs` on it, and open it once the gate passes; only an explicit throwaway
-   explain-back skips it.
+   (`teach/LEARNING-RECORD-FORMAT.md`) - the records, not a flat journal, set the next ZPD and
+   survive sessions. Promote settled terms into `GLOSSARY.md`. Append the live chat journal to
+   `teach/<topic>/<topic>-YYYY-MM-DD.md` (question, bridge, terms, user explanation, open questions);
+   create the workspace if missing per `teach/README.md`. Write the interactive HTML lesson by
+   default (see **Lessons**), run `node templates/teach-lesson-gate.mjs` on it, and open it once the
+   gate passes; only an explicit throwaway explain-back skips it.
 
 ## Interview check
 
-Replace the single recap question with a short interview that makes the user actively retrieve and
-apply, not just nod along. End every teaching turn - and the opening - with a small set of
-questions drawn from different angles, then the difficulty menu. Keep it bite-sized: ask the fewest
-questions that force real recall at the current level, never a wall.
+End every teaching turn - and the opening - with a short interview that makes the user actively
+retrieve and apply, not just nod along: the fewest questions that force real recall at the current
+level, drawn from different angles (never one flat recap), then the difficulty menu.
 
 **MUST: ask via the choice tool, not plain prose.** Deliver the interview through `AskUserQuestion`
 (one tool call, one `header` per angle, 2-4 options each) - never as a bare numbered list the user
-has to type answers to. Each question's options are concrete answers to pick from (one correct, the
-rest plausible distractors), scaled to the current level. The difficulty menu is the final question
-in the same call (`header: 난이도`, options: 더 쉽게 / 적당함 / 더 어렵게). Fall back to prose
-questions only if the choice tool is unavailable.
+has to type answers to. Options are concrete answers (one correct, the rest plausible distractors)
+scaled to the current level. The difficulty menu is the final question in the same call
+(`header: 난이도`, options: 더 쉽게 / 적당함 / 더 어렵게). Fall back to prose questions only if the
+choice tool is unavailable.
 
-**Exception - bite-sized mode.** During **Prerequisite scaffolding** turns, and at saved
-difficulty 1-2, ask **one single inline prose question** instead of the choice tool, and skip the
-difficulty menu inside that turn. The conversational micro-step feel ("미니 퀴즈 - 한 개만") beats
-multiple-choice when the atom is small enough that any plausible distractor would just confuse.
-Resume the choice-tool interview when the main lesson resumes.
+**Exception - bite-sized mode.** During **Prerequisite scaffolding** turns, and at saved difficulty
+1-2, ask **one single inline prose question** instead of the choice tool, and skip the difficulty
+menu inside that turn ("미니 퀴즈 - 한 개만"). Resume the choice-tool interview when the main lesson
+resumes.
 
-**MUST: randomize the correct option's position.** Do not always place the right answer first. Vary
-which slot holds the correct option across questions and across turns so the user reads every choice
-instead of pattern-matching on position. Distractors must be real misconceptions, not obvious filler.
+**MUST: randomize the correct option's position.** Do not always place the right answer first; vary
+which slot holds the correct option across questions and turns so the user reads every choice instead
+of pattern-matching on position. Distractors must be real misconceptions, not obvious filler.
 
-Draw from these angles; mix types rather than asking the same kind twice:
+Angles - mix types rather than asking the same kind twice:
 
 - **Recall:** define one key term in your own words.
 - **Why:** why does this piece/step exist - what breaks without it?
@@ -236,103 +201,83 @@ Draw from these angles; mix types rather than asking the same kind twice:
 - **Edge/failure:** what if it fails, or hits the boundary case?
 - **Connect:** how do term X and term Y relate?
 
-How many, by difficulty:
+How many, by difficulty: **1-2** one gentle recall; **3-4** one or two (recall + why); **5
+(default)** two or three across different angles; **6-7** three including one apply/transfer;
+**8-10** three or four including an edge/failure and a transfer question.
 
-- **1-2:** one gentle recall question.
-- **3-4:** one or two questions (recall + why).
-- **5 (default):** two or three questions across different angles.
-- **6-7:** three questions including one apply/transfer.
-- **8-10:** three or four, including an edge/failure and a transfer question.
-
-Stay Socratic and conversational: invite the user to answer in any order and as far as they can; do
-not require every answer. Respond to whichever they take, fill the gap, and re-ask only what they
-missed. This is an interview to induce learning, not an exam - never punish a miss, just re-teach
-that piece.
+Stay Socratic and conversational: invite answers in any order, respond to whichever the user takes,
+fill the gap, and re-ask only what they missed. Never punish a miss - re-teach that piece.
 
 ## Lessons (the primary teaching unit)
 
 A lesson is the main thing TEACH produces: one self-contained, **interactive** HTML file at
-`teach/<topic>/lessons/NNNN-slug.html` (increment `NNNN`). It teaches one tightly-scoped thing tied to
-the mission, in the user's ZPD. The interactive HTML lesson is the **default deliverable for every
-teaching turn** - not a terminal transcript, and not an optional extra "for things they'll revisit."
-The in-chat opening is its spoken intro; the HTML lesson is where the learning actually lands.
+`teach/<topic>/lessons/NNNN-slug.html` (increment `NNNN`), teaching one tightly-scoped thing tied to
+the mission, in the user's ZPD. It is the **default deliverable for every teaching turn**. The
+in-chat **Opening output format** below is its spoken intro, delivered alongside the HTML lesson,
+not instead of it; only a throwaway one-off explain-back the user explicitly will not revisit may
+use the chat opening alone.
 
 - **Interactive by default.** Every lesson ships at least one *working* in-browser interactive element
   with immediate feedback: a hydrated `.sg-quiz` check, a small simulator/visualizer that lets the user
   step through the process, or a light in-browser task. Reading-only HTML is not a lesson - the user
-  must *do* something and see the result. Feedback follows `reference/engagement.md` (immediate
-  hover/active/correct/incorrect tied to a real action; calm, not gamified).
+  must *do* something and see the result. Feedback follows `reference/engagement.md` (immediate,
+  tied to a real action; calm, not gamified).
 - **Scaffold, do not hand-roll.** On the first lesson in a workspace, copy
   `templates/teach/assets/` into `teach/<topic>/assets/` (shared `lesson.css` + `lesson-book.js` +
-  `quiz.js` + `lesson-template.html`). Build every lesson from that scaffold so the whole course looks like one
-  thing; write topic-specific simulators as `teach/<topic>/assets/<topic>-viz.js` and reuse, never
-  inline-duplicate. Read `assets/` before authoring.
-- **Book layout, not a long scroll.** Lessons read like a book: a left table of contents jumps to any
-  section and the reader flips left/right between pages (prev/next, arrow keys, swipe, or TOC click).
-  Author each page as a `<section id data-title>` inside `.pages-track`; `lesson-book.js` builds the TOC
-  and pager. One idea per page, inside working memory - and that page *develops* the idea like a
-  textbook section (definition, why, how, worked example, common trap), not a one-line restatement of
-  the glossary row. The terms table is the index; the concept pages are where teaching happens. The
-  simulator and the quiz each earn their own page so the reader *does* on that page, not just reads.
-- **UI/UX bar.** Lessons are user-facing UI: hold the `reference/ui-ux.md` Expressive baseline (the
-  default for all user-facing UI). The shipped `lesson.css`/`quiz.js` already carry the WCAG 2.2
-  essentials (visible focus, keyboard operability, >=44px targets, `prefers-reduced-motion`, light/dark
-  `color-scheme`) - keep them when you adapt. Dense step-tables/visualizers also honor
-  `reference/functional-ui.md` (tabular numbers, complete states).
+  `quiz.js` + `lesson-template.html`). Build every lesson from that scaffold so the whole course looks
+  like one thing; write topic-specific simulators as `teach/<topic>/assets/<topic>-viz.js` and reuse,
+  never inline-duplicate. Read `assets/` before authoring.
+- **Book layout, not a long scroll.** A left table of contents jumps to any section; the reader flips
+  pages (prev/next, arrow keys, swipe, or TOC click). Author each page as a `<section id data-title>`
+  inside `.pages-track`; `lesson-book.js` builds the TOC and pager. One idea per page, developed per
+  **Textbook depth, not abstraction** - the terms table is the index, the concept pages are the
+  teaching. The simulator and the quiz each earn their own page so the reader *does* on that page.
+- **UI/UX bar.** Lessons are user-facing UI: hold the `reference/ui-ux.md` Expressive baseline. The
+  shipped `lesson.css`/`quiz.js` already carry the WCAG 2.2 essentials (visible focus, keyboard
+  operability, >=44px targets, `prefers-reduced-motion`, light/dark `color-scheme`) - keep them when
+  you adapt. Dense step-tables/visualizers also honor `reference/functional-ui.md`.
 - **Beautiful, deep, and scoped.** Clean Tufte-style typography; the user returns to these, so they
-  must read and print well. "Short" is about scope, not depth (see **Textbook depth, not
-  abstraction**): a lesson covers few concepts, but develops each one fully like a textbook chapter -
-  definition, why, how, worked example, common trap - never a one-line gloss. Cut scope into more
-  lessons before thinning a concept's explanation.
+  must read and print well. Scope vs depth per **Textbook depth, not abstraction**: cut scope into
+  more lessons before thinning a concept's explanation.
 - **Knowledge then skill.** Teach only the knowledge the skill needs, cited inline, then drill the
   skill through the tight interactive feedback loop above.
 - **Quiz hygiene.** Every answer option is the same length in words (and characters where possible);
-  formatting leaks no clue to the correct answer; `quiz.js` randomizes the correct option's position on
-  load (same rule as the interview check) - do not encode the answer by position.
+  formatting leaks no clue to the correct answer; `quiz.js` randomizes the correct option's position
+  on load (same rule as the interview check) - do not encode the answer by position.
 - **Linked.** Anchor-link to related lessons and to `reference/*.html`. Recommend one primary source.
   End with a reminder that the agent is their teacher - ask follow-up questions on anything unclear.
 - **Gate before done.** A lesson is not finished until
   `node templates/teach-lesson-gate.mjs teach/<topic>/lessons/NNNN-slug.html` exits 0. The gate
-  deterministically rejects a reading-only page: it requires the shared `assets/lesson.css` +
-  `quiz.js` + `lesson-book.js`, the `.book` page shell (not one long scroll), and at least one
-  hydrated `.sg-quiz` with a `data-correct` option. On failure, fix the lesson - never the gate.
-- **Open it.** After the gate passes, open the lesson in the user's browser with a CLI command so they
-  land in the interactive material, not a file path.
-
-The in-chat **Opening output format** below is the lesson's spoken counterpart; deliver it alongside the
-HTML lesson, not instead of it. Only a throwaway one-off codebase explain-back the user explicitly will
-not revisit may use the chat opening alone.
+  deterministically rejects a page that is off-scaffold, a long scroll, or reading-only (no hydrated
+  `.sg-quiz` with a `data-correct` option). On failure, fix the lesson - never the gate.
+- **Open it.** After the gate passes, open the lesson in the user's browser with a CLI command.
 
 ## Reference documents & glossary
 
 Lessons are rarely revisited; reference documents are. After a lesson, distill its compressed essence
 into `teach/<topic>/reference/*.html` - syntax/snippets, algorithms/flowcharts, poses/sequences,
 routines - formatted for fast lookup. The **glossary** (`GLOSSARY.md`, `teach/GLOSSARY-FORMAT.md`) is
-the most important reference: add a term only once the user can use it correctly (compressing a concept
-into a tight definition is itself evidence of learning), be opinionated about the canonical word, and
-adhere to it in every later lesson.
+the most important reference: add a term only once the user can use it correctly, be opinionated about
+the canonical word, and adhere to it in every later lesson.
 
 ## Wisdom & communities
 
-When a question needs wisdom (real-world judgment beyond knowledge or skill), answer as far as you can,
-then point the user to a high-reputation **community** where they can test their skill for real - a
-moderated forum, subreddit, local class, or interest group - recorded under Wisdom in `RESOURCES.md`.
-If the user opts out of communities, respect it and note the preference in `RESOURCES.md`.
+When a question needs wisdom (real-world judgment beyond knowledge or skill), answer as far as you
+can, then point the user to a high-reputation **community** (moderated forum, subreddit, local class,
+interest group), recorded under Wisdom in `RESOURCES.md`. If the user opts out of communities,
+respect it and note the preference there.
 
 ## Assets (reusable components)
 
-Lessons are built from reusable components in `teach/<topic>/assets/`: a shared stylesheet, quiz
-widgets, simulators, diagram helpers. Reuse is the default - read `assets/` before authoring a lesson
-and build from what is there. The shared stylesheet is the first component every workspace earns, so
-all lessons look like one course, not a pile of one-offs. When a lesson needs something new and
-reusable, write it as a component in `assets/` and link it; never inline code a future lesson would
-duplicate.
+Lessons are built from reusable components in `teach/<topic>/assets/` (shared stylesheet, quiz
+widgets, simulators, diagram helpers). Reuse is the default: read `assets/` before authoring and build
+from what is there - the shared stylesheet is the first component every workspace earns, so all lessons
+look like one course. When a lesson needs something new and reusable, write it as a component in
+`assets/` and link it; never inline code a future lesson would duplicate.
 
 ## Opening output format
 
-Use the user's language. The key-terms map comes first internally, but label it naturally for the user:
-Korean lessons use `핵심 용어` or `구성 요소`, not literal `원자`. Each entry gets a plain definition
-and a process role before the full explanation.
+Use the user's language; short sentences.
 
 ```markdown
 ## [주제]를 왜 쓰는지 감 잡기
@@ -345,10 +290,7 @@ and a process role before the full explanation.
 | 핵심 용어 | 쉬운 뜻 | 흐름에서 하는 일 |
 |---|---|---|
 | 용어 1 | 전문용어 없이, 한 문장으로 풀어쓴 정의 | 이 단계에서 맡는 역할 |
-| 용어 2 | ... | ... |
-| 용어 3 | ... | ... |
-| 용어 4 | ... | ... |
-| 용어 5 | ... | ... |
+| 용어 2..5 | ... | ... |
 
 [비유 한 줄 - 위 용어들을 사용자의 세계로 잇는 다리]
 
@@ -369,12 +311,8 @@ and a process role before the full explanation.
 (지금은 건너뛰는 것: [지금 배우면 헷갈리는 내용])
 ```
 
-그런 다음 인터뷰 체크와 난이도 메뉴는 **본문 텍스트가 아니라 `AskUserQuestion` 한 번의 호출**로
-내보낸다 (난이도에 따라 1~3개 각도 질문 + 마지막에 난이도 질문). 각 질문은 2~4개의 선택지를 주고,
-정답 위치는 매번 무작위로 섞는다:
-- recall: [핵심 용어 하나의 뜻을 고르게 하는 질문] - 선택지에 정답 1 + 그럴듯한 오답들
-- why/process/apply: [각도를 바꾼 질문 하나 이상]
-- 난이도(`header: 난이도`): 더 쉽게 / 적당함 / 더 어렵게
+그런 다음 인터뷰 체크와 난이도 메뉴를 본문 텍스트가 아니라 `AskUserQuestion` 한 번의 호출로
+내보낸다 - 질문 수, 각도, 선택지, 정답 위치 무작위는 `## Interview check` 규칙 그대로.
 
 Rules:
 
@@ -388,8 +326,8 @@ Rules:
 - For coding/codebase topics, include one short "사람 생각 -> 기계 단계" bridge before any code.
 - Never replace the process trace with a summary sentence when the topic is code, algorithm, system
   behavior, data flow, or a business workflow.
-- An opening leads with the core question (top, not waited on) and ends with the interview check -
-  a short, difficulty-scaled question set per "Interview check" - then the difficulty menu.
+- An opening leads with the core question (top, not waited on) and ends with the interview check,
+  then the difficulty menu.
 
 ## Human-to-Code bridge
 
@@ -404,19 +342,17 @@ variables, objects, or data; **flow/code** - map actions to `if`, loop, function
 request, state transition, or module boundary; **trace** - walk one normal case and one
 boundary/failure case, fixing gaps before adding more detail.
 
-Phrase the mapping in plain sentences when useful, e.g. "'기억해 둔다'는 변수나 상태에 저장하는
-것, '하나씩 본다'는 반복문·iterator·query cursor·event stream으로 순회하는 것" - sentences, not a
-table.
-
-At levels 1-4, use only one or two steps. At level 5, use three to five steps. At levels 6-10, add
-precise names and edge cases, but keep the same bridge order.
+Phrase the mapping in plain sentences, not a table, e.g. "'기억해 둔다'는 변수나 상태에 저장하는
+것, '하나씩 본다'는 반복문·iterator·query cursor·event stream으로 순회하는 것". At levels 1-4, use
+only one or two steps; at level 5, three to five; at levels 6-10, add precise names and edge cases,
+but keep the same bridge order.
 
 ## Prerequisite scaffolding
 
 Before introducing any term in the key-terms map, check whether its building blocks are realistic
 for the saved difficulty. If the next atom would force a leap (a term defined by other unknown
-terms, syntax the user has not seen, a data structure the user has not used), **pause the main
-lesson and offer to teach the prerequisite first**. Never push through a leap.
+terms, unseen syntax, an unused data structure), **pause the main lesson and offer to teach the
+prerequisite first**. Never push through a leap.
 
 ### Triggers - when to scaffold
 
@@ -428,26 +364,25 @@ Scaffold when **any** of these fire:
 - The next step would assume a term, syntax, or concept the user has not heard in this session.
 - Saved difficulty is 1-4 and the topic uses any specialized vocabulary.
 
-A miss is a signal that a piece **below** the current atom is missing. **Do not just rephrase the
-same explanation at the same level** - back up one level, not sideways.
+A miss means a piece **below** the current atom is missing. **Do not just rephrase the same
+explanation at the same level** - back up one level, not sideways.
 
 ### Offer the prerequisite (do not just dive in)
 
-Say plainly what is missing and ask once whether to cover it now. One short prose offer is enough -
-do not use the choice tool here, the question is binary and conversational:
+Say plainly what is missing and ask once whether to cover it now - one short prose offer (not the
+choice tool; the question is binary and conversational):
 
 > 이 다음을 이해하려면 `<누락된 개념>` 부터 짚는 게 좋겠다. 잠깐 그것부터 짧게 보고 갈까,
 > 아니면 그냥 이어서 갈까?
 
-If the user says yes (or stays silent on the dive-in path), open a numbered prerequisite mini
-lesson: `사전지식 ① - <이름>`, `사전지식 ② - ...`. **One piece per turn.** When all listed
-prerequisites are covered, **return to the main lesson at the exact atom that blocked**, not to the
-top.
+If yes (or silent on the dive-in path), open a numbered prerequisite mini lesson: `사전지식 ① -
+<이름>`, `사전지식 ② - ...`. **One piece per turn.** When all listed prerequisites are covered,
+**return to the main lesson at the exact atom that blocked**, not to the top.
 
 ### Prerequisite turn shape (level 1-4)
 
-Each prerequisite turn is shorter than the standard opening - target ~150 words, no key-terms
-table, no human-to-code bridge inside the prerequisite, no difficulty menu inside the prerequisite:
+Shorter than the standard opening - target ~150 words; no key-terms table, no human-to-code bridge,
+no difficulty menu inside the prerequisite:
 
 ```markdown
 # 사전지식 ① - [이름]
@@ -468,14 +403,11 @@ Ask the mini quiz as **one inline prose question**, per the bite-sized exception
 
 ### Recursive back-off
 
-A prerequisite can itself trigger another prerequisite. If the user misses the prerequisite's mini
-quiz, apply the same trigger rule and back up again - there is no maximum depth, only a stopping
-rule: keep backing up until the user can answer one tiny check unaided. Then climb back the same
-path, one rung at a time, all the way to the original blocked atom.
-
-If a prerequisite would itself need three or more layers of back-off, that is a signal the saved
-difficulty is wrong - drop one level via the difficulty menu when the main lesson resumes, and say
-why briefly.
+A prerequisite can itself trigger another prerequisite: on a mini-quiz miss, apply the same trigger
+rule and back up again. No maximum depth - keep backing up until the user can answer one tiny check
+unaided, then climb back the same path, one rung at a time, to the original blocked atom. If a
+prerequisite would need three or more layers of back-off, the saved difficulty is wrong - drop one
+level via the difficulty menu when the main lesson resumes, and say why briefly.
 
 ## Difficulty ladder
 
@@ -528,35 +460,11 @@ Read it at step 0. Do not re-ask each session. Use the profile without lecturing
 
 ## Tutor contract
 
-1. Break composite ideas into the smallest useful pieces before explaining the full flow.
-2. Show the key-terms map first, with plain definitions and each piece's role.
-3. Explain why the topic exists before deep mechanics.
-4. Include a process trace before the composed explanation.
-5. Show trigger, decision point, side effect, and stop/fallback when they exist.
-6. Use an apt analogy from the user's interests.
-7. Keep must-know atoms near 5 at level 5.
-8. Park confusing depth as "later."
-9. Short sentences in the user's language.
-10. Always include one realistic example and one takeaway.
-11. Drive every turn, opening included, with an interview-style check - a short, difficulty-scaled
-    set of questions across different angles - then respond to whichever ones the user answers.
-12. An atom is known only when the user can define its role and place in the process plainly.
-13. For coding/codebase lessons, never jump straight from concept to code; translate the human move
-    into explicit state and flow first.
-14. Treat "모르겠어 / I don't know" or a check miss as a signal that a piece below the current atom
-    is missing - back up via **Prerequisite scaffolding**, do not rephrase at the same level.
-15. Ground every workspace in a `MISSION.md`; never trust parametric knowledge - teach from the
-    high-trust sources in `RESOURCES.md` and cite them.
-16. Produce a beautiful, self-contained HTML lesson as the primary teaching unit; reuse `assets/`
-    components and design for desirable difficulty (retrieval, spacing, interleaving), not fluency; a
-    lesson is done only when `teach-lesson-gate.mjs` passes.
-17. Capture decision-grade insight in `learning-records/` and settled terms in `GLOSSARY.md`; let the
-    records, not a flat journal, set the next zone of proximal development.
-18. Teach each concept to textbook depth: after the key-terms index, develop every concept that
-    matters with its own definition, reason, mechanism, worked example, and common trap - never
-    collapse it into a one-line gloss or a single abstraction the user cannot unpack. Narrow scope
-    into more lessons before thinning a concept's explanation.
-19. Anchor every process or flow in one real worked scenario traced end-to-end - a real input with
-    sourced values (code/data/docs), not an invented analogy or placeholder. Show how that one case
-    changes at each step and what final output it produces. Prefer a real instance over a metaphor for
-    the load-bearing explanation; if the user rejects an analogy, replace it with a traced real case.
+Exit checklist; each rule is owned by the named section:
+
+1. Smallest useful pieces, key-terms map, plain definitions, process trace, then the composed explanation (**Decomposition**).
+2. Teach each concept to textbook depth; narrow scope into more lessons, never thin an explanation (**Textbook depth, not abstraction**).
+3. Anchor every process or flow in one real worked scenario traced end-to-end with sourced values (**Process explanation gate**).
+4. Every turn ends with the interview check and the difficulty menu; a miss means a missing piece below - back up, never rephrase at the same level (**Interview check**, **Prerequisite scaffolding**).
+5. Mission-grounded, sourced, never parametric; difficulty and interests come from the saved profile (**The mission**, **Resources**, **User preference profile**).
+6. Ship the interactive HTML lesson, pass `teach-lesson-gate.mjs`, record learning, promote glossary terms (**Lessons**, **Flow** step 5).

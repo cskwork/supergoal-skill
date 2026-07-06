@@ -1,6 +1,0 @@
-Implemented in [src/slug.mjs](/private/tmp/supergoal-harness-eval-3case/sandboxes/easy-slugify/baseline/src/slug.mjs:1). `slugify` now lowercases, trims, collapses non-alphanumeric runs to one hyphen, strips edge hyphens, and returns `""` for no alphanumeric text.
-
-Added the required changelog note in [docs/changelog/changelog-2026-06-06.md](/private/tmp/supergoal-harness-eval-3case/sandboxes/easy-slugify/baseline/docs/changelog/changelog-2026-06-06.md:1).
-
-Verified:
-`npm test` passes: 1 test, 1 pass.

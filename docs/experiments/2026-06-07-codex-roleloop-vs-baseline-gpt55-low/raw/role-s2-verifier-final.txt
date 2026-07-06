@@ -1,7 +1,0 @@
-Verifier pass complete.
-
-No `src/` changes were needed: existing implementation already passed the task behavior and targeted hidden-risk checks. Updated `NOTES.md` and `docs/changelog/changelog-2026-06-07.md`.
-
-Verified:
-- `npm test` passes: 10/10
-- Manual targeted check passed for UTF-8 `Content-Length` transport and range-based `didChange` behavior.

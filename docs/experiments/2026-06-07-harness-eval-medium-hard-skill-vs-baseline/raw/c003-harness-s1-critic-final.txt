@@ -1,8 +1,0 @@
-Added red-team black-box coverage in [test/spec.gen.test.mjs](/tmp/sg-eval-svb-003/sandboxes/harness-s1/test/spec.gen.test.mjs), plus defect notes in [NOTES.md](/tmp/sg-eval-svb-003/sandboxes/harness-s1/NOTES.md). I also updated the changelog per repo instructions.
-
-Did not edit `src/`.
-
-Final `npm test`: fails as expected on the new half-cent rounding spec:
-`1.005` currently returns `subtotal: 1`, but cents rounding should produce `1.01`.
-
-Also covered previously unpinned behavior: public API export shape, result key order, SAVE20 below-threshold boundary, shipping tier boundaries after discount, express fee composition, and VIP coupon floor preservation.

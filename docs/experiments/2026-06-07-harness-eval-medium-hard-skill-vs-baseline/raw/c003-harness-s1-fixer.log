@@ -1,5 +1,0 @@
-{"type":"thread.started","thread_id":"019ea16c-b223-7290-a77a-a6156239a761"}
-{"type":"item.completed","item":{"id":"item_0","type":"error","message":"`[features].codex_hooks` is deprecated. Use `[features].hooks` instead. (Enable it with `--enable hooks` or `[features].hooks` in config.toml. See https://developers.openai.com/codex/config-basic#feature-flags for details.)"}}
-{"type":"turn.started"}
-Reading additional input from stdin...
-2026-06-07T09:31:55.811529Z ERROR codex_models_manager::manager: failed to refresh available models: stream disconnected before completion: failed to decode models response: missing field `models` at line 1 column 425; body: {"object": "list", "data": [{"id": "gpt-5.5", "object": "model", "created": 0, "owned_by": "openai"}, {"id": "gpt-5.4", "object": "model", "created": 0, "owned_by": "openai"}, {"id": "gpt-5.4-mini", "object": "model", "created": 0, "owned_by": "openai"}, {"id": "gpt-5.3-codex-spark", "object": "model", "created": 0, "owned_by": "openai"}, {"id": "codex-auto-review", "object": "model", "created": 0, "owned_by": "openai"}]}

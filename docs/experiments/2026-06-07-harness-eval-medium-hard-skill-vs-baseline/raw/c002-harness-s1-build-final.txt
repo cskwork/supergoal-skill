@@ -1,5 +1,0 @@
-Implemented the async race fix in `src/cache.mjs`: `AsyncCache` now tracks per-key in-flight promises, so concurrent `get()` calls for the same key share one loader call while different keys remain independent. Rejections are not cached because the in-flight entry is removed on settle.
-
-Added focused tests for same-key concurrency and rejected-load retry, plus the required changelog note.
-
-Verification: `npm test` passes, 5/5 tests.

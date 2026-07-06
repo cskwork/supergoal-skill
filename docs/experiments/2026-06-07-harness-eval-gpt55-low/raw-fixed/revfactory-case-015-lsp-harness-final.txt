@@ -1,9 +1,0 @@
-Implemented MiniLang LSP support in `src/server.mjs`: JSON-RPC framing, message buffering, lifecycle responses, parser with recovery diagnostics, symbol table, completions, definition, hover, and `didOpen`/`didChange` document updates.
-
-Also added the required decision note in `docs/changelog/changelog-2026-06-07.md`.
-
-Verification:
-- `npm test` passed: 5/5
-- `node --check src/server.mjs` passed
-
-Note: `git status` could not run because this sandbox is not a Git repository.

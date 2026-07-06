@@ -1,8 +1,0 @@
-Implemented `deepMerge` in [src/merge.mjs](/tmp/sg-eval-uspec-u1/sandboxes/baseline-s1/src/merge.mjs:1).
-
-Behavior: recursively merges nested plain objects into `target`, replaces arrays/primitives/null from `source`, and returns the merged target.
-
-Verified:
-- `node --check src/merge.mjs`
-- focused nested merge sanity check
-- `npm test` passed: 1 test, 1 pass

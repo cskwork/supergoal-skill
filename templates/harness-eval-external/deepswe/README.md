@@ -14,9 +14,25 @@ while hidden authorization/cache checks fail. A harness win needs paired public 
 For difficult SWE or harness-effectiveness claims, do not stop at a single public task unless the user
 explicitly names one. Run the forced default DeepSWE suite:
 
-1. `etree-xml-diff-patch`
-2. `cliffy-config-file-parsing`
-3. `yjs-map-conflict-detection`
+1. `etree-xml-diff-patch` - go; leaderboard rank 76/113 (40.5% overall) but the anchor task: the only one
+   with a completed local paired run showing baseline headroom and directional harness lift at codex
+   gpt-5.5 low.
+2. `cliffy-config-file-parsing` - typescript; rank 31/113 (17.2% overall, gpt-5.5 1/12). Hardest gpt-5.5
+   task in the suite; expect binary floors and rely on partial-reward deltas.
+3. `csstree-shorthand-expansion-compression` - javascript; rank 15/113 (11.2% overall, gpt-5.5 6/12).
+4. `skrub-duration-encoding` - python; rank 14/113 (10.3% overall, gpt-5.5 4/12).
+5. `termenv-preserve-ansi-resets` - go; rank 11/113 (9.5% overall, gpt-5.5 5/12); small repo, fast tests.
+
+Selection method (snapshot 2026-07-06): 13,108 included-in-score leaderboard trials across 21 models and
+all 113 tasks, scraped per task page. Suite tasks need a LOW overall pass rate (difficult) AND nonzero
+gpt-5.5 passes (so the codex gpt-5.5 lane is not a guaranteed floor). Rust tasks are excluded from the
+900s low-effort lane because compile time eats the agent budget. Held-out escalation pool when the suite
+saturates or floors: `updo-policy-alerting`, `happy-dom-deterministic-intersectionobserver`,
+`testem-bail-on-test-failure`, `koota-deferred-mutation-buffer`, `dateutil-rfc5545-timezone-interop`.
+
+`yjs-map-conflict-detection` was demoted from this suite on 2026-07-06: leaderboard rank 101/113 (55.2%
+overall, gpt-5.5 11/12) and the local Spark-low paired run had a perfect baseline the harness regressed
+by one preservation check - no headroom, so it cannot show harness lift.
 
 Use the suite runner so the same full-cycle baseline/harness protocol is applied to each task:
 

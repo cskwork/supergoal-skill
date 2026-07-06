@@ -1,5 +1,0 @@
-Final-fix pass complete. `deepMerge` already satisfied the task and visible spec, so I made no `src/` or test changes.
-
-Updated [NOTES.md](/private/tmp/sg-eval-uspec-u1/sandboxes/harness-s1/NOTES.md) with today’s verification note.
-
-Verification: `npm test` passes, 7/7 tests.

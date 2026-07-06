@@ -1,6 +1,0 @@
-Implemented `applyPatch` in [src/applyPatch.mjs](/private/tmp/supergoal-harness-eval-low-effort-2case/sandboxes/hard-json-patch/baseline/src/applyPatch.mjs:1).
-
-Covers `add`, `remove`, `replace`, `test`, `copy`, and `move`; JSON Pointer escaping; array `-` append for `add`; deep-copy patching; input immutability; and `TypeError` on invalid operations or failed tests. Added the required short changelog note at [docs/changelog/changelog-2026-06-06.md](/private/tmp/supergoal-harness-eval-low-effort-2case/sandboxes/hard-json-patch/baseline/docs/changelog/changelog-2026-06-06.md:1).
-
-Verified:
-`npm test` passes. Also ran a direct smoke check for escaped pointers, copy/move, append, immutability, and failed `test` errors.

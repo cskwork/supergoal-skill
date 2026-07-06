@@ -1,7 +1,0 @@
-Added the red-team coverage in [test/spec.gen.test.mjs](/private/tmp/supergoal-codex-roleloop/sandboxes/revfactory-case-015-lsp/role-s1/test/spec.gen.test.mjs), created [NOTES.md](/private/tmp/supergoal-codex-roleloop/sandboxes/revfactory-case-015-lsp/role-s1/NOTES.md), and recorded rationale in [docs/changelog/changelog-2026-06-07.md](/private/tmp/supergoal-codex-roleloop/sandboxes/revfactory-case-015-lsp/role-s1/docs/changelog/changelog-2026-06-07.md). I did not edit `src/`.
-
-Verification:
-- Initial `npm test`: visible tests passed.
-- Final `npm test`: fails as expected from new generated spec tests.
-- Failing generated cases: prefix-filtered completion, missing-brace recovery diagnostic, local-scope go-to-definition precedence.
-- Passing generated edge checks: comment handling and range `didChange` stale diagnostic clearing.

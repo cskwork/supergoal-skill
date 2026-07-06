@@ -43,6 +43,6 @@ Return pass/fail and a small diff; never paste raw row dumps, secrets, credentia
 
 ## Record
 
-In `verification.md` `## QA`, add a `DB:` line naming dialect/client and read-only status, e.g.
+In `QA.md` `## QA`, add a `DB:` line naming dialect/client and read-only status, e.g.
 `DB: postgres (read-only via supergoal db-access)`.
 List checks by name with pass/fail and small diff. No credentials, no raw rows, no PII.

@@ -20,8 +20,8 @@ Fix/feature request -> route to DEBUG/LEGACY; QA-ONLY reports findings and stops
 | Target & Access | Resolve running-app target (URL/env, NOT built from repo), browser driver, read-only DB access, action budget | `brief.md` | target reachable; driver + DB access named/skipped; `action_cap` set (default 100) |
 | Impact Matrix | Infer the feature's direct, adjacent, before/during/after, data, role, viewport, and failure-risk surface | `brief.md` | coverage plan has priority tiers and explicit exclusions |
 | Scenario checkpoint | Show the detailed scenario list + budget + comparison type; let the user narrow | run note | user confirms or narrows; proceed unless told to wait |
-| Exercise | Drive the app through scenarios via `qa-auditor`, capped | `verification.md` `## QA`, `qa/`, `state.json` | each scenario pass/fail recorded; combined `action_count` written to `state.json`, `<= action_cap` |
-| Cross-check | Read-only DB checks via `db-reader`: auth, source-of-truth expected values, dataset/env diff | `verification.md` `## QA`, `qa/` | each check pass/fail + small diff recorded; no raw dumps |
+| Exercise | Drive the app through scenarios via `qa-auditor`, capped | `QA.md` `## QA`, `qa/`, `state.json` | each scenario pass/fail recorded; combined `action_count` written to `state.json`, `<= action_cap` |
+| Cross-check | Read-only DB checks via `db-reader`: auth, source-of-truth expected values, dataset/env diff | `QA.md` `## QA`, `qa/` | each check pass/fail + small diff recorded; no raw dumps |
 | Report | Human-friendly result with coverage, reproduction steps, and remaining risk | `report.md` | required report headings present |
 | Persist | Save reusable suite, index it | `.domain-agent/qa/<suite>.md`, `index.md` | suite + re-run steps saved; no secrets/PII; path gitignored |
 
@@ -93,8 +93,8 @@ stop, report done/remaining, and ask before a fresh budget. Gate fails if `actio
 
 ## Vault (reduced run folder)
 
-`docs/changelog/<YYYY-MM>/<DD-qa-topic>/`: `brief.md`, `verification.md` (`## QA` evidence),
-`report.md`, `qa/scenario-ledger.md`, `qa/` evidence, `state.json`. No `plan.md`. Per-run report stays
+`docs/changelog/<YYYY-MM>/<DD-qa-topic>/`: `brief.md`, `QA.md` (`## QA` evidence),
+`report.md`, `qa/scenario-ledger.md`, `qa/` evidence, `state.json`. No `PLAN.md`. Per-run report stays
 here; reusable suite goes to the domain pack.
 
 ## Report (the one human-facing deliverable)
@@ -150,7 +150,7 @@ Use the vault as the common communication surface:
 - `qa/shards/<shard-id>.md`: one file per QA subagent. The subagent writes only its own shard file and
   evidence under `qa/`; it never edits another shard or the shared ledger directly.
 
-Conductor merges shards into `qa/scenario-ledger.md`, `verification.md`, and `report.md`.
+Conductor merges shards into `qa/scenario-ledger.md`, `QA.md`, and `report.md`.
 
 Handoff is conductor-mediated through the vault, never agent-to-agent. For `data-integrity`, `db-reader`
 writes sanitized `qa/expected.md` (`field -> expected value`, no raw rows/secrets/PII); the conductor

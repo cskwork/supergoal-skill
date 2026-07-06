@@ -35,7 +35,7 @@ Fire when **any** holds:
   or alters existing observed behavior. This fires even when the request is unambiguous - the
   "already clear" skip below does NOT cover it.
 
-Skip when **any** holds (and log the skip in `README.md`):
+Skip when **any** holds (and log the skip in `PLAN.md`):
 
 - The request is clear AND the change stays within its explicit target (no cross-function or behavior
   spillover), or
@@ -102,10 +102,11 @@ Approval confirms intent only; it never substitutes for independent spec/verific
 
 ## Recording
 
-Write a compact `## Interview` section in `plan.md` (DEBUG: in `README.md` next to the hypothesis
-ledger): each question, the chosen answer or user-approved assumption, and the decision it drove. Do
-not paste the whole exchange. A skipped interview records one line in `README.md` stating why it was
-safe to skip.
+Write a compact `## Interview` section in `PLAN.md` (DEBUG: next to the hypothesis ledger, also in
+`PLAN.md`): each question, the chosen answer or user-approved assumption, and the decision it drove. Do
+not paste the whole exchange. A skipped interview records one line in `PLAN.md` stating why it was
+safe to skip. The plan approval gate (`reference/role-loop.md`) is separate and blocking in interactive
+sessions: the interview confirms approach; the approval gate authorizes Build.
 
 For a blast-radius confirm, record the impact presented (functions/modules touched, behavior that
 could change), the strength applied (non-blocking / hard gate), and the user's approval or your

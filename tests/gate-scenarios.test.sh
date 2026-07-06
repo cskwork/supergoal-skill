@@ -45,30 +45,30 @@ QAGATE="$SKILL_DIR/templates/qa-gate.sh"
 v=$(mkvault s6)
 run_case "6.0 missing app-type -> usage (exit 2)"   2 "usage"                bash "$QAGATE" "$v"
 run_case "6.0b bad app-type -> usage (exit 2)"      2 "usage"                bash "$QAGATE" "$v" mobile
-run_case "6.1 no verification.md -> blocked"        1 "verification.md missing" bash "$QAGATE" "$v" browser
-printf 'verdict: GREEN\nno qa section here\n' > "$v/verification.md"
+run_case "6.1 no QA.md -> blocked"                  1 "QA.md missing"          bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\nno qa section here\n' > "$v/QA.md"
 run_case "6.2 no ## QA section -> blocked"          1 "no '## QA' section"   bash "$QAGATE" "$v" browser
-printf 'verdict: GREEN\n## QA\nintegration smoke: bin vs fixture snapshot matches\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nintegration smoke: bin vs fixture snapshot matches\n' > "$v/QA.md"
 run_case "6.3 CLI: ## QA present -> PASS"           0 "QA GATE PASS"         bash "$QAGATE" "$v" cli
 run_case "6.4 browser, no as-is/to-be -> blocked"   1 "no 'qa/as-is"         bash "$QAGATE" "$v" browser
 mkdir -p "$v/qa"; printf 'as-is proof\n' > "$v/qa/as-is-1040.png"
 run_case "6.5 as-is only, no to-be -> blocked"      1 "no 'qa/to-be"         bash "$QAGATE" "$v" browser
 printf 'to-be proof\n' > "$v/qa/to-be-1040.png"
-printf 'verdict: GREEN\n## QA\nTool: playwright-cli\n- as-is/to-be at 1040px captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
 : > "$v/qa/as-is-1040.png"
 run_case "6.6 empty as-is evidence -> blocked"      1 "empty 'qa/as-is"      bash "$QAGATE" "$v" browser
 printf 'as-is proof\n' > "$v/qa/as-is-1040.png"; : > "$v/qa/to-be-1040.png"
 run_case "6.6b empty to-be evidence -> blocked"     1 "empty 'qa/to-be"      bash "$QAGATE" "$v" browser
 printf 'to-be proof\n' > "$v/qa/to-be-1040.png"
-printf 'verdict: GREEN\n## QA\n- as-is/to-be at 1040px captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
 run_case "6.6c evidence but no Tool line -> blocked" 1 "no 'Tool:' line"     bash "$QAGATE" "$v" browser
-printf 'verdict: GREEN\n## QA\nTool: agent-browser\n- as-is/to-be at 1040px captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nTool: agent-browser\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
 run_case "6.7 agent-browser driver -> blocked"      1 "not playwright-cli"   bash "$QAGATE" "$v" browser
-printf 'verdict: GREEN\nTool: playwright-cli\n## QA\nTool: agent-browser\n- as-is/to-be at 1040px captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\nTool: playwright-cli\n## QA\nTool: agent-browser\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
 run_case "6.7b non-QA Tool cannot mask QA driver"   1 "not playwright-cli"   bash "$QAGATE" "$v" browser
-printf 'verdict: GREEN\n## QA\nTool: headless Chrome\n- render-1040 captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nTool: headless Chrome\n- render-1040 captured\n' > "$v/QA.md"
 run_case "6.8 headless-Chrome render -> blocked"    1 "not playwright-cli"   bash "$QAGATE" "$v" browser
-printf 'verdict: GREEN\n## QA\nTool: playwright-cli\n- as-is/to-be at 1040px captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
 run_case "6.9 playwright-cli + evidence -> PASS"    0 "QA GATE PASS"         bash "$QAGATE" "$v" browser
 
 # ----------------------------------------------------------------------
@@ -103,7 +103,7 @@ echo; echo "SCENARIO 9 — qa-gate.sh : contrast gate is wired in for UI runs"
 # ----------------------------------------------------------------------
 QAGATE="$SKILL_DIR/templates/qa-gate.sh"
 v=$(mkvault s9); mkdir -p "$v/qa"; printf 'as-is proof\n' > "$v/qa/as-is-1040.png"; printf 'to-be proof\n' > "$v/qa/to-be-1040.png"
-printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nUI-tier: Functional\n- as-is/to-be captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nUI-tier: Functional\n- as-is/to-be captured\n' > "$v/QA.md"
 run_case "9.1 UI-tier declared, no pairs file -> blocked" 1 "no 'qa/contrast-pairs.json'" bash "$QAGATE" "$v" browser
 printf '[{"el":"body","fg":"#f4efe7","bg":"#16140f","size":"body"},{"el":"t","fg":"#8a8275","bg":"#221e17","size":"normal"}]\n' > "$v/qa/contrast-pairs.json"
 run_case "9.2 UI-tier + sub-AA pair -> blocked"      1 "contrast gate failed" bash "$QAGATE" "$v" browser
@@ -111,7 +111,7 @@ printf '[{"el":"body","fg":"#f4efe7","bg":"#16140f","size":"body"},{"el":"t","fg
 run_case "9.3 UI-tier + passing palette -> PASS"     0 "QA GATE PASS"         bash "$QAGATE" "$v" browser
 # No UI-tier and no pairs file: contrast block is skipped, behaviour unchanged.
 rm -f "$v/qa/contrast-pairs.json"
-printf 'verdict: GREEN\n## QA\nTool: playwright-cli\n- as-is/to-be captured\n' > "$v/verification.md"
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\n- as-is/to-be captured\n' > "$v/QA.md"
 run_case "9.4 no UI-tier, no pairs -> PASS (unaffected)" 0 "QA GATE PASS"     bash "$QAGATE" "$v" browser
 
 # ----------------------------------------------------------------------
@@ -176,98 +176,132 @@ run_case "12.3 quiz but no scaffold/book -> FAIL"       1 "lesson.css"          
 run_case "12.4 dir scan flags off-spec lessons -> FAIL" 1 "FAIL"                   node "$TEACHGATE" "$v"
 
 # ----------------------------------------------------------------------
-echo; echo "SCENARIO 13 — commit-gate.sh : a non-green run must not commit (failed/incomplete QA, open requirement, uncertain intent)"
+echo; echo "SCENARIO 13 — commit-gate.sh : a non-green run must not commit (unchecked criterion, failed/incomplete QA, pending approval, missing Z marker)"
 # ----------------------------------------------------------------------
 COMMITGATE="$SKILL_DIR/templates/commit-gate.sh"
-mkproof() {  # write a GREEN delivery-proof.md into $1
-  cat > "$1/delivery-proof.md" <<'EOF'
-# Delivery Proof
-## Requirement Trace
-| # | Requirement (user's words) | Source | Implementing change (file:line) | Verifying check | Status |
-|---|---|---|---|---|---|
-| r1 | preserve existing behavior | user | src/app.js:12 | npm test | met |
-
-Backward-trace: clean
-## Reproduction Fidelity
-- Fidelity level: exact
-- Test data source:
-- Failure-triggering properties preserved:
-- Prod-vs-test deltas:
-- Residual risk from data gap:
-- Post-deploy confirmation plan:
-## Command Manifest
-| Name | Command | Source | Proves | Used when |
-|---|---|---|---|---|
-| test | npm test | frozen_repo | suite green | both |
+mkgreen() {  # write a fully-GREEN run vault (GOAL/PLAN/QA/Z) into $1
+  cat > "$1/GOAL.md" <<'EOF'
+# GOAL - s13
+## Original Request
+> preserve existing behavior
+## Spec
+smallest correct change to src/app.js
+## Success Criteria
+- [x] preserve existing behavior - verify: `npm test`
+## QA Cases (web apps only)
 ## Decision Gates
 | ID | Action | Status | Finding | Decision | Recheck |
 |---|---|---|---|---|---|
 | d1 | auto-fix | resolved | lint | fixed | reran |
-## After Evidence
-| Check | Status | Evidence | Verifies | Does not verify |
-|---|---|---|---|---|
-| npm test | pass | log.txt | behavior | perf |
+EOF
+  cat > "$1/PLAN.md" <<'EOF'
+# PLAN - s13
+## Approval
+- Status: approved-by-user
+- Record: 2026-07-06 user said OK
+## Intent
+- Completion promise: suite green via npm test; stop when green; max_iterations 8
+## Steps
+1. edit src/app.js
+## Tools & Skills
+- npm test
+EOF
+  cat > "$1/QA.md" <<'EOF'
+# QA - s13
+- Verdict: PASS
+## Before
+- [x] baseline captured before change - `npm test` output saved
+## Results
+- [x] suite green after change - `npm test` (frozen_repo)
+
+Backward-trace: clean
+## Commands
+| Command | Source | Proves |
+|---|---|---|
+| npm test | frozen_repo | suite green |
+## QA
+Tool: playwright-cli
+## Reproduction Fidelity
+- Fidelity level: exact
+- Residual risk from data gap:
+- Post-deploy confirmation plan:
 ## Residual Risk
 - Not proven: load
+EOF
+  cat > "$1/Z-2026-07-06.md" <<'EOF'
+# DONE 2026-07-06
+- Branch: run/s13 -> main
+- Completed: 2026-07-06T12:00:00+09:00
 EOF
 }
 v=$(mkvault s13)
 run_case "13.0 no args -> usage (exit 2)"             2 "usage"                    bash "$COMMITGATE"
 run_case "13.0b bad app-type -> usage (exit 2)"       2 "usage"                    bash "$COMMITGATE" "$v" mobile
-run_case "13.1 no delivery-proof -> blocked"          1 "no Before/After Eval"     bash "$COMMITGATE" "$v" none
-mkproof "$v"
-run_case "13.2 green proof -> PASS"                   0 "COMMIT GATE PASS"         bash "$COMMITGATE" "$v" none
-sed 's/| d1 | auto-fix | resolved/| d1 | ask-user | open/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+run_case "13.1 no GOAL.md -> blocked"                 1 "GOAL.md missing"          bash "$COMMITGATE" "$v" none
+mkgreen "$v"
+run_case "13.2 green vault -> PASS"                   0 "COMMIT GATE PASS"         bash "$COMMITGATE" "$v" none
+sed 's/| d1 | auto-fix | resolved | lint | fixed | reran |/| d1 | ask-user | open | semantics | pending | - |/' "$v/GOAL.md" > "$v/p"; mv "$v/p" "$v/GOAL.md"
 run_case "13.3 open ask-user gate -> blocked"         1 "open decision gate"       bash "$COMMITGATE" "$v" none
-mkproof "$v"
-printf '# Surfaced requirements\n## 2026-06-30 - x\n- **R** - implied; covered by `t::x`; status: open\n'  > "$v/surfaced-requirements.md"
-run_case "13.4 open surfaced requirement -> blocked"  1 "surfaced requirement is still open" bash "$COMMITGATE" "$v" none
-printf '# Surfaced requirements\n## 2026-06-30 - x\n- **R** - implied; covered by `t::x`; status: fixed\n' > "$v/surfaced-requirements.md"
-run_case "13.5 closed surfaced requirement -> PASS"   0 "COMMIT GATE PASS"         bash "$COMMITGATE" "$v" none
+mkgreen "$v"
+sed 's/^- \[x\] preserve existing behavior.*/- [ ] reject malformed input - verify: `t::rejects` (surfaced: implied by data rule)/' "$v/GOAL.md" > "$v/p"; mv "$v/p" "$v/GOAL.md"
+run_case "13.4 unchecked surfaced criterion -> blocked (Z premature)" 1 "unchecked" bash "$COMMITGATE" "$v" none
+mkgreen "$v"
+sed 's/^- \[x\] preserve existing behavior - verify: `npm test`$/- [x] preserve existing behavior - verify: `npm test` (surfaced: implied by data rule)/' "$v/GOAL.md" > "$v/p"; mv "$v/p" "$v/GOAL.md"
+run_case "13.5 ticked surfaced criterion -> PASS"     0 "COMMIT GATE PASS"         bash "$COMMITGATE" "$v" none
 printf 'Verdict: PARTIAL   Actions used: 2/100\n' > "$v/report.md"
 run_case "13.6 QA verdict PARTIAL -> blocked"         1 "FAIL/PARTIAL"             bash "$COMMITGATE" "$v" none
 printf 'Verdict: PASS   Actions used: 2/100\n' > "$v/report.md"
 run_case "13.7 QA verdict PASS -> PASS"               0 "COMMIT GATE PASS"         bash "$COMMITGATE" "$v" none
-sed 's/frozen_repo/agent_detected/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+sed 's/frozen_repo/agent_detected/g' "$v/QA.md" > "$v/p"; mv "$v/p" "$v/QA.md"
 run_case "13.8 no trusted command -> blocked"         1 "no trusted command"       bash "$COMMITGATE" "$v" none
-mkproof "$v"; rm -f "$v/report.md" "$v/surfaced-requirements.md"
-sed 's/| npm test | pass |/| npm test | FAIL |/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
-run_case "13.9 after-evidence FAIL row -> blocked"    1 "failing row"              bash "$COMMITGATE" "$v" none
-mkproof "$v"; rm -f "$v/surfaced-requirements.md"
+mkgreen "$v"; rm -f "$v/report.md"
+sed 's/^- \[x\] suite green after change.*/- [ ] suite green after change - `npm test` (frozen_repo)/' "$v/QA.md" > "$v/p"; mv "$v/p" "$v/QA.md"
+run_case "13.9 unchecked Results row -> blocked"      1 "unchecked row"            bash "$COMMITGATE" "$v" none
+mkgreen "$v"
 printf 'Verdict: PASS\nlater run:\nVerdict: FAIL\n' > "$v/report.md"   # H1: FAIL hidden behind earlier PASS
 run_case "13.10 FAIL behind earlier PASS -> blocked"  1 "FAIL/PARTIAL"             bash "$COMMITGATE" "$v" none
 printf 'Verdict: <PASS | FAIL | PARTIAL>\n' > "$v/report.md"          # M1: started-but-incomplete report
 run_case "13.11 un-filled Verdict placeholder -> blocked" 1 "un-filled Verdict"    bash "$COMMITGATE" "$v" none
 rm -f "$v/report.md"
 run_case "13.12 app run w/o QA evidence -> blocked"   1 "QA evidence gate failed"  bash "$COMMITGATE" "$v" browser
-mkproof "$v"; rm -f "$v/report.md" "$v/surfaced-requirements.md"
-sed 's/| r1 | preserve existing behavior | user | src\/app.js:12 | npm test | met |/| r1 | preserve existing behavior | user | src\/app.js:12 | npm test | open |/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
-run_case "13.13 open Requirement Trace -> blocked"     1 "Requirement Trace"        bash "$COMMITGATE" "$v" none
-mkproof "$v"
-sed 's/Backward-trace: clean/Backward-trace: orphan src\/bonus.js:1/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+mkgreen "$v"
+sed 's/- Status: approved-by-user/- Status: pending/' "$v/PLAN.md" > "$v/p"; mv "$v/p" "$v/PLAN.md"
+run_case "13.13 pending plan approval -> blocked"     1 "approval is pending"      bash "$COMMITGATE" "$v" none
+mkgreen "$v"
+sed 's/Backward-trace: clean/Backward-trace: orphan src\/bonus.js:1/' "$v/QA.md" > "$v/p"; mv "$v/p" "$v/QA.md"
 run_case "13.14 orphan Backward-trace -> blocked"      1 "Backward-trace is not clean" bash "$COMMITGATE" "$v" none
-mkproof "$v"
-sed 's/Fidelity level: exact/Fidelity level: exact | prod-snapshot | synthetic-representative | synthetic-minimal | not-reproduced/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+mkgreen "$v"
+sed 's/Fidelity level: exact/Fidelity level: exact | prod-snapshot | synthetic-representative | synthetic-minimal | not-reproduced/' "$v/QA.md" > "$v/p"; mv "$v/p" "$v/QA.md"
 run_case "13.15 placeholder fidelity -> blocked"       1 "unknown or placeholder"   bash "$COMMITGATE" "$v" none
-mkproof "$v"
-sed 's/Fidelity level: exact/Fidelity level: synthetic-minimal/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+mkgreen "$v"
+sed 's/Fidelity level: exact/Fidelity level: synthetic-minimal/' "$v/QA.md" > "$v/p"; mv "$v/p" "$v/QA.md"
 run_case "13.16 non-exact no risk/plan -> blocked"     1 "residual risk"           bash "$COMMITGATE" "$v" none
-mkproof "$v"
-sed 's/Fidelity level: exact/Fidelity level: synthetic-minimal/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
-sed 's/Residual risk from data gap:/Residual risk from data gap: prod concurrency not fully represented/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+mkgreen "$v"
+sed 's/Fidelity level: exact/Fidelity level: synthetic-minimal/' "$v/QA.md" > "$v/p"; mv "$v/p" "$v/QA.md"
+sed 's/Residual risk from data gap:/Residual risk from data gap: prod concurrency not fully represented/' "$v/QA.md" > "$v/p"; mv "$v/p" "$v/QA.md"
 run_case "13.16b non-exact no confirmation -> blocked" 1 "post-deploy confirmation" bash "$COMMITGATE" "$v" none
-mkproof "$v"
-sed 's/Fidelity level: exact/Fidelity level: synthetic-minimal/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
-sed 's/Residual risk from data gap:/Residual risk from data gap: (pending)/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
-sed 's/Post-deploy confirmation plan:/Post-deploy confirmation plan: canary logs after deploy/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+mkgreen "$v"
+sed 's/Fidelity level: exact/Fidelity level: synthetic-minimal/' "$v/QA.md" > "$v/p"; mv "$v/p" "$v/QA.md"
+sed 's/Residual risk from data gap:/Residual risk from data gap: (pending)/' "$v/QA.md" > "$v/p"; mv "$v/p" "$v/QA.md"
+sed 's/Post-deploy confirmation plan:/Post-deploy confirmation plan: canary logs after deploy/' "$v/QA.md" > "$v/p"; mv "$v/p" "$v/QA.md"
 run_case "13.16c parenthesized risk placeholder -> blocked" 1 "residual risk"       bash "$COMMITGATE" "$v" none
-mkproof "$v"
-sed 's/Fidelity level: exact/Fidelity level: synthetic-representative/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
-sed 's/Failure-triggering properties preserved:/Failure-triggering properties preserved: cached deny after role change, request ordering, TTL boundary/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
-sed 's/Prod-vs-test deltas:/Prod-vs-test deltas: staging has lower tenant cardinality and no real CDN cache/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
-sed 's/Residual risk from data gap:/Residual risk from data gap: prod scale and concurrency may still differ; monitor authz-cache-deny-rate/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
-sed 's/Post-deploy confirmation plan:/Post-deploy confirmation plan: canary 10% for 30 minutes and compare 403\/200 authz-cache logs/' "$v/delivery-proof.md" > "$v/p"; mv "$v/p" "$v/delivery-proof.md"
+mkgreen "$v"
+sed 's/Fidelity level: exact/Fidelity level: synthetic-representative/' "$v/QA.md" > "$v/p"; mv "$v/p" "$v/QA.md"
+sed 's/Residual risk from data gap:/Residual risk from data gap: prod scale and concurrency may still differ; monitor authz-cache-deny-rate/' "$v/QA.md" > "$v/p"; mv "$v/p" "$v/QA.md"
+sed 's/Post-deploy confirmation plan:/Post-deploy confirmation plan: canary 10% for 30 minutes and compare 403\/200 authz-cache logs/' "$v/QA.md" > "$v/p"; mv "$v/p" "$v/QA.md"
 run_case "13.17 difficult synthetic proxy -> PASS"     0 "COMMIT GATE PASS"        bash "$COMMITGATE" "$v" none
+mkgreen "$v"
+rm -f "$v/Z-2026-07-06.md"
+run_case "13.18 missing Z completion marker -> blocked" 1 "completion marker"      bash "$COMMITGATE" "$v" none
+mkgreen "$v"
+printf '# DONE later\n- Branch: run/s13 -> main\n- Completed: 2026-07-07T09:00:00+09:00\n' > "$v/Z-2026-07-07.md"
+run_case "13.19 multiple Z markers -> blocked"          1 "multiple"               bash "$COMMITGATE" "$v" none
+rm -f "$v/Z-2026-07-07.md"
+: > "$v/Z-2026-07-06.md"
+run_case "13.20 empty Z marker -> blocked"              1 "empty"                  bash "$COMMITGATE" "$v" none
+mkgreen "$v"
+sed '/- Branch: run\/s13 -> main/d' "$v/Z-2026-07-06.md" > "$v/p"; mv "$v/p" "$v/Z-2026-07-06.md"
+run_case "13.21 Z marker without branch -> blocked"     1 "Branch:"                bash "$COMMITGATE" "$v" none
 
 # ----------------------------------------------------------------------
 echo

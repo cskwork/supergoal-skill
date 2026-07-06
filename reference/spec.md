@@ -10,7 +10,8 @@ surfaced requirements flow back into it.
 
 Prefix for GREENFIELD / LEGACY. DEBUG keeps `reference/debugging.md`; bug fixes usually skip spec. Run at
 Frame end. It replaces the generic clarifying interview (`reference/interview.md`); do not run both. The
-approved spec replaces `plan.md` as the frozen plan (`reference/plan-grounding.md` grounds design.md).
+approved spec is the frozen plan: the vault `PLAN.md` records the approval (`## Approval`) and links
+`docs/spec/<feature-slug>/` (`reference/plan-grounding.md` grounds design.md).
 
 ## Gate - when to spec vs skip
 
@@ -19,7 +20,7 @@ Fire when **either** holds:
 - The user explicitly asks for a spec ("spec this", "스펙", "requirements 문서로", "구조화해서"), or
 - Multi-component / high-rework-cost feature and the user confirms spec-first.
 
-Skip when **any** holds (default loop without spec; log the skip in the run `README.md`):
+Skip when **any** holds (default loop without spec; log the skip in the run `PLAN.md`):
 
 - Trivial single edit or clear single-interpretation change - a spec here is ceremony, not signal.
 - Urgent hotfix - fix first; backfill the spec only if the user asks.
@@ -100,8 +101,8 @@ grill load-bearing decisions, and crystallize docs from answers.
 - **Build executes tasks.md in order**; check off each task as its tests pass. When implementation
   reveals a gap, add a task - never silently skip or reorder without noting why.
 - **Critic**: the critic derives its failing tests from the EARS acceptance criteria - each WHEN/THEN
-  line is a test case by construction, and the edge-case lists seed the boundary tests. The run vault's
-  `surfaced-requirements.md` trail stays as-is (`reference/role-loop.md`).
+  line is a test case by construction, and the edge-case lists seed the boundary tests. Surfaced criteria
+  are appended to the run vault's `GOAL.md` as usual (`reference/role-loop.md`).
 - **Backflow**: every surfaced requirement is added to requirements.md as a new numbered requirement
   with EARS criteria, so the spec stays the document of record while the run vault keeps the per-run
   trail.

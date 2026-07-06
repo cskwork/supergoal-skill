@@ -71,18 +71,17 @@ Open with an app shell + a KPI summary row, north-star metric top-left. Every un
 ## Frame overlay
 
 Add a one-line **Design Read** (surface kind + chosen design system) and the three dials
-(`DESIGN_VARIANCE` low/symmetric, `MOTION_INTENSITY` 1-3, `VISUAL_DENSITY` 7-10) to `plan.md`
-(or the run `README.md` when no plan file exists).
+(`DESIGN_VARIANCE` low/symmetric, `MOTION_INTENSITY` 1-3, `VISUAL_DENSITY` 7-10) to `PLAN.md`.
 
 ## Build overlay
 
-Dispatch **Designer** with `plan.md` + this file as the authority. Enforce the baseline above.
+Dispatch **Designer** with `PLAN.md` + this file as the authority. Enforce the baseline above.
 No self-approval.
 
 ## QA overlay
 
 Run beside normal QA: a11y (keyboard focus, labels), reduced motion, all UI states present, density
-matches dials, `color-scheme` declared. Record `UI-tier: Functional` in `verification.md` `## QA` and
+matches dials, `color-scheme` declared. Record `UI-tier: Functional` in `QA.md` `## QA` and
 enumerate every text/bg pair to `<vault>/qa/contrast-pairs.json`; `qa-gate.sh` runs
 `node templates/contrast-gate.mjs` on it (completeness critic audits the pair list). Any fail rewinds
 to Build and blocks delivery.

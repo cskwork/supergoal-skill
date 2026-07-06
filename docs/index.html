@@ -988,8 +988,8 @@
       <div class="copy-stack">
         <div class="claim reveal">
           <h3><span class="en">It distrusts visible green.</span><span class="ko">테스트 통과 표시만으로 끝내지 않습니다.</span></h3>
-          <p class="en">After Build, a fresh-context role compares the request, ticket, README, design/API docs, and Requirement Trace with current behavior. Another role checks edge/error paths. Fresh gaps get the smallest fix.</p>
-          <p class="ko">Build 뒤에는 새 컨텍스트 역할이 요청, 티켓, README, 설계/API 문서, Requirement Trace와 현재 동작을 비교합니다. 다른 역할은 예외/에러 경로를 확인합니다. 새로 찾은 틈만 가장 작게 고칩니다.</p>
+          <p class="en">After Build, a fresh-context verifier diffs the implementer's changes against GOAL.md - the user's request verbatim plus falsifiable Success Criteria - and ticks off only what is proven. Unmet criteria go to a timestamped R-LOOP.md section and the implementer relaunches.</p>
+          <p class="ko">Build 뒤에는 새 컨텍스트 검증자가 구현자의 변경(diff)을 GOAL.md - 사용자 요청 원문 + 반증 가능한 성공 기준 - 와 대조해 증명된 것만 체크합니다. 미충족 기준은 R-LOOP.md에 타임스탬프 섹션으로 남고 구현자가 다시 실행됩니다.</p>
         </div>
         <div class="claim reveal">
           <h3><span class="en">It keeps the change minimal.</span><span class="ko">변경을 필요한 만큼만 유지합니다.</span></h3>
@@ -1003,13 +1003,13 @@
         </div>
       </div>
       <div class="route-map reveal" aria-label="Supergoal loop">
-        <div class="route-step pass"><b>01 Frame</b><span>goal + criteria</span></div>
-        <div class="route-step pass"><b>02 Build</b><span>smallest change</span></div>
-        <div class="route-step red"><b>03 Improve spec</b><span>docs vs behavior</span></div>
-        <div class="route-step red"><b>04 Improve edges</b><span>edge/error paths</span></div>
-        <div class="route-step pass"><b>05 Final Verify</b><span>real suite stable</span></div>
-        <div class="route-step pass"><b>06 Escalate</b><span>Critic/Fixer if needed</span></div>
-        <div class="route-step pass"><b>07 Done</b><span>evidence recorded</span></div>
+        <div class="route-step pass"><b>01 Frame</b><span>GOAL.md: request + criteria</span></div>
+        <div class="route-step pass"><b>02 Plan</b><span>PLAN.md frozen, user OK</span></div>
+        <div class="route-step pass"><b>03 Build</b><span>implementer reads PLAN.md</span></div>
+        <div class="route-step red"><b>04 Improve spec</b><span>docs vs behavior</span></div>
+        <div class="route-step red"><b>05 Improve edges</b><span>edge/error paths</span></div>
+        <div class="route-step pass"><b>06 Verify</b><span>tick GOAL.md; gaps -&gt; R-LOOP.md</span></div>
+        <div class="route-step pass"><b>07 Done</b><span>all boxes -&gt; Z-&lt;date&gt;.md</span></div>
       </div>
     </div>
   </section>
@@ -1130,18 +1130,18 @@
           <div class="file-chip"><code>SKILL.md</code><span class="en">baseline-first loop, modes, map</span><span class="ko">핵심 루프, 모드, 레퍼런스 맵</span></div>
           <div class="file-chip"><code>agents/&lt;role&gt;.md</code><span class="en">one persona per role</span><span class="ko">역할별 지침 파일</span></div>
           <div class="file-chip"><code>reference/role-loop.md</code><span class="en">Build -> Improve spec -> Improve edges -> Final Verify</span><span class="ko">Build -> Improve spec -> Improve edges -> Final Verify</span></div>
+          <div class="file-chip"><code>templates/</code><span class="en">GOAL / PLAN / QA / R-LOOP / Z vault templates + commit gate</span><span class="ko">GOAL / PLAN / QA / R-LOOP / Z 볼트 템플릿 + 커밋 게이트</span></div>
           <div class="file-chip"><code>reference/domain-context.md</code><span class="en">surface hidden requirements</span><span class="ko">숨은 요구사항 찾기</span></div>
           <div class="file-chip"><code>reference/debugging.md</code><span class="en">reproduce-first diagnose loop</span><span class="ko">재현 우선 진단 루프</span></div>
           <div class="file-chip"><code>.domain-agent/</code><span class="en">persisted wiki / QA suite</span><span class="ko">저장된 위키 / QA 스위트</span></div>
         </div>
       </div>
-<pre class="vault-ascii reveal">loop/
-  frame    goal + criteria
-  build    smallest change, test-first
-  improve  docs vs behavior + edge cases
-  verify   real suite + proof closure
-  escalate critic/fixer only when needed
-  done     evidence + command output
+<pre class="vault-ascii reveal">vault/  docs/changelog/&lt;YYYY-MM&gt;/&lt;DD-topic&gt;/
+  GOAL.md      request verbatim + success criteria
+  PLAN.md      frozen plan -&gt; explicit user OK
+  QA.md        results as plain checklist sentences
+  R-LOOP.md    verify gaps -&gt; implementer relaunch
+  Z-&lt;date&gt;.md  written only when every box is checked
 
 Stop on green. Report with output.</pre>
     </div>

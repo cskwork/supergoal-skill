@@ -63,6 +63,13 @@ Before any file mutation, create the run vault's `GOAL.md` from `templates/GOAL.
 - keep `run-state.json` current: phase, iteration, plan_approval, unresolved gates, blockers, next
   action, regression_ledger, last proof command.
 
+## LEGACY entry (order)
+
+1. Map first (`agents/explore.md`, `reference/domain-context.md`).
+2. Existing API touched: capture its preserve-baseline (`reference/qa.md` "API behavior baseline").
+3. Shared code/state past *very easy*: capture the neighbor characterization baseline (`reference/qa.md`).
+4. Proceed with the default loop; the before state lands in `QA.md` `## Before` (`reference/delivery-gate.md`).
+
 ## Completion promise + loop cap
 
 Frame writes the completion promise (`PLAN.md` `## Intent`) before Build. Loop only while the promise is
@@ -76,8 +83,9 @@ previously green check turns red, stop, fix it, and record
 
 Dispatch by default: conductor runs each role as a fresh-context subagent so heavy references load inside
 that role, not the conductor. Return short structured status only: changed files, proof output, concerns.
-Parallelize independent units; order dependent roles. Build (1), Improve full spec (2), Improve edge
-cases (3), Mandatory Adversarial Review (4), and Exact Verify/QA (5) are mandatory. Critic/Fixer is
+Parallelize independent units; order dependent roles. Each dispatch's model tier is the conductor's
+choice at dispatch time (stronger tier for novel/algorithmic slices). Build (1), Improve full spec (2),
+Improve edge cases (3), Mandatory Adversarial Review (4), and Exact Verify/QA (5) are mandatory. Critic/Fixer is
 optional gated escalation, usually after the edge pass or when Exact Verify finds an unexplained gap.
 
 0. **Adversarial plan attack (conditional, no src edits)** - only for under-specified, wide-blast-radius,
@@ -124,7 +132,9 @@ optional gated escalation, usually after the edge pass or when Exact Verify find
      fixes, `ask-user` decision gates, or residual risk. Reviewer approval is not a substitute for exact
      verification.
 
-5. **Exact Verify/QA vs ground truth (mandatory core; Final Verify/QA)** (`agents/qa-auditor.md` / `security-reviewer.md`)
+5. **Exact Verify/QA vs ground truth (mandatory core; Final Verify/QA)** (browser proof:
+   `agents/qa-tester.md`; non-browser/artifact verify: `agents/qa-auditor.md`; security:
+   `agents/security-reviewer.md`)
    - Re-run REAL tests and report output. Run the command/browser/API/E2E layer promised in
      `PLAN.md` `## Intent`. If the user expected an actual E2E/live/API/browser run, run it; otherwise mark
      that layer not proven with blocker/residual risk. Exact verification outranks reviewer approval. Fresh

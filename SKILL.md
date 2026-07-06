@@ -53,10 +53,10 @@ GREENFIELD/DEBUG/LEGACY only after the edit target is clear.
 | Signal in the objective | Mode | Route |
 |---|---|---|
 | build / make / ship a new app/tool | GREENFIELD | default loop |
-| fix / broken / failing / crash / why does | DEBUG | default loop; observe live symptom, then failing-test repro (`reference/debugging.md`); web: `reference/qa.md`, `reference/playwright-cli.md` |
+| fix / broken / failing / crash / why does | DEBUG | default loop; observe live symptom, then failing-test repro (`reference/debugging.md`, driver persona `agents/debugger.md`); web: `reference/qa.md`, `reference/playwright-cli.md` |
 | add / integrate / refactor existing code | LEGACY | default loop; map first (`agents/explore.md`, `reference/domain-context.md`); optional DB evidence (`reference/db-access.md`); existing API: capture its exact behavior first as a preserve-baseline; shared code/state past *very easy*: characterization baseline (`reference/qa.md`) |
 | spec / requirements first / 스펙 문서로 구조화 | SPEC | spec-first prefix: requirements -> design -> tasks under `docs/spec/`, then tasks drive Build (`reference/spec.md`) |
-| explain / teach / how does X work (no code) | TEACH | stateful `teach/<topic>/` workspace (`reference/teach.md`); lessons must pass `teach-lesson-gate.mjs` |
+| explain / teach / how does X work (no code) | TEACH | stateful `teach/<topic>/` workspace (`reference/teach.md`); lessons must pass `node templates/teach-lesson-gate.mjs` |
 | learn / onboard / map this codebase (persist a wiki) | LEARN-DOMAIN | Survey -> Map -> Ground -> Onboard a `.domain-agent/` wiki (`reference/learn-domain.md`; gate `learn-grounding-gate.mjs`) |
 | QA / verify / 검증만 / compare data (no code) | QA-ONLY | Impact Matrix QA (`reference/qa-only.md`; gate `templates/qa-only-gate.sh`) |
 | review / audit this code/diff/PR (no fixes) | REVIEW-ONLY | `reference/review-only.md` |
@@ -92,7 +92,8 @@ Critic/Fixer only when hidden requirements are the value being tested.
    verification, and web apps' `## QA Cases`. Write a completion promise in `PLAN.md` `## Intent`:
    outcome, proof, stop condition, `max_iterations` (default 8). Ask <=5 high-leverage questions only
    when needed; confirm wide/destructive/behavior-changing blast radius after grounding
-   (`reference/interview.md`). UI: load `reference/ui-ux.md`. Non-trivial code: create `QA.md` and
+   (`reference/interview.md`); deep requirements interviews may dispatch `agents/analyst.md`, and
+   architecture calls `agents/architect.md`. UI: load `reference/ui-ux.md`. Non-trivial code: create `QA.md` and
    `run-state.json` from templates and record the Before/After Eval. Freeze `PLAN.md` (self-sufficient:
    steps, tools & skills, verification strategy), then clear the plan approval gate - interactive:
    the user's explicit OK; autonomous run: auto-approved, recorded in `## Approval`.
@@ -128,7 +129,8 @@ Critic/Fixer only when hidden requirements are the value being tested.
    Reserve for the under-specified frontier and keep within the critic->fixer cap.
 
 Roles -> personas: builder/improver/fixer=`agents/executor.md`, critic=`agents/code-reviewer.md`,
-verify/QA=`agents/qa-auditor.md`/`security-reviewer.md` (others in `agents/<role>.md`).
+browser QA=`agents/qa-tester.md`, non-browser/artifact verify=`agents/qa-auditor.md`,
+security=`agents/security-reviewer.md` (others in `agents/<role>.md`).
 
 ## Reference map (load only what the current phase needs)
 

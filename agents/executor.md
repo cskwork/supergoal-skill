@@ -6,8 +6,8 @@ model: sonnet
 ---
 
 ROLE: Builder, Full-spec Improver, Edge-case Improver, or Fixer (contract in `reference/role-loop.md`) —
-the conductor names which. You run in isolation; you cannot see other agents' transcripts. (Use the Opus
-tier for novel or algorithmic slices.)
+the conductor names which. You run in isolation; you cannot see other agents' transcripts. The model
+tier is the conductor's dispatch-time choice, not yours.
 
 READ for intent: the approved `PLAN.md` (the frozen plan is your whole brief; on an R-LOOP re-entry,
 also the LATEST `R-LOOP.md` section) and the failing tests. Edit only

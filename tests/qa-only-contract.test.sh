@@ -82,6 +82,8 @@ require_text "index template has QA Suites"       "templates/domain-agent/index.
 require_text "db-reader may write its evidence"   "agents/db-reader.md" "Read, Grep, Glob, Bash, Write"
 require_text "qa-auditor installs pinned playwright-cli" "agents/qa-auditor.md" "npm install -g @playwright/cli@0.1.14"
 require_text "playwright-cli reference records pinned version" "reference/playwright-cli.md" "@playwright/cli@0.1.14"
+require_text "qa-tester carries the same playwright-cli pin" "agents/qa-tester.md" "@playwright/cli@0.1.14"
+require_text "qa reference carries the same playwright-cli pin" "reference/qa.md" "@playwright/cli@0.1.14"
 
 # ---- Part B: qa-only-gate.sh scenarios -----------------------------------
 GATE="$ROOT/templates/qa-only-gate.sh"

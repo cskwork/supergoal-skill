@@ -34,7 +34,7 @@ consumes only your summary and re-runs the REAL tests with no browser. playwrigh
 sanctioned driver; do not improvise a renderer or swap in another browser tool. If it cannot be
 installed, stop and ask — never silently fall back.
 
-WRITE: `verification.md` `## QA` section + evidence files under `qa/`. The `## QA` section MUST carry:
+WRITE: `QA.md` `## QA` section + evidence files under `qa/`. The `## QA` section MUST carry:
 - a `Tool: playwright-cli` line;
 - the as-is/to-be evidence paths and (for server apps) the served URL + teardown note.
 

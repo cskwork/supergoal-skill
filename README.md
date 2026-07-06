@@ -112,16 +112,23 @@ flowchart TD
 | "test harness effectiveness / with vs without" | **HARNESS-EVAL** | Cases -> baseline run -> harness run -> machine checks -> quality score -> compare |
 | "make a skill from history - no product code" | **SKILL-MINE** | Mine history -> rank -> you pick -> forge portable `SKILL.md` -> install |
 
-**Default loop (GREENFIELD / DEBUG / LEGACY):** 1) **Frame** the goal + acceptance criteria and start
-`delivery-proof.md` with Before/After Eval plus `run-state.json`; 2) **Build** the smallest correct
-change, test-first (bug -> failing test first); 3) **Improve full spec** by re-reading the user's
-request, issue/ticket, README, design/API docs, and `## Requirement Trace`, then fixing the smallest
+**Default loop (GREENFIELD / DEBUG / LEGACY):** 1) **Frame** the goal: write `GOAL.md` first (the user's
+request verbatim + refined spec + falsifiable Success Criteria checkboxes + browser QA cases for web
+apps), freeze a self-sufficient `PLAN.md` (steps, tools & skills, verification strategy), start `QA.md`
+`## Before` plus `run-state.json`, then clear the plan approval gate (interactive: the user's explicit
+OK; autonomous: auto-approved, recorded); 2) **Build** the smallest correct change in a fresh-context
+implementer briefed by `PLAN.md` alone, test-first (bug -> failing test first); 3) **Improve full spec**
+by re-reading the user's request, issue/ticket, README, design/API docs, and `GOAL.md` Success Criteria,
+then fixing the smallest
 gap between that intent and the current behavior; 4) **Improve edge cases** by checking degenerate
 inputs, edge/error paths, state/protocol, compatibility, and security side effects; 5) **Final Verify**
-by re-running the real tests until stable and closing the proof; 6) escalate to
+by re-running the real tests, diffing the implementer's changes against `GOAL.md`, ticking each criterion
+proven met, and recording plain checklist results in `QA.md`; unmet criteria go to a timestamped
+`R-LOOP.md` section and the implementer relaunches; 6) escalate to
 independent **Critic -> Fixer** only for genuinely under-specified or latent-correctness work where
-missing requirements need to become failing tests. Stop only after the completion promise, after-evidence,
-resolved decision gates, and residual risk are recorded with command output. The core loop has a default
+missing requirements need to become failing tests. Stop only after every `GOAL.md` box is checked and the
+`Z-<date>.md` completion marker (run branch + timestamp) is written with command output recorded. The
+core loop has a default
 8-iteration cap with forced reflection before continuing.
 
 Coding/debug runs use a run worktree by default: resolve and verify the source/base branch plus the
@@ -201,7 +208,7 @@ SKILL.md            thin spine: baseline-first loop, modes, reference map
 agents/             one persona file per role (analyst, architect, executor, debugger, explore, designer, qa-*, db-reader, code-reviewer, security-reviewer)
 reference/          domain-rules · rules (project standing rules) · domain-context · debugging · interview · delivery-gate · plan-grounding · market-research · qa · qa-only · db-access · teach · learn-domain · ui-ux · taste-skill-v2 · functional-ui · harness-eval · skill-mine · observability
 teach/              TEACH-mode format guides + per-topic teaching workspaces
-templates/          delivery-proof.md · run-state.json · rules.md · qa-gate.sh · qa-only-gate.sh · commit-gate.sh · contrast-gate.mjs · learn-grounding-gate.mjs · qa-report.md · db-access/ · domain-agent/ · domain-onboarding.html · arch-report.html · harness-eval-gate.mjs · harness-eval-stats.mjs · harness-eval-cases/ · skill-mine/ · skill-frontmatter-gate.mjs · skill-install-audit.mjs · skill.md.template · observability/ (sg-emit board state)
+templates/          GOAL.md · PLAN.md · QA.md · R-LOOP.md · Z-DONE.md · run-state.json · rules.md · qa-gate.sh · qa-only-gate.sh · commit-gate.sh · contrast-gate.mjs · learn-grounding-gate.mjs · qa-report.md · db-access/ · domain-agent/ · domain-onboarding.html · arch-report.html · harness-eval-gate.mjs · harness-eval-stats.mjs · harness-eval-cases/ · skill-mine/ · skill-frontmatter-gate.mjs · skill-install-audit.mjs · skill.md.template · observability/ (sg-emit board state)
 tests/              contract tests + run-all.sh canonical verifier
 tui/                optional live Board: state.py (reader) · app.py (Textual UI) · serve.py (in-browser) · launch.sh
 docs/               DESIGN.md · research-brief.md · experiments/ (the harness evals) · changelog/ · index.html (landing)

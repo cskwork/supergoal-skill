@@ -10,7 +10,7 @@ tests, the QA gates, and the read-only DB rule still decide.
    Multiple domains may stack.
 2. **Distill.** Write <=10 one-line principle rules total - from the project's own docs/code first,
    then general domain knowledge. Keep them abstract, not task steps.
-3. **Record once.** Add `## Priority Rules` to the run vault `README.md`; keep them in the
+3. **Record once.** Add `## Priority Rules` to the run vault `PLAN.md`; keep them in the
    conductor's context.
 
 ## Apply per role
@@ -27,7 +27,7 @@ Inject only the role-relevant subset into each role prompt. Do not widen vault r
 ## Conservative updates
 
 Refine only when the objective or plan materially changes. Keep rules abstract and log the reason in
-the run `README.md` as `RULES-UPDATE:`.
+the run `PLAN.md` as `RULES-UPDATE:`.
 
 ## Format
 

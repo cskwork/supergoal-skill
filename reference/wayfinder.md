@@ -61,6 +61,8 @@ of local docs.
 - `Out of scope` - tempting adjacent work to keep out.
 - `Ticket graph` - ticket list with status and `Blocked by:` edges.
 - `Frontier` - the next unblocked ticket(s), ordered by risk and leverage.
+- `Smoke ledger` (build-out only) - one re-runnable boot + end-to-end check per closed ticket
+  (`reference/build-out.md`). Never remove or weaken a line to make it pass.
 
 ## Ticket contract
 
@@ -73,6 +75,8 @@ Each ticket is a vertical slice by default and acts as a `GOAL.md` detail slice:
 - Lists `Blocked by:` ticket ids or `none`.
 - Lists `Unblocks:` ticket ids when known.
 - Names scope boundaries and explicit non-goals.
+- Names its smoke check: the one boot/end-to-end command proving it in the assembled app (seeds the
+  Smoke ledger in build-out).
 
 Research-needed tickets stay WAYFINDER tickets. When the decision needs knowledge outside the current
 repo or recorded Domain Brief, write `Research: reference/research.md -> <question>` in the ticket and
@@ -124,10 +128,13 @@ records only the decision gist and link; the cited details live in the research 
 Work one frontier ticket per session. A frontier ticket is unblocked, high-leverage, and small enough to
 verify independently. After it closes, update the map, recompute the frontier, then stop.
 
-For large efforts, do not start a second ticket in the same context. Ask the user to clear context before
-the next ticket, and ask for the integration test / end-to-end check that should run before continuing.
-If no integration test exists, ask whether to add one as the next frontier ticket or record the gap as
-`Not covered`.
+For large efforts, do not start a second ticket in the same context. A GREENFIELD full-app build-out
+satisfies this with fresh-context roles per ticket and continues without asking: the conductor runs the
+boot smoke, updates the map, and selects the next frontier (`reference/build-out.md`). Every other
+large effort - interactive WAYFINDER planning, or a frontier ticket delivered via LEGACY/DEBUG -
+instead asks the user to clear context before the next ticket, and asks for
+the integration test / end-to-end check that should run before continuing. If no integration test
+exists, ask whether to add one as the next frontier ticket or record the gap as `Not covered`.
 
 ## Resume
 
@@ -145,3 +152,5 @@ carry only that ticket's acceptance checks into `GOAL.md`. After that ticket ver
 - the integration test / end-to-end check status or requested command,
 - the next frontier id,
 - a request to clear context before the next task.
+
+A GREENFIELD build-out run does not stop here; the conductor loops per `reference/build-out.md`.

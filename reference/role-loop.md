@@ -47,6 +47,11 @@ Before any file mutation, create the run vault's `GOAL.md` from `templates/GOAL.
   run vault before freezing `PLAN.md`; write `wayfinder/map.md`, write vertical tickets under
   `wayfinder/tickets/`, name the first unblocked frontier ticket, and carry only that ticket's
   acceptance checks into `GOAL.md` / `PLAN.md`; do not build sibling tickets in the same context;
+  full-app build-out: after map freeze and the app-level plan approval, the conductor loops tickets per
+  `reference/build-out.md` - each ticket gets its own run vault under `runs/<NNN-slug>/` and a fresh
+  worktree from the current integration branch; per-ticket plans record
+  `Status: auto-approved (build-out: app plan approved at map freeze)`; the boot smoke + Smoke-ledger
+  re-run gates the next frontier;
 - record eval intent in `PLAN.md` `## Intent`: user goal, constraints, tradeoffs, rejected approaches;
 - record the completion promise in `PLAN.md` `## Intent`: promised outcome, required proof, stop
   condition, and `max_iterations` (default 8);

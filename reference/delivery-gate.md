@@ -61,6 +61,8 @@ Run real verification commands, then compare against before state:
 - Every `GOAL.md` Success Criterion and QA Case is checked, and Backward-trace is clean.
 - Browser UI changes include browser evidence from `qa-gate.sh <vault> browser`.
 - Data-backed behavior includes read-only DB evidence when available.
+- Build-out ticket close: the assembled app boots from the integration branch and the Smoke ledger
+  re-runs green (`reference/build-out.md`).
 
 Done requires at least one trusted command (`frozen_repo` or `evaluator_owned`) in `QA.md`.
 Agent-detected commands can supplement proof, but cannot be the whole proof.
@@ -83,7 +85,9 @@ commit gate passed (`## Commit gate`).
 
 ## Commit gate
 
-Commit or merge into the target/integration branch only when proof is green and the user has accepted.
+Commit or merge into the target/integration branch only when proof is green and the user has accepted
+(in a build-out run, the map-freeze approval covers per-ticket merges into the integration branch;
+external push/publish still needs consent - `reference/build-out.md`).
 Block while any holds: REAL tests or request/docs not satisfied; QA verdict FAIL or PARTIAL (incomplete);
 an unchecked Success Criterion or QA Case in `GOAL.md` (including surfaced criteria); `PLAN.md` approval
 still pending; a missing or non-clean `Backward-trace` in `QA.md` (scope-creep orphan); an unresolved

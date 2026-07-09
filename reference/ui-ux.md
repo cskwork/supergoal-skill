@@ -21,6 +21,14 @@ The chosen authority overlays the normal mode; phases, gates, vault, and topolog
 scaffolding may fan out, but one surface's look-and-feel is deep-and-narrow: use one Designer driver
 per surface.
 
+## Design shell (multi-ticket app build-out)
+
+For a GREENFIELD build-out (`reference/build-out.md`), run the Frame Design Read ONCE at app level and
+record it in `wayfinder/map.md` under `Design shell`: dials, chosen system/family, accent source, and -
+after the first UI ticket ships - the shell files (layout frame, nav, type scale, color tokens). Every
+later ticket's Designer loads the recorded shell and extends it; it does not re-run the Design Read,
+pick a new family, or add tokens outside the shell. Shell drift is a Standards-axis red.
+
 ## Localized UI copy
 
 Visible copy is part of UI quality, not a translation afterthought. For non-English UI, rewrite the

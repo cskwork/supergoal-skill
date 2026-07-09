@@ -70,9 +70,10 @@ limited delegation, tooling is unavailable, or a safety/permission gate requires
 independent QA shards/review dimensions. Implementation/debug/legacy runs require red-green, plus DB
 evidence when persisted data is load-bearing. Full contract: `reference/role-loop.md`.
 
-Mandatory core: Build -> Improve full spec -> Improve edge cases -> Mandatory Two-Axis Review ->
-Exact Verify/QA. Historical contract string: Build -> Improve full spec -> Improve edge cases -> Final
-Verify. Critic/Fixer is not part of the default loop; the mandatory two-axis review is. The two review
+Mandatory core: Build -> Improve spec & edges -> Mandatory Two-Axis Review -> Exact Verify/QA.
+The merged Improve phase has two mandatory checks: Spec fit (request/docs/`GOAL.md` vs behavior)
+and Edge stress (boundary/error/state/security paths). Critic/Fixer is not part of the default loop; the
+mandatory two-axis review is. The two review
 axes stay separate: **Spec** asks whether the diff satisfies request/docs/`GOAL.md` without scope creep;
 **Standards** asks whether it fits repo standards, surrounding design, test quality, and maintainability.
 Use optional Critic/Fixer only when hidden requirements are the value being tested.
@@ -95,15 +96,15 @@ Use optional Critic/Fixer only when hidden requirements are the value being test
    `PLAN.md` alone (on an R-LOOP re-entry, also the latest `R-LOOP.md` section). Smallest
    correct change, test-first, surrounding style. Bug: failing test first (`reference/debugging.md`).
    Shared code/state changes: capture neighbor characterization baseline before editing.
-3. **Improve full spec.** Fresh-context improver re-reads the request/ticket, README, design/API docs,
-   `GOAL.md` `## Success Criteria`, code, tests, and repo/data rules; fix the smallest gap between those
-   requirements and current behavior.
+3. **Improve spec & edges.** Fresh-context improver completes both checks:
+   - **Spec fit:** re-read the request/ticket, README, design/API docs, `GOAL.md` `## Success Criteria`,
+     code, tests, and repo/data rules; fix the smallest gap between those requirements and current behavior.
+   - **Edge stress:** attack degenerate values, error/recovery, state/protocol, concurrency,
+     compatibility, security, and cleanup. Test only grounded `must` behavior.
    Production/source-code domain ambiguity that changes behavior stops as `ask-user`; generic no-user
-   coding ambiguity uses a conservative, reversible default and records it.
-4. **Improve edge cases.** Separate fresh-context improver attacks degenerate values, error/recovery,
-   state/protocol, concurrency, compatibility, security, and cleanup. Test only grounded `must` behavior;
-   route product/domain choices to the user.
-5. **Mandatory Two-Axis Review (no src edits).** Fresh reviewers run independent axes, parallel when
+   coding ambiguity uses a conservative, reversible default and records it. Route product/domain choices
+   to the user.
+4. **Mandatory Two-Axis Review (no src edits).** Fresh reviewers run independent axes, parallel when
    tooling allows:
    - **Spec axis:** re-read request/docs, `GOAL.md`, `PLAN.md`, `QA.md`, current diff, and tests to find
      missing/partial/wrong requirements and scope creep.
@@ -111,7 +112,7 @@ Use optional Critic/Fixer only when hidden requirements are the value being test
      readability, maintainability, and design-smell issues.
    Keep the axes separate in the report. Findings become fixes, decision gates, or residual risk; reviewer
    approval alone never means done.
-6. **Exact Verify/QA.** Re-run REAL tests plus the proof layer promised in Frame. Runtime-facing or
+5. **Exact Verify/QA.** Re-run REAL tests plus the proof layer promised in Frame. Runtime-facing or
    user-expected proof: run the actual E2E/live/API/browser run; exact verification outranks reviewer
    approval. Browser UI: complete browser app verification with `qa-gate.sh <vault> browser`. Diff the
    implementer's changes against `GOAL.md` and tick each criterion proven met; re-run neighbor baselines,
@@ -120,7 +121,7 @@ Use optional Critic/Fixer only when hidden requirements are the value being test
    (reads `PLAN.md` + latest section; capped by `max_iterations`). If the exact layer
    cannot run, mark it not proven with blocker/residual risk. Every `GOAL.md` box checked: write
    `Z-<YYYY-MM-DD>.md` (run branch + completion timestamp) - never earlier.
-7. **Critic escalation (opt-in; no src edits).** For under-specified / latent-correctness work, an
+6. **Critic escalation (opt-in; no src edits).** For under-specified / latent-correctness work, an
    independent critic classifies inferred behavior as `must`, `should`, or `ask-user`; only grounded
    `must` becomes FAILING tests. Append each as an unchecked `(surfaced: ...)` criterion to the run
    vault's `GOAL.md`; fixer clears reds

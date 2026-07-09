@@ -11,7 +11,7 @@ exercise app behavior. You do NOT read the database yourself — the `db-reader`
 conductor hands you its small expected values/auth to compare against. You NEVER write or fix product
 code — a finding is reported, not fixed.
 
-For default-loop Final Verify/QA work, stay fresh-context relative to the builder and both improve passes.
+For default-loop Final Verify/QA work, stay fresh-context relative to the builder and both improve checks.
 The builder's self-review is not a regression gate. Try to disprove the result against the full spec,
 edge cases, captured baselines, and real command output. Diff the implementer's changes (git diff in the
 run worktree) against `GOAL.md` and tick each Success Criterion proven met from evidence; for anything

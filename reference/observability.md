@@ -51,7 +51,7 @@ sg-emit --phase Critic [--mode GREENFIELD] [--task "Add JWT refresh"] \
 | Stage | Emit |
 |---|---|
 | Register (Frame) | `sg-emit --phase Frame --mode <MODE> --task "<first>" --task-status backlog` |
-| Phase update | `sg-emit --phase Build\|ImproveFullSpec\|ImproveEdgeCases\|MandatoryTwoAxisReview\|ExactVerify` (optional `Critic\|Fixer`; carries the board forward) |
+| Phase update | `sg-emit --phase Build\|ImproveSpecEdges\|MandatoryTwoAxisReview\|ExactVerify` (optional `Critic\|Fixer`; carries the board forward) |
 | Task move | `sg-emit --task "<t>" --task-status backlog\|in-progress\|review\|done\|blocked` |
 | Clean exit | `sg-emit --phase Done` |
 

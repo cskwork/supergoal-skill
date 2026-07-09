@@ -16,7 +16,7 @@ from textual.widgets import DataTable, Footer, Header, RichLog, Static
 
 from tui import state
 
-STAGES = ["Frame", "Build", "Critic", "Fixer", "Verify"]
+STAGES = ["Frame", "Build", "ImproveSpecEdges", "Critic", "Fixer", "MandatoryTwoAxisReview", "ExactVerify"]
 GLYPH = {"alive": ("●", "green"), "stale": ("○", "yellow"),
          "dead": ("○", "dim"), "done": ("✓", "blue")}
 BOARD_COLS = [("Backlog", "backlog"), ("In-Progress", "in-progress"),

@@ -3,12 +3,11 @@
 Use when the user invokes `supergoal` for GREENFIELD / DEBUG / LEGACY feature, bug, or refactor
 work. Once invoked, use this loop; do not downgrade to an inline shortcut.
 
-The mandatory core is Build -> Improve full spec -> Improve edge cases -> Mandatory Two-Axis Review ->
-Exact Verify/QA. Historical contract string: Build -> Improve full spec -> Improve edge cases -> Final
-Verify. After Build, one fresh-context improver compares the request/docs with current behavior; another
-attacks edge cases; separate fresh-context Spec and Standards reviewers try to disprove completeness from
-different axes; then Exact Verify/QA runs the real proof layer. Exact verification outranks reviewer
-approval.
+The mandatory core is Build -> Improve spec & edges -> Mandatory Two-Axis Review -> Exact Verify/QA.
+After Build, one fresh-context improver completes two mandatory checks: compare request/docs/`GOAL.md`
+with current behavior, then attack edge/error/state/security paths. Separate fresh-context Spec and
+Standards reviewers try to disprove completeness from different axes; then Exact Verify/QA runs the real
+proof layer. Exact verification outranks reviewer approval.
 Critic/Fixer is not part of the default loop.
 
 Use it when the task is under-specified, latent-correctness-heavy, security/edge/domain-rule-sensitive, or
@@ -94,8 +93,8 @@ subagents?" question unless the user limited delegation, tooling is unavailable,
 safety/permission gate requires consent. Return short structured status only:
 changed files, proof output, concerns. Parallelize independent units; order dependent roles. Each dispatch's
 model tier is the conductor's choice at dispatch time (stronger tier for novel/algorithmic slices).
-Build (1), Improve full spec (2), Improve edge cases (3), Mandatory Two-Axis Review (4), and Exact
-Verify/QA (5) are mandatory. Critic/Fixer is optional gated escalation, usually after the edge pass or
+Build (1), Improve spec & edges (2), Mandatory Two-Axis Review (3), and Exact Verify/QA (4) are
+mandatory. Critic/Fixer is optional gated escalation, usually after the Improve phase or
 when Exact Verify finds an unexplained gap.
 
 0. **Adversarial plan attack (conditional, no src edits)** - only for under-specified, wide-blast-radius,
@@ -113,8 +112,8 @@ when Exact Verify finds an unexplained gap.
    (`reference/qa.md` "Characterization baseline"). Refactor/integrate an existing API: capture its
    exact-behavior baseline FIRST. Capture run setup in `QA.md` `## Before` and `run-state.json`.
 
-2. **Improve full spec** (`agents/executor.md`; fresh-context improver)
-   - Re-read the request/ticket, README, design/API docs, current code, existing tests,
+2. **Improve spec & edges** (`agents/executor.md`; fresh-context improver)
+   - **Spec fit:** re-read the request/ticket, README, design/API docs, current code, existing tests,
      `GOAL.md` `## Success Criteria`, and repo/data rules. Fix the smallest gap between those requirements
      and current behavior.
    - If production/source-code domain ambiguity would change user-visible behavior, data semantics,
@@ -124,17 +123,16 @@ when Exact Verify finds an unexplained gap.
      record the choice in `GOAL.md` `## Decision Gates` (resolved), and prefer preserving existing
      values/no-op behavior unless spec or safety requires strictness.
    - Add or adjust tests only for grounded `must` behavior. Do not turn silence into stricter semantics.
-
-3. **Improve edge cases** (`agents/executor.md`; fresh-context improver)
-   - Attack degenerate inputs, missing/extra fields, duplicates, ordering, idempotency, error/recovery,
-     state/protocol transitions, concurrency, compatibility, security side effects, resource cleanup.
+   - **Edge stress:** attack degenerate inputs, missing/extra fields, duplicates, ordering, idempotency,
+     error/recovery, state/protocol transitions, concurrency, compatibility, security side effects,
+     resource cleanup.
    - For each gap, apply the same threshold: production/domain behavior-changing ambiguity needs user
      feedback; generic no-user coding ambiguity gets a conservative, reversible default and a recorded
      rationale.
    - Re-run the targeted tests after every fix. Keep the diff minimal; no padding, rewrites, or unrelated
      cleanup.
 
-4. **Mandatory Two-Axis Review (mandatory core; no src edits)** (`agents/code-reviewer.md`)
+3. **Mandatory Two-Axis Review (mandatory core; no src edits)** (`agents/code-reviewer.md`)
    - Dispatch two fresh-context reviewers independently, in parallel when tooling allows. Do not merge or
      rerank the axes; a change can pass one and fail the other.
    - **Spec axis:** re-read the request/docs, `GOAL.md`, `PLAN.md`, `QA.md`, current diff, tests, and
@@ -147,13 +145,13 @@ when Exact Verify finds an unexplained gap.
      `ask-user` decision gates, or residual risk. Reviewer approval is not a substitute for exact
      verification.
 
-5. **Exact Verify/QA vs ground truth (mandatory core; Final Verify/QA)** (browser proof:
+4. **Exact Verify/QA vs ground truth (mandatory core; Final Verify/QA)** (browser proof:
    `agents/qa-tester.md`; non-browser/artifact verify: `agents/qa-auditor.md`; security:
    `agents/security-reviewer.md`)
    - Re-run REAL tests and report output. Run the command/browser/API/E2E layer promised in
      `PLAN.md` `## Intent`. If the user expected an actual E2E/live/API/browser run, run it; otherwise mark
      that layer not proven with blocker/residual risk. Exact verification outranks reviewer approval. Fresh
-     gap -> route back to Improve full spec or Improve edge cases.
+     gap -> route back to Improve spec & edges.
    - Diff the implementer's changes (git diff in the run worktree) against `GOAL.md`: tick each Success
      Criterion / QA Case proven met (only the verifier ticks); untick a regressed previously-green
      criterion with the regression evidence.
@@ -183,7 +181,7 @@ when Exact Verify finds an unexplained gap.
    - Update `run-state.json`: phase, iteration, gate status, last proof command, blockers, next action,
      and completion-promise status.
 
-6. **Critic** (`agents/code-reviewer.md`; OPT-IN escalation for under-specified / latent-correctness work) - DO NOT edit src or weaken/delete existing tests.
+5. **Critic** (`agents/code-reviewer.md`; OPT-IN escalation for under-specified / latent-correctness work) - DO NOT edit src or weaken/delete existing tests.
    - Re-read request/docs and repo/data rules. Enumerate REQUIRED behaviors existing tests miss, especially
      boundary inputs, error/recovery, scoping/precedence, filters, incremental update, concurrency,
      protocol/state.
@@ -201,7 +199,7 @@ when Exact Verify finds an unexplained gap.
      that now covers it (unchecked box = open; only the verifier ticks it).
    - Leave the failing tests red.
 
-7. **Fixer** (`agents/executor.md`) - DO NOT edit test files.
+6. **Fixer** (`agents/executor.md`) - DO NOT edit test files.
    - Read NOTES + run the suite. Make the failing tests pass with the SMALLEST change.
    - If a critic-authored test appears to encode an `ask-user` choice, contradict current/API behavior, or
      harden semantics not required by request/docs or safety, stop and report the decision gate instead of
@@ -210,12 +208,12 @@ when Exact Verify finds an unexplained gap.
      passing tests.
 
 The improve-pass core is mandatory for invoked GREENFIELD / DEBUG / LEGACY runs: docs-vs-behavior
-improve, edge-case improve, mandatory adversarial review, exact REAL tests/E2E evidence, and DB evidence
+and edge-case checks, mandatory adversarial review, exact REAL tests/E2E evidence, and DB evidence
 for data-backed bugs (`reference/db-access.md`). DB proves data state; it does not replace red-green. Loop
 the opt-in critic->fixer escalation only while a fresh red appears.
 
 Board (optional): if enabled (`reference/observability.md`), conductor may call `sg-emit --phase <P>` at
-phase transitions (Frame/Build/ImproveFullSpec/ImproveEdgeCases/MandatoryTwoAxisReview/ExactVerify/Critic/Fixer/Done). Opt-in,
+phase transitions (Frame/Build/ImproveSpecEdges/MandatoryTwoAxisReview/ExactVerify/Critic/Fixer/Done). Opt-in,
 best-effort; observes only, never blocks or gates the loop.
 
 ## Guardrails (keep it baseline-first, not Goodhart)

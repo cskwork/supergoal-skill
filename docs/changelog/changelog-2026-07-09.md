@@ -140,9 +140,8 @@ the planning note.
 ## Mandatory Two-Axis Review
 
 **Change**: Split the default GREENFIELD / DEBUG / LEGACY review gate into independent Spec and Standards
-axes. The mandatory core is now Build -> Improve full spec -> Improve edge cases -> Mandatory Two-Axis
-Review -> Exact Verify/QA. REVIEW-ONLY uses the same split and keeps the existing Security reviewer as a
-third findings-only pass.
+axes. The mandatory core now routes through the same review gate before Exact Verify/QA. REVIEW-ONLY uses
+the same split and keeps the existing Security reviewer as a third findings-only pass.
 
 **Why**: Matt Pocock's `code-review` skill has one directly useful import for Supergoal: "did we build the
 right thing?" and "is it built well?" should not be blended into one reviewer context. Separate axes make
@@ -160,3 +159,26 @@ category masking the other.
 
 **Verification target**: `bash tests/role-loop-contract.test.sh`, `bash tests/review-only-contract.test.sh`,
 `bash tests/harness-eval-contract.test.sh`, `bash tests/run-all.sh`, and `git diff --check`.
+
+## Merged Improve phase
+
+**Change**: Collapsed the visible delivery loop from `Build -> Improve full spec -> Improve edge cases ->
+Mandatory Two-Axis Review -> Exact Verify/QA` to `Build -> Improve spec & edges -> Mandatory Two-Axis
+Review -> Exact Verify/QA`.
+
+**Why**: The full-spec and edge-case passes use the same executor persona, same ambiguity threshold, and
+same smallest-correct-change rule. Keeping two public phases made the loop look heavier than the behavior
+requires. The merged phase keeps two mandatory internal checks: Spec fit compares request/docs/`GOAL.md`
+against current behavior, and Edge stress attacks boundary, error, state/protocol, compatibility,
+security, and cleanup paths.
+
+**Rejected alternatives**:
+
+- Keep both public phase names. This preserves history but keeps unnecessary surface area in the loop.
+- Merge Improve into Build. That would weaken the fresh re-read after implementation.
+- Move edge checks into Two-Axis Review. Review is no-src-edit; grounded edge gaps still need an editable
+  improve phase before exact verification.
+
+**Verification target**: `bash tests/role-loop-contract.test.sh`, `bash tests/harness-eval-contract.test.sh`,
+`bash tests/observability-contract.test.sh`, `bash tests/tui-state-reader.test.sh`, `bash tests/run-all.sh`,
+and `git diff --check`.

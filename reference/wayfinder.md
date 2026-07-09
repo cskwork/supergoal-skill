@@ -5,6 +5,17 @@ multi-session effort, blocker graph, "what should we do first?", or "turn this p
 WAYFINDER is planning and tracker work, not product delivery. It can create or update issue records, but
 it writes no product code by default.
 
+## GREENFIELD scope gate
+
+When the user asks to build/make/ship a new app or tool, keep the top-level mode `GREENFIELD`. If that
+GREENFIELD objective is broad, foggy, roadmap-shaped, or clearly multi-session, use this file as an
+internal Frontier Map before Build instead of switching the user-facing route to WAYFINDER.
+
+The run vault root still carries the original GREENFIELD objective. Put the map under
+`wayfinder/map.md`, put slice tickets under `wayfinder/tickets/`, pick one unblocked frontier ticket,
+then copy only that ticket's acceptance checks into the delivery `GOAL.md` / `PLAN.md`. Do not build
+sibling tickets in the same context.
+
 ## Theory
 
 The map is not the work. It is a routing artifact: destination, settled decisions, open decisions,

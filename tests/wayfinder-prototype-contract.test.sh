@@ -63,6 +63,17 @@ require_text "landing has prototype card" "docs/index.html" "PROTOTYPE"
 # WAYFINDER preserves the upstream ticket-frontier idea without making it product delivery.
 require_text "wayfinder is not product delivery" "reference/wayfinder.md" "writes no product code by default"
 require_text "wayfinder supports issue tracker" "reference/wayfinder.md" "native tracker"
+require_text "greenfield keeps broad builds in greenfield" "SKILL.md" 'broad/foggy builds first use a `wayfinder/` Frontier Map inside the run vault'
+require_text "greenfield frame uses internal scope gate" "SKILL.md" 'GREENFIELD broad/foggy build requests use `reference/wayfinder.md` as an internal scope gate'
+require_text "role-loop defines greenfield scope gate" "reference/role-loop.md" "GREENFIELD scope gate"
+require_text "role-loop keeps broad greenfield mode" "reference/role-loop.md" 'keep the mode `GREENFIELD`'
+require_text "role-loop carries only frontier checks" "reference/role-loop.md" 'carry only that ticket'\''s acceptance checks into `GOAL.md` / `PLAN.md`'
+require_text "wayfinder defines greenfield scope gate" "reference/wayfinder.md" "## GREENFIELD scope gate"
+require_text "wayfinder keeps user-facing route greenfield" "reference/wayfinder.md" 'keep the top-level mode `GREENFIELD`'
+require_text "wayfinder copies only selected ticket checks" "reference/wayfinder.md" 'copy only that ticket'\''s acceptance checks into the delivery `GOAL.md` / `PLAN.md`'
+require_text "README explains broad greenfield frontier map" "README.md" "Broad new-app builds stay GREENFIELD"
+require_text "README.ko explains broad greenfield frontier map" "README.ko.md" "넓은 새 앱 build는 GREENFIELD에 남기되"
+require_text "landing explains broad greenfield frontier map" "docs/index.html" "broad GREENFIELD builds first use an internal wayfinder map"
 require_text "wayfinder nests local markdown under run vault" "reference/wayfinder.md" 'current run vault'\''s `wayfinder/` subfolder'
 require_text "wayfinder names canonical vault path" "reference/wayfinder.md" "docs/changelog/<YYYY-MM>/<DD-topic>/wayfinder/"
 reject_text "wayfinder rejects old standalone docs path" "reference/wayfinder.md" "docs/wayfinder/<slug>"

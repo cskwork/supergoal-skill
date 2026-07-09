@@ -36,7 +36,7 @@ on assumption. Full contract: `reference/role-loop.md`.
 
 | Signal in the objective | Mode | Route |
 |---|---|---|
-| build / make / ship a new app/tool | GREENFIELD | default loop |
+| build / make / ship a new app/tool | GREENFIELD | default loop; broad/foggy builds first use a `wayfinder/` Frontier Map inside the run vault, then deliver one selected frontier ticket |
 | fix / broken / failing / crash / why does | DEBUG | default loop; observe live symptom, then failing-test repro (`reference/debugging.md`, driver persona `agents/debugger.md`); web: `reference/qa.md`, `reference/playwright-cli.md` |
 | add / integrate / refactor existing code | LEGACY | default loop; map first (`agents/explore.md`, `reference/domain-context.md`); optional DB evidence (`reference/db-access.md`); existing API: capture its exact behavior first as a preserve-baseline; shared code/state changes: characterization baseline (`reference/qa.md`) |
 | spec / requirements first / break down / tickets / roadmap / big vague effort / frontier / what should we do first | WAYFINDER | map the destination, optional ticket-depth requirements, ticket graph, blockers, and next frontier; no product code by default (`reference/wayfinder.md`) |
@@ -77,7 +77,11 @@ Critic/Fixer only when hidden requirements are the value being tested.
 
 1. **Frame.** Write `GOAL.md` FIRST from `templates/GOAL.md`: `## Original Request` (user prompt
    verbatim), refined `## Spec`, falsifiable `## Success Criteria` checkboxes each naming its
-   verification, and web apps' `## QA Cases`. Write a completion promise in `PLAN.md` `## Intent`:
+   verification, and web apps' `## QA Cases`. GREENFIELD broad/foggy build requests use
+   `reference/wayfinder.md` as an internal scope gate: preserve the destination in
+   `wayfinder/map.md`, write vertical tickets under `wayfinder/tickets/`, select one frontier ticket,
+   and carry only that ticket's acceptance checks into the delivery `GOAL.md` / `PLAN.md`. Write a
+   completion promise in `PLAN.md` `## Intent`:
    outcome, proof, stop condition, `max_iterations` (default 8). Ask <=5 high-leverage questions only
    when needed; confirm wide/destructive/behavior-changing blast radius after grounding
    (`reference/interview.md`); deep requirements interviews may dispatch `agents/analyst.md`, and
@@ -132,7 +136,7 @@ security=`agents/security-reviewer.md` (others in `agents/<role>.md`).
 | `reference/debugging.md` | DEBUG: hypothesis-ledger diagnose loop |
 | `reference/interview.md` | interview: ambiguity (what) + blast-radius confirm (approach, tiered) |
 | `reference/delivery-gate.md`, `templates/GOAL.md`, `templates/PLAN.md`, `templates/QA.md`, `templates/R-LOOP.md`, `templates/Z-DONE.md`, `templates/run-state.json`, `templates/commit-gate.sh` | run vault file set + Before/After Eval + resumable run state + commit gate for GREENFIELD / DEBUG / LEGACY code changes |
-| `reference/wayfinder.md` | WAYFINDER: issue map -> vertical tickets -> optional EARS/user-story depth -> blockers -> next frontier |
+| `reference/wayfinder.md` | WAYFINDER: issue map -> vertical tickets -> optional EARS/user-story depth -> blockers -> next frontier; also GREENFIELD internal Frontier Map for broad/foggy new builds |
 | `reference/research.md` | WAYFINDER research-needed tickets; docs/API/source facts that need high-trust cited evidence |
 | `reference/prototype.md` | PROTOTYPE: throwaway logic/UI proof -> capture answer -> delete/quarantine or route to delivery |
 | `reference/plan-grounding.md` | ground the approach before committing |

@@ -17,6 +17,7 @@ the smallest correct change, checks the request and project docs against the rea
 1. **Route the objective.** The mode table classifies the real work kind, then routes as build,
    debug, legacy change, spec, wayfinding, prototype, QA, review, architecture, teaching, domain
    onboarding, harness eval, or skill mining.
+   Broad new-app builds stay GREENFIELD but first get a `wayfinder/` Frontier Map so only one vertical slice enters delivery.
 2. **Load only the needed playbook.** The root `SKILL.md` stays small; each route loads its own
    `reference/` and `agents/` files only when needed.
 3. **Keep contexts fresh.** Code delivery runs Build, Improve full spec, Improve edge cases, and
@@ -101,7 +102,7 @@ flowchart TD
 
 | Objective looks like | Mode | Approach |
 |---|---|---|
-| "build / ship a new app/tool" | **GREENFIELD** | default loop |
+| "build / ship a new app/tool" | **GREENFIELD** | default loop; broad/foggy app requests first use a `wayfinder/` Frontier Map, then one selected vertical slice enters Build |
 | "fix / broken / failing / why does" | **DEBUG** | default loop; reproduce with a failing test first |
 | "add X to our existing/legacy code" | **LEGACY** | default loop; map the code first; refactoring an existing API: capture its exact behavior first, Verify diffs against that baseline |
 | "spec this / break this into tickets / roadmap / what first?" | **WAYFINDER** | issue map under the run vault's `wayfinder/` folder -> optional ticket-depth sections (glossary, user story, EARS checks, design notes, tasks) and cited research assets via `reference/research.md` when outside facts are needed -> vertical tickets -> blocker edges -> next frontier; route one ticket, stop, then ask for context clear + integration test before the next |
@@ -118,7 +119,11 @@ flowchart TD
 request verbatim + refined spec + falsifiable Success Criteria checkboxes + browser QA cases for web
 apps), freeze a self-sufficient `PLAN.md` (steps, tools & skills, verification strategy), start `QA.md`
 `## Before` plus `run-state.json`, then clear the plan approval gate (interactive: the user's explicit
-OK; autonomous: auto-approved, recorded); 2) **Build** the smallest correct change in a fresh-context
+OK; autonomous: auto-approved, recorded). For broad GREENFIELD requests, Frame first writes an internal
+`wayfinder/map.md`, creates vertical tickets
+under `wayfinder/tickets/`, selects the first unblocked frontier, and copies only that ticket's
+acceptance checks into delivery. The route remains GREENFIELD; WAYFINDER stays the explicit no-code
+planning mode. 2) **Build** the smallest correct change in a fresh-context
 implementer briefed by `PLAN.md` alone, test-first (bug -> failing test first); 3) **Improve full spec**
 by re-reading the user's request, issue/ticket, README, design/API docs, and `GOAL.md` Success Criteria,
 then fixing the smallest

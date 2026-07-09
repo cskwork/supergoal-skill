@@ -1,5 +1,16 @@
 # 2026-07-09
 
+## GREENFIELD Frontier Scope Gate
+
+- Decision: keep broad new-app requests in `GREENFIELD` instead of routing them to a separate top-level
+  `WAYFINDER` run.
+  Why: users asking to build a new thing should not need to choose a planning route manually.
+- Decision: reuse WAYFINDER's map/ticket mechanics inside GREENFIELD before Build when the new build is
+  broad, foggy, roadmap-shaped, or multi-session.
+  Why: one vertical frontier slice is simpler to verify than a large app plan.
+- Rejected: fully merging away `WAYFINDER`.
+  Why: explicit no-code planning asks still need a product-code-free route.
+
 ## WAYFINDER and PROTOTYPE routes
 
 **Change**: Added two routes from the full mattpocock/skills scan:

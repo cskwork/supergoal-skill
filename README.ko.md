@@ -17,6 +17,7 @@
 1. **목표를 분류합니다.** 모드 표가 실제 작업 종류를 판단하고, 그다음 build, debug, legacy 변경,
    wayfinding, prototype, QA, review, architecture, teaching, domain onboarding, harness eval,
    skill mining 중 하나로 보냅니다.
+   넓은 새 앱 build는 GREENFIELD에 남기되, 먼저 `wayfinder/` Frontier Map으로 한 개 세로 슬라이스만 delivery에 넣습니다.
 2. **필요한 가이드만 읽습니다.** 루트 `SKILL.md`는 작게 유지하고, 각 경로가 필요한 `reference/`와
    `agents/` 파일만 로드합니다.
 3. **역할마다 새 컨텍스트를 씁니다.** 무거운 작업은 Build, Improve full spec, Improve edge cases,
@@ -101,7 +102,7 @@ flowchart TD
 
 | 목표 형태 | 모드 | 접근 |
 |---|---|---|
-| "새 앱/도구를 만든다/출시한다" | **GREENFIELD** | 기본 루프 |
+| "새 앱/도구를 만든다/출시한다" | **GREENFIELD** | 기본 루프. 범위가 넓으면 먼저 `wayfinder/` Frontier Map을 만들고, 선택된 세로 슬라이스 하나만 Build로 넘김 |
 | "고장/실패/크래시/왜 이러지" | **DEBUG** | 기본 루프; 실패 테스트부터 재현 |
 | "기존/레거시 코드에 X를 추가한다" | **LEGACY** | 기본 루프; 코드 구조부터 파악 |
 | "스펙 문서부터 구조화해줘 / 티켓으로 쪼개줘 / 로드맵 / 뭐부터 하지?" | **WAYFINDER** | 실행 vault의 `wayfinder/` 폴더에 지도를 만들고, 필요할 때만 티켓 안에 glossary, user story, EARS checks, design notes, tasks를 추가, 외부 사실 확인이 필요하면 `reference/research.md`로 인용된 research asset을 남김 -> 세로 슬라이스 티켓 -> blocker edge -> 다음 frontier; 티켓 하나만 delivery로 넘기고 멈춘 뒤 context clear + integration test를 요청 |
@@ -123,6 +124,9 @@ flowchart TD
 2. **계획 승인 게이트**: 대화형 세션에서는 `PLAN.md`를 보여주고 사용자의 명시적 OK를 받아야 구현이
    시작됩니다. 자율 실행(harness-eval, 백그라운드)은 auto-approved 사유를 `PLAN.md`에 기록하고
    진행합니다.
+   범위가 넓은 GREENFIELD 요청은 이 단계에서 먼저 내부 `wayfinder/map.md`와 `wayfinder/tickets/`를 만들고,
+   첫 번째 unblocked frontier 티켓의 acceptance check만 delivery `GOAL.md` / `PLAN.md`로 옮깁니다.
+   사용자에게 보이는 route는 GREENFIELD로 유지합니다.
 3. **Build**: 새 컨텍스트의 구현자가 `PLAN.md`만 읽고 가장 작은 올바른 변경을 만듭니다. 버그는 실패
    테스트로 먼저 재현합니다.
 4. **Improve full spec**: 사용자 요청, 이슈/티켓, README, 설계/API 문서, `GOAL.md` Success Criteria를

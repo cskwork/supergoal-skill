@@ -20,8 +20,8 @@ the smallest correct change, checks the request and project docs against the rea
    Broad new-app builds stay GREENFIELD but first get a `wayfinder/` Frontier Map so only one vertical slice enters delivery.
 2. **Load only the needed playbook.** The root `SKILL.md` stays small; each route loads its own
    `reference/` and `agents/` files only when needed.
-3. **Keep contexts fresh.** Code delivery runs Build, Improve full spec, Improve edge cases,
-   Mandatory Two-Axis Review, and Final Verify as separate fresh-context roles. The conductor passes the
+3. **Keep contexts fresh.** Code delivery runs Build, Improve spec & edges, Mandatory Two-Axis Review,
+   and Final Verify as separate fresh-context phases. The conductor passes the
    run vault and needed files, then collects short status. Critic/Fixer is an opt-in escalation for
    under-specified work, not the always-on default.
 4. **Run Before/After Eval.** Capture the before state, define the after target, write a completion
@@ -35,14 +35,14 @@ the smallest correct change, checks the request and project docs against the rea
 ## What it adds over a plain baseline
 
 A strong model with the real spec is the bar. `/supergoal` adds the part a plain baseline skips under
-pressure: after Build, it runs the current core loop - Improve full spec, Improve edge cases, Mandatory
-Two-Axis Review, then Final Verify - and records the proof. For genuinely under-specified work, it can
+pressure: after Build, it runs the current core loop - Improve spec & edges, Mandatory Two-Axis Review,
+then Final Verify - and records the proof. For genuinely under-specified work, it can
 escalate to an independent critic that writes spec-derived failing tests before a fixer clears them. Once
 invoked for code delivery, `/supergoal` uses the role-loop instead of downgrading to an inline shortcut.
 
 Each role is a bundled file in `agents/`, so dispatch stays harness-agnostic across Claude Code, Codex,
-agy, and other agent CLIs. Build -> Improve full spec -> Improve edge cases -> Mandatory Two-Axis Review
--> Final Verify is the mandatory core; Critic/Fixer stays available for the under-specified frontier. The
+agy, and other agent CLIs. Build -> Improve spec & edges -> Mandatory Two-Axis Review -> Final Verify is
+the mandatory core; Critic/Fixer stays available for the under-specified frontier. The
 conductor stays lean: subagents load the heavy references for their phase, and independent units run in
 parallel.
 
@@ -85,7 +85,7 @@ flowchart TD
     C -->|"harness effectiveness"| HARNESS["HARNESS-EVAL<br/>baseline vs harness"]
     C -->|"make a reusable skill"| SKILLMINE["SKILL-MINE<br/>mine -> forge -> install"]
 
-    GREENFIELD --> LOOP["Default delivery loop<br/>Build -> Improve full spec<br/>-> Improve edge cases -> Two-Axis Review<br/>-> Final Verify<br/>(Critic/Fixer opt-in)"]
+    GREENFIELD --> LOOP["Default delivery loop<br/>Build -> Improve spec & edges<br/>-> Two-Axis Review -> Final Verify<br/>(Critic/Fixer opt-in)"]
     DEBUG --> LOOP
     LEGACY --> LOOP
 
@@ -125,15 +125,14 @@ OK; autonomous: auto-approved, recorded). For broad GREENFIELD requests, Frame f
 under `wayfinder/tickets/`, selects the first unblocked frontier, and copies only that ticket's
 acceptance checks into delivery. The route remains GREENFIELD; WAYFINDER stays the explicit no-code
 planning mode. 2) **Build** the smallest correct change in a fresh-context
-implementer briefed by `PLAN.md` alone, test-first (bug -> failing test first); 3) **Improve full spec**
+implementer briefed by `PLAN.md` alone, test-first (bug -> failing test first); 3) **Improve spec & edges**
 by re-reading the user's request, issue/ticket, README, design/API docs, and `GOAL.md` Success Criteria,
-then fixing the smallest
-gap between that intent and the current behavior; 4) **Improve edge cases** by checking degenerate
-inputs, edge/error paths, state/protocol, compatibility, and security side effects; 5) **Mandatory
-Two-Axis Review** checks Spec fit and Standards/design quality in separate fresh contexts; 6) **Final Verify**
+then fixing the smallest gap between that intent and current behavior, plus checking degenerate inputs,
+edge/error paths, state/protocol, compatibility, and security side effects; 4) **Mandatory Two-Axis Review**
+checks Spec fit and Standards/design quality in separate fresh contexts; 5) **Final Verify**
 by re-running the real tests, diffing the implementer's changes against `GOAL.md`, ticking each criterion
 proven met, and recording plain checklist results in `QA.md`; unmet criteria go to a timestamped
-`R-LOOP.md` section and the implementer relaunches; 7) escalate to
+`R-LOOP.md` section and the implementer relaunches; 6) escalate to
 independent **Critic -> Fixer** only for genuinely under-specified or latent-correctness work where
 missing requirements need to become failing tests. Stop only after every `GOAL.md` box is checked and the
 `Z-<date>.md` completion marker (run branch + timestamp) is written with command output recorded. The

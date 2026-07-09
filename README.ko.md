@@ -20,8 +20,8 @@
    넓은 새 앱 build는 GREENFIELD에 남기되, 먼저 `wayfinder/` Frontier Map으로 한 개 세로 슬라이스만 delivery에 넣습니다.
 2. **필요한 가이드만 읽습니다.** 루트 `SKILL.md`는 작게 유지하고, 각 경로가 필요한 `reference/`와
    `agents/` 파일만 로드합니다.
-3. **역할마다 새 컨텍스트를 씁니다.** 무거운 작업은 Build, Improve full spec, Improve edge cases,
-   Mandatory Two-Axis Review, Final Verify를 각각 새 컨텍스트의 역할로 나눕니다. 지휘 역할은 run vault와 필요한 파일만 넘기고,
+3. **역할마다 새 컨텍스트를 씁니다.** 무거운 작업은 Build, Improve spec & edges,
+   Mandatory Two-Axis Review, Final Verify를 각각 새 컨텍스트 단계로 나눕니다. 지휘 역할은 run vault와 필요한 파일만 넘기고,
    각 역할은 짧은 상태만 반환합니다. Critic/Fixer는 모든 작업의 기본이 아니라, 요구사항이 충분히
    드러나지 않은 작업에서만 쓰는 확장입니다.
 4. **전/후 평가를 남깁니다.** 변경 전 상태와 변경 후 목표를 먼저 적고, 완료 약속과 재개 가능한
@@ -34,13 +34,13 @@
 ## 일반 실행보다 더해지는 것
 
 강력한 모델이 실제 요구사항과 문서를 읽고 작업하는 것이 기준입니다. `/supergoal`은 일반 실행이 바쁜 작업 중에
-건너뛰기 쉬운 부분만 보강합니다. Build 뒤에 현재 핵심 루프인 Improve full spec, Improve edge cases,
+건너뛰기 쉬운 부분만 보강합니다. Build 뒤에 현재 핵심 루프인 Improve spec & edges,
 Mandatory Two-Axis Review, Final Verify를 거쳐 증거를 남깁니다. 요구사항이 덜 명시된 작업은 독립
 검토자(Critic)가 요구사항 기반 실패 테스트를 쓰고 Fixer가 가장 작은 변경으로 통과시키는 방식으로 확장할 수
 있습니다. 코드 delivery로 호출된 `/supergoal`은 인라인 단축 실행으로 낮추지 않고 role-loop를 사용합니다.
 
 각 역할은 `agents/`에 파일로 들어 있습니다. 그래서 Claude Code, Codex, agy 같은 여러 에이전트 CLI에서 특정
-harness에 묶이지 않고 역할을 나눠 실행할 수 있습니다. Build -> Improve full spec -> Improve edge cases ->
+harness에 묶이지 않고 역할을 나눠 실행할 수 있습니다. Build -> Improve spec & edges ->
 Mandatory Two-Axis Review -> Final Verify가 필수 핵심이고, Critic/Fixer는 요구사항이 충분히 드러나지 않은
 작업에서만 쓰는 확장입니다. 진행 에이전트는 가볍게 유지되고, 역할별 상세 가이드는 서브에이전트 안에서만
 로드됩니다. 독립적인 작업 단위는 병렬로 돌립니다.
@@ -84,7 +84,7 @@ flowchart TD
     C -->|"harness effectiveness"| HARNESS["HARNESS-EVAL<br/>baseline vs harness"]
     C -->|"make a reusable skill"| SKILLMINE["SKILL-MINE<br/>mine -> forge -> install"]
 
-    GREENFIELD --> LOOP["기본 delivery loop<br/>Build -> Improve full spec<br/>-> Improve edge cases -> Two-Axis Review<br/>-> Final Verify<br/>(Critic/Fixer는 필요할 때)"]
+    GREENFIELD --> LOOP["기본 delivery loop<br/>Build -> Improve spec & edges<br/>-> Two-Axis Review -> Final Verify<br/>(Critic/Fixer는 필요할 때)"]
     DEBUG --> LOOP
     LEGACY --> LOOP
 
@@ -129,17 +129,17 @@ flowchart TD
    사용자에게 보이는 route는 GREENFIELD로 유지합니다.
 3. **Build**: 새 컨텍스트의 구현자가 `PLAN.md`만 읽고 가장 작은 올바른 변경을 만듭니다. 버그는 실패
    테스트로 먼저 재현합니다.
-4. **Improve full spec**: 사용자 요청, 이슈/티켓, README, 설계/API 문서, `GOAL.md` Success Criteria를
-   다시 읽습니다. 그 의도와 현재 코드 동작을 비교하고, 빠졌거나 틀린 동작만 가장 작게 고칩니다.
-5. **Improve edge cases**: null/빈 값/경계값, 에러 경로, 상태/프로토콜, 호환성, 보안 부작용을 확인합니다.
-6. **Mandatory Two-Axis Review**: Spec 축은 요청/문서/`GOAL.md` 대비 빠진 동작과 scope creep을 보고,
+4. **Improve spec & edges**: 사용자 요청, 이슈/티켓, README, 설계/API 문서, `GOAL.md` Success Criteria를
+   다시 읽어 현재 동작과 비교하고, null/빈 값/경계값, 에러 경로, 상태/프로토콜, 호환성, 보안 부작용까지
+   확인합니다.
+5. **Mandatory Two-Axis Review**: Spec 축은 요청/문서/`GOAL.md` 대비 빠진 동작과 scope creep을 보고,
    Standards 축은 저장소 규칙, 주변 설계, 테스트 품질, 유지보수성을 별도로 봅니다.
-7. **Final Verify**: 실제 테스트를 다시 돌리고, 구현자의 git diff를 `GOAL.md`와 대조해 충족된 기준을
+6. **Final Verify**: 실제 테스트를 다시 돌리고, 구현자의 git diff를 `GOAL.md`와 대조해 충족된 기준을
    체크하고, 결과를 평이한 체크리스트 문장으로 `QA.md`에 남깁니다. 미충족 기준은 `R-LOOP.md`에
    타임스탬프 섹션으로 적고 구현자를 다시 띄웁니다.
-8. **Critic -> Fixer(선택 확장)**: 요구사항이 덜 명시된 작업에서만 독립 검토자가 스펙 기반 실패 테스트를
+7. **Critic -> Fixer(선택 확장)**: 요구사항이 덜 명시된 작업에서만 독립 검토자가 스펙 기반 실패 테스트를
    쓰고, Fixer가 가장 작은 변경으로 통과시킵니다.
-9. **완료**: `GOAL.md`의 모든 체크박스가 채워졌을 때만 작업 브랜치와 완료 시각을 담은 `Z-<날짜>.md`를
+8. **완료**: `GOAL.md`의 모든 체크박스가 채워졌을 때만 작업 브랜치와 완료 시각을 담은 `Z-<날짜>.md`를
    만들고 멈춥니다. 어떤 명령으로 검증했는지 함께 보고합니다. 핵심 루프는 기본 8회 상한을 두고, 상한에
    닿으면 무엇이 막히는지 먼저 반성 기록을 남깁니다.
 

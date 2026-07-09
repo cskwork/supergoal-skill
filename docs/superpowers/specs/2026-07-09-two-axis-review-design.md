@@ -23,7 +23,7 @@ Keep Exact Verify/QA as the hard proof layer after review.
 
 The default loop becomes:
 
-`Build -> Improve full spec -> Improve edge cases -> Mandatory Two-Axis Review -> Exact Verify/QA`
+`Build -> Improve spec & edges -> Mandatory Two-Axis Review -> Exact Verify/QA`
 
 The Spec axis checks request/docs, `GOAL.md`, `PLAN.md`, `QA.md`, tests, and the current diff for missing
 requirements, partial behavior, wrong behavior, and scope creep.

@@ -58,11 +58,11 @@ require_text "fixer blocks ask-user generated tests" "reference/role-loop.md" "s
 require_text "verifier marks surfaced requirements fixed" "reference/role-loop.md" "Tick each surfaced criterion"
 
 # SKILL.md surfaces the route; reference/role-loop.md owns the detailed behavior.
-require_text "SKILL names equal-compute improve loop" "SKILL.md" "Build -> Improve full spec -> Improve edge cases -> Final Verify"
+require_text "SKILL names equal-compute improve loop" "SKILL.md" "Build -> Improve spec & edges -> Mandatory Two-Axis Review -> Exact Verify/QA"
 require_text "role-loop critic step logs surfaced requirements" "reference/role-loop.md" 'run vault'\''s `GOAL.md`'
 require_text "role-loop keeps production ambiguity as ask-user" "reference/role-loop.md" "production/source-code domain ambiguity"
 require_text "role-loop allows conservative no-user default" "reference/role-loop.md" "conservative, reversible default"
-require_text "role-loop names mandatory improve passes" "reference/role-loop.md" "Build -> Improve full spec -> Improve edge cases -> Final Verify"
+require_text "role-loop names mandatory improve phase" "reference/role-loop.md" "Build -> Improve spec & edges -> Mandatory Two-Axis Review -> Exact Verify/QA"
 require_text "role-loop excludes critic from default loop" "reference/role-loop.md" "Critic/Fixer is not part of the default loop"
 require_text "SKILL excludes critic from default loop" "SKILL.md" "Critic/Fixer is not part of the default loop"
 require_text "role-loop dispatches fresh-context roles" "reference/role-loop.md" "fresh-context subagent"
@@ -94,19 +94,21 @@ require_text "SKILL exact verification outranks review" "SKILL.md" "exact verifi
 require_text "role-loop exact verification outranks review" "reference/role-loop.md" "Exact verification outranks reviewer approval"
 require_text "SKILL requires actual E2E/live/API/browser run" "SKILL.md" "actual E2E/live/API/browser run"
 require_text "role-loop requires actual E2E/live/API/browser run" "reference/role-loop.md" "actual E2E/live/API/browser run"
-require_text "role-loop compares request docs to behavior" "reference/role-loop.md" "compares the request/docs with current behavior"
+require_text "role-loop compares request docs to behavior" "reference/role-loop.md" 'compare request/docs/`GOAL.md` with current behavior'
 require_text "SKILL full-spec pass names concrete docs" "SKILL.md" "request/ticket, README, design/API docs"
 require_text "executor full-spec pass names concrete docs" "agents/executor.md" "request/ticket, README, design/API docs"
 require_text "role-loop says when to use critic" "reference/role-loop.md" "Use it when the task is under-specified"
 require_text "role-loop says when not to use critic" "reference/role-loop.md" "Do not use it when the spec is explicit"
 require_text "role-loop gates critic escalation" "reference/role-loop.md" "optional gated escalation"
-require_text "role-loop has full-spec improver role" "reference/role-loop.md" "Improve full spec"
-require_text "role-loop has edge-case improver role" "reference/role-loop.md" "Improve edge cases"
+require_text "role-loop has merged improve phase" "reference/role-loop.md" "Improve spec & edges"
+require_text "role-loop keeps spec-fit check" "reference/role-loop.md" "Spec fit"
+require_text "role-loop keeps edge-stress check" "reference/role-loop.md" "Edge stress"
 require_text "role-loop preserves user feedback for production domain" "reference/role-loop.md" "Production/domain behavior-changing ambiguity needs user feedback"
 require_text "role-loop records conservative no-user default" "reference/role-loop.md" "conservative, reversible default"
-require_text "executor supports full-spec improve mode" "agents/executor.md" "DO (Improve full spec)"
-require_text "executor supports edge-case improve mode" "agents/executor.md" "DO (Improve edge cases)"
-require_text "qa-auditor verifies after improve passes" "agents/qa-auditor.md" "builder and both improve passes"
+require_text "executor supports merged improve mode" "agents/executor.md" "DO (Improve spec & edges)"
+require_text "executor keeps spec-fit check" "agents/executor.md" "Spec fit"
+require_text "executor keeps edge-stress check" "agents/executor.md" "Edge stress"
+require_text "qa-auditor verifies after improve checks" "agents/qa-auditor.md" "builder and both improve checks"
 require_text "critic is optional escalation" "agents/code-reviewer.md" "Optional Critic escalation"
 require_text "code-reviewer supports spec axis" "agents/code-reviewer.md" "DO (Spec axis)"
 require_text "code-reviewer supports standards axis" "agents/code-reviewer.md" "DO (Standards axis)"
@@ -182,6 +184,7 @@ require_text "role-loop gates plan attack to under-specified work" "reference/ro
 # Critic carries an explicit adversarial (disprove, not validate) stance.
 require_text "critic stance is to disprove, not rubber-stamp" "agents/code-reviewer.md" "try to DISPROVE"
 require_text "observability uses two-axis review phase" "reference/observability.md" "MandatoryTwoAxisReview"
+require_text "observability uses merged improve phase" "reference/observability.md" "ImproveSpecEdges"
 
 printf '\nSummary: %s passed, %s failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

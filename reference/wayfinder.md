@@ -7,6 +7,10 @@ it writes no product code by default.
 
 ## GREENFIELD scope gate
 
+Boundary: combine the workflow path, not the mode identity. A planning/spec request routes to WAYFINDER
+and stops without product code. A broad build routes to GREENFIELD, uses this map/ticket-depth machinery
+during Frame, then delivers one selected ticket.
+
 When the user asks to build/make/ship a new app or tool, keep the top-level mode `GREENFIELD`. If that
 GREENFIELD objective is broad, foggy, roadmap-shaped, or clearly multi-session, use this file as an
 internal Frontier Map before Build instead of switching the user-facing route to WAYFINDER.

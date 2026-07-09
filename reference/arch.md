@@ -51,10 +51,10 @@ opener when available) and ask which one to explore.
 
 ## Grill the pick
 
-The user picks a candidate; walk its design tree with the grill protocol from `reference/spec.md`
-(`## Grill`): one question at a time with a recommended answer; explore the codebase instead of
-asking when code can answer; stress-test the deepened module with concrete scenarios - what sits
-behind the seam, which tests survive the change. Decisions land inline where they belong:
+The user picks a candidate; walk its design tree with the ticket-depth protocol from
+`reference/wayfinder.md`: one question at a time with a recommended answer; explore the codebase instead
+of asking when code can answer; stress-test the deepened module with concrete scenarios - what sits behind
+the seam, which tests survive the change. Decisions land inline where they belong:
 
 - A deepened module named after a concept missing from `CONTEXT.md` -> add the term there (create
   the file lazily; glossary only, no implementation details).
@@ -66,5 +66,5 @@ behind the seam, which tests survive the change. Decisions land inline where the
 ## Exit
 
 Report delivered; repo untouched except the run vault and any user-approved `CONTEXT.md`/ADR writes
-(`git status` shows nothing else). The grilled candidate's refactor plan hands off to LEGACY or SPEC
+(`git status` shows nothing else). The grilled candidate's refactor plan hands off to LEGACY or WAYFINDER
 (multi-component reshape) as a new objective - do not start fixing in this mode.

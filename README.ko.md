@@ -21,7 +21,7 @@
 2. **필요한 가이드만 읽습니다.** 루트 `SKILL.md`는 작게 유지하고, 각 경로가 필요한 `reference/`와
    `agents/` 파일만 로드합니다.
 3. **역할마다 새 컨텍스트를 씁니다.** 무거운 작업은 Build, Improve full spec, Improve edge cases,
-   Final Verify를 각각 새 컨텍스트의 역할로 나눕니다. 지휘 역할은 run vault와 필요한 파일만 넘기고,
+   Mandatory Two-Axis Review, Final Verify를 각각 새 컨텍스트의 역할로 나눕니다. 지휘 역할은 run vault와 필요한 파일만 넘기고,
    각 역할은 짧은 상태만 반환합니다. Critic/Fixer는 모든 작업의 기본이 아니라, 요구사항이 충분히
    드러나지 않은 작업에서만 쓰는 확장입니다.
 4. **전/후 평가를 남깁니다.** 변경 전 상태와 변경 후 목표를 먼저 적고, 완료 약속과 재개 가능한
@@ -35,15 +35,15 @@
 
 강력한 모델이 실제 요구사항과 문서를 읽고 작업하는 것이 기준입니다. `/supergoal`은 일반 실행이 바쁜 작업 중에
 건너뛰기 쉬운 부분만 보강합니다. Build 뒤에 현재 핵심 루프인 Improve full spec, Improve edge cases,
-Final Verify를 거쳐 증거를 남깁니다. 요구사항이 덜 명시된 작업은 독립 검토자(Critic)가 요구사항 기반
-실패 테스트를 쓰고 Fixer가 가장 작은 변경으로 통과시키는 방식으로 확장할 수 있습니다. 코드 delivery로
-호출된 `/supergoal`은 인라인 단축 실행으로 낮추지 않고 role-loop를 사용합니다.
+Mandatory Two-Axis Review, Final Verify를 거쳐 증거를 남깁니다. 요구사항이 덜 명시된 작업은 독립
+검토자(Critic)가 요구사항 기반 실패 테스트를 쓰고 Fixer가 가장 작은 변경으로 통과시키는 방식으로 확장할 수
+있습니다. 코드 delivery로 호출된 `/supergoal`은 인라인 단축 실행으로 낮추지 않고 role-loop를 사용합니다.
 
 각 역할은 `agents/`에 파일로 들어 있습니다. 그래서 Claude Code, Codex, agy 같은 여러 에이전트 CLI에서 특정
 harness에 묶이지 않고 역할을 나눠 실행할 수 있습니다. Build -> Improve full spec -> Improve edge cases ->
-Final Verify가 필수 핵심이고, Critic/Fixer는 요구사항이 충분히 드러나지 않은 작업에서만 쓰는 확장입니다.
-진행 에이전트는 가볍게 유지되고, 역할별 상세 가이드는 서브에이전트 안에서만 로드됩니다. 독립적인 작업
-단위는 병렬로 돌립니다.
+Mandatory Two-Axis Review -> Final Verify가 필수 핵심이고, Critic/Fixer는 요구사항이 충분히 드러나지 않은
+작업에서만 쓰는 확장입니다. 진행 에이전트는 가볍게 유지되고, 역할별 상세 가이드는 서브에이전트 안에서만
+로드됩니다. 독립적인 작업 단위는 병렬로 돌립니다.
 
 ## 원칙
 
@@ -84,7 +84,7 @@ flowchart TD
     C -->|"harness effectiveness"| HARNESS["HARNESS-EVAL<br/>baseline vs harness"]
     C -->|"make a reusable skill"| SKILLMINE["SKILL-MINE<br/>mine -> forge -> install"]
 
-    GREENFIELD --> LOOP["기본 delivery loop<br/>Build -> Improve full spec<br/>-> Improve edge cases -> Final Verify<br/>(Critic/Fixer는 필요할 때)"]
+    GREENFIELD --> LOOP["기본 delivery loop<br/>Build -> Improve full spec<br/>-> Improve edge cases -> Two-Axis Review<br/>-> Final Verify<br/>(Critic/Fixer는 필요할 때)"]
     DEBUG --> LOOP
     LEGACY --> LOOP
 
@@ -110,7 +110,7 @@ flowchart TD
 | "X를 설명/가르쳐줘" (코드 변경 없음) | **TEACH** | Mission -> Source -> Bridge -> Teach -> Check |
 | "이 코드베이스를 학습/온보딩해줘" | **LEARN-DOMAIN** | Survey -> Map -> Ground -> `.domain-agent/` 위키 |
 | "QA만/검증/데이터 비교" (코드 변경 없음) | **QA-ONLY** | 상세 Impact Matrix(기능 영향 범위 QA 지도) + 읽기 전용 DB -> 증거 -> `report.md` |
-| "코드/diff/PR 리뷰만" (수정 없음) | **REVIEW-ONLY** | 독립 리뷰어 2명 -> 검증된 findings -> `report.md` |
+| "코드/diff/PR 리뷰만" (수정 없음) | **REVIEW-ONLY** | Standards + Spec + Security 리뷰어 -> 검증된 findings -> `report.md` |
 | "구조 개선 / 리팩터링 후보 찾아줘" | **ARCHITECTURE** | 마찰 조사 -> 후보를 시각적 `report.html`로 제시 -> 고른 후보만 grill -> 리팩터링은 LEGACY/WAYFINDER로 |
 | "harness 효과 테스트 / 유무 비교" | **HARNESS-EVAL** | 케이스 -> baseline -> harness -> 머신 체크 -> 품질 점수 -> 비교 |
 | "히스토리에서 스킬 생성" (제품 코드 변경 없음) | **SKILL-MINE** | 히스토리 마이닝 -> 랭크 -> 선택 -> 포터블 `SKILL.md` 생성 -> 설치 |
@@ -132,12 +132,14 @@ flowchart TD
 4. **Improve full spec**: 사용자 요청, 이슈/티켓, README, 설계/API 문서, `GOAL.md` Success Criteria를
    다시 읽습니다. 그 의도와 현재 코드 동작을 비교하고, 빠졌거나 틀린 동작만 가장 작게 고칩니다.
 5. **Improve edge cases**: null/빈 값/경계값, 에러 경로, 상태/프로토콜, 호환성, 보안 부작용을 확인합니다.
-6. **Final Verify**: 실제 테스트를 다시 돌리고, 구현자의 git diff를 `GOAL.md`와 대조해 충족된 기준을
+6. **Mandatory Two-Axis Review**: Spec 축은 요청/문서/`GOAL.md` 대비 빠진 동작과 scope creep을 보고,
+   Standards 축은 저장소 규칙, 주변 설계, 테스트 품질, 유지보수성을 별도로 봅니다.
+7. **Final Verify**: 실제 테스트를 다시 돌리고, 구현자의 git diff를 `GOAL.md`와 대조해 충족된 기준을
    체크하고, 결과를 평이한 체크리스트 문장으로 `QA.md`에 남깁니다. 미충족 기준은 `R-LOOP.md`에
    타임스탬프 섹션으로 적고 구현자를 다시 띄웁니다.
-7. **Critic -> Fixer(선택 확장)**: 요구사항이 덜 명시된 작업에서만 독립 검토자가 스펙 기반 실패 테스트를
+8. **Critic -> Fixer(선택 확장)**: 요구사항이 덜 명시된 작업에서만 독립 검토자가 스펙 기반 실패 테스트를
    쓰고, Fixer가 가장 작은 변경으로 통과시킵니다.
-8. **완료**: `GOAL.md`의 모든 체크박스가 채워졌을 때만 작업 브랜치와 완료 시각을 담은 `Z-<날짜>.md`를
+9. **완료**: `GOAL.md`의 모든 체크박스가 채워졌을 때만 작업 브랜치와 완료 시각을 담은 `Z-<날짜>.md`를
    만들고 멈춥니다. 어떤 명령으로 검증했는지 함께 보고합니다. 핵심 루프는 기본 8회 상한을 두고, 상한에
    닿으면 무엇이 막히는지 먼저 반성 기록을 남깁니다.
 
@@ -165,7 +167,7 @@ delivery 경로를 통과해야 합니다.
 ## Board (선택형 실시간 대시보드)
 
 동시에 실행되는 에이전트의 진행 상황을 실시간으로 볼 수 있습니다. `bash tui/launch.sh &`는 브라우저에서 보는
-Textual 기반 대시보드를 열고, 각 에이전트의 모드와 단계(Frame -> Build -> Improve -> Final Verify,
+Textual 기반 대시보드를 열고, 각 에이전트의 모드와 단계(Frame -> Build -> Improve -> Two-Axis Review -> Final Verify,
 필요하면 Critic/Fixer)를 repo / branch / worktree별 작업 보드로 보여줍니다. 브랜치는 참고 정보일 뿐 잠금이
 아니므로 여러 에이전트가 같은 브랜치를 공유할 수 있습니다.
 

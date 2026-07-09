@@ -3,11 +3,12 @@
 Use when the user invokes `supergoal` for GREENFIELD / DEBUG / LEGACY feature, bug, or refactor
 work. Once invoked, use this loop; do not downgrade to an inline shortcut.
 
-The mandatory core is Build -> Improve full spec -> Improve edge cases -> Mandatory Adversarial Review ->
+The mandatory core is Build -> Improve full spec -> Improve edge cases -> Mandatory Two-Axis Review ->
 Exact Verify/QA. Historical contract string: Build -> Improve full spec -> Improve edge cases -> Final
 Verify. After Build, one fresh-context improver compares the request/docs with current behavior; another
-attacks edge cases; a separate fresh-context adversarial review always tries to disprove completeness;
-then Exact Verify/QA runs the real proof layer. Exact verification outranks reviewer approval.
+attacks edge cases; separate fresh-context Spec and Standards reviewers try to disprove completeness from
+different axes; then Exact Verify/QA runs the real proof layer. Exact verification outranks reviewer
+approval.
 Critic/Fixer is not part of the default loop.
 
 Use it when the task is under-specified, latent-correctness-heavy, security/edge/domain-rule-sensitive, or
@@ -28,7 +29,7 @@ verify both refs exist and create a branch-scoped run worktree:
 git worktree add -b <run_branch> <worktree_path> <source/base branch>
 ```
 
-Run Build, Improve, Mandatory Adversarial Review, Exact Verify/QA, optional Critic/Fixer, tests, and vault
+Run Build, Improve, Mandatory Two-Axis Review, Exact Verify/QA, optional Critic/Fixer, tests, and vault
 writes inside that worktree; never edit the original checkout. Treat dirty original-checkout files as user
 work. Commit or merge only
 into the verified target/integration branch after green verification, user acceptance, and only once the
@@ -93,7 +94,7 @@ subagents?" question unless the user limited delegation, tooling is unavailable,
 safety/permission gate requires consent. Return short structured status only:
 changed files, proof output, concerns. Parallelize independent units; order dependent roles. Each dispatch's
 model tier is the conductor's choice at dispatch time (stronger tier for novel/algorithmic slices).
-Build (1), Improve full spec (2), Improve edge cases (3), Mandatory Adversarial Review (4), and Exact
+Build (1), Improve full spec (2), Improve edge cases (3), Mandatory Two-Axis Review (4), and Exact
 Verify/QA (5) are mandatory. Critic/Fixer is optional gated escalation, usually after the edge pass or
 when Exact Verify finds an unexplained gap.
 
@@ -133,12 +134,17 @@ when Exact Verify finds an unexplained gap.
    - Re-run the targeted tests after every fix. Keep the diff minimal; no padding, rewrites, or unrelated
      cleanup.
 
-4. **Mandatory Adversarial Review (mandatory core; no src edits)** (`agents/code-reviewer.md`)
-   - Fresh-context adversarial review: re-read the request/docs, `GOAL.md`, `PLAN.md`, `QA.md`, current
-     diff, tests, and repo/data rules. Try to disprove the change against required behavior, edge cases,
-     and execution evidence. Fresh gap -> route back to Improve full spec or Improve edge cases.
-   - The reviewer does not edit source, does not weaken tests, and does not declare done. Findings become
-     fixes, `ask-user` decision gates, or residual risk. Reviewer approval is not a substitute for exact
+4. **Mandatory Two-Axis Review (mandatory core; no src edits)** (`agents/code-reviewer.md`)
+   - Dispatch two fresh-context reviewers independently, in parallel when tooling allows. Do not merge or
+     rerank the axes; a change can pass one and fail the other.
+   - **Spec axis:** re-read the request/docs, `GOAL.md`, `PLAN.md`, `QA.md`, current diff, tests, and
+     repo/data rules. Try to disprove the change against required behavior, edge cases, execution evidence,
+     and scope boundaries. Report missing requirements, partial behavior, wrong behavior, and scope creep.
+   - **Standards axis:** re-read documented repo standards, standing rules, neighboring code, tests, and the
+     fixed smell baseline in `agents/code-reviewer.md`. Report hard documented-standard violations
+     separately from judgment-call design smells. Skip issues already enforced by tooling.
+   - Reviewers do not edit source, do not weaken tests, and do not declare done. Findings become fixes,
+     `ask-user` decision gates, or residual risk. Reviewer approval is not a substitute for exact
      verification.
 
 5. **Exact Verify/QA vs ground truth (mandatory core; Final Verify/QA)** (browser proof:
@@ -209,7 +215,7 @@ for data-backed bugs (`reference/db-access.md`). DB proves data state; it does n
 the opt-in critic->fixer escalation only while a fresh red appears.
 
 Board (optional): if enabled (`reference/observability.md`), conductor may call `sg-emit --phase <P>` at
-phase transitions (Frame/Build/ImproveFullSpec/ImproveEdgeCases/MandatoryAdversarialReview/ExactVerify/Critic/Fixer/Done). Opt-in,
+phase transitions (Frame/Build/ImproveFullSpec/ImproveEdgeCases/MandatoryTwoAxisReview/ExactVerify/Critic/Fixer/Done). Opt-in,
 best-effort; observes only, never blocks or gates the loop.
 
 ## Guardrails (keep it baseline-first, not Goodhart)

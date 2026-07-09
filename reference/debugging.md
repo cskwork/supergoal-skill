@@ -86,7 +86,7 @@ For DB/API/network/queue failures, map before digging:
 6. **Verify regression.** The red repro now passes in a clean sandbox and the full suite stays green.
    This failing-before/passing-after proof is DEBUG's literal delivery evidence.
 
-After Fix, the shared mandatory core still applies: Mandatory Adversarial Review then Exact Verify
+After Fix, the shared mandatory core still applies: Mandatory Two-Axis Review then Exact Verify
 (`reference/role-loop.md`).
 
 ## Circuit breaker

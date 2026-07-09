@@ -43,10 +43,15 @@ require_text "mode is findings, not fixes" "reference/review-only.md" "findings,
 require_text "no source or test edits" "reference/review-only.md" "NO source or test edits"
 require_text "read-only except the run folder" "reference/review-only.md" "read-only except the run folder"
 
-# Two independent reviewers, both named.
-require_text "dispatches the critic persona" "reference/review-only.md" "agents/code-reviewer.md"
+# Independent reviewers, all named.
+require_text "dispatches the code-reviewer persona" "reference/review-only.md" "agents/code-reviewer.md"
+require_text "dispatches spec axis" "reference/review-only.md" "**Spec axis**"
+require_text "dispatches standards axis" "reference/review-only.md" "**Standards axis**"
 require_text "dispatches the security persona" "reference/review-only.md" "agents/security-reviewer.md"
 require_text "critic stance writes no test files here" "reference/review-only.md" "does NOT write failing test files"
+require_text "standards axis uses smell baseline" "reference/review-only.md" "fixed smell baseline"
+require_text "repo rules override smell findings" "reference/review-only.md" "Documented repo rules override smell findings"
+require_text "keeps review axes separate" "reference/review-only.md" "Keep Standards, Spec, and Security reports separate"
 
 # Findings are verified evidence, not vibes.
 require_text "findings re-checked before reporting" "reference/review-only.md" "re-checked against the cited code"
@@ -55,6 +60,9 @@ require_text "findings never override passing real tests" "reference/review-only
 # Report anchors.
 require_text "report names what was not covered" "reference/review-only.md" "Not covered:"
 require_text "report lists untested behaviors" "reference/review-only.md" "Untested behaviors:"
+require_text "report has standards block" "reference/review-only.md" "## Standards"
+require_text "report has spec block" "reference/review-only.md" "## Spec"
+require_text "report has security block" "reference/review-only.md" "## Security"
 require_text "findings carry file:line" "reference/review-only.md" "file:line"
 
 # Fixes are a different mode.

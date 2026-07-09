@@ -136,3 +136,27 @@ footer.
 **Why**: WAYFINDER and the cited research helper deliberately reuse concepts from Matt Pocock's
 research and skill-writing patterns, so the credit belongs on the durable skill surfaces, not only in
 the planning note.
+
+## Mandatory Two-Axis Review
+
+**Change**: Split the default GREENFIELD / DEBUG / LEGACY review gate into independent Spec and Standards
+axes. The mandatory core is now Build -> Improve full spec -> Improve edge cases -> Mandatory Two-Axis
+Review -> Exact Verify/QA. REVIEW-ONLY uses the same split and keeps the existing Security reviewer as a
+third findings-only pass.
+
+**Why**: Matt Pocock's `code-review` skill has one directly useful import for Supergoal: "did we build the
+right thing?" and "is it built well?" should not be blended into one reviewer context. Separate axes make
+missing requirements, scope creep, repo-standard violations, and design smells easier to judge without one
+category masking the other.
+
+**Rejected alternatives**:
+
+- Put the review inside Build. That weakens independence; the builder should keep one job and not approve
+  its own work.
+- Replace Supergoal's review/verify model wholesale. Supergoal already has `GOAL.md`, `PLAN.md`, `QA.md`,
+  run vaults, red-green, exact proof, and optional Critic/Fixer; only the axis split was missing.
+- Drop the Security reviewer from REVIEW-ONLY. That would make the standalone audit route less safe than
+  before.
+
+**Verification target**: `bash tests/role-loop-contract.test.sh`, `bash tests/review-only-contract.test.sh`,
+`bash tests/harness-eval-contract.test.sh`, `bash tests/run-all.sh`, and `git diff --check`.

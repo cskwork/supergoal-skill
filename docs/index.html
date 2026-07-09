@@ -587,6 +587,8 @@
   .mode-card.qa-only::after { background: var(--pink); }
   .mode-card.review-only::after { background: var(--green); }
   .mode-card.arch::after { background: var(--cyan); }
+  .mode-card.wayfinder::after { background: var(--violet); }
+  .mode-card.prototype::after { background: var(--green); }
   .mode-card.harness-eval::after { background: var(--amber); }
   .mode-card.skill-mine::after { background: var(--blue); }
   .mode-label {
@@ -883,7 +885,7 @@
     <span class="status-led" aria-hidden="true"></span>
     <span class="mono">verify - ground-truth</span>
     <span class="label en">the real test suite is the oracle, never a generated proxy</span>
-    <span class="label ko">판단 기준은 스스로 만든 기준이 아니라 프로젝트 테스트입니다.</span>
+    <span class="label ko">판단 기준은 직접 만든 기준이 아니라 프로젝트 테스트입니다.</span>
     <span class="pass">GREEN</span>
     <span class="spacer"></span>
     <span class="gatebar-controls" role="group" aria-label="Text size">
@@ -904,13 +906,13 @@
     <div>
       <div class="brandline">
         <span class="en">Baseline-first delivery skill</span>
-        <span class="ko">테스트와 스펙을 먼저 보는 스킬</span>
+        <span class="ko">테스트와 요구사항을 먼저 확인하는 스킬</span>
       </div>
       <h1><span>/</span>supergoal</h1>
       <p class="hero-sub en">The smallest correct change, verified.</p>
-      <p class="hero-sub ko">필요한 만큼만 고치고, 테스트와 스펙으로 확인합니다.</p>
+      <p class="hero-sub ko">필요한 만큼만 고치고, 실제 테스트와 요구사항으로 확인합니다.</p>
       <p class="hero-copy en">Hand `/supergoal` one objective. It makes the smallest correct change, then distrusts visible green: compare the request/docs with current behavior, check edge paths, run the real tests, and escalate to Critic/Fixer only when hidden requirements are the risk.</p>
-      <p class="hero-copy ko">`/supergoal`에 목표 하나를 맡기세요. 필요한 만큼만 고친 뒤, 테스트 통과 표시만으로 끝내지 않습니다. 요청/문서와 현재 동작을 비교하고, 예외 경로를 확인하고, 프로젝트 테스트를 다시 돌립니다. 숨은 요구사항 위험이 클 때만 Critic/Fixer로 확장합니다.</p>
+      <p class="hero-copy ko">`/supergoal`에 목표 하나를 맡기세요. 필요한 만큼만 고친 뒤, 테스트 통과 표시만으로 끝내지 않습니다. 요청/문서와 현재 동작을 대조하고, 예외 경로를 확인한 다음 프로젝트 테스트를 다시 돌립니다. 숨은 요구사항 위험이 클 때만 Critic/Fixer로 확장합니다.</p>
       <div class="cta-row">
         <a class="btn primary" href="#install"><span class="en">Install</span><span class="ko">설치</span></a>
         <a class="btn" href="#workflow"><span class="en">The loop</span><span class="ko">루프</span></a>
@@ -935,7 +937,7 @@
 <pre class="ko"><span class="c-cyan">/supergoal</span> 레거시 앱에 SSO 추가
 <span class="c-soft">mode</span> LEGACY
 <span class="c-green">build</span> 필요한 만큼만 패치
-<span class="c-red">improve_spec</span> 동작 틈 2개 발견
+<span class="c-red">improve_spec</span> 동작 차이 2개 발견
 <span class="c-green">verify</span> 프로젝트 테스트 안정 통과
 <span class="c-green">done</span> exit 0</pre>
       </div>
@@ -970,12 +972,12 @@
   <section id="why">
     <div class="wrap">
       <div class="section-head reveal">
-        <h2><span class="en">A baseline-first skill, not a ceremony.</span><span class="ko">절차를 늘리는 도구가 아니라, 테스트와 스펙을 지키는 스킬.</span></h2>
+        <h2><span class="en">A baseline-first skill, not a ceremony.</span><span class="ko">절차를 늘리지 않고, 테스트와 요구사항을 지키는 스킬.</span></h2>
         <p class="lead en">A strong model with the real spec is the bar. `/supergoal` adds only what a plain baseline cannot do for free.</p>
-        <p class="lead ko">좋은 모델도 프로젝트 스펙을 읽고 작업해야 합니다. `/supergoal`은 일반 실행이 놓치기 쉬운 부분만 보강합니다.</p>
+        <p class="lead ko">좋은 모델도 프로젝트 요구사항과 문서를 읽고 작업해야 합니다. `/supergoal`은 일반 실행이 놓치기 쉬운 부분만 보강합니다.</p>
       </div>
       <div class="metric-grid">
-        <div class="metric reveal"><strong>11</strong><span class="en">modes; the objective picks the lane.</span><span class="ko">가지 모드. 목표에 따라 경로가 정해집니다.</span></div>
+        <div class="metric reveal"><strong>12</strong><span class="en">modes; the objective picks the lane.</span><span class="ko">개 모드. 목표에 맞춰 경로를 고릅니다.</span></div>
         <div class="metric reveal"><strong>4</strong><span class="en">core fresh-context roles: Build, Improve spec, Improve edges, Final Verify.</span><span class="ko">핵심 역할 4개: Build, Improve spec, Improve edges, Final Verify.</span></div>
         <div class="metric reveal"><strong>0</strong><span class="en">generated-proxy verifiers; only your real tests grade the work.</span><span class="ko">자체 생성 검증기를 쓰지 않습니다. 프로젝트 테스트로 결과를 판단합니다.</span></div>
         <div class="metric reveal"><strong>10</strong><span class="en">production-pilot rows planned: metrics only.</span><span class="ko">프로덕션 파일럿 10건: 날짜, 모드, 발견한 격차, 게이트 결과만 기록합니다.</span></div>
@@ -989,7 +991,7 @@
         <div class="claim reveal">
           <h3><span class="en">It distrusts visible green.</span><span class="ko">테스트 통과 표시만으로 끝내지 않습니다.</span></h3>
           <p class="en">After Build, a fresh-context verifier diffs the implementer's changes against GOAL.md - the user's request verbatim plus falsifiable Success Criteria - and ticks off only what is proven. Unmet criteria go to a timestamped R-LOOP.md section and the implementer relaunches.</p>
-          <p class="ko">Build 뒤에는 새 컨텍스트 검증자가 구현자의 변경(diff)을 GOAL.md - 사용자 요청 원문 + 반증 가능한 성공 기준 - 와 대조해 증명된 것만 체크합니다. 미충족 기준은 R-LOOP.md에 타임스탬프 섹션으로 남고 구현자가 다시 실행됩니다.</p>
+          <p class="ko">Build 뒤에는 새 컨텍스트 검증자가 구현자의 변경(diff)을 GOAL.md(사용자 요청 원문 + 반증 가능한 성공 기준)와 대조해 증명된 것만 체크합니다. 미충족 기준은 R-LOOP.md에 타임스탬프 섹션으로 남기고 구현자를 다시 실행합니다.</p>
         </div>
         <div class="claim reveal">
           <h3><span class="en">It keeps the change minimal.</span><span class="ko">변경을 필요한 만큼만 유지합니다.</span></h3>
@@ -997,7 +999,7 @@
           <p class="ko">그 테스트들을 통과시키는 가장 작은 올바른 변경을 만듭니다. 주변 코드에 맞추고, 파일 전체를 다시 쓰지 않습니다.</p>
         </div>
         <div class="claim reveal">
-          <h3><span class="en">It verifies against ground truth.</span><span class="ko">테스트와 스펙으로 검증합니다.</span></h3>
+          <h3><span class="en">It verifies against ground truth.</span><span class="ko">테스트와 요구사항으로 검증합니다.</span></h3>
           <p class="en">It re-runs your real test suite and re-checks the request/docs. It never grades the work against a checklist it generated itself.</p>
           <p class="ko">프로젝트 테스트 스위트를 다시 돌리고, 요청/문서를 다시 확인합니다. 스스로 만든 체크리스트로 채점하지 않습니다.</p>
         </div>
@@ -1017,9 +1019,9 @@
   <section id="modes">
     <div class="wrap">
       <div class="section-head reveal">
-        <h2><span class="en">One command. Eleven modes.</span><span class="ko">명령 하나. 열한 가지 모드.</span></h2>
-        <p class="lead en">The objective picks the lane. Build, debug, legacy, and spec share the baseline-first loop; teach, learn-domain, QA, review, architecture, harness-eval, and skill-mine stay purpose-built.</p>
-        <p class="lead ko">목표에 따라 경로가 정해집니다. build·debug·legacy·spec은 baseline-first 루프를 쓰고, teach·learn-domain·QA·review·architecture·harness-eval·skill-mine은 각 목적에 맞게 동작합니다.</p>
+        <h2><span class="en">One command. Twelve modes.</span><span class="ko">명령 하나. 열두 가지 모드.</span></h2>
+        <p class="lead en">The objective picks the lane. Build, debug, and legacy share the baseline-first loop; wayfinder now owns spec-depth planning, ticket frontiers, prototype, teach, learn-domain, QA, review, architecture, harness-eval, and skill-mine stay purpose-built.</p>
+        <p class="lead ko">목표에 따라 경로가 정해집니다. build·debug·legacy는 baseline-first 루프를 쓰고, wayfinder는 세부 요구사항 정리와 ticket frontier를 맡습니다. prototype·teach·learn-domain·QA·review·architecture·harness-eval·skill-mine은 각 목적에 맞게 동작합니다.</p>
       </div>
       <div class="mode-grid">
         <article class="mode-card reveal">
@@ -1043,16 +1045,23 @@
           <p class="ko">영향 범위를 파악한 뒤 가장 작고 정확하게 수정합니다.</p>
           <div class="mode-pipe">Frame -> <b>Map</b> -> Build -> Improve -> Final Verify</div>
         </article>
-        <article class="mode-card spec reveal">
-          <span class="mode-label">SPEC</span>
-          <h3><span class="en">Spec first, then build.</span><span class="ko">스펙 문서부터 만들고 구현합니다.</span></h3>
-          <p class="en">Load-bearing decisions grilled one question at a time; requirements (EARS), design, and tasks crystallize under docs/spec/ and drive the loop.</p>
-          <p class="ko">핵심 결정을 한 번에 한 질문씩 따져 묻고, requirements(EARS), design, tasks를 docs/spec/에 정리해 루프를 진행합니다.</p>
-          <div class="mode-pipe">Skeleton -> <b>Grill</b> -> Crystallize -> Build vs spec</div>
+        <article class="mode-card wayfinder reveal">
+          <span class="mode-label">WAYFINDER</span>
+          <h3><span class="en">Spec and split foggy work.</span><span class="ko">큰 작업을 구조화하고 티켓으로 나눕니다.</span></h3>
+          <p class="en">Map the destination inside the run vault, add ticket-depth requirements or cited research assets only where useful, route one frontier ticket, then stop for context clear and integration proof.</p>
+          <p class="ko">실행 vault 안에서 목적지를 정리하고, 필요한 티켓에만 세부 요구사항이나 인용된 research asset을 더합니다. 그런 다음 frontier 티켓 하나만 실행하고 context clear와 통합 검증을 요청합니다.</p>
+          <div class="mode-pipe">Vault map -> Ticket depth -> <b>Route one</b> -> Stop</div>
+        </article>
+        <article class="mode-card prototype reveal">
+          <span class="mode-label">PROTOTYPE</span>
+          <h3><span class="en">Test one uncertain direction.</span><span class="ko">불확실한 방향 하나를 검증합니다.</span></h3>
+          <p class="en">Build a throwaway proof, capture the answer, then delete/quarantine it or route the decision into delivery.</p>
+          <p class="ko">throwaway proof로 답을 얻고, 삭제/격리하거나 결정만 delivery로 넘깁니다.</p>
+          <div class="mode-pipe">Question -> Proof -> <b>Answer</b> -> Delete or route</div>
         </article>
         <article class="mode-card learn reveal">
           <span class="mode-label">TEACH</span>
-          <h3><span class="en">Understand, no code.</span><span class="ko">설명만 듣고 이해합니다.</span></h3>
+          <h3><span class="en">Understand, no code.</span><span class="ko">코드 변경 없이 이해를 돕습니다.</span></h3>
           <p class="en">Ground the mission, teach from sources, then check that you can explain it back.</p>
           <p class="ko">학습 목적을 잡고 근거 있는 자료로 설명한 뒤, 사용자가 자기 말로 다시 설명해 이해를 확인합니다.</p>
           <div class="mode-pipe">Mission -> Source -> Bridge -> Teach -> <b>Check</b></div>
@@ -1061,14 +1070,14 @@
           <span class="mode-label">LEARN-DOMAIN</span>
           <h3><span class="en">Map a codebase, no code.</span><span class="ko">코드베이스를 파악합니다.</span></h3>
           <p class="en">Learn the repo for the agent; persist a grounded `.domain-agent/` wiki.</p>
-          <p class="ko">에이전트가 다시 쓸 수 있도록 레포를 학습하고, 검증된 `.domain-agent/` 위키를 남깁니다.</p>
+          <p class="ko">에이전트가 다시 쓸 수 있도록 저장소를 학습하고, 검증된 `.domain-agent/` 위키를 남깁니다.</p>
           <div class="mode-pipe">Survey -> Map -> Deepen -> <b>Ground</b> -> Persist</div>
         </article>
         <article class="mode-card qa-only reveal">
           <span class="mode-label">QA-ONLY</span>
           <h3><span class="en">QA or compare data, no code.</span><span class="ko">QA와 데이터 비교만 합니다.</span></h3>
           <p class="en">Build an Impact Matrix: a feature-impact QA map for screens, data paths, roles, before/during/after actions, and failure cases. Shard independent checks, cross-check displayed data, and report covered/not-covered risk.</p>
-          <p class="ko">Impact Matrix는 화면, 데이터 경로, 권한, 전/중/후 액션, 실패 케이스를 펼친 기능 영향 범위 QA 지도입니다. 독립 검증은 shard로 나누고, 표시 데이터 일관성과 미확인 위험까지 리포트합니다.</p>
+          <p class="ko">Impact Matrix는 화면, 데이터 경로, 권한, 전/중/후 액션, 실패 케이스를 펼친 기능 영향 범위 QA 지도입니다. 독립 검증은 나눠 실행하고, 표시 데이터 일관성과 미확인 위험까지 리포트합니다.</p>
           <div class="mode-pipe">Target -> Impact Matrix -> Shards -> Cross-check -> <b>Report</b></div>
         </article>
         <article class="mode-card review-only reveal">
@@ -1081,8 +1090,8 @@
         <article class="mode-card arch reveal">
           <span class="mode-label">ARCHITECTURE</span>
           <h3><span class="en">Find what to deepen, no fixes.</span><span class="ko">고칠 곳을 찾고, 고치지는 않습니다.</span></h3>
-          <p class="en">Survey shallow modules and missing seams; grill the picked candidate; the refactor routes to LEGACY/SPEC.</p>
-          <p class="ko">얕은 모듈과 부족한 분리 지점(seam)을 조사해 후보를 제시하고, 고른 후보만 따져 물은 뒤 리팩터링은 LEGACY/SPEC으로 넘깁니다.</p>
+          <p class="en">Survey shallow modules and missing seams; grill the picked candidate; the refactor routes to LEGACY/WAYFINDER.</p>
+          <p class="ko">얕은 모듈과 부족한 분리 지점(seam)을 조사해 후보를 제시하고, 고른 후보만 검토한 뒤 리팩터링은 LEGACY/WAYFINDER로 넘깁니다.</p>
           <div class="mode-pipe">Survey -> Candidates -> <b>Grill the pick</b> -> Route out</div>
         </article>
         <article class="mode-card harness-eval reveal">
@@ -1106,12 +1115,12 @@
   <section id="gates">
     <div class="wrap">
       <div class="section-head reveal">
-        <h2><span class="en">Not a gate stack. Five principles.</span><span class="ko">복잡한 게이트 묶음이 아니라, 다섯 가지 원칙.</span></h2>
+        <h2><span class="en">Not a gate stack. Five principles.</span><span class="ko">게이트를 쌓는 대신, 다섯 가지 원칙.</span></h2>
         <p class="lead en">The skill is a short contract applied every run, not ceremony you have to satisfy.</p>
-        <p class="lead ko">매 실행에 적용되는 짧은 계약입니다. 통과만을 위한 의식이 아닙니다.</p>
+        <p class="lead ko">매 실행에 적용되는 짧은 계약입니다. 통과만을 위한 형식적인 절차가 아닙니다.</p>
       </div>
       <div class="gate-grid">
-        <article class="gate-item reveal"><span class="gate-no">1</span><h3><span class="en">Verify against ground truth</span><span class="ko">테스트와 문서로 검증</span></h3><p class="en">Re-run the real tests; re-check the request, ticket, README, design/API docs, and repo rules for gaps they miss. Never optimize to a generated proxy.</p><p class="ko">프로젝트 테스트를 다시 돌리고, 테스트가 놓친 규칙은 요청, 티켓, README, 설계/API 문서, repo 규칙에서 다시 확인합니다. 스스로 만든 기준에 맞춰 결과를 꾸미지 않습니다.</p></article>
+        <article class="gate-item reveal"><span class="gate-no">1</span><h3><span class="en">Verify against ground truth</span><span class="ko">테스트와 문서로 검증</span></h3><p class="en">Re-run the real tests; re-check the request, ticket, README, design/API docs, and repo rules for gaps they miss. Never optimize to a generated proxy.</p><p class="ko">프로젝트 테스트를 다시 돌리고, 테스트가 놓친 규칙은 요청, 티켓, README, 설계/API 문서, 저장소 규칙에서 다시 확인합니다. 스스로 만든 기준에 맞춰 결과를 꾸미지 않습니다.</p></article>
         <article class="gate-item reveal"><span class="gate-no">2</span><h3><span class="en">Smallest correct change</span><span class="ko">필요한 만큼만 변경</span></h3><p class="en">Match the surrounding code. No whole-file rewrite to change a few lines.</p><p class="ko">주변 코드 스타일을 따릅니다. 몇 줄 바꾸려고 파일 전체를 다시 쓰지 않습니다.</p></article>
         <article class="gate-item reveal"><span class="gate-no">3</span><h3><span class="en">Escalate when hidden requirements matter</span><span class="ko">숨은 요구사항 위험이 클 때 확장</span></h3><p class="en">Critic/Fixer is available for under-specified work, but the default core is Build -> Improve spec -> Improve edges -> Final Verify.</p><p class="ko">Critic/Fixer는 요구사항이 덜 명시된 작업에서 쓰는 확장입니다. 기본 핵심은 Build -> Improve spec -> Improve edges -> Final Verify입니다.</p></article>
         <article class="gate-item reveal"><span class="gate-no">4</span><h3><span class="en">Ask only when ambiguous</span><span class="ko">모호할 때만 질문</span></h3><p class="en">Resolve code-answerable questions by reading the code. Interrupt only for genuine forks.</p><p class="ko">코드로 답할 수 있는 것은 먼저 코드를 읽어 해결합니다. 진짜 선택지가 갈릴 때만 멈춥니다.</p></article>
@@ -1123,9 +1132,9 @@
   <section id="vault">
     <div class="wrap vault">
       <div class="reveal">
-        <h2><span class="en">Bundled roles. Load what the phase needs.</span><span class="ko">역할은 함께 제공되고, 단계마다 필요한 것만 불러옵니다.</span></h2>
+        <h2><span class="en">Bundled roles. Load what the phase needs.</span><span class="ko">역할 파일을 함께 제공하고, 단계마다 필요한 것만 불러옵니다.</span></h2>
         <p class="lead en">Every role is a file in `agents/`, so dispatch works the same across Claude Code, Codex, agy, and other agent CLIs. For code delivery, each phase gets a fresh context and loads only its guide.</p>
-        <p class="lead ko">모든 역할은 `agents/` 파일로 제공됩니다. Claude Code, Codex, agy 같은 agent CLI에서도 같은 방식으로 dispatch할 수 있습니다. 코드 delivery에서는 단계마다 새 컨텍스트를 받고 필요한 가이드만 읽습니다.</p>
+        <p class="lead ko">모든 역할은 `agents/` 파일로 제공됩니다. Claude Code, Codex, agy 같은 에이전트 CLI에서도 같은 방식으로 역할을 나눌 수 있습니다. 코드 delivery에서는 단계마다 새 컨텍스트를 받고 필요한 가이드만 읽습니다.</p>
         <div class="file-list">
           <div class="file-chip"><code>SKILL.md</code><span class="en">baseline-first loop, modes, map</span><span class="ko">핵심 루프, 모드, 레퍼런스 맵</span></div>
           <div class="file-chip"><code>agents/&lt;role&gt;.md</code><span class="en">one persona per role</span><span class="ko">역할별 지침 파일</span></div>
@@ -1152,14 +1161,14 @@ Stop on green. Report with output.</pre>
       <div class="section-head reveal">
         <h2><span class="en">What each lane looks like.</span><span class="ko">각 작업 경로는 이렇게 동작합니다.</span></h2>
         <p class="lead en">The same loop, shaped by the objective. Three representative lanes:</p>
-        <p class="lead ko">같은 루프가 목표에 맞춰 형태를 바꿉니다. 대표 경로 셋:</p>
+        <p class="lead ko">같은 루프가 목표에 맞춰 형태를 바꿉니다. 대표 경로 세 가지입니다.</p>
       </div>
       <div class="proof-grid">
         <article class="proof-item reveal">
           <span class="tag">GREENFIELD</span>
           <h3><span class="en">Visible green is not enough.</span><span class="ko">테스트 통과 표시만으로는 부족합니다.</span></h3>
           <p class="en">After the first build passes visible tests, fresh roles compare request/docs with behavior and check edge paths before the change is accepted.</p>
-          <p class="ko">첫 build가 보이는 테스트를 통과해도, 새 역할들이 요청/문서와 동작을 비교하고 예외 경로를 확인한 뒤에야 변경을 받아들입니다.</p>
+          <p class="ko">첫 Build가 보이는 테스트를 통과해도, 새 역할들이 요청/문서와 동작을 비교하고 예외 경로를 확인한 뒤에야 변경을 받아들입니다.</p>
         </article>
         <article class="proof-item debug reveal">
           <span class="tag">DEBUG</span>
@@ -1201,7 +1210,7 @@ ln -s "$(pwd)/supergoal-skill" &lt;your-agent-skills-dir&gt;/supergoal
 <span class="c-soft"># 설치본이 소스와 달라졌는지 확인</span>
 node templates/skill-install-audit.mjs "$(pwd)/supergoal-skill"
 
-<span class="c-soft"># 그다음 사용하는 agent CLI에서</span>
+<span class="c-soft"># 그다음 사용하는 에이전트 CLI에서</span>
 <span class="c-cyan">/supergoal</span> CLI 할 일 앱을 만들고 출시해줘</pre>
       </div>
       <div class="install-card reveal">

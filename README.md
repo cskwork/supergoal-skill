@@ -15,8 +15,8 @@ the smallest correct change, checks the request and project docs against the rea
 `/supergoal` is a routing and verification wrapper around an agent. The useful mental model:
 
 1. **Route the objective.** The mode table classifies the real work kind, then routes as build,
-   debug, legacy change, spec, QA, review, architecture, teaching, domain onboarding, harness eval, or
-   skill mining.
+   debug, legacy change, spec, wayfinding, prototype, QA, review, architecture, teaching, domain
+   onboarding, harness eval, or skill mining.
 2. **Load only the needed playbook.** The root `SKILL.md` stays small; each route loads its own
    `reference/` and `agents/` files only when needed.
 3. **Keep contexts fresh.** Code delivery runs Build, Improve full spec, Improve edge cases, and
@@ -73,7 +73,8 @@ flowchart TD
     C -->|"build / make / ship"| GREENFIELD["GREENFIELD<br/>new app or tool"]
     C -->|"fix / broken / failing"| DEBUG["DEBUG<br/>reproduce, diagnose, fix"]
     C -->|"add / integrate / refactor"| LEGACY["LEGACY<br/>map existing code first"]
-    C -->|"spec / requirements first"| SPEC["SPEC<br/>requirements -> design -> tasks"]
+    C -->|"spec / requirements / roadmap"| WAYFINDER["WAYFINDER<br/>map -> ticket depth -> frontier"]
+    C -->|"prototype / spike"| PROTOTYPE["PROTOTYPE<br/>throwaway proof"]
     C -->|"QA / verify only"| QAONLY["QA-ONLY<br/>Impact Matrix + evidence"]
     C -->|"review / audit"| REVIEW["REVIEW-ONLY<br/>findings, no fixes"]
     C -->|"architecture improvement"| ARCHITECTURE["ARCHITECTURE<br/>friction survey -> candidates"]
@@ -86,8 +87,9 @@ flowchart TD
     DEBUG --> LOOP
     LEGACY --> LOOP
 
-    SPEC --> DOCS["Docs first<br/>then tasks route into delivery"]
-    ARCHITECTURE --> PICK["Grill chosen candidate<br/>then route to LEGACY or SPEC"]
+    WAYFINDER --> REPORT
+    PROTOTYPE --> REPORT
+    ARCHITECTURE --> PICK["Grill chosen candidate<br/>then route to LEGACY or WAYFINDER"]
 
     QAONLY --> REPORT["No product code by default<br/>report evidence and risk"]
     REVIEW --> REPORT
@@ -102,12 +104,13 @@ flowchart TD
 | "build / ship a new app/tool" | **GREENFIELD** | default loop |
 | "fix / broken / failing / why does" | **DEBUG** | default loop; reproduce with a failing test first |
 | "add X to our existing/legacy code" | **LEGACY** | default loop; map the code first; refactoring an existing API: capture its exact behavior first, Verify diffs against that baseline |
-| "spec this first - requirements/design/tasks docs" | **SPEC** | grill load-bearing decisions one question at a time; requirements -> design -> tasks crystallize under `docs/spec/`, then the default loop runs against them |
+| "spec this / break this into tickets / roadmap / what first?" | **WAYFINDER** | issue map under the run vault's `wayfinder/` folder -> optional ticket-depth sections (glossary, user story, EARS checks, design notes, tasks) and cited research assets via `reference/research.md` when outside facts are needed -> vertical tickets -> blocker edges -> next frontier; route one ticket, stop, then ask for context clear + integration test before the next |
+| "prototype / spike / try variants before building" | **PROTOTYPE** | throwaway proof answers one question; then delete/quarantine or route the decision into delivery |
 | "explain / teach me X" (no code) | **TEACH** | Mission -> Source -> Bridge -> Teach -> Check (explain-back) |
 | "learn / map / onboard onto this codebase" | **LEARN-DOMAIN** | Survey -> Map -> Ground -> Persist a `.domain-agent/` wiki |
 | "QA only / verify / compare data - no code" | **QA-ONLY** | Detailed Impact Matrix (feature-impact QA map) + read-only DB -> evidence -> `report.md` |
 | "review / audit this code/diff/PR - no fixes" | **REVIEW-ONLY** | Two independent reviewers -> verified findings -> `report.md` |
-| "improve the architecture / find refactoring opportunities" | **ARCHITECTURE** | Friction survey -> candidates as a visual `report.html` -> grill the pick -> refactor routes to LEGACY/SPEC |
+| "improve the architecture / find refactoring opportunities" | **ARCHITECTURE** | Friction survey -> candidates as a visual `report.html` -> grill the pick -> refactor routes to LEGACY/WAYFINDER |
 | "test harness effectiveness / with vs without" | **HARNESS-EVAL** | Cases -> baseline run -> harness run -> machine checks -> quality score -> compare |
 | "make a skill from history - no product code" | **SKILL-MINE** | Mine history -> rank -> you pick -> forge portable `SKILL.md` -> install |
 
@@ -139,18 +142,22 @@ changes also require real browser QA: `Tool: playwright-cli` evidence and `qa-ga
 /supergoal build a habit-tracker app and ship it
 /supergoal the checkout page hangs intermittently in prod. fix it
 /supergoal add SSO to our legacy Django monolith
+/supergoal break this billing migration into tickets with blockers and tell me what to do first
+/supergoal prototype three checkout flows before we commit to the implementation
 /supergoal learn this codebase and build a domain wiki
 /supergoal QA the checkout flow on staging and check the order totals match the DB (no code change)
 /supergoal compare this migration harness with and without the harness on 3 cases
 ```
 
-QA-ONLY, REVIEW-ONLY, ARCHITECTURE, TEACH/LEARN-DOMAIN, HARNESS-EVAL, and SKILL-MINE are kept as separate-purpose
-utilities (detailed no-code QA, findings-only review, teaching/onboarding, harness measurement, skill
-forging). QA-ONLY is the broad regression lane. Its Impact Matrix is a QA map of everything the feature can
+WAYFINDER, PROTOTYPE, QA-ONLY, REVIEW-ONLY, ARCHITECTURE, TEACH/LEARN-DOMAIN, HARNESS-EVAL, and
+SKILL-MINE are kept as separate-purpose utilities (ticket maps, throwaway proofs, detailed no-code QA,
+findings-only review, teaching/onboarding, harness measurement, skill forging). QA-ONLY is the broad
+regression lane. Its Impact Matrix is a QA map of everything the feature can
 affect: displayed data consistency, direct behavior, adjacent surfaces, complex multi-step scenarios,
 before/during/after actions, and explicit not-covered risk within the action cap. Independent QA surfaces
 can run as scenario shards, merged by the conductor through `qa/scenario-ledger.md`.
-They write no product code by default and confirm with you before installing anything.
+They write no product code by default; PROTOTYPE writes only isolated throwaway code and must route back
+through delivery before anything ships.
 
 ## Board (optional live dashboard)
 
@@ -205,13 +212,13 @@ under **WSL** bash.
 ```
 SKILL.md            thin spine: baseline-first loop, modes, reference map
 agents/             one persona file per role (analyst, architect, executor, debugger, explore, designer, qa-*, db-reader, code-reviewer, security-reviewer)
-reference/          domain-rules · rules (project standing rules) · domain-context · debugging · interview · delivery-gate · plan-grounding · market-research · qa · qa-only · db-access · teach · learn-domain · ui-ux · taste-skill-v2 · functional-ui · harness-eval · skill-mine · observability
+reference/          domain-rules · rules (project standing rules) · domain-context · debugging · interview · delivery-gate · plan-grounding · research · market-research · qa · qa-only · db-access · teach · learn-domain · ui-ux · taste-skill-v2 · functional-ui · harness-eval · skill-mine · observability
 teach/              TEACH-mode format guides + per-topic teaching workspaces
 templates/          GOAL.md · PLAN.md · QA.md · R-LOOP.md · Z-DONE.md · run-state.json · rules.md · qa-gate.sh · qa-only-gate.sh · commit-gate.sh · contrast-gate.mjs · learn-grounding-gate.mjs · qa-report.md · db-access/ · domain-agent/ · domain-onboarding.html · arch-report.html · harness-eval-gate.mjs · harness-eval-stats.mjs · harness-eval-cases/ · skill-mine/ · skill-frontmatter-gate.mjs · skill-install-audit.mjs · skill.md.template · observability/ (sg-emit board state)
 tests/              contract tests + run-all.sh canonical verifier
 tui/                optional live Board: state.py (reader) · app.py (Textual UI) · serve.py (in-browser) · launch.sh
 docs/               DESIGN.md · research-brief.md · experiments/ (the harness evals) · changelog/ · index.html (landing)
-examples/url-shortener/   a worked example service exercised across the build / debug / extend modes
+examples/           optional worked services when vendored; run-all skips them when absent
 ```
 
 ## Evidence
@@ -223,8 +230,8 @@ the request/docs verification pass beat one-shot baseline and matched or beat ro
 ceremony, while generated-proxy verifiers can score worse via Goodhart. The next proof frontier is not
 more synthetic fixtures; it is the production-adoption plan in
 `docs/changelog/2026-07/02-production-adoption/plan.md`, which tracks symlink deployment, trigger
-accuracy, and production pilot metrics: date, mode, gaps, and gate results. `examples/url-shortener/` remains the worked
-example service exercised across build, debug, and extend modes.
+accuracy, and production pilot metrics: date, mode, gaps, and gate results. Historical worked examples
+may be vendored under `examples/`; the canonical verifier skips that optional step when absent.
 
 ## Harness Eval Reference
 

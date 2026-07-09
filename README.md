@@ -245,7 +245,9 @@ keep the existing sign-flip/BCa gate.
 ## Credit
 
 Concept and workflow adapted from **oh-my-symphony** by cskwork
-(https://github.com/cskwork/oh-my-symphony). Built as a portable agent skill.
+(https://github.com/cskwork/oh-my-symphony). WAYFINDER and research-depth ideas also credit
+Matt Pocock's public skills, especially the research and skill-writing patterns.
+Built as a portable agent skill.
 
 ## License
 

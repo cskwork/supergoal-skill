@@ -201,3 +201,24 @@ security, and cleanup paths.
 **Verification target**: `bash tests/role-loop-contract.test.sh`, `bash tests/harness-eval-contract.test.sh`,
 `bash tests/observability-contract.test.sh`, `bash tests/tui-state-reader.test.sh`, `bash tests/run-all.sh`,
 and `git diff --check`.
+
+## Tracker choice: default to run vault, ask before using a native tracker
+
+**Change**: In `reference/wayfinder.md`, inverted the tracker-choice rule. Old rule preferred the target
+repo's native tracker when "configured, named by the user, or documented in repo rules", with the run
+vault as fallback. New rule: the run vault path (`docs/changelog/<YYYY-MM>/<DD-topic>/wayfinder/tickets/`,
+beside `GOAL.md`) is the default; if a native tracker exists, ask the user which to use; a pre-existing
+docs folder (e.g. `docs/improvements/`) is explicitly not a tracker. Removed the now-redundant "Ask only
+when the choice changes visibility" line.
+
+**Why**: In symphony-multi-agent, a WAYFINDER run placed 16 tickets under `docs/improvements/tickets/2026-07-09/`
+because the old "documented in repo rules" clause was stretched to cover an existing docs folder. The user
+expects tickets beside `GOAL.md` unless they explicitly choose otherwise.
+
+**Rejected alternatives**:
+
+- Keep repo-convention precedence and only exclude docs folders. Still allows silent divergence when a
+  tracker is merely present but the user wanted vault-local tickets.
+- Always use the vault, never ask. Loses legitimate GitHub Issues/Jira workflows the user may want.
+
+**Verification target**: `bash tests/run-all.sh` and `git diff --check`.

@@ -79,7 +79,7 @@ Per ticket:
 5. Integration boot smoke (below); green -> commit gate -> merge into the integration branch -> mark
    the ticket `closed` in `map.md`, append its Smoke-ledger line, recompute the frontier. Record any
    newly settled repo convention (layout, naming, commands) in `map.md` `Decisions so far` or the
-   repo's agent context file, so later tickets do not re-derive it.
+   repo's agent context file (e.g. AGENTS.md), so later tickets do not re-derive it.
 6. Continue with the next frontier ticket.
 
 ## Integration boot smoke
@@ -92,8 +92,8 @@ not select the next frontier while the ledger is red. Keep the ledger cheap: one
 command/route per ticket - a regression tripwire, not a second QA pass.
 
 Smoke evidence counts only if produced after the last edit; re-run, never reuse. Tear down whatever the
-smoke spawned (server, port, tmux session, temp dir) and record the teardown in `QA.md`; leftover
-runtime state blocks the ticket close.
+smoke spawned (server, port, tmux session, temp dir) and record the teardown in `QA.md` `## Results`;
+leftover runtime state blocks the ticket close.
 
 ## Stop conditions
 

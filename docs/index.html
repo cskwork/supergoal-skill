@@ -1020,15 +1020,15 @@
     <div class="wrap">
       <div class="section-head reveal">
         <h2><span class="en">One command. Twelve modes.</span><span class="ko">명령 하나. 열두 가지 모드.</span></h2>
-        <p class="lead en">The objective picks the lane. Build, debug, and legacy share the baseline-first loop; broad GREENFIELD builds first use an internal wayfinder map to choose one frontier slice. Explicit planning asks still route to WAYFINDER.</p>
-        <p class="lead ko">목표에 따라 경로가 정해집니다. build·debug·legacy는 baseline-first 루프를 쓰고, 넓은 GREENFIELD build는 내부 wayfinder map으로 frontier 슬라이스 하나를 먼저 고릅니다. 순수 계획 요청은 그대로 WAYFINDER로 갑니다.</p>
+        <p class="lead en">The objective picks the lane. Build, debug, and legacy share the baseline-first loop; broad GREENFIELD builds reuse the same wayfinder map/ticket path before Build. Explicit planning/spec asks still route to no-code WAYFINDER.</p>
+        <p class="lead ko">목표에 따라 경로가 정해집니다. build·debug·legacy는 baseline-first 루프를 쓰고, 넓은 GREENFIELD build는 같은 wayfinder map/ticket 흐름으로 frontier 슬라이스 하나를 먼저 고릅니다. 순수 planning/spec 요청은 코드 변경 없는 WAYFINDER로 갑니다.</p>
       </div>
       <div class="mode-grid">
         <article class="mode-card reveal">
           <span class="mode-label">GREENFIELD</span>
           <h3><span class="en">Build and ship a new thing.</span><span class="ko">새 제품을 만들고 출시합니다.</span></h3>
-          <p class="en">Broad app/tool requests first get a wayfinder map inside the run vault, then one selected frontier slice enters Build.</p>
-          <p class="ko">넓은 앱/도구 요청은 run vault 안의 wayfinder map으로 나눈 뒤, 선택된 frontier 슬라이스 하나만 Build로 들어갑니다.</p>
+          <p class="en">Broad app/tool requests reuse the wayfinder map/ticket path inside the run vault, then one selected frontier slice enters Build.</p>
+          <p class="ko">넓은 앱/도구 요청은 run vault 안의 wayfinder map/ticket 흐름을 재사용한 뒤, 선택된 frontier 슬라이스 하나만 Build로 들어갑니다.</p>
           <div class="mode-pipe">Frame -> <b>Frontier if broad</b> -> Build -> Verify</div>
         </article>
         <article class="mode-card debug reveal">
@@ -1048,8 +1048,8 @@
         <article class="mode-card wayfinder reveal">
           <span class="mode-label">WAYFINDER</span>
           <h3><span class="en">Spec and split foggy work.</span><span class="ko">큰 작업을 구조화하고 티켓으로 나눕니다.</span></h3>
-          <p class="en">Map the destination inside the run vault, add ticket-depth requirements or cited research assets only where useful, route one frontier ticket, then stop for context clear and integration proof.</p>
-          <p class="ko">실행 vault 안에서 목적지를 정리하고, 필요한 티켓에만 세부 요구사항이나 인용된 research asset을 더합니다. 그런 다음 frontier 티켓 하나만 실행하고 context clear와 통합 검증을 요청합니다.</p>
+          <p class="en">Planning/spec asks map the destination inside the run vault, add ticket-depth requirements or cited research assets only where useful, route one frontier ticket if delivery is requested, then stop.</p>
+          <p class="ko">planning/spec 요청은 실행 vault 안에서 목적지를 정리하고, 필요한 티켓에만 세부 요구사항이나 인용된 research asset을 더합니다. delivery를 요청받으면 frontier 티켓 하나만 넘기고 멈춥니다.</p>
           <div class="mode-pipe">Vault map -> Ticket depth -> <b>Route one</b> -> Stop</div>
         </article>
         <article class="mode-card prototype reveal">

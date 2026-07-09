@@ -93,6 +93,25 @@ for context clear plus integration proof before the next ticket.
 - Delete all SPEC learnings. The old workflow had useful rigor - glossary discipline, EARS checks,
   one-question grill, and traceable tasks - but those belong inside a ticket, not as a separate mode.
 
+## Clarify GREENFIELD + WAYFINDER path sharing
+
+**Change**: Kept GREENFIELD and WAYFINDER as separate public modes while making their shared path
+explicit. Broad GREENFIELD requests now reuse the WAYFINDER map/ticket-depth machinery during Frame, then
+deliver one selected frontier ticket as GREENFIELD. Pure planning/spec requests still route to no-code
+WAYFINDER.
+
+**Why**: This gives one simple workflow path for broad new builds without making "spec this" requests
+accidentally ship code or forcing every small GREENFIELD request through heavy planning.
+
+**Rejected alternatives**:
+
+- Fully merge GREENFIELD and WAYFINDER into one public mode. That erases the no-code planning boundary.
+- Keep the wording as "scope gate" only. That is technically correct but does not make the shared
+  workflow path obvious enough.
+
+**Verification target**: `tests/wayfinder-prototype-contract.test.sh` should enforce shared map/ticket
+machinery plus the separate no-code WAYFINDER boundary.
+
 ## Korean public-copy cleanup
 
 **Change**: Smoothed awkward Korean copy in `README.ko.md` and `docs/index.html`, especially English-style

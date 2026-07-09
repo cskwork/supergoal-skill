@@ -36,10 +36,10 @@ on assumption. Full contract: `reference/role-loop.md`.
 
 | Signal in the objective | Mode | Route |
 |---|---|---|
-| build / make / ship a new app/tool | GREENFIELD | default loop; broad/foggy builds first use a `wayfinder/` Frontier Map inside the run vault, then deliver one selected frontier ticket |
+| build / make / ship a new app/tool | GREENFIELD | default delivery loop; if broad/foggy, Frame uses the same `wayfinder/` map/ticket path inside the run vault, selects one frontier ticket, then delivery remains GREENFIELD |
 | fix / broken / failing / crash / why does | DEBUG | default loop; observe live symptom, then failing-test repro (`reference/debugging.md`, driver persona `agents/debugger.md`); web: `reference/qa.md`, `reference/playwright-cli.md` |
 | add / integrate / refactor existing code | LEGACY | default loop; map first (`agents/explore.md`, `reference/domain-context.md`); optional DB evidence (`reference/db-access.md`); existing API: capture its exact behavior first as a preserve-baseline; shared code/state changes: characterization baseline (`reference/qa.md`) |
-| spec / requirements first / break down / tickets / roadmap / big vague effort / frontier / what should we do first | WAYFINDER | map the destination, optional ticket-depth requirements, ticket graph, blockers, and next frontier; no product code by default (`reference/wayfinder.md`) |
+| spec / requirements first / break down / tickets / roadmap / big vague effort / frontier / what should we do first | WAYFINDER | planning/spec/tickets only: map the destination, deepen only useful tickets, name blockers/frontier, and route one ticket when implementation is requested; no product code by default (`reference/wayfinder.md`) |
 | prototype / spike / try variants / prove approach before build | PROTOTYPE | throwaway proof that answers one question, then delete/quarantine or route to delivery (`reference/prototype.md`) |
 | explain / teach / how does X work (no code) | TEACH | stateful `teach/<topic>/` workspace (`reference/teach.md`); lessons must pass `node templates/teach-lesson-gate.mjs` |
 | learn / onboard / map this codebase (persist a wiki) | LEARN-DOMAIN | Survey -> Map -> Ground -> Onboard a `.domain-agent/` wiki (`reference/learn-domain.md`; gate `learn-grounding-gate.mjs`) |
@@ -51,7 +51,8 @@ on assumption. Full contract: `reference/role-loop.md`.
 
 The no-code/utility/planning modes - **QA-ONLY**, REVIEW-ONLY, ARCHITECTURE, WAYFINDER, PROTOTYPE, TEACH,
 LEARN-DOMAIN, HARNESS-EVAL, SKILL-MINE - write no product code by default and confirm before installing
-anything. PROTOTYPE may write throwaway sandbox code; it cannot ship until routed back through delivery.
+anything. WAYFINDER may hand one ticket to a delivery mode, but is not itself delivery. PROTOTYPE may
+write throwaway sandbox code; it cannot ship until routed back through delivery.
 
 **UI/UX overlay (any mode shipping user-facing UI).** Load `reference/ui-ux.md` at Frame; apply the
 Expressive/polished baseline by default (`reference/taste-skill-v2.md` is the authority for ALL
@@ -80,8 +81,8 @@ Use optional Critic/Fixer only when hidden requirements are the value being test
 
 1. **Frame.** Write `GOAL.md` FIRST from `templates/GOAL.md`: `## Original Request` (user prompt
    verbatim), refined `## Spec`, falsifiable `## Success Criteria` checkboxes each naming its
-   verification, and web apps' `## QA Cases`. GREENFIELD broad/foggy build requests use
-   `reference/wayfinder.md` as an internal scope gate: preserve the destination in
+   verification, and web apps' `## QA Cases`. GREENFIELD broad/foggy build requests do not switch
+   user-facing modes; they use `reference/wayfinder.md` as an internal scope gate: preserve the destination in
    `wayfinder/map.md`, write vertical tickets under `wayfinder/tickets/`, select one frontier ticket,
    and carry only that ticket's acceptance checks into the delivery `GOAL.md` / `PLAN.md`. Write a
    completion promise in `PLAN.md` `## Intent`:
@@ -144,7 +145,7 @@ security=`agents/security-reviewer.md` (others in `agents/<role>.md`).
 | `reference/debugging.md` | DEBUG: hypothesis-ledger diagnose loop |
 | `reference/interview.md` | interview: ambiguity (what) + blast-radius confirm (approach, tiered) |
 | `reference/delivery-gate.md`, `templates/GOAL.md`, `templates/PLAN.md`, `templates/QA.md`, `templates/R-LOOP.md`, `templates/Z-DONE.md`, `templates/run-state.json`, `templates/commit-gate.sh` | run vault file set + Before/After Eval + resumable run state + commit gate for GREENFIELD / DEBUG / LEGACY code changes |
-| `reference/wayfinder.md` | WAYFINDER: issue map -> vertical tickets -> optional EARS/user-story depth -> blockers -> next frontier; also GREENFIELD internal Frontier Map for broad/foggy new builds |
+| `reference/wayfinder.md` | WAYFINDER: issue map -> vertical tickets -> optional EARS/user-story depth -> blockers -> next frontier; also the shared GREENFIELD Frontier Map path for broad/foggy new builds |
 | `reference/research.md` | WAYFINDER research-needed tickets; docs/API/source facts that need high-trust cited evidence |
 | `reference/prototype.md` | PROTOTYPE: throwaway logic/UI proof -> capture answer -> delete/quarantine or route to delivery |
 | `reference/plan-grounding.md` | ground the approach before committing |

@@ -28,11 +28,12 @@ GREENFIELD, DEBUG, LEGACY, QA-ONLY, REVIEW-ONLY, or PROTOTYPE.
 
 ## Tracker choice
 
-Use the target repo's native tracker when it is already configured, named by the user, or documented in
-repo rules. Otherwise write local markdown under the current run vault's `wayfinder/` subfolder, beside
-the root `GOAL.md`/`PLAN.md`/`QA.md` for the large objective. In this repo's default vault shape, that is
-`docs/changelog/<YYYY-MM>/<DD-topic>/wayfinder/` - the same dated task folder that holds `GOAL.md`, with
-WAYFINDER details nested below it.
+Default: write local markdown under the current run vault's `wayfinder/` subfolder, beside the root
+`GOAL.md`/`PLAN.md`/`QA.md` for the large objective - `docs/changelog/<YYYY-MM>/<DD-topic>/wayfinder/`,
+the same dated task folder that holds `GOAL.md`, with WAYFINDER details nested below it. If the repo has
+a native tracker (GitHub Issues, Jira, etc. - configured, named by the user, or documented in repo
+rules), ask the user whether to use that tracker or the default vault path; never silently switch. A
+pre-existing docs folder (e.g. `docs/improvements/`) is not a tracker and does not override the default.
 
 Local shape:
 
@@ -47,8 +48,6 @@ docs/changelog/<YYYY-MM>/<DD-topic>/
       001-short-title.md
 ```
 
-Ask only when the choice changes visibility or permissions, for example publishing GitHub issues instead
-of local docs.
 
 ## Map contract
 

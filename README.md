@@ -20,10 +20,10 @@ the smallest correct change, checks the request and project docs against the rea
    Broad new-app builds stay GREENFIELD but first get a `wayfinder/` Frontier Map so only one vertical slice enters delivery.
 2. **Load only the needed playbook.** The root `SKILL.md` stays small; each route loads its own
    `reference/` and `agents/` files only when needed.
-3. **Keep contexts fresh.** Code delivery runs Build, Improve full spec, Improve edge cases, and
-   Final Verify as separate fresh-context roles. The conductor passes the run vault and needed files,
-   then collects short status. Critic/Fixer is an opt-in escalation for under-specified work, not the
-   always-on default.
+3. **Keep contexts fresh.** Code delivery runs Build, Improve full spec, Improve edge cases,
+   Mandatory Two-Axis Review, and Final Verify as separate fresh-context roles. The conductor passes the
+   run vault and needed files, then collects short status. Critic/Fixer is an opt-in escalation for
+   under-specified work, not the always-on default.
 4. **Run Before/After Eval.** Capture the before state, define the after target, write a completion
    promise, and keep a resumable run state plus command manifest so the final claim proves the delta
    instead of just saying "tests passed."
@@ -35,15 +35,16 @@ the smallest correct change, checks the request and project docs against the rea
 ## What it adds over a plain baseline
 
 A strong model with the real spec is the bar. `/supergoal` adds the part a plain baseline skips under
-pressure: after Build, it runs the current core loop - Improve full spec, Improve edge cases, then Final
-Verify - and records the proof. For genuinely under-specified work, it can escalate to an independent
-critic that writes spec-derived failing tests before a fixer clears them. Once invoked for code delivery,
-`/supergoal` uses the role-loop instead of downgrading to an inline shortcut.
+pressure: after Build, it runs the current core loop - Improve full spec, Improve edge cases, Mandatory
+Two-Axis Review, then Final Verify - and records the proof. For genuinely under-specified work, it can
+escalate to an independent critic that writes spec-derived failing tests before a fixer clears them. Once
+invoked for code delivery, `/supergoal` uses the role-loop instead of downgrading to an inline shortcut.
 
 Each role is a bundled file in `agents/`, so dispatch stays harness-agnostic across Claude Code, Codex,
-agy, and other agent CLIs. Build -> Improve full spec -> Improve edge cases -> Final Verify is the
-mandatory core; Critic/Fixer stays available for the under-specified frontier. The conductor stays lean:
-subagents load the heavy references for their phase, and independent units run in parallel.
+agy, and other agent CLIs. Build -> Improve full spec -> Improve edge cases -> Mandatory Two-Axis Review
+-> Final Verify is the mandatory core; Critic/Fixer stays available for the under-specified frontier. The
+conductor stays lean: subagents load the heavy references for their phase, and independent units run in
+parallel.
 
 ## Principles
 
@@ -84,7 +85,7 @@ flowchart TD
     C -->|"harness effectiveness"| HARNESS["HARNESS-EVAL<br/>baseline vs harness"]
     C -->|"make a reusable skill"| SKILLMINE["SKILL-MINE<br/>mine -> forge -> install"]
 
-    GREENFIELD --> LOOP["Default delivery loop<br/>Build -> Improve full spec<br/>-> Improve edge cases -> Final Verify<br/>(Critic/Fixer opt-in)"]
+    GREENFIELD --> LOOP["Default delivery loop<br/>Build -> Improve full spec<br/>-> Improve edge cases -> Two-Axis Review<br/>-> Final Verify<br/>(Critic/Fixer opt-in)"]
     DEBUG --> LOOP
     LEGACY --> LOOP
 
@@ -110,7 +111,7 @@ flowchart TD
 | "explain / teach me X" (no code) | **TEACH** | Mission -> Source -> Bridge -> Teach -> Check (explain-back) |
 | "learn / map / onboard onto this codebase" | **LEARN-DOMAIN** | Survey -> Map -> Ground -> Persist a `.domain-agent/` wiki |
 | "QA only / verify / compare data - no code" | **QA-ONLY** | Detailed Impact Matrix (feature-impact QA map) + read-only DB -> evidence -> `report.md` |
-| "review / audit this code/diff/PR - no fixes" | **REVIEW-ONLY** | Two independent reviewers -> verified findings -> `report.md` |
+| "review / audit this code/diff/PR - no fixes" | **REVIEW-ONLY** | Standards + Spec + Security reviewers -> verified findings -> `report.md` |
 | "improve the architecture / find refactoring opportunities" | **ARCHITECTURE** | Friction survey -> candidates as a visual `report.html` -> grill the pick -> refactor routes to LEGACY/WAYFINDER |
 | "test harness effectiveness / with vs without" | **HARNESS-EVAL** | Cases -> baseline run -> harness run -> machine checks -> quality score -> compare |
 | "make a skill from history - no product code" | **SKILL-MINE** | Mine history -> rank -> you pick -> forge portable `SKILL.md` -> install |
@@ -128,10 +129,11 @@ implementer briefed by `PLAN.md` alone, test-first (bug -> failing test first); 
 by re-reading the user's request, issue/ticket, README, design/API docs, and `GOAL.md` Success Criteria,
 then fixing the smallest
 gap between that intent and the current behavior; 4) **Improve edge cases** by checking degenerate
-inputs, edge/error paths, state/protocol, compatibility, and security side effects; 5) **Final Verify**
+inputs, edge/error paths, state/protocol, compatibility, and security side effects; 5) **Mandatory
+Two-Axis Review** checks Spec fit and Standards/design quality in separate fresh contexts; 6) **Final Verify**
 by re-running the real tests, diffing the implementer's changes against `GOAL.md`, ticking each criterion
 proven met, and recording plain checklist results in `QA.md`; unmet criteria go to a timestamped
-`R-LOOP.md` section and the implementer relaunches; 6) escalate to
+`R-LOOP.md` section and the implementer relaunches; 7) escalate to
 independent **Critic -> Fixer** only for genuinely under-specified or latent-correctness work where
 missing requirements need to become failing tests. Stop only after every `GOAL.md` box is checked and the
 `Z-<date>.md` completion marker (run branch + timestamp) is written with command output recorded. The
@@ -167,7 +169,7 @@ through delivery before anything ships.
 ## Board (optional live dashboard)
 
 Watch progress across concurrent agents in real time. `bash tui/launch.sh &` opens an in-browser
-dashboard (Textual) showing each agent's mode + workflow stage (Frame -> Build -> Improve -> Final Verify,
+dashboard (Textual) showing each agent's mode + workflow stage (Frame -> Build -> Improve -> Two-Axis Review -> Final Verify,
 with Critic/Fixer only when escalated) and a Jira-like task board, grouped by repo / branch / worktree.
 Branch is advisory - never locked, so multiple agents can share a branch freely.
 

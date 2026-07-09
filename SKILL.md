@@ -70,10 +70,12 @@ limited delegation, tooling is unavailable, or a safety/permission gate requires
 independent QA shards/review dimensions. Implementation/debug/legacy runs require red-green, plus DB
 evidence when persisted data is load-bearing. Full contract: `reference/role-loop.md`.
 
-Mandatory core: Build -> Improve full spec -> Improve edge cases -> Mandatory Adversarial Review ->
+Mandatory core: Build -> Improve full spec -> Improve edge cases -> Mandatory Two-Axis Review ->
 Exact Verify/QA. Historical contract string: Build -> Improve full spec -> Improve edge cases -> Final
-Verify. Critic/Fixer is not part of the default loop; the mandatory adversarial review is. Use optional
-Critic/Fixer only when hidden requirements are the value being tested.
+Verify. Critic/Fixer is not part of the default loop; the mandatory two-axis review is. The two review
+axes stay separate: **Spec** asks whether the diff satisfies request/docs/`GOAL.md` without scope creep;
+**Standards** asks whether it fits repo standards, surrounding design, test quality, and maintainability.
+Use optional Critic/Fixer only when hidden requirements are the value being tested.
 
 1. **Frame.** Write `GOAL.md` FIRST from `templates/GOAL.md`: `## Original Request` (user prompt
    verbatim), refined `## Spec`, falsifiable `## Success Criteria` checkboxes each naming its
@@ -101,9 +103,14 @@ Critic/Fixer only when hidden requirements are the value being tested.
 4. **Improve edge cases.** Separate fresh-context improver attacks degenerate values, error/recovery,
    state/protocol, concurrency, compatibility, security, and cleanup. Test only grounded `must` behavior;
    route product/domain choices to the user.
-5. **Mandatory Adversarial Review (no src edits).** Fresh reviewer re-reads request/docs,
-   `GOAL.md`, `PLAN.md`, `QA.md`, current diff, and tests to disprove completeness. Findings become fixes,
-   decision gates, or residual risk; reviewer approval alone never means done.
+5. **Mandatory Two-Axis Review (no src edits).** Fresh reviewers run independent axes, parallel when
+   tooling allows:
+   - **Spec axis:** re-read request/docs, `GOAL.md`, `PLAN.md`, `QA.md`, current diff, and tests to find
+     missing/partial/wrong requirements and scope creep.
+   - **Standards axis:** re-read repo standards/rules plus surrounding code to find style, test-design,
+     readability, maintainability, and design-smell issues.
+   Keep the axes separate in the report. Findings become fixes, decision gates, or residual risk; reviewer
+   approval alone never means done.
 6. **Exact Verify/QA.** Re-run REAL tests plus the proof layer promised in Frame. Runtime-facing or
    user-expected proof: run the actual E2E/live/API/browser run; exact verification outranks reviewer
    approval. Browser UI: complete browser app verification with `qa-gate.sh <vault> browser`. Diff the

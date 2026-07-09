@@ -295,8 +295,8 @@ export async function selectAdapter(preferred = DEFAULT_ADAPTER, { adapters = AD
 // execution helpers
 // --------------------------------------------------------------------------
 // Run one arm's ORDERED passes. For the current supergoal skill this is usually
-// Build -> Improve full spec -> Improve edge cases -> Final Verify. Use a
-// critic/fixer pass only when the experiment is explicitly testing the
+// Build -> Improve full spec -> Improve edge cases -> Mandatory Two-Axis Review
+// -> Final Verify. Use a critic/fixer pass only when the experiment is explicitly testing the
 // surface-hidden-requirements lever. Always serial: each pass depends on the
 // previous edit. Each item is a prompt string or { prompt, addDir }; a per-item
 // addDir overrides the shared one.

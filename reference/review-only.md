@@ -11,15 +11,21 @@ report as the Frame input.
 Name the review target (working diff, branch vs base, PR number, or files), the base it is compared
 against, and the depth the user asked for (quick pass vs thorough audit).
 
-## Dispatch - two independent reviewers in parallel
+## Dispatch - independent reviewers in parallel
 
-- `agents/code-reviewer.md` in findings-only stance: correctness, test adequacy, readability, error
-  handling, dead code. In this mode it does NOT write failing test files; each untested required
-  behavior becomes a finding that names the missing test it would write (file, behavior, edge).
+- `agents/code-reviewer.md` in **Spec axis** findings-only stance: request/docs, issue/PRD, `GOAL.md`
+  if present, diff, tests, missing requirements, partial behavior, wrong behavior, and scope creep. In this
+  mode it does NOT write failing test files; each untested required behavior becomes a finding that names
+  the missing test it would write (file, behavior, edge).
+- `agents/code-reviewer.md` in **Standards axis** findings-only stance: repo standards, standing rules,
+  surrounding style, test design, readability, error handling, dead code, maintainability, and the fixed
+  smell baseline in `agents/code-reviewer.md`. Documented repo rules override smell findings; smell
+  findings are judgment calls.
 - `agents/security-reviewer.md`: secrets, injection, SSRF/XSS, auth, unsafe crypto, input validation.
 
 Both read request/docs and repo/data rules (`reference/domain-context.md`, `domain-rules.md`) so
-findings are judged against what the project requires, not generic style taste.
+findings are judged against what the project requires, not generic style taste. Keep Standards, Spec, and
+Security reports separate; do not merge or rerank them.
 
 ## Verify findings before reporting
 
@@ -30,11 +36,16 @@ a passing real test; they explain why the test is insufficient instead.
 
 ## Report (the one deliverable)
 
-Write `report.md` in the run vault (`docs/changelog/<YYYY-MM>/<DD-review-topic>/`), severity-ordered:
+Write `report.md` in the run vault (`docs/changelog/<YYYY-MM>/<DD-review-topic>/`):
 
 - `Target:` what was reviewed and against which base.
-- Findings grouped CRITICAL / HIGH / MEDIUM / LOW: each carries file:line, what is wrong, why it
-  matters here, and a concrete fix suggestion (suggestion only - not applied).
+- `## Standards`: findings grouped CRITICAL / HIGH / MEDIUM / LOW, each with file:line, cited standard or
+  smell name, what is wrong, why it matters here, and a concrete fix suggestion (suggestion only - not
+  applied).
+- `## Spec`: findings grouped CRITICAL / HIGH / MEDIUM / LOW, each with file:line, cited spec/source line,
+  what is missing/wrong/extra, why it matters here, and a concrete fix suggestion.
+- `## Security`: findings grouped CRITICAL / HIGH / MEDIUM / LOW, each with file:line, vulnerability class,
+  exploit/impact, and a concrete fix suggestion.
 - `Untested behaviors:` the missing-test findings from the critic stance.
 - `Not covered:` what the review did not look at, so silence is not read as approval.
 

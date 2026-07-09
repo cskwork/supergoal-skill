@@ -81,8 +81,15 @@ reject_text "role-loop has no very-easy shortcut" "reference/role-loop.md" "very
 reject_text "role-loop has no inline edit shortcut" "reference/role-loop.md" "edit inline"
 reject_text "qa has no very-easy skip" "reference/qa.md" "very easy"
 reject_text "delivery gate has no very-easy threshold" "reference/delivery-gate.md" "very easy"
-require_text "SKILL requires mandatory adversarial review" "SKILL.md" "Mandatory Adversarial Review"
-require_text "role-loop requires mandatory adversarial review" "reference/role-loop.md" "Mandatory Adversarial Review"
+require_text "SKILL requires mandatory two-axis review" "SKILL.md" "Mandatory Two-Axis Review"
+require_text "role-loop requires mandatory two-axis review" "reference/role-loop.md" "Mandatory Two-Axis Review"
+require_text "SKILL names spec review axis" "SKILL.md" '**Spec** asks whether the diff satisfies request/docs/`GOAL.md` without scope creep'
+require_text "SKILL names standards review axis" "SKILL.md" "**Standards** asks whether it fits repo standards"
+require_text "role-loop dispatches independent review axes" "reference/role-loop.md" "Dispatch two fresh-context reviewers independently"
+require_text "role-loop keeps review axes separate" "reference/role-loop.md" "Do not merge or rerank the axes"
+require_text "role-loop spec axis checks goal plan qa" "reference/role-loop.md" '`GOAL.md`, `PLAN.md`, `QA.md`'
+require_text "role-loop spec axis checks scope creep" "reference/role-loop.md" "scope creep"
+require_text "role-loop standards axis checks smell baseline" "reference/role-loop.md" "fixed smell baseline"
 require_text "SKILL exact verification outranks review" "SKILL.md" "exact verification outranks reviewer approval"
 require_text "role-loop exact verification outranks review" "reference/role-loop.md" "Exact verification outranks reviewer approval"
 require_text "SKILL requires actual E2E/live/API/browser run" "SKILL.md" "actual E2E/live/API/browser run"
@@ -101,6 +108,10 @@ require_text "executor supports full-spec improve mode" "agents/executor.md" "DO
 require_text "executor supports edge-case improve mode" "agents/executor.md" "DO (Improve edge cases)"
 require_text "qa-auditor verifies after improve passes" "agents/qa-auditor.md" "builder and both improve passes"
 require_text "critic is optional escalation" "agents/code-reviewer.md" "Optional Critic escalation"
+require_text "code-reviewer supports spec axis" "agents/code-reviewer.md" "DO (Spec axis)"
+require_text "code-reviewer supports standards axis" "agents/code-reviewer.md" "DO (Standards axis)"
+require_text "code-reviewer standards include Fowler smell names" "agents/code-reviewer.md" "Mysterious Name, Duplicated Code"
+require_text "code-reviewer keeps standards smells judgment-call" "agents/code-reviewer.md" "judgment calls, not hard violations"
 
 # LEGACY captures an existing API's exact behavior before a refactor (preserve-baseline),
 # and Verify diffs the re-capture against it (parallel to DEBUG's screen->endpoint capture).
@@ -170,6 +181,7 @@ require_text "role-loop has conditional plan attack" "reference/role-loop.md" "A
 require_text "role-loop gates plan attack to under-specified work" "reference/role-loop.md" "under-specified, wide-blast-radius"
 # Critic carries an explicit adversarial (disprove, not validate) stance.
 require_text "critic stance is to disprove, not rubber-stamp" "agents/code-reviewer.md" "try to DISPROVE"
+require_text "observability uses two-axis review phase" "reference/observability.md" "MandatoryTwoAxisReview"
 
 printf '\nSummary: %s passed, %s failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

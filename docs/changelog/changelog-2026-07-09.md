@@ -116,3 +116,12 @@ tickets instead of creating another top-level mode.
 
 **Verification target**: `bash tests/research-contract.test.sh`, `bash tests/reference-integrity.test.sh`,
 and `bash tests/run-all.sh`.
+
+## Credit surface
+
+**Change**: Added Matt Pocock public-skill credit to the root skill, README, Korean README, and landing
+footer.
+
+**Why**: WAYFINDER and the cited research helper deliberately reuse concepts from Matt Pocock's
+research and skill-writing patterns, so the credit belongs on the durable skill surfaces, not only in
+the planning note.

@@ -155,3 +155,8 @@ completion timestamp; DEBUG prod issue has reproduction fidelity and, if
 non-exact, residual risk + post-deploy confirmation plan; user-facing UI at the Expressive baseline;
 destructive steps consented; commit/merge only after the commit gate passes (`reference/delivery-gate.md`);
 verified commands reported.
+
+## Credit
+
+Workflow lineage: cskwork's **oh-my-symphony**. WAYFINDER and research-depth concepts also draw from
+Matt Pocock's public skills, especially the research and skill-writing patterns.

@@ -243,7 +243,9 @@ https://github.com/revfactory/claude-code-harness/
 ## 크레딧
 
 컨셉과 워크플로는 cskwork의 **oh-my-symphony**에서 차용했습니다
-(https://github.com/cskwork/oh-my-symphony). 여러 에이전트 CLI에서 쓸 수 있게 구성했습니다.
+(https://github.com/cskwork/oh-my-symphony). WAYFINDER와 research-depth 아이디어는 Matt Pocock의
+공개 스킬, 특히 research와 skill-writing 패턴에서도 많은 개념을 가져왔습니다.
+여러 에이전트 CLI에서 쓸 수 있게 구성했습니다.
 
 ## 라이선스
 

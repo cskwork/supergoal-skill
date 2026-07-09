@@ -36,7 +36,7 @@ on assumption. Full contract: `reference/role-loop.md`.
 
 | Signal in the objective | Mode | Route |
 |---|---|---|
-| build / make / ship a new app/tool | GREENFIELD | default delivery loop; if broad/foggy, Frame uses the same `wayfinder/` map/ticket path inside the run vault, selects one frontier ticket, then delivery remains GREENFIELD |
+| build / make / ship a new app/tool | GREENFIELD | default delivery loop; if broad/foggy, Frame uses the same `wayfinder/` map/ticket path inside the run vault, selects one frontier ticket, then delivery remains GREENFIELD; full-app builds auto-continue ticket-by-ticket (`reference/build-out.md`) |
 | fix / broken / failing / crash / why does | DEBUG | default loop; observe live symptom, then failing-test repro (`reference/debugging.md`, driver persona `agents/debugger.md`); web: `reference/qa.md`, `reference/playwright-cli.md` |
 | add / integrate / refactor existing code | LEGACY | default loop; map first (`agents/explore.md`, `reference/domain-context.md`); optional DB evidence (`reference/db-access.md`); existing API: capture its exact behavior first as a preserve-baseline; shared code/state changes: characterization baseline (`reference/qa.md`) |
 | spec / requirements first / break down / tickets / roadmap / big vague effort / frontier / what should we do first | WAYFINDER | planning/spec/tickets only: map the destination, deepen only useful tickets, name blockers/frontier, and route one ticket when implementation is requested; no product code by default (`reference/wayfinder.md`) |
@@ -84,7 +84,13 @@ Use optional Critic/Fixer only when hidden requirements are the value being test
    verification, and web apps' `## QA Cases`. GREENFIELD broad/foggy build requests do not switch
    user-facing modes; they use `reference/wayfinder.md` as an internal scope gate: preserve the destination in
    `wayfinder/map.md`, write vertical tickets under `wayfinder/tickets/`, select one frontier ticket,
-   and carry only that ticket's acceptance checks into the delivery `GOAL.md` / `PLAN.md`. Write a
+   and carry only that ticket's acceptance checks into the delivery `GOAL.md` / `PLAN.md`. Empty/new
+   repo: ticket 0 is the walking skeleton - stack chosen, official-CLI scaffold, app boots, one
+   end-to-end check, test command green (`reference/build-out.md`). If instead the user asked to build
+   the whole app (not one slice): after the map
+   freezes and the plan approval gate clears at app level, auto-continue ticket-by-ticket per
+   `reference/build-out.md` - fresh-context roles per ticket, boot smoke + Smoke-ledger re-run between
+   tickets; stop only on ask-user, gate failure, or all tickets closed. Write a
    completion promise in `PLAN.md` `## Intent`:
    outcome, proof, stop condition, `max_iterations` (default 8). Ask <=5 high-leverage questions only
    when needed; confirm wide/destructive/behavior-changing blast radius after grounding
@@ -146,6 +152,7 @@ security=`agents/security-reviewer.md` (others in `agents/<role>.md`).
 | `reference/interview.md` | interview: ambiguity (what) + blast-radius confirm (approach, tiered) |
 | `reference/delivery-gate.md`, `templates/GOAL.md`, `templates/PLAN.md`, `templates/QA.md`, `templates/R-LOOP.md`, `templates/Z-DONE.md`, `templates/run-state.json`, `templates/commit-gate.sh` | run vault file set + Before/After Eval + resumable run state + commit gate for GREENFIELD / DEBUG / LEGACY code changes |
 | `reference/wayfinder.md` | WAYFINDER: issue map -> vertical tickets -> optional EARS/user-story depth -> blockers -> next frontier; also the shared GREENFIELD Frontier Map path for broad/foggy new builds |
+| `reference/build-out.md` | GREENFIELD full-app auto-continue: walking-skeleton ticket 0, conductor loop, boot smoke + Smoke ledger, per-ticket run vaults under `runs/` |
 | `reference/research.md` | WAYFINDER research-needed tickets; docs/API/source facts that need high-trust cited evidence |
 | `reference/prototype.md` | PROTOTYPE: throwaway logic/UI proof -> capture answer -> delete/quarantine or route to delivery |
 | `reference/plan-grounding.md` | ground the approach before committing |
@@ -167,6 +174,7 @@ red-green test + DB evidence if data load-bearing; neighbor snapshots re-run wit
 completion timestamp; DEBUG prod issue has reproduction fidelity and, if
 non-exact, residual risk + post-deploy confirmation plan; user-facing UI at the Expressive baseline;
 destructive steps consented; commit/merge only after the commit gate passes (`reference/delivery-gate.md`);
+full-app build-out ends with the assembled app booting and the Smoke ledger green (`reference/build-out.md`);
 verified commands reported.
 
 ## Credit

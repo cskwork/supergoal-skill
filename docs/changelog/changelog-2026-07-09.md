@@ -201,3 +201,54 @@ security, and cleanup paths.
 **Verification target**: `bash tests/role-loop-contract.test.sh`, `bash tests/harness-eval-contract.test.sh`,
 `bash tests/observability-contract.test.sh`, `bash tests/tui-state-reader.test.sh`, `bash tests/run-all.sh`,
 and `git diff --check`.
+
+## GREENFIELD build-out: full-app auto-continue
+
+**Change**: Added `reference/build-out.md` and wired it into the GREENFIELD route. A full-app request now
+authorizes continuous ticket-by-ticket progression: walking-skeleton ticket 0 on empty repos (stack
+bundle question inside the interview budget, official-CLI scaffold, boots + one end-to-end check), a
+conductor loop that dispatches each frontier ticket to fresh-context role subagents with its own run
+vault under `runs/<NNN-slug>/`, an integration boot smoke + `Smoke ledger` re-run between tickets, an
+app-level `Design shell` record in `ui-ux.md`, and stop conditions (all closed + final smoke green,
+ask-user, two strikes, hard stops, context exhaustion). New contract test
+`tests/build-out-contract.test.sh`.
+
+**Why**: The skill delivered exactly one frontier ticket per invocation and then asked the user to clear
+context, so a multi-feature app needed a human re-invocation per ticket; stack selection, scaffolding,
+cross-ticket integration verification, and booting the assembled app were unspecified. The additions
+follow the measured guardrails: the per-ticket delivery loop is unchanged, no new mode or gate script,
+the Smoke ledger is a cheap regression tripwire (one boot + one proof per ticket), and heavyweight parts
+fire only on genuinely full-app builds. Precedent: `81cb15b` (invocation authorizes the full role-loop).
+Pattern sources: Anthropic effective-harnesses-for-long-running-agents (filesystem-backed progress
+object, initializer/walking skeleton, never-weaken-checks, per-feature fresh context) adapted onto the
+existing wayfinder map/ticket machinery instead of a new artifact format; lazycodex/OmO
+(code-yeongyu/lazycodex) contributed four one-line invariants: ticket-close convention capture (later
+fresh-context tickets do not re-derive settled conventions), literal smoke commands with an expected
+observable ("check it works" is not a check), evidence freshness (smoke evidence produced before the
+last edit is invalid), and cleanup receipts (leftover runtime state from a smoke - server, port, tmux -
+blocks the ticket close; prevents stale-server false green across the auto-continue loop). Its other
+levers were reviewed and not taken: planning-first workflow, durable goal/ledger CLI state machine,
+orchestrator-never-implements, 5-lane blocking review, tier triage, wave planning - each is either
+covered by existing machinery (wayfinder, role-loop, two-axis review, caps) or the gated-ceremony
+pattern the evals removed.
+
+**Rejected alternatives**:
+
+- A new BUILD-OUT user-facing mode. Routing stays GREENFIELD (mode table promises this; landing counts
+  twelve modes); build-out is loop behavior, not identity.
+- Batch tickets in one builder context. Measured guardrail: no sibling tickets in the same context; the
+  conductor/fresh-role split preserves it literally.
+- A separate milestone layer over the ticket graph. Bootable-after-every-ticket is the milestone
+  concept; a second layer is ceremony.
+- A JSON feature-list artifact (Anthropic-style). The wayfinder ticket graph + Smoke ledger already
+  carries status; a parallel format would drift.
+- Gate-script changes. `commit-gate.sh`'s non-recursive `Z-*.md` glob already works per ticket vault;
+  the app-level `Z-<date>.md` lives outside any gated vault until the final smoke.
+
+**Not claimed**: no measured lift for build-out yet — full-app GREENFIELD has zero recorded eval results.
+Follow-up (out of scope here): one runnable full-app fixture (revfactory-case-001) + skill-vs-baseline
+A/B before any effectiveness claim; retract the lever if the plain baseline ties.
+
+**Verification target**: `bash tests/build-out-contract.test.sh`, `bash tests/wayfinder-prototype-contract.test.sh`,
+`bash tests/role-loop-contract.test.sh`, `bash tests/reference-integrity.test.sh`, `bash tests/run-all.sh`,
+and `git diff --check`.

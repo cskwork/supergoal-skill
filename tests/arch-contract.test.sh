@@ -2,7 +2,7 @@
 # /supergoal ARCHITECTURE-mode contract.
 # Fails if the architecture survey loses its findings-only boundary, its depth/seam
 # vocabulary, its run-vault report with recommendation strengths, its grill reuse,
-# or its route-out to LEGACY/SPEC.
+# or its route-out to LEGACY/WAYFINDER.
 
 set -u
 
@@ -83,12 +83,12 @@ require_text "arch report template uses readable Korean body size" "templates/ar
 require_text "arch report requires Korean readable minimums" "reference/arch.md" 'at least `17px/1.7`'
 
 # grill the pick (reuse, not reinvent)
-require_text "arch reuses the spec grill protocol" "reference/arch.md" "reference/spec.md"
+require_text "arch reuses the wayfinder depth protocol" "reference/arch.md" "reference/wayfinder.md"
 require_text "arch records rejections as ADRs" "reference/arch.md" "so future surveys don't re-suggest it"
 require_text "arch skips ephemeral rejection reasons" "reference/arch.md" "skip ephemeral"
 
 # route out
-require_text "arch routes the refactor out" "reference/arch.md" "hands off to LEGACY or SPEC"
+require_text "arch routes the refactor out" "reference/arch.md" "hands off to LEGACY or WAYFINDER"
 
 printf '\nSummary: %s passed, %s failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

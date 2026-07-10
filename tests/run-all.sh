@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Canonical local verification for /supergoal. Runs the shell contract suite,
-# syntax-checks Node templates, and exercises the zero-dependency example.
+# syntax-checks Node templates, and exercises the optional zero-dependency example
+# when the checkout vendors it.
 
 set -euo pipefail
 
@@ -24,7 +25,9 @@ done
 
 echo
 echo "== example url-shortener =="
-if command -v npm >/dev/null 2>&1; then
+if [ ! -d "$ROOT/examples/url-shortener" ]; then
+  echo "SKIP examples/url-shortener not present in this checkout"
+elif command -v npm >/dev/null 2>&1; then
   (cd "$ROOT/examples/url-shortener" && npm test)
 else
   echo "SKIP npm not on PATH"

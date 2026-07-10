@@ -108,4 +108,5 @@ kept the change correct on the first build.
 
 > Note: the commit SHAs above (`c3d74f6`, `0ce82a1`, `b2c897f`) refer to the ephemeral
 > `/tmp/jdi-live/url-shortener` working copy used during validation, not this repository's history.
-> The validated source + full audit trail are vendored under `examples/url-shortener/`.
+> Some checkouts may vendor that optional example under `examples/url-shortener/`; this checkout does not
+> require it for the canonical contract suite.

@@ -42,6 +42,11 @@ Before any file mutation, create the run vault's `GOAL.md` from `templates/GOAL.
 - `GOAL.md` is written FIRST: `## Original Request` quotes the user's prompt verbatim; `## Spec` refines
   it into a detailed spec; `## Success Criteria` seeds falsifiable checkboxes, each naming its
   verification method; web apps also seed `## QA Cases` (browser scenarios for playwright-cli);
+- GREENFIELD scope gate: if the new app/tool request is broad, foggy, roadmap-shaped, or clearly
+  multi-session, keep the mode `GREENFIELD` and use `reference/wayfinder.md` inside this same run vault
+  before freezing `PLAN.md`; write `wayfinder/map.md`, write vertical tickets under
+  `wayfinder/tickets/`, name the first unblocked frontier ticket, and carry only that ticket's
+  acceptance checks into `GOAL.md` / `PLAN.md`; do not build sibling tickets in the same context;
 - record eval intent in `PLAN.md` `## Intent`: user goal, constraints, tradeoffs, rejected approaches;
 - record the completion promise in `PLAN.md` `## Intent`: promised outcome, required proof, stop
   condition, and `max_iterations` (default 8);

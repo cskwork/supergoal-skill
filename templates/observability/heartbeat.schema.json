@@ -13,7 +13,7 @@
     "repo": { "type": "string", "description": "basename, for column grouping" },
     "branch": { "type": "string", "description": "advisory only; multiple agents may share it; never a mutex" },
     "worktree": { "type": "string", "description": "worktree root (== repo_path unless a linked worktree)" },
-    "mode": { "type": ["string", "null"], "description": "supergoal mode (GREENFIELD|DEBUG|LEGACY|SPEC|...)" },
+    "mode": { "type": ["string", "null"], "description": "supergoal mode (GREENFIELD|DEBUG|LEGACY|WAYFINDER|PROTOTYPE|...)" },
     "phase": { "type": ["string", "null"], "enum": ["Frame", "Build", "Critic", "Fixer", "Verify", "Done", null], "description": "current loop position" },
     "current_task": { "type": ["string", "null"] },
     "started_at": { "type": "string", "description": "ISO-8601 UTC Z; agent registration time, immutable" },

@@ -1,6 +1,6 @@
 ---
 name: supergoal
-description: Use for "build X", "fix this bug", "add this feature", "spec/plan this feature", "break this into tickets", "prototype this", "QA / verify", "code review", "improve the architecture", "learn this codebase", "make a skill", or "eval a harness".
+description: Use for "fix this bug", "add/build/plan/spec this feature", "prototype this", "QA / verify", "code review", "improve architecture", "learn codebase", "make skill", or "eval a harness".
 ---
 
 # About

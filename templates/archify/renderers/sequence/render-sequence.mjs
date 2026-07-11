@@ -67,9 +67,15 @@ function validateSequence() {
   }
 
   for (const participant of participants.values()) {
-    const estLabelW = textUnits(participant.label) * 6.8;
+    const estLabelW = textUnits(participant.label) * 7.5;
     if (estLabelW > layout.participantW + 6) {
       problems.push(`Label "${participant.label}" (~${Math.round(estLabelW)}px) is wider than the ${layout.participantW}px participant box — shorten it or move detail to sublabel.`);
+    }
+    if (participant.sublabel) {
+      const estSubW = textUnits(participant.sublabel) * 4.2;
+      if (estSubW > layout.participantW + 6) {
+        problems.push(`Sublabel "${participant.sublabel}" (~${Math.round(estSubW)}px) is wider than the ${layout.participantW}px participant box — shorten it.`);
+      }
     }
   }
 
@@ -112,7 +118,7 @@ function validateSequence() {
     .map((m) => {
       const x1 = participants.get(m.from).cx;
       const x2 = participants.get(m.to).cx;
-      const width = Math.max(34, textUnits(m.label) * 5.2 + 12);
+      const width = Math.max(34, textUnits(m.label) * 5.7 + 12);
       return { label: m.label, x: (x1 + x2) / 2 - width / 2, y: m.y - 20, width, height: layout.labelH };
     });
   for (let i = 0; i < labelRects.length; i += 1) {
@@ -152,8 +158,8 @@ function renderParticipant(participant) {
   const fill = componentFill[participant.type] || 'c-external';
   return `        <rect x="${participant.x}" y="${layout.topY}" width="${layout.participantW}" height="${layout.participantH}" rx="6" class="c-mask"/>
         <rect x="${participant.x}" y="${layout.topY}" width="${layout.participantW}" height="${layout.participantH}" rx="6" class="${fill}"${animateAttr(sequence.meta, 'node', participant.index)} stroke-width="1.5"/>
-        <text x="${participant.cx}" y="${layout.topY + 22}" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">${esc(participant.label)}</text>
-        <text x="${participant.cx}" y="${layout.topY + 39}" class="t-muted" font-size="7" text-anchor="middle">${esc(participant.sublabel)}</text>`;
+        <text x="${participant.cx}" y="${layout.topY + 22}" class="t-primary" font-size="12" font-weight="600" text-anchor="middle">${esc(participant.label)}</text>
+        <text x="${participant.cx}" y="${layout.topY + 39}" class="t-muted" font-size="8" text-anchor="middle">${esc(participant.sublabel)}</text>`;
 }
 
 function renderLifeline(participant) {
@@ -162,7 +168,7 @@ function renderLifeline(participant) {
 
 function renderSegment(segment) {
   return `        <rect x="48" y="${segment.from}" width="${viewBox[0] - 96}" height="${segment.to - segment.from}" rx="10" class="c-lane" stroke-width="1"/>
-        <text x="62" y="${segment.from + 18}" class="t-dim" font-size="9" font-weight="600">${esc(segment.label)}</text>`;
+        <text x="62" y="${segment.from + 18}" class="t-dim" font-size="10" font-weight="600">${esc(segment.label)}</text>`;
 }
 
 function renderActivation(activation) {
@@ -177,7 +183,7 @@ function renderActivation(activation) {
 function messageLabel(message, x1, x2) {
   const center = (x1 + x2) / 2;
   const y = message.y - 10;
-  const labelW = Math.max(34, textUnits(message.label) * 5.2 + 12);
+  const labelW = Math.max(34, textUnits(message.label) * 5.7 + 12);
   const accent = message.variant === 'security'
     ? 't-security'
     : message.variant === 'dashed'
@@ -186,7 +192,7 @@ function messageLabel(message, x1, x2) {
         ? 't-muted'
         : 't-backend';
   return `        <rect x="${center - labelW / 2}" y="${y - 10}" width="${labelW}" height="${layout.labelH}" rx="3" class="c-mask"/>
-        <text x="${center}" y="${y}" class="${accent}" font-size="9" text-anchor="middle">${esc(message.label)}</text>`;
+        <text x="${center}" y="${y}" class="${accent}" font-size="10" text-anchor="middle">${esc(message.label)}</text>`;
 }
 
 function renderMessage(message, index) {
@@ -199,7 +205,7 @@ function renderMessage(message, index) {
   const strokeWidth = message.variant === 'emphasis' ? 1.8 : 1.4;
   const dash = message.variant === 'return' ? ' stroke-dasharray="3,5"' : '';
   const note = message.note
-    ? `\n        <text x="${Math.min(start, end) + 12}" y="${message.y + 18}" class="t-dim" font-size="7">${esc(message.note)}</text>`
+    ? `\n        <text x="${Math.min(start, end) + 12}" y="${message.y + 18}" class="t-dim" font-size="8">${esc(message.note)}</text>`
     : '';
   return `        <path d="M ${start} ${message.y} L ${end} ${message.y}" class="${cls}"${animateAttr(sequence.meta, 'edge', index)} stroke-width="${strokeWidth}"${dash} marker-end="url(#${marker})"/>
 ${messageLabel(message, start, end)}${note}`;
@@ -207,15 +213,15 @@ ${messageLabel(message, start, end)}${note}`;
 
 function renderLegend() {
   const y = layout.legendY;
-  return `        <text x="150" y="${y - 20}" class="t-primary" font-size="10" font-weight="600">Legend</text>
+  return `        <text x="150" y="${y - 20}" class="t-primary" font-size="11" font-weight="600">Legend</text>
         <path d="M 150 ${y} L 184 ${y}" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <text x="193" y="${y + 3}" class="t-muted" font-size="8">request</text>
+        <text x="193" y="${y + 3}" class="t-muted" font-size="9">request</text>
         <path d="M 270 ${y} L 304 ${y}" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
-        <text x="313" y="${y + 3}" class="t-muted" font-size="8">return</text>
+        <text x="313" y="${y + 3}" class="t-muted" font-size="9">return</text>
         <path d="M 385 ${y} L 419 ${y}" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
-        <text x="428" y="${y + 3}" class="t-muted" font-size="8">security</text>
+        <text x="428" y="${y + 3}" class="t-muted" font-size="9">security</text>
         <path d="M 530 ${y} L 564 ${y}" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
-        <text x="573" y="${y + 3}" class="t-muted" font-size="8">async trace</text>`;
+        <text x="573" y="${y + 3}" class="t-muted" font-size="9">async trace</text>`;
 }
 
 function renderSvg() {

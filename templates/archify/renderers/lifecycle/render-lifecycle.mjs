@@ -157,9 +157,15 @@ function validateLifecycle() {
     if (state.y < 64 || state.y + state.height > legendY() - 24) {
       problems.push(`State "${state.id}" exceeds the vertical lifecycle area — keep y between 64 and ${legendY() - 24} (adjust yOffset or increase meta.viewBox[1]).`);
     }
-    const estLabelW = textUnits(state.label) * 6.2;
+    const estLabelW = textUnits(state.label) * 6.8;
     if (estLabelW > state.width + 6) {
       problems.push(`Label "${state.label}" (~${Math.round(estLabelW)}px) is wider than state "${state.id}" (${state.width}px) — shorten the label, move detail to sublabel, or increase state.width.`);
+    }
+    if (state.sublabel) {
+      const estSubW = textUnits(state.sublabel) * 4.2;
+      if (estSubW > state.width + 6) {
+        problems.push(`Sublabel "${state.sublabel}" (~${Math.round(estSubW)}px) is wider than state "${state.id}" (${state.width}px) — shorten the sublabel or increase state.width.`);
+      }
     }
   }
 
@@ -281,26 +287,26 @@ function renderBands() {
   const right = viewBox[0] - 72;
   const titles = bandTitles();
   return `        <path d="M 72 112 L ${right} 112" class="a-default" stroke-width="0.8" stroke-dasharray="3,8"/>
-        <text x="72" y="100" class="t-dim" font-size="10" font-weight="600">01 / ${esc(titles[0])}</text>
+        <text x="72" y="100" class="t-dim" font-size="11" font-weight="600">01 / ${esc(titles[0])}</text>
         <path d="M 72 264 L ${right} 264" class="a-default" stroke-width="0.8" stroke-dasharray="3,8"/>
-        <text x="72" y="252" class="t-dim" font-size="10" font-weight="600">02 / ${esc(titles[1])}</text>
+        <text x="72" y="252" class="t-dim" font-size="11" font-weight="600">02 / ${esc(titles[1])}</text>
         <path d="M 72 436 L ${right} 436" class="a-default" stroke-width="0.8" stroke-dasharray="3,8"/>
-        <text x="72" y="424" class="t-dim" font-size="10" font-weight="600">03 / ${esc(titles[2])}</text>`;
+        <text x="72" y="424" class="t-dim" font-size="11" font-weight="600">03 / ${esc(titles[2])}</text>`;
 }
 
 function renderState(state) {
   const fill = typeClass[state.type] || typeClass.neutral;
   const accent = textClass[state.type] || 't-muted';
   const tag = state.tag
-    ? `\n        <text x="${state.cx}" y="${state.y + state.height - 11}" class="${accent}" font-size="7" text-anchor="middle">${esc(state.tag)}</text>`
+    ? `\n        <text x="${state.cx}" y="${state.y + state.height - 11}" class="${accent}" font-size="8" text-anchor="middle">${esc(state.tag)}</text>`
     : '';
   const step = state.step
-    ? `\n        <text x="${state.x + 10}" y="${state.y + 14}" class="${accent}" font-size="7" font-weight="700">${esc(state.step)}</text>`
+    ? `\n        <text x="${state.x + 10}" y="${state.y + 14}" class="${accent}" font-size="8" font-weight="700">${esc(state.step)}</text>`
     : '';
   return `        <rect x="${state.x}" y="${state.y}" width="${state.width}" height="${state.height}" rx="7" class="c-mask"/>
         <rect x="${state.x}" y="${state.y}" width="${state.width}" height="${state.height}" rx="7" class="${fill}"${animateAttr(lifecycle.meta, 'node', stateSteps.get(state.id))} stroke-width="1.5"/>${step}
-        <text x="${state.cx}" y="${state.y + 21}" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">${esc(state.label)}</text>
-        <text x="${state.cx}" y="${state.y + 37}" class="t-muted" font-size="7" text-anchor="middle">${esc(state.sublabel || '')}</text>${tag}`;
+        <text x="${state.cx}" y="${state.y + 21}" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">${esc(state.label)}</text>
+        <text x="${state.cx}" y="${state.y + 37}" class="t-muted" font-size="8" text-anchor="middle">${esc(state.sublabel || '')}</text>${tag}`;
 }
 
 function renderTransitionPath(transition, index) {
@@ -318,23 +324,23 @@ function renderTransitionLabel(transition) {
   const labelW = Math.max(32, longestLine * 4.9 + 12);
   const labelH = transition.note ? 27 : 16;
   const note = transition.note
-    ? `\n        <text x="${lx}" y="${ly + 11}" class="t-dim" font-size="7" text-anchor="middle">${esc(transition.note)}</text>`
+    ? `\n        <text x="${lx}" y="${ly + 11}" class="t-dim" font-size="8" text-anchor="middle">${esc(transition.note)}</text>`
     : '';
   return `        <rect x="${lx - labelW / 2}" y="${ly - 11}" width="${labelW}" height="${labelH}" rx="4" class="c-mask"/>
-        <text x="${lx}" y="${ly}" class="${variantAccent(transition.variant)}" font-size="8" text-anchor="middle">${esc(transition.label)}</text>${note}`;
+        <text x="${lx}" y="${ly}" class="${variantAccent(transition.variant)}" font-size="9" text-anchor="middle">${esc(transition.label)}</text>${note}`;
 }
 
 function renderLegend() {
   const y = legendY();
-  return `        <text x="220" y="${y - 20}" class="t-primary" font-size="10" font-weight="600">Legend</text>
+  return `        <text x="220" y="${y - 20}" class="t-primary" font-size="11" font-weight="600">Legend</text>
         <rect x="220" y="${y - 8}" width="14" height="9" rx="2" class="c-backend" stroke-width="1"/>
-        <text x="240" y="${y}" class="t-muted" font-size="7">active state</text>
+        <text x="240" y="${y}" class="t-muted" font-size="8">active state</text>
         <rect x="325" y="${y - 8}" width="14" height="9" rx="2" class="c-cloud" stroke-width="1"/>
-        <text x="345" y="${y}" class="t-muted" font-size="7">waiting</text>
+        <text x="345" y="${y}" class="t-muted" font-size="8">waiting</text>
         <rect x="415" y="${y - 8}" width="14" height="9" rx="2" class="c-database" stroke-width="1"/>
-        <text x="435" y="${y}" class="t-muted" font-size="7">terminal success</text>
+        <text x="435" y="${y}" class="t-muted" font-size="8">terminal success</text>
         <rect x="560" y="${y - 8}" width="14" height="9" rx="2" class="c-security" stroke-width="1"/>
-        <text x="580" y="${y}" class="t-muted" font-size="7">failure / exit</text>`;
+        <text x="580" y="${y}" class="t-muted" font-size="8">failure / exit</text>`;
 }
 
 function renderLifecycleRail() {

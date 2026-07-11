@@ -104,9 +104,15 @@ function validateDataflow() {
     if (node.y < layout.stageY + layout.stageH + 22 || node.y + node.height > viewBox[1] - layout.stageBottomPad) {
       problems.push(`Node "${node.id}" exceeds the readable diagram area — keep y between ${layout.stageY + layout.stageH + 22} and ${viewBox[1] - layout.stageBottomPad} (adjust row/yOffset or increase meta.viewBox[1]).`);
     }
-    const estLabelW = textUnits(node.label) * 6.2;
+    const estLabelW = textUnits(node.label) * 6.8;
     if (estLabelW > node.width + 6) {
       problems.push(`Label "${node.label}" (~${Math.round(estLabelW)}px) is wider than node "${node.id}" (${node.width}px) — shorten the label, move detail to sublabel, or increase node.width.`);
+    }
+    if (node.sublabel) {
+      const estSubW = textUnits(node.sublabel) * 4.2;
+      if (estSubW > node.width + 6) {
+        problems.push(`Sublabel "${node.sublabel}" (~${Math.round(estSubW)}px) is wider than node "${node.id}" (${node.width}px) — shorten the sublabel or increase node.width.`);
+      }
     }
   }
 
@@ -212,19 +218,19 @@ function renderStage(stage, index) {
   const x = cx - layout.stageW / 2;
   const h = viewBox[1] - layout.stageY - layout.stageBottomPad;
   return `        <rect x="${x}" y="${layout.stageY}" width="${layout.stageW}" height="${h}" rx="10" class="c-lane" stroke-width="1"/>
-        <text x="${cx}" y="${layout.stageY + 22}" class="t-dim" font-size="9" font-weight="600" text-anchor="middle">${String(index + 1).padStart(2, '0')} / ${esc(stage.label)}</text>`;
+        <text x="${cx}" y="${layout.stageY + 22}" class="t-dim" font-size="10" font-weight="600" text-anchor="middle">${String(index + 1).padStart(2, '0')} / ${esc(stage.label)}</text>`;
 }
 
 function renderNode(node) {
   const fill = componentFill[node.type] || 'c-external';
   const accent = componentText[node.type] || 't-muted';
   const tag = node.tag
-    ? `\n        <text x="${node.cx}" y="${node.y + node.height - 11}" class="${accent}" font-size="7" text-anchor="middle">${esc(node.tag)}</text>`
+    ? `\n        <text x="${node.cx}" y="${node.y + node.height - 11}" class="${accent}" font-size="8" text-anchor="middle">${esc(node.tag)}</text>`
     : '';
   return `        <rect x="${node.x}" y="${node.y}" width="${node.width}" height="${node.height}" rx="6" class="c-mask"/>
         <rect x="${node.x}" y="${node.y}" width="${node.width}" height="${node.height}" rx="6" class="${fill}"${animateAttr(dataflow.meta, 'node', nodeSteps.get(node.id))} stroke-width="1.5"/>
-        <text x="${node.cx}" y="${node.y + 21}" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">${esc(node.label)}</text>
-        <text x="${node.cx}" y="${node.y + 37}" class="t-muted" font-size="7" text-anchor="middle">${esc(node.sublabel || '')}</text>${tag}`;
+        <text x="${node.cx}" y="${node.y + 21}" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">${esc(node.label)}</text>
+        <text x="${node.cx}" y="${node.y + 37}" class="t-muted" font-size="8" text-anchor="middle">${esc(node.sublabel || '')}</text>${tag}`;
 }
 
 function renderFlowPath(flow, index) {
@@ -240,24 +246,24 @@ function renderFlowLabel(flow) {
   const longestLine = Math.max(textUnits(flow.label), textUnits(flow.classification || ''));
   const labelW = Math.max(34, longestLine * 4.9 + 12);
   const classification = flow.classification
-    ? `\n        <text x="${lx}" y="${ly + 11}" class="t-dim" font-size="7" text-anchor="middle">${esc(flow.classification)}</text>`
+    ? `\n        <text x="${lx}" y="${ly + 11}" class="t-dim" font-size="8" text-anchor="middle">${esc(flow.classification)}</text>`
     : '';
   const labelH = flow.classification ? 27 : layout.labelH;
   return `        <rect x="${lx - labelW / 2}" y="${ly - 11}" width="${labelW}" height="${labelH}" rx="4" class="c-mask"/>
-        <text x="${lx}" y="${ly}" class="${variantAccent(flow.variant)}" font-size="8" text-anchor="middle">${esc(flow.label)}</text>${classification}`;
+        <text x="${lx}" y="${ly}" class="${variantAccent(flow.variant)}" font-size="9" text-anchor="middle">${esc(flow.label)}</text>${classification}`;
 }
 
 function renderLegend() {
   const y = viewBox[1] - 36;
-  return `        <text x="214" y="${y - 20}" class="t-primary" font-size="10" font-weight="600">Legend</text>
+  return `        <text x="214" y="${y - 20}" class="t-primary" font-size="11" font-weight="600">Legend</text>
         <path d="M 214 ${y} L 248 ${y}" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <text x="257" y="${y + 3}" class="t-muted" font-size="8">primary data</text>
+        <text x="257" y="${y + 3}" class="t-muted" font-size="9">primary data</text>
         <path d="M 340 ${y} L 374 ${y}" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
-        <text x="383" y="${y + 3}" class="t-muted" font-size="8">policy / PII</text>
+        <text x="383" y="${y + 3}" class="t-muted" font-size="9">policy / PII</text>
         <path d="M 480 ${y} L 514 ${y}" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
-        <text x="523" y="${y + 3}" class="t-muted" font-size="8">async batch</text>
+        <text x="523" y="${y + 3}" class="t-muted" font-size="9">async batch</text>
         <rect x="625" y="${y - 8}" width="14" height="9" rx="2" class="c-database" stroke-width="1"/>
-        <text x="646" y="${y}" class="t-muted" font-size="8">data store</text>`;
+        <text x="646" y="${y}" class="t-muted" font-size="9">data store</text>`;
 }
 
 function renderSvg() {

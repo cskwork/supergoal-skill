@@ -42,7 +42,9 @@ CSS only, no CDN or network (offline, like the LEARN-DOMAIN handbook); before/af
 boxes (shallow -> deep). Render the survey-level system diagram with archify (`reference/archify.md`):
 one current-state `architecture` diagram - plus a target-state twin for the Top recommendation when it
 clarifies the change - into `diagrams/` beside `report.html`, linked from the report, JSON IR kept
-beside it. Per-candidate before/after visuals stay inline SVG/CSS boxes; no Node -> archify fallback. Per candidate: Files / Problem (the friction) / Solution in plain language /
+beside it. Per-candidate before/after visuals stay inline SVG/CSS
+boxes - do not escalate them to archify renders. If Node is unavailable, use the fallback in
+`reference/archify.md`. Per candidate: Files / Problem (the friction) / Solution in plain language /
 Benefits stated in locality, leverage, and test terms / a before/after visual / recommendation strength
 `Strong | Worth exploring | Speculative` as a badge. Every Strong candidate is re-checked against the
 cited code before it enters the report - plausible-but-unverified is the failure mode. End with a `Top

@@ -33,3 +33,26 @@ LEARN-DOMAIN Onboard renders the architecture overview and top key-flow diagrams
 - Verified: `node templates/archify/bin/archify.mjs doctor` passes from the vendored path;
   `render workflow examples/agent-tool-call.workflow.json` + `check` produce a clean 56K self-contained
   HTML on Node v22.
+
+## Subagent test run of the archify integration (same day, follow-up)
+
+A fresh subagent ran the new-version skill end-to-end: ARCHITECTURE mode on a synthetic inventory
+service. It loaded `reference/archify.md` -> `templates/archify/SKILL.md` + schema + example, rendered
+current-state and target-state `architecture` diagrams into the run vault's `diagrams/`, hit one layout
+validation failure (label overlap), applied the renderer's printed `labelDy` suggestion verbatim, and
+both diagrams passed `check`. Loop confirmed followable without guesswork.
+
+Fixes applied from its feedback:
+
+- `reference/archify.md`: documented that `render` itself layout-validates and prints numeric fixes
+  (`validate` is schema-shape only); added the >=110px gap hint for labeled horizontal edges - the one
+  render failure was predictable from missing that budget.
+- `reference/arch.md`: split the ambiguous "no Node -> archify fallback" clause into two sentences
+  (per-candidate visuals never escalate to archify; Node-missing fallback lives in archify.md).
+- `templates/arch-report.html`: added a "System diagrams" slot (arch.md required linking diagrams but
+  the template had no slot, so runs invented their own markup); removed the duplicated
+  "Top recommendation" heading (`.top-anchor` outer h2 had no CSS and rendered the title twice).
+
+Reported, not fixed (pre-existing, out of this change's scope): arch.md's read-only rule vs
+runtime-verifying Strong candidates (test run used a disposable repo copy - worth codifying); no
+autonomous-run branch at the Report step's "open and ask" closing move.

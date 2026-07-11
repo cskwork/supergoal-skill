@@ -196,6 +196,29 @@ function validateArchitecture() {
     }
   }
 
+  // Boundary labels are drawn text too: they must fit their box, and nothing may sit on them.
+  const boundaryLabelRects = boundaries
+    .filter((b) => b.label)
+    .map((b) => ({ id: b.label, label: b.label, x: b.x + 8, y: b.y + 7, width: textUnits(b.label) * 5.9, height: 14 }));
+  for (const blr of boundaryLabelRects) {
+    if (blr.width > 0) {
+      const owner = boundaries.find((b) => b.label === blr.id);
+      if (owner && blr.width > owner.width - 12) {
+        problems.push(`Boundary label "${blr.label}" (~${Math.round(blr.width)}px) is wider than its ${Math.round(owner.width)}px boundary — shorten the label.`);
+      }
+    }
+    for (const c of components.values()) {
+      if (rectsOverlap(blr, c, -2)) {
+        problems.push(`Boundary label "${blr.label}" runs under component "${c.id}" — shorten the label or move the component down.`);
+      }
+    }
+    for (const rect of labelRects) {
+      if (rectsOverlap(rect, blr, -2)) {
+        problems.push(`Label "${rect.label}" overlaps boundary label "${blr.label}" — adjust labelDx/labelDy/labelSegment or set labelAt.\n${suggestLabelObstacleFix(rect, rect.lx, rect.ly, blr, 'boundary label')}`);
+      }
+    }
+  }
+
   if (problems.length) {
     throw new Error(`Architecture layout validation failed:\n- ${problems.join('\n- ')}`);
   }

@@ -71,3 +71,12 @@ any upstream sync:
 - `examples/agent-tool-call.workflow.json` sublabel "shell / browser / MCP" -> "shell, browser, MCP"
   (the new validation correctly flagged it at ~101px in a 92px node).
 - Verified: all five example types render+check green; `doctor` passes.
+
+## Archify fork: boundary labels join layout validation
+
+User hit a second hidden-text class: a connection label moved "above" per a suggested fix landed on a
+region boundary's label text (the validator knew components and connection labels as obstacles, but not
+boundary labels). Architecture renderer now (1) fails when a boundary label is wider than its boundary,
+(2) fails when a component sits on a boundary label, (3) treats boundary labels as obstacles for
+connection labels with the same numeric Suggested fix output. Regression: the exact user-visible overlap
+now fails render with a named boundary-label collision; all five upstream examples stay green.

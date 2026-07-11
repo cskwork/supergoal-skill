@@ -135,9 +135,15 @@ function validateArchitecture() {
     if (c.x < 0 || c.y < 0 || c.x + c.width > viewBox[0] || c.y + c.height > viewBox[1]) {
       problems.push(`Component "${c.id}" falls outside the viewBox ${viewBox[0]}x${viewBox[1]} — adjust pos/size or set a larger meta.viewBox.`);
     }
-    const estLabelW = textUnits(c.label) * 6.6;
+    const estLabelW = textUnits(c.label) * 7.3;
     if (estLabelW > c.width + 8) {
       problems.push(`Label "${c.label}" (~${Math.round(estLabelW)}px) is wider than component "${c.id}" (${c.width}px) — shorten the label, move detail to sublabel, or widen size.`);
+    }
+    if (c.sublabel) {
+      const estSubW = textUnits(c.sublabel) * 5.3;
+      if (estSubW > c.width + 8) {
+        problems.push(`Sublabel "${c.sublabel}" (~${Math.round(estSubW)}px) is wider than component "${c.id}" (${c.width}px) — shorten the sublabel or widen size.`);
+      }
     }
   }
 
@@ -179,7 +185,7 @@ function validateArchitecture() {
   for (const conn of asArray(arch.connections)) {
     if (!conn.label || !components.has(conn.from) || !components.has(conn.to)) continue;
     const [lx, ly] = labelPoint(conn, pathFor(conn).points);
-    const w = Math.max(30, textUnits(conn.label) * 4.8 + 10);
+    const w = Math.max(30, textUnits(conn.label) * 5.3 + 10);
     labelRects.push({ label: conn.label, x: lx - w / 2, y: ly - 10, width: w, height: 14, lx, ly });
   }
   for (const rect of labelRects) {
@@ -200,7 +206,7 @@ function buildLayoutReport() {
   for (const conn of asArray(arch.connections)) {
     if (!conn.label || !components.has(conn.from) || !components.has(conn.to)) continue;
     const [lx, ly] = labelPoint(conn, pathFor(conn).points);
-    const w = Math.max(30, textUnits(conn.label) * 4.8 + 10);
+    const w = Math.max(30, textUnits(conn.label) * 5.3 + 10);
     labels.push({
       text: conn.label,
       x: Math.round(lx - w / 2),
@@ -271,7 +277,7 @@ function renderBoundary(b) {
   const labelCls = b.kind === 'security-group' ? 't-security' : 't-cloud';
   const rx = b.kind === 'security-group' ? 8 : 12;
   return `        <rect x="${b.x}" y="${b.y}" width="${b.width}" height="${b.height}" rx="${rx}" class="${cls}" stroke-width="1"/>
-        <text x="${b.x + 8}" y="${b.y + 18}" class="${labelCls}" font-size="9" font-weight="600">${esc(b.label)}</text>`;
+        <text x="${b.x + 8}" y="${b.y + 18}" class="${labelCls}" font-size="10" font-weight="600">${esc(b.label)}</text>`;
 }
 
 function renderConnectionPath(conn, index) {
@@ -284,9 +290,9 @@ function renderConnectionPath(conn, index) {
 function renderConnectionLabel(conn) {
   if (!conn.label) return '';
   const [lx, ly] = labelPoint(conn, pathFor(conn).points);
-  const w = Math.max(30, textUnits(conn.label) * 4.8 + 10);
+  const w = Math.max(30, textUnits(conn.label) * 5.3 + 10);
   return `        <rect x="${lx - w / 2}" y="${ly - 10}" width="${w}" height="14" rx="3" class="c-mask"/>
-        <text x="${lx}" y="${ly}" class="${variantAccent(conn.variant)}" font-size="8" text-anchor="middle">${esc(conn.label)}</text>`;
+        <text x="${lx}" y="${ly}" class="${variantAccent(conn.variant)}" font-size="9" text-anchor="middle">${esc(conn.label)}</text>`;
 }
 
 function renderComponent(c) {
@@ -296,14 +302,14 @@ function renderComponent(c) {
   const hasSub = c.sublabel != null && c.sublabel !== '';
   const labelY = hasSub ? c.y + c.height / 2 - 2 : c.y + c.height / 2 + 4;
   const sub = hasSub
-    ? `\n        <text x="${cx}" y="${c.y + c.height / 2 + 14}" class="t-muted" font-size="9" text-anchor="middle">${esc(c.sublabel)}</text>`
+    ? `\n        <text x="${cx}" y="${c.y + c.height / 2 + 14}" class="t-muted" font-size="10" text-anchor="middle">${esc(c.sublabel)}</text>`
     : '';
   const tag = c.tag
-    ? `\n        <text x="${cx}" y="${c.y + c.height - 8}" class="${accent}" font-size="7" text-anchor="middle">${esc(c.tag)}</text>`
+    ? `\n        <text x="${cx}" y="${c.y + c.height - 8}" class="${accent}" font-size="8" text-anchor="middle">${esc(c.tag)}</text>`
     : '';
   return `        <rect x="${c.x}" y="${c.y}" width="${c.width}" height="${c.height}" rx="6" class="c-mask"/>
         <rect x="${c.x}" y="${c.y}" width="${c.width}" height="${c.height}" rx="6" class="${fill}"${animateAttr(arch.meta, 'node', componentSteps.get(c.id))} stroke-width="1.5"/>
-        <text x="${cx}" y="${labelY}" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">${esc(c.label)}</text>${sub}${tag}`;
+        <text x="${cx}" y="${labelY}" class="t-primary" font-size="12" font-weight="600" text-anchor="middle">${esc(c.label)}</text>${sub}${tag}`;
 }
 
 // Auto legend: one swatch per component type actually used, left to right.
@@ -319,11 +325,11 @@ function renderLegend() {
   }
   const y = legendY();
   let x = layout.margin;
-  const parts = [`        <text x="${x}" y="${y - 13}" class="t-primary" font-size="9" font-weight="600">Legend</text>`];
+  const parts = [`        <text x="${x}" y="${y - 13}" class="t-primary" font-size="10" font-weight="600">Legend</text>`];
   for (const type of used) {
     parts.push(`        <rect x="${x}" y="${y - 8}" width="14" height="9" rx="2" class="${componentFill[type] || 'c-external'}" stroke-width="1"/>`);
-    parts.push(`        <text x="${x + 20}" y="${y}" class="t-muted" font-size="8">${TYPE_LABELS[type] || type}</text>`);
-    x += 30 + (textUnits(TYPE_LABELS[type] || type) * 5 + 28);
+    parts.push(`        <text x="${x + 20}" y="${y}" class="t-muted" font-size="9">${TYPE_LABELS[type] || type}</text>`);
+    x += 30 + (textUnits(TYPE_LABELS[type] || type) * 5.5 + 28);
   }
   return parts.join('\n');
 }

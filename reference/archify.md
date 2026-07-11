@@ -33,8 +33,9 @@ knowledge path).
    summary cards, not extra arrows. Labeled horizontal edges need room: allow >=110px gap between the
    nodes they join, or expect a `labelDy`/`labelAt` fix after the first render.
 3. `node <archify>/bin/archify.mjs render <type> <name>.<type>.json <name>.html` - render also
-   layout-validates (node/label overlap, legend clearance) and on failure prints concrete numeric
-   fixes (`Suggested fix: labelAt [...] or labelDy ...`); apply them to the JSON as-is.
+   layout-validates (node/label overlap, label AND sublabel width vs node, legend clearance) and on
+   failure prints concrete numeric fixes (`Suggested fix: labelAt [...] or labelDy ...`); apply them to
+   the JSON as-is. Tags are not width-checked - keep them ~2 words.
 4. `node <archify>/bin/archify.mjs check <name>.html`. For schema-shape errors only, use
    `validate <type> <input> --json`. Either way: fix the JSON, never the renderer.
 5. Keep the `.json` IR beside the HTML so later edits re-render instead of redrawing.

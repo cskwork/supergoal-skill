@@ -56,3 +56,18 @@ Fixes applied from its feedback:
 Reported, not fixed (pre-existing, out of this change's scope): arch.md's read-only rule vs
 runtime-verifying Strong candidates (test run used a disposable repo copy - worth codifying); no
 autonomous-run branch at the Report step's "open and ask" closing move.
+
+## Vendored archify fork deltas (user-requested readability)
+
+`templates/archify/` now intentionally diverges from upstream tt-a1i/archify v2.10 - re-apply these on
+any upstream sync:
+
+- All SVG diagram text +1px (7->8, 8->9, 9->10, 10->11, 11->12) across the five renderers and
+  `assets/template.html`; width-estimation multipliers scaled 1.1x to match the larger glyphs.
+  Why: user found the default text too small in rendered diagrams.
+- New sublabel width validation in all five renderers (upstream validates label width only).
+  Why: long sublabels visibly overflowed node boxes with no error - the exact bug class the user hit;
+  now render fails with a shorten-or-widen message like the label check.
+- `examples/agent-tool-call.workflow.json` sublabel "shell / browser / MCP" -> "shell, browser, MCP"
+  (the new validation correctly flagged it at ~101px in a 92px node).
+- Verified: all five example types render+check green; `doctor` passes.

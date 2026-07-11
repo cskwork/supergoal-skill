@@ -157,9 +157,15 @@ function validateWorkflow() {
       problems.push(`Node "${node.id}" produced non-finite coordinates — check col, width, height, and yOffset are numbers.`);
       continue;
     }
-    const estLabelW = textUnits(node.label) * 6.8;
+    const estLabelW = textUnits(node.label) * 7.5;
     if (estLabelW > node.width + 6) {
       problems.push(`Label "${node.label}" (~${Math.round(estLabelW)}px) is wider than node "${node.id}" (${node.width}px) — shorten the label, move detail to sublabel, or increase node.width.`);
+    }
+    if (node.sublabel) {
+      const estSubW = textUnits(node.sublabel) * 4.8;
+      if (estSubW > node.width + 6) {
+        problems.push(`Sublabel "${node.sublabel}" (~${Math.round(estSubW)}px) is wider than node "${node.id}" (${node.width}px) — shorten the sublabel or increase node.width.`);
+      }
     }
 
     const top = laneTop(node.lane);
@@ -181,7 +187,7 @@ function validateWorkflow() {
     if (phase.fromCol < 0 || phase.toCol >= layout.colXs.length || phase.fromCol > phase.toCol) {
       problems.push(`Phase "${phase.id}" uses invalid columns ${phase.fromCol}..${phase.toCol}; use an ordered range within 0..${layout.colXs.length - 1}.`);
     }
-    const estLabelW = textUnits(phase.label) * 5.6;
+    const estLabelW = textUnits(phase.label) * 6.2;
     const width = spanForCols(phase.fromCol, phase.toCol).width;
     if (estLabelW > width + 8) {
       problems.push(`Phase label "${phase.label}" (~${Math.round(estLabelW)}px) is wider than its ${Math.round(width)}px span — shorten the label or widen the phase range.`);
@@ -271,7 +277,7 @@ function validateWorkflow() {
   for (const edge of workflow.edges) {
     if (!edge.label || !nodes.has(edge.from) || !nodes.has(edge.to)) continue;
     const [lx, ly] = labelPoint(edge, pathFor(edge).points);
-    const width = Math.max(30, textUnits(edge.label) * 4.8 + 10);
+    const width = Math.max(30, textUnits(edge.label) * 5.3 + 10);
     labelRects.push({ label: edge.label, x: lx - width / 2, y: ly - 10, width, height: 14, lx, ly });
   }
   for (const rect of labelRects) {
@@ -375,7 +381,7 @@ function renderLane(lane, index) {
   const labelClass = lane.variant === 'exception' ? 't-security' : 't-dim';
   const prefix = lane.variant === 'exception' ? 'EX' : String(index + 1).padStart(2, '0');
   return `        <rect x="${layout.laneX}" y="${y}" width="${layout.laneW}" height="${layout.laneH}" rx="10" class="c-lane" stroke-width="1"/>${exception}
-        <text x="${layout.laneX + 14}" y="${y + 22}" class="${labelClass}" font-size="10" font-weight="600">${prefix} / ${esc(lane.label)}</text>`;
+        <text x="${layout.laneX + 14}" y="${y + 22}" class="${labelClass}" font-size="11" font-weight="600">${prefix} / ${esc(lane.label)}</text>`;
 }
 
 function renderPhase(phase) {
@@ -384,7 +390,7 @@ function renderPhase(phase) {
   const [lineClass] = arrowClassMap[phase.variant || 'default'] || arrowClassMap.default;
   return `        <line x1="${span.x}" y1="35" x2="${span.x + span.width}" y2="35" class="${lineClass}" stroke-width="1.1"/>
         <rect x="${span.x}" y="27" width="${span.width}" height="16" rx="4" class="c-mask"/>
-        <text x="${span.cx}" y="39" class="${accent}" font-size="8" font-weight="600" text-anchor="middle">${esc(phase.label)}</text>`;
+        <text x="${span.cx}" y="39" class="${accent}" font-size="9" font-weight="600" text-anchor="middle">${esc(phase.label)}</text>`;
 }
 
 function renderGroup(group) {
@@ -394,19 +400,19 @@ function renderGroup(group) {
   const cls = group.variant === 'security' ? 'c-security-group' : 'c-lane';
   const textClass = variantAccent(group.variant);
   return `        <rect x="${span.x}" y="${y}" width="${span.width}" height="${height}" rx="9" class="${cls}" stroke-width="1"/>
-        <text x="${span.x + 10}" y="${y + 14}" class="${textClass}" font-size="7" font-weight="600">${esc(group.label)}</text>`;
+        <text x="${span.x + 10}" y="${y + 14}" class="${textClass}" font-size="8" font-weight="600">${esc(group.label)}</text>`;
 }
 
 function renderNode(node) {
   const fill = componentFill[node.type] || 'c-external';
   const accent = componentText[node.type] || 't-muted';
   const tag = node.tag
-    ? `\n        <text x="${node.cx}" y="${node.y + node.height - 12}" class="${accent}" font-size="7" text-anchor="middle">${esc(node.tag)}</text>`
+    ? `\n        <text x="${node.cx}" y="${node.y + node.height - 12}" class="${accent}" font-size="8" text-anchor="middle">${esc(node.tag)}</text>`
     : '';
   return `        <rect x="${node.x}" y="${node.y}" width="${node.width}" height="${node.height}" rx="6" class="c-mask"/>
         <rect x="${node.x}" y="${node.y}" width="${node.width}" height="${node.height}" rx="6" class="${fill}"${animateAttr(workflow.meta, 'node', nodeStep(node))} stroke-width="1.5"/>
-        <text x="${node.cx}" y="${node.y + 21}" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">${esc(node.label)}</text>
-        <text x="${node.cx}" y="${node.y + 38}" class="t-muted" font-size="8" text-anchor="middle">${esc(node.sublabel || '')}</text>${tag}`;
+        <text x="${node.cx}" y="${node.y + 21}" class="t-primary" font-size="12" font-weight="600" text-anchor="middle">${esc(node.label)}</text>
+        <text x="${node.cx}" y="${node.y + 38}" class="t-muted" font-size="9" text-anchor="middle">${esc(node.sublabel || '')}</text>${tag}`;
 }
 
 function renderEdgePath(edge) {
@@ -420,24 +426,24 @@ function renderEdgeLabel(edge) {
   if (!edge.label) return '';
   const routed = pathFor(edge);
   const [lx, ly] = labelPoint(edge, routed.points);
-  const labelW = Math.max(30, textUnits(edge.label) * 4.8 + 10);
+  const labelW = Math.max(30, textUnits(edge.label) * 5.3 + 10);
   return `        <rect x="${lx - labelW / 2}" y="${ly - 10}" width="${labelW}" height="14" rx="3" class="c-mask"/>
-        <text x="${lx}" y="${ly}" class="${variantAccent(edge.variant, { dashed: 't-database' })}" font-size="8" text-anchor="middle">${esc(edge.label)}</text>`;
+        <text x="${lx}" y="${ly}" class="${variantAccent(edge.variant, { dashed: 't-database' })}" font-size="9" text-anchor="middle">${esc(edge.label)}</text>`;
 }
 
 function renderLegend() {
   const y = legendY();
-  return `        <text x="175" y="${y - 20}" class="t-primary" font-size="10" font-weight="600">Legend</text>
+  return `        <text x="175" y="${y - 20}" class="t-primary" font-size="11" font-weight="600">Legend</text>
         <rect x="175" y="${y - 8}" width="14" height="9" rx="2" class="c-frontend" stroke-width="1"/>
-        <text x="195" y="${y}" class="t-muted" font-size="7">User UI</text>
+        <text x="195" y="${y}" class="t-muted" font-size="8">User UI</text>
         <rect x="260" y="${y - 8}" width="14" height="9" rx="2" class="c-backend" stroke-width="1"/>
-        <text x="280" y="${y}" class="t-muted" font-size="7">Agent logic</text>
+        <text x="280" y="${y}" class="t-muted" font-size="8">Agent logic</text>
         <rect x="370" y="${y - 8}" width="14" height="9" rx="2" class="c-security" stroke-width="1"/>
-        <text x="390" y="${y}" class="t-muted" font-size="7">Policy</text>
+        <text x="390" y="${y}" class="t-muted" font-size="8">Policy</text>
         <rect x="455" y="${y - 8}" width="14" height="9" rx="2" class="c-messagebus" stroke-width="1"/>
-        <text x="475" y="${y}" class="t-muted" font-size="7">Tool action</text>
+        <text x="475" y="${y}" class="t-muted" font-size="8">Tool action</text>
         <rect x="565" y="${y - 8}" width="14" height="9" rx="2" class="c-database" stroke-width="1"/>
-        <text x="585" y="${y}" class="t-muted" font-size="7">Context / trace</text>`;
+        <text x="585" y="${y}" class="t-muted" font-size="8">Context / trace</text>`;
 }
 
 function renderSvg() {

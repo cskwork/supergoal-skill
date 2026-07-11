@@ -144,6 +144,7 @@ security=`agents/security-reviewer.md` (others in `agents/<role>.md`).
 | `reference/qa.md`, `qa-only.md`, `playwright-cli.md` | QA / no-code verify; single browser driver = playwright-cli |
 | `reference/review-only.md` | REVIEW-ONLY: findings, no fixes |
 | `reference/arch.md` | ARCHITECTURE: friction survey -> route out |
+| `reference/archify.md`, `templates/archify/` | diagrams as self-contained HTML (typed JSON IR -> validated render): ARCHITECTURE report system diagram, LEARN-DOMAIN onboard architecture/flow diagrams |
 | `reference/teach.md`, `learn-domain.md` | teach a human / onboard the agent |
 | `reference/ui-ux.md`, `taste-skill-v2.md`, `functional-ui.md`, `taste-aesthetics.md`, `engagement.md` | user-facing UI tier |
 | `reference/harness-eval.md`, `templates/harness-eval-runner.mjs`, `templates/harness-eval-external/deepswe/run-default-suite.mjs` | HARNESS-EVAL; the runner is the DEFAULT portable eval driver (adapters + preflight + fallback + retry, serial by default). Difficult SWE/harness-effectiveness claims default to the forced five-task DeepSWE suite (measured-difficult tasks) - use it, don't hand-roll a single-CLI run.mjs |

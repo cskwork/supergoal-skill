@@ -145,8 +145,10 @@ Sections, plain summary first then expert detail:
 
 1. Orientation - what this system is, who it serves, the one-paragraph mental model.
 2. Key terms - `glossary.md` in this repo's meaning, each in plain language (not generic industry meaning).
-3. Architecture - systems, bounded contexts, entry points, and how a request/data moves; one inline
-   diagram (inline SVG or CSS boxes, no external scripts).
+3. Architecture - systems, bounded contexts, entry points, and how a request/data moves; render the
+   overview `architecture` diagram and top key-flow `workflow`/`sequence` diagrams with archify
+   (`reference/archify.md`) into `<knowledgePath>/diagrams/`, link them, and inline the extracted
+   overview `<svg>` so the handbook still reads standalone; no Node -> hand-placed inline SVG.
 4. Key flows - per `flows/<ctx>.md`, entry -> service -> data/external in human terms + invariants touched.
 5. Rules that must not break - `invariants.md`, each with grounding status.
 6. Get hands-on - the key `test-map.md` commands a newcomer runs to see the system work.
@@ -159,7 +161,8 @@ Constraints:
   type/spacing/radius scale, computed WCAG-AA contrast (body AAA), dense layout, minimal motion,
   `prefers-reduced-motion`, light+dark `color-scheme`, no empty decoration.
 - Single self-contained file: inline CSS only; **no external scripts, fonts, CDN, or network requests**.
-  Use inline SVG for diagrams.
+  Diagrams inside the handbook are inline SVG (extracted from archify output when rendered); interactive
+  archify copies live as sibling self-contained files under `<knowledgePath>/diagrams/`.
 - Show every load-bearing fact's grounding as a visible verified/unverified badge; put expert detail
   (signatures, file paths, probe commands) in `<details>`.
 - Accessible and responsive: semantic HTML, a table of contents with anchors, usable below 768px.

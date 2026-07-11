@@ -35,7 +35,7 @@
     { "id": "approval", "lane": "policy", "col": 3, "type": "security", "label": "Approval Gate", "sublabel": "scope + consent", "tag": "block risky ops" },
     { "id": "blocked", "lane": "exceptions", "col": 4, "type": "security", "label": "Blocked", "sublabel": "wait or reject" },
     { "id": "retry", "lane": "exceptions", "col": 5, "type": "messagebus", "label": "Retry Path", "sublabel": "revise request" },
-    { "id": "tool", "lane": "tools", "col": 4, "type": "messagebus", "label": "Tool Call", "sublabel": "shell / browser / MCP", "tag": "structured result" },
+    { "id": "tool", "lane": "tools", "col": 4, "type": "messagebus", "label": "Tool Call", "sublabel": "shell, browser, MCP", "tag": "structured result" },
     { "id": "external", "lane": "tools", "col": 5, "type": "cloud", "label": "External API", "sublabel": "network service" },
     { "id": "store", "lane": "trace", "col": 1, "type": "database", "label": "Context Store", "sublabel": "repo + memory" },
     { "id": "trace", "lane": "trace", "col": 4, "type": "database", "label": "Trace Log", "sublabel": "events + output" }

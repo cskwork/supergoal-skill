@@ -106,7 +106,7 @@ flowchart TD
 | "fix / broken / failing / why does" | **DEBUG** | default loop; reproduce with a failing test first |
 | "add X to our existing/legacy code" | **LEGACY** | default loop; map the code first; refactoring an existing API: capture its exact behavior first, Verify diffs against that baseline |
 | "spec this / break this into tickets / roadmap / what first?" | **WAYFINDER** | issue map under the run vault's `wayfinder/` folder -> optional ticket-depth sections (glossary, user story, EARS checks, design notes, tasks) and cited research assets via `reference/research.md` when outside facts are needed -> vertical tickets -> blocker edges -> next frontier; route one ticket, stop, then ask for context clear + integration test before the next |
-| "prototype / spike / try variants before building" | **PROTOTYPE** | throwaway proof answers one question; then delete/quarantine or route the decision into delivery |
+| "prototype / spike / try variants before building" | **PROTOTYPE** | throwaway proof answers one question; UI/interaction prototypes load SuperDesign for design and render gates; then delete/quarantine or route the decision into delivery |
 | "explain / teach me X" (no code) | **TEACH** | Mission -> Source -> Bridge -> Teach -> Check (explain-back) |
 | "learn / map / onboard onto this codebase" | **LEARN-DOMAIN** | Survey -> Map -> Ground -> Persist a `.domain-agent/` wiki |
 | "QA only / verify / compare data - no code" | **QA-ONLY** | Detailed Impact Matrix (feature-impact QA map) + read-only DB -> evidence -> `report.md` |
@@ -162,7 +162,8 @@ affect: displayed data consistency, direct behavior, adjacent surfaces, complex 
 before/during/after actions, and explicit not-covered risk within the action cap. Independent QA surfaces
 can run as scenario shards, merged by the conductor through `qa/scenario-ledger.md`.
 They write no product code by default; PROTOTYPE writes only isolated throwaway code and must route back
-through delivery before anything ships.
+through delivery before anything ships. UI/interaction prototypes load SuperDesign; logic/state and data/API
+prototypes keep their lightweight, non-visual paths.
 
 ## Board (optional live dashboard)
 
@@ -251,7 +252,8 @@ keep the existing sign-flip/BCa gate.
 
 Concept and workflow adapted from **oh-my-symphony** by cskwork
 (https://github.com/cskwork/oh-my-symphony). WAYFINDER and research-depth ideas also credit
-Matt Pocock's public skills, especially the research and skill-writing patterns.
+Matt Pocock's public skills, especially the research and skill-writing patterns. UI/interaction prototypes
+route through cskwork's **superdesign-skill** (https://github.com/cskwork/superdesign-skill).
 Built as a portable agent skill.
 
 ## License

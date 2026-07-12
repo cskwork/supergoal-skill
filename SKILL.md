@@ -138,7 +138,7 @@ security=`agents/security-reviewer.md` (others in `agents/<role>.md`).
 | `reference/delivery-gate.md`, `templates/GOAL.md`, `templates/PLAN.md`, `templates/QA.md`, `templates/R-LOOP.md`, `templates/Z-DONE.md`, `templates/run-state.json`, `templates/commit-gate.sh` | run vault file set + Before/After Eval + resumable run state + commit gate for GREENFIELD / DEBUG / LEGACY code changes |
 | `reference/wayfinder.md` | WAYFINDER: issue map -> vertical tickets -> optional EARS/user-story depth -> blockers -> next frontier; also GREENFIELD internal Frontier Map for broad/foggy new builds |
 | `reference/research.md` | WAYFINDER research-needed tickets; docs/API/source facts that need high-trust cited evidence |
-| `reference/prototype.md` | PROTOTYPE: throwaway logic/UI proof -> capture answer -> delete/quarantine or route to delivery |
+| `reference/prototype.md` | PROTOTYPE: throwaway logic/UI proof -> capture answer -> delete/quarantine or route to delivery; UI/interaction prototypes must also load the installed `superdesign` skill |
 | `reference/plan-grounding.md` | ground the approach before committing |
 | `reference/db-access.md`, `templates/db-access/` | read-only DB evidence (required when persisted data is load-bearing) |
 | `reference/qa.md`, `qa-only.md`, `playwright-cli.md` | QA / no-code verify; single browser driver = playwright-cli |
@@ -164,4 +164,5 @@ verified commands reported.
 ## Credit
 
 Workflow lineage: cskwork's **oh-my-symphony**. WAYFINDER and research-depth concepts also draw from
-Matt Pocock's public skills, especially the research and skill-writing patterns.
+Matt Pocock's public skills, especially the research and skill-writing patterns. UI/interaction prototype
+craft and gates route through cskwork's **superdesign-skill** (https://github.com/cskwork/superdesign-skill).

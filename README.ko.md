@@ -106,7 +106,7 @@ flowchart TD
 | "고장/실패/크래시/왜 이러지" | **DEBUG** | 기본 루프; 실패 테스트부터 재현 |
 | "기존/레거시 코드에 X를 추가한다" | **LEGACY** | 기본 루프; 코드 구조부터 파악 |
 | "스펙 문서부터 구조화해줘 / 티켓으로 쪼개줘 / 로드맵 / 뭐부터 하지?" | **WAYFINDER** | 실행 vault의 `wayfinder/` 폴더에 지도를 만들고, 필요할 때만 티켓 안에 glossary, user story, EARS checks, design notes, tasks를 추가, 외부 사실 확인이 필요하면 `reference/research.md`로 인용된 research asset을 남김 -> 세로 슬라이스 티켓 -> blocker edge -> 다음 frontier; 티켓 하나만 delivery로 넘기고 멈춘 뒤 context clear + integration test를 요청 |
-| "prototype / spike / variant를 먼저 보자" | **PROTOTYPE** | 질문 하나에 답하는 throwaway proof를 만들고, 삭제/격리하거나 결정만 delivery로 넘김 |
+| "prototype / spike / variant를 먼저 보자" | **PROTOTYPE** | 질문 하나에 답하는 throwaway proof를 만듦. UI/interaction prototype은 SuperDesign을 로드해 디자인·렌더 검증을 적용하고, 이후 삭제/격리하거나 결정만 delivery로 넘김 |
 | "X를 설명/가르쳐줘" (코드 변경 없음) | **TEACH** | Mission -> Source -> Bridge -> Teach -> Check |
 | "이 코드베이스를 학습/온보딩해줘" | **LEARN-DOMAIN** | Survey -> Map -> Ground -> `.domain-agent/` 위키 |
 | "QA만/검증/데이터 비교" (코드 변경 없음) | **QA-ONLY** | 상세 Impact Matrix(기능 영향 범위 QA 지도) + 읽기 전용 DB -> 증거 -> `report.md` |
@@ -160,7 +160,8 @@ WAYFINDER, PROTOTYPE, QA-ONLY, REVIEW-ONLY, ARCHITECTURE, TEACH/LEARN-DOMAIN, HA
 복잡한 다단계 시나리오, 실행하지 못한 위험을 정해진 범위 안에서 기록합니다. 독립적인 QA 영역은
 시나리오 단위로 나눠 병렬 실행하고, 진행 에이전트가 `qa/scenario-ledger.md`에 병합합니다.
 기본적으로 제품 코드는 쓰지 않습니다. PROTOTYPE은 격리된 throwaway 코드만 쓰고, 실제로 ship하려면 다시
-delivery 경로를 통과해야 합니다.
+delivery 경로를 통과해야 합니다. UI/interaction prototype은 SuperDesign을 로드하고, logic/state와
+data/API prototype은 가벼운 비시각 경로를 유지합니다.
 
 ## Board (선택형 실시간 대시보드)
 
@@ -248,7 +249,8 @@ https://github.com/revfactory/claude-code-harness/
 
 컨셉과 워크플로는 cskwork의 **oh-my-symphony**에서 차용했습니다
 (https://github.com/cskwork/oh-my-symphony). WAYFINDER와 research-depth 아이디어는 Matt Pocock의
-공개 스킬, 특히 research와 skill-writing 패턴에서도 많은 개념을 가져왔습니다.
+공개 스킬, 특히 research와 skill-writing 패턴에서도 많은 개념을 가져왔습니다. UI/interaction
+prototype은 cskwork의 **superdesign-skill**(https://github.com/cskwork/superdesign-skill)로 연결합니다.
 여러 에이전트 CLI에서 쓸 수 있게 구성했습니다.
 
 ## 라이선스

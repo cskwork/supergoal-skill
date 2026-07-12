@@ -26,7 +26,8 @@ normal mode.
 
 - Keep it throwaway and isolated: temp dir, run vault, sandbox route, or local-only flag.
 - Provide one command or one URL to run it.
-- No production migrations, irreversible writes, secret use, analytics, billing, or external publishing.
+- No production migrations, irreversible writes, secret use, analytics, billing, or external publishing without
+  explicit user approval.
 - Prefer fixtures, mocks, read-only data, or sandbox credentials.
 - Skip unrelated polish and broad product tests; add only the checks needed to trust the answer. UI/interaction
   prototypes still follow SuperDesign's design-quality and render gates because visual quality affects the decision.
@@ -75,6 +76,12 @@ Write a short result note in the run vault or prototype folder:
 - recommended route if delivery should continue.
 
 ## Exit
+
+For a finished prototype with a browser-viewable surface, ask: "Should I deploy this prototype to Vercel so
+it has a public, shareable URL that others can view and review?" Do not deploy before the user explicitly
+agrees because publishing changes visibility. If the user agrees, follow `reference/vercel-host.md`; treat the
+hosted artifact as a quarantined prototype, not production or delivery proof. If the user declines, continue
+with the normal delete/quarantine exit.
 
 Delete or quarantine the prototype before any final done claim. If the answer should become product, route
 to GREENFIELD, DEBUG, LEGACY, or WAYFINDER and copy only the proven decision into `PLAN.md`; do not copy

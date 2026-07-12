@@ -46,6 +46,7 @@ echo "=================================================================="
 
 require_file "wayfinder reference exists" "reference/wayfinder.md"
 require_file "prototype reference exists" "reference/prototype.md"
+require_file "Vercel hosting reference exists" "reference/vercel-host.md"
 
 # Router and public docs expose both modes.
 require_text "SKILL routes WAYFINDER" "SKILL.md" "WAYFINDER"
@@ -115,6 +116,16 @@ require_text "prototype nonvisual paths skip superdesign" "reference/prototype.m
 require_text "prototype has data API path" "reference/prototype.md" "Data/API prototype"
 require_text "prototype captures the answer" "reference/prototype.md" "answer to the question"
 require_text "prototype must delete or quarantine" "reference/prototype.md" "Delete or quarantine"
+require_text "prototype offers public Vercel hosting" "reference/prototype.md" "public, shareable URL"
+require_text "prototype requires approval before Vercel deploy" "reference/prototype.md" "Do not deploy before the user explicitly agrees"
+require_text "prototype routes approved hosting" "reference/prototype.md" "reference/vercel-host.md"
+require_text "SKILL maps Vercel hosting reference" "SKILL.md" "reference/vercel-host.md"
+require_text "Vercel hosting verifies CLI auth" "reference/vercel-host.md" "vercel whoami"
+require_text "Vercel hosting explains interactive login" "reference/vercel-host.md" "vercel login"
+require_text "Vercel hosting requires isolated project" "reference/vercel-host.md" "isolated Vercel project"
+require_text "Vercel hosting performs dry run" "reference/vercel-host.md" "vercel deploy --dry"
+require_text "Vercel hosting deploys production URL" "reference/vercel-host.md" "vercel deploy --prod"
+require_text "Vercel hosting checks anonymous access" "reference/vercel-host.md" "signed-out browser"
 require_text "prototype cannot satisfy delivery done" "reference/prototype.md" 'PROTOTYPE cannot satisfy delivery `Done`'
 require_text "SKILL reference map routes prototype UI to superdesign" "SKILL.md" 'UI/interaction prototypes must also load the installed `superdesign` skill'
 require_text "README documents superdesign prototype route" "README.md" "UI/interaction prototypes load SuperDesign"

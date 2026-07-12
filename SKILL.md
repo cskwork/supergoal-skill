@@ -139,6 +139,7 @@ security=`agents/security-reviewer.md` (others in `agents/<role>.md`).
 | `reference/wayfinder.md` | WAYFINDER: issue map -> vertical tickets -> optional EARS/user-story depth -> blockers -> next frontier; also GREENFIELD internal Frontier Map for broad/foggy new builds |
 | `reference/research.md` | WAYFINDER research-needed tickets; docs/API/source facts that need high-trust cited evidence |
 | `reference/prototype.md` | PROTOTYPE: throwaway logic/UI proof -> capture answer -> delete/quarantine or route to delivery; UI/interaction prototypes must also load the installed `superdesign` skill |
+| `reference/vercel-host.md` | PROTOTYPE: after explicit approval, publish an isolated browser prototype to a public Vercel URL and verify anonymous access |
 | `reference/plan-grounding.md` | ground the approach before committing |
 | `reference/db-access.md`, `templates/db-access/` | read-only DB evidence (required when persisted data is load-bearing) |
 | `reference/qa.md`, `qa-only.md`, `playwright-cli.md` | QA / no-code verify; single browser driver = playwright-cli |

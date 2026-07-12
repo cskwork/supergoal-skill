@@ -28,7 +28,8 @@ normal mode.
 - Provide one command or one URL to run it.
 - No production migrations, irreversible writes, secret use, analytics, billing, or external publishing.
 - Prefer fixtures, mocks, read-only data, or sandbox credentials.
-- Skip polish and broad tests; add only the checks needed to trust the answer.
+- Skip unrelated polish and broad product tests; add only the checks needed to trust the answer. UI/interaction
+  prototypes still follow SuperDesign's design-quality and render gates because visual quality affects the decision.
 - Surface state so the user can see the behavior, not only read a summary.
 
 ## Type-specific paths
@@ -41,11 +42,21 @@ Logic/state prototype:
 
 UI/interaction prototype:
 
+- Before choosing a visual direction or writing UI, load and follow the installed `superdesign` skill. SuperGoal
+  owns the prototype question, isolation, evidence, and exit; SuperDesign owns the design brief, direction,
+  UI build, independent critique, and its preflight and rendered-verification gates.
+- Use SuperDesign CREATE or REDESIGN for every runnable prototype surface, including runnable variants. Use
+  EXPLORE only when the requested artifact is directions or a moodboard with no built surface.
+- If `superdesign` is not installed or cannot be loaded, stop and ask the user to install it; do not silently
+  replace its contract with SuperGoal's vendored UI guidance.
 - Prefer an existing page behind a local query flag such as `?prototype=<name>`.
 - If that is unsafe or impossible, create a local-only prototype route or standalone HTML.
 - Default to three structurally different variants when comparing direction.
 - Include a simple variant switcher and enough responsive behavior to judge the choice.
 - Hide or remove the route before shipping; hidden prototype UI is not production readiness.
+
+Do not load SuperDesign for logic/state or data/API prototypes unless they also include a user-facing visual
+surface. For mixed prototypes, apply SuperDesign only to the UI/interaction surface.
 
 Data/API prototype:
 

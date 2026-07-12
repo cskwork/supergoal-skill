@@ -107,10 +107,19 @@ require_text "prototype requires one command or URL" "reference/prototype.md" "o
 require_text "prototype forbids production mutations" "reference/prototype.md" "No production migrations"
 require_text "prototype has logic path" "reference/prototype.md" "Logic/state prototype"
 require_text "prototype has UI variant path" "reference/prototype.md" "three structurally different variants"
+require_text "prototype UI loads superdesign" "reference/prototype.md" 'load and follow the installed `superdesign` skill'
+require_text "prototype UI preserves superdesign gates" "reference/prototype.md" "preflight and rendered-verification gates"
+require_text "prototype runnable UI uses superdesign build mode" "reference/prototype.md" "CREATE or REDESIGN"
+require_text "prototype missing superdesign stops" "reference/prototype.md" "stop and ask the user to install it"
+require_text "prototype nonvisual paths skip superdesign" "reference/prototype.md" "Do not load SuperDesign for logic/state or data/API prototypes"
 require_text "prototype has data API path" "reference/prototype.md" "Data/API prototype"
 require_text "prototype captures the answer" "reference/prototype.md" "answer to the question"
 require_text "prototype must delete or quarantine" "reference/prototype.md" "Delete or quarantine"
 require_text "prototype cannot satisfy delivery done" "reference/prototype.md" 'PROTOTYPE cannot satisfy delivery `Done`'
+require_text "SKILL reference map routes prototype UI to superdesign" "SKILL.md" 'UI/interaction prototypes must also load the installed `superdesign` skill'
+require_text "README documents superdesign prototype route" "README.md" "UI/interaction prototypes load SuperDesign"
+require_text "README.ko documents superdesign prototype route" "README.ko.md" "UI/interaction prototype은 SuperDesign을 로드"
+require_text "landing documents superdesign prototype route" "docs/index.html" "UI/interaction prototypes load SuperDesign"
 
 printf '\nSummary: %s passed, %s failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

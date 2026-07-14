@@ -14,7 +14,7 @@ Required fields and where each lives:
 
 - `eval_intent` -> `PLAN.md` `## Intent`: user goal, constraints, tradeoffs, rejected approaches.
 - `completion_promise` -> `PLAN.md` `## Intent`: promised outcome, required proof, stop condition, and
-  approved `max_iterations`. `run-state.json` mirrors that cap for resume and tracks fulfillment state.
+  approved `max_iterations`. `run-state.json` mirrors only that cap for loop resume.
 - `requirement_trace` -> `GOAL.md` `## Success Criteria`: falsifiable checkbox per requirement, each
   naming its verifying check; plus `Backward-trace: clean` in `QA.md` when no diff hunk is orphan scope.
 - `before_state` -> `QA.md` `## Before`: observed current behavior before the change.
@@ -33,9 +33,9 @@ Required fields and where each lives:
   paths, screenshots, DB reads, or API captures proving the after target.
 - `residual_risk` -> `QA.md` `## Residual Risk`: what the checks do not prove.
 - `run_state` -> `run-state.json`: compact mutable/resumable checkpoint for branch/ref safety,
-  plan approval, phase/iteration/loop cap, completion status, unresolved gates, blockers, regression
-  state, proof checkpoint, next action, forced reflection, and timestamp. Static completion-promise
-  content remains canonical in `PLAN.md`.
+  phase/iteration/loop cap, unresolved gates, blockers, regression state, next action, forced reflection,
+  and timestamp. Approval remains canonical in `PLAN.md`; proof commands remain canonical in `QA.md`;
+  final completion is inferred from `phase: Finalize` with empty blockers/gates.
 
 ## Before State
 
@@ -77,16 +77,21 @@ Unresolved `ask-user` findings block a final done claim.
 
 ## Done
 
-Done means the vault shows: before state (`QA.md`), completion promise fulfilled or blocked (`PLAN.md`),
+Done means the vault shows: before state (`QA.md`), completion promise and stop condition (`PLAN.md`),
 every `GOAL.md` Success Criterion checked, trusted command outputs/artifacts, resolved decision gates,
 residual risk, clean backward trace, DEBUG/prod reproduction fidelity, final `run-state.json`,
 `Z-<YYYY-MM-DD>.md` written with run branch and completion timestamp, changelog alternatives, and
 commit gate passed (`## Commit gate`).
 
+The final checkpoint must be valid JSON with `refs_verified: true`, `phase: Finalize`, `blockers: []`,
+and `unresolved_gates: []`. `templates/run-state-gate.mjs` enforces this final-only state; the starting
+template intentionally begins at Frame with unverified refs until run setup completes.
+
 ## Commit gate
 
 Commit or merge into the target/integration branch only when proof is green and the user has accepted.
-Block while any holds: REAL tests or request/docs not satisfied; QA verdict FAIL or PARTIAL (incomplete);
+Block while any holds: REAL tests or request/docs not satisfied; QA.md does not contain exactly one
+canonical `- Verdict: PASS` line;
 an unchecked Success Criterion or QA Case in `GOAL.md` (including surfaced criteria); `PLAN.md` approval
 still pending; a missing or non-clean `Backward-trace` in `QA.md` (scope-creep orphan); an unresolved
 `ask-user` decision gate; a missing `Z-*.md` completion marker (or one written while a criterion is still

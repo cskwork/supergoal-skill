@@ -62,8 +62,9 @@ require_file "qa template exists" "templates/QA.md"
 require_file "r-loop template exists" "templates/R-LOOP.md"
 require_file "z-done template exists" "templates/Z-DONE.md"
 require_file "run state template exists" "templates/run-state.json"
-require_json "run state is a valid v2 resumable checkpoint" "templates/run-state.json" \
-  '.schema_version == 2 and .max_iterations == 3 and .forced_reflection == null and
+require_file "run state gate exists" "templates/run-state-gate.mjs"
+require_json "run state is a valid v3 resumable checkpoint" "templates/run-state.json" \
+  '.schema_version == 3 and .max_iterations == 3 and .forced_reflection == null and
    (.branches.refs_verified | type) == "boolean" and (.unresolved_gates | type) == "array" and
    (.blockers | type) == "array" and (.regression_ledger | type) == "array"'
 
@@ -109,7 +110,7 @@ require_text "delivery gate requires clean backward trace" "reference/delivery-g
 # Commit gate: a non-green run (failed/incomplete QA, open requirement, uncertain intent) must not commit.
 require_file "commit gate script exists" "templates/commit-gate.sh"
 require_text "delivery gate defines commit gate" "reference/delivery-gate.md" "## Commit gate"
-require_text "commit gate blocks failed/incomplete QA" "reference/delivery-gate.md" "QA verdict FAIL or PARTIAL"
+require_text "commit gate blocks failed/incomplete QA" "reference/delivery-gate.md" 'canonical `- Verdict: PASS`'
 require_text "commit gate blocks unchecked criterion" "reference/delivery-gate.md" "unchecked Success Criterion"
 require_text "commit gate blocks unresolved ask-user gate" "reference/delivery-gate.md" "unresolved \`ask-user\` decision gate"
 require_text "commit gate blocks pending plan approval" "reference/delivery-gate.md" "approval still pending"
@@ -147,13 +148,16 @@ require_text "r-loop template feeds latest section only" "templates/R-LOOP.md" "
 require_text "z template records branch" "templates/Z-DONE.md" "Branch:"
 require_text "z template records completion timestamp" "templates/Z-DONE.md" "Completed:"
 require_text "z template requires all criteria checked" "templates/Z-DONE.md" "ONLY when every"
-require_text "run state uses schema version 2" "templates/run-state.json" '"schema_version": 2'
+require_absent_text "z template does not predict gate success" "templates/Z-DONE.md" "COMMIT GATE PASS"
+require_absent_text "z template has no self-referential gate claim" "templates/Z-DONE.md" "- Gate:"
+require_text "run state uses schema version 3" "templates/run-state.json" '"schema_version": 3'
 require_text "run state is limited to code modes" "templates/run-state.json" '"mode": "GREENFIELD|DEBUG|LEGACY"'
 require_text "run state records max iterations" "templates/run-state.json" '"max_iterations": 3'
-require_text "run state records completion status" "templates/run-state.json" '"completion_status": "open|fulfilled|blocked"'
 require_text "run state records regression ledger" "templates/run-state.json" "regression_ledger"
 require_text "run state starts forced reflection empty" "templates/run-state.json" '"forced_reflection": null'
-require_text "run state records plan approval" "templates/run-state.json" "plan_approval"
+require_absent_text "run state defers plan approval to PLAN" "templates/run-state.json" "plan_approval"
+require_absent_text "run state infers completion from final phase" "templates/run-state.json" "completion_status"
+require_absent_text "run state defers proof commands to QA" "templates/run-state.json" "last_proof_command"
 require_absent_text "run state omits intent gate" "templates/run-state.json" "intent_gate"
 require_absent_text "run state omits capability refs" "templates/run-state.json" "capability_refs"
 require_absent_text "run state omits promised outcome" "templates/run-state.json" "promised_outcome"
@@ -168,6 +172,11 @@ require_text "commit gate parses reproduction fidelity" "templates/commit-gate.s
 require_text "commit gate requires post deploy plan" "templates/commit-gate.sh" "post-deploy confirmation plan"
 require_text "commit gate parses plan approval" "templates/commit-gate.sh" "approved-by-user"
 require_text "commit gate requires completion marker" "templates/commit-gate.sh" "completion marker"
+require_text "commit gate requires canonical QA verdict" "templates/commit-gate.sh" "exactly one canonical"
+require_text "commit gate enforces final run state" "templates/commit-gate.sh" "run-state-gate.mjs"
+require_text "delivery gate requires final refs" "reference/delivery-gate.md" "refs_verified: true"
+require_text "delivery gate requires final phase" "reference/delivery-gate.md" "phase: Finalize"
+require_text "delivery gate requires no run blockers" "reference/delivery-gate.md" "blockers: []"
 
 printf '\nSummary: %s passed, %s failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

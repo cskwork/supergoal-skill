@@ -59,15 +59,14 @@ Before any file mutation, create the run vault's `GOAL.md` from `templates/GOAL.
 - record eval intent in `PLAN.md` `## Intent`: user goal, constraints, tradeoffs, rejected approaches;
 - record the completion promise in `PLAN.md` `## Intent`: promised outcome, required proof, stop
   condition, and `max_iterations` (default 3). `PLAN.md` is canonical for the approved promise and cap;
-  `run-state.json` mirrors `max_iterations` for resume and holds mutable `completion_status`;
+  `run-state.json` mirrors only `max_iterations` for loop resume;
 - `PLAN.md` `## Steps` + `## Tools & Skills` must be self-sufficient: a fresh-context implementer reads
   ONLY `PLAN.md` and builds it; copy the Success Criteria (including the edge-case and resilience
   criteria) into `PLAN.md` `## Acceptance checklist` so the builder needs no other file;
 - **Plan approval gate (blocking, unlike the interview's confirms):** after `PLAN.md` freezes and before
   Build is dispatched — interactive session: present `PLAN.md` and WAIT for the user's explicit OK;
-  record it in `## Approval` and set `run-state.json` `plan_approval: "user"`. Autonomous run
-  (harness-eval arm, scheduled/background, pre-authorized autonomy): set `Status: auto-approved` with the
-  reason and `plan_approval: "auto"`, then proceed;
+  record it in `## Approval`. Autonomous run (harness-eval arm, scheduled/background, pre-authorized
+  autonomy): set `Status: auto-approved` with the reason, then proceed;
 - record the before state in `QA.md` `## Before`: absent feature/red acceptance check for GREENFIELD,
   reproduced symptom for DEBUG, preserve-baseline capture for LEGACY/brownfield, plus neighbor
   characterization baseline for any shared code/state change;
@@ -76,9 +75,9 @@ Before any file mutation, create the run vault's `GOAL.md` from `templates/GOAL.
   fidelity level, data source, prod-vs-test deltas, residual risk, and post-deploy confirmation plan;
 - record the after target and the command manifest (`QA.md` `## Commands`) from repo-owned or
   evaluator-owned proof commands.
-- keep `run-state.json` current as the compact mutable/resumable checkpoint: branch/ref safety,
-  plan_approval, phase, iteration, `max_iterations`, `completion_status`, unresolved gates, blockers,
-  `regression_ledger`, last proof command, next action, forced reflection, and timestamp.
+- keep `run-state.json` current as the compact mutable/resumable checkpoint: branch/ref safety, phase,
+  iteration, `max_iterations`, unresolved gates, blockers, `regression_ledger`, next action, forced
+  reflection, and timestamp. Approval remains in `PLAN.md`; proof commands remain in `QA.md`.
 - **Vault language (one vault, one language)**: all vault prose - `GOAL.md`, `PLAN.md`, `QA.md`,
   `R-LOOP.md`, `Z-*.md` - uses the language of the user's original request; a Korean `GOAL.md` means a
   Korean `PLAN.md` too, and every later writer (builder rows, verifier results, R-LOOP items) keeps
@@ -98,7 +97,7 @@ Before any file mutation, create the run vault's `GOAL.md` from `templates/GOAL.
 
 Frame writes the completion promise and `max_iterations` (`PLAN.md` `## Intent`) before Build. Loop only
 while the promise is unproven and a fresh, actionable gap remains. `run-state.json` mirrors the approved
-cap (default 3) and tracks mutable `completion_status`. Its initial `forced_reflection` is `null`. At
+cap (default 3). Its initial `forced_reflection` is `null`. At
 the cap, replace it with an object containing `what_keeps_failing`, `likely_root_cause`,
 `unproven_requirement`, and `regressed_previously_green`; store the smallest next action in the existing
 top-level `next_action`, then escalate to the user with that state instead of grinding. Each iteration
@@ -186,9 +185,9 @@ is trigger-gated.
      trusted commands block a final done claim and commit (`reference/delivery-gate.md` Commit gate).
    - Every `GOAL.md` box checked: write `Z-<YYYY-MM-DD>.md` (`templates/Z-DONE.md`) with the run branch
      and completion timestamp - never earlier.
-   - Update `run-state.json` as the final mutable checkpoint: branch/ref safety, plan approval, phase,
-     iteration, `max_iterations`, unresolved gates, blockers, regression state, last proof command, next
-     action, forced reflection, mutable `completion_status`, and timestamp.
+   - Update `run-state.json` as the final mutable checkpoint: `refs_verified: true`, `phase: Finalize`,
+     empty unresolved gates/blockers, iteration, `max_iterations`, regression state, next action, forced
+     reflection, and timestamp. The commit gate validates this final checkpoint.
 
 ## Escalation (conditional plan attack; the only extra dispatch)
 

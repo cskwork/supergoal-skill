@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "mode": "GREENFIELD|DEBUG|LEGACY",
   "branches": {
     "source_base_branch": "",
@@ -8,15 +8,12 @@
     "worktree_path": "",
     "refs_verified": false
   },
-  "plan_approval": "pending|user|auto",
   "phase": "Frame",
   "iteration": 0,
   "max_iterations": 3,
-  "completion_status": "open|fulfilled|blocked",
   "unresolved_gates": [],
   "blockers": [],
   "regression_ledger": [],
-  "last_proof_command": "",
   "next_action": "",
   "forced_reflection": null,
   "updated_at": "YYYY-MM-DDTHH:MM:SSZ"

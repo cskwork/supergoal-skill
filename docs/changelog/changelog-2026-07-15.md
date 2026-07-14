@@ -49,3 +49,37 @@ the checkpoint mirrors that cap for resume and tracks mutable fulfillment state.
   branch, gate, or blocker safety state; those fields answer distinct resume and safety questions.
 - Touch: `templates/run-state.json`, `reference/role-loop.md`, `reference/delivery-gate.md`, and
   `tests/delivery-gate-contract.test.sh`.
+
+## v0.6.4 gate and skill simplification
+
+**Change**: tightened final proof while removing duplicated agent-facing and test-facing text.
+
+- `QA.md` is now the only commit-verdict source and must contain exactly one literal
+  `- Verdict: PASS`. Missing, duplicate, placeholder, unknown, FAIL, and PARTIAL values block commit.
+- `run-state.json` schema v3 keeps only mutable resume/safety state. Approval remains in `PLAN.md`,
+  proof commands remain in `QA.md`, and final completion is enforced by `run-state-gate.mjs`.
+- `Z-DONE.md` remains the completion receipt but no longer claims a future commit-gate result.
+- `SKILL.md` is the thin router/invariant spine; `reference/role-loop.md` is the sole detailed default-loop
+  authority. This removes 52 lines and preserves the direct-collaboration negative route.
+- Repeated shell assertions now use `tests/support/contract.sh`. HARNESS tests clone the shipped valid
+  result fixture and apply narrow deltas, and the validator is reusable without spawning its CLI.
+- `tests/run-all.sh` reports independent failures and recursively syntax-checks all template JavaScript.
+- Mode IDs are checked across `SKILL.md`, both READMEs, and the landing page. The already-documented
+  draw/diagram landing omission remains the only content-level exception.
+
+**Why**: canonical ownership makes failures unambiguous and reduces drift. The state file should answer
+only "where can this run safely resume?"; stable intent and evidence belong in their existing documents.
+
+**Rejected alternatives**:
+
+- Merge verifier and code reviewer in this release. Their current proof responsibilities differ, and the
+  browser path needs a separate role-boundary decision before changing behavior.
+- Merge `GOAL.md` and `PLAN.md`. One records the falsifiable contract; the other is the approved build brief.
+- Introduce a generated central mode registry. Twelve stable rows do not justify another source format;
+  a parity test catches drift with less machinery.
+- Parallelize the full suite. Several shell contracts use process-global temporary state, so aggregation is
+  safe now while parallel execution needs explicit isolation first.
+
+**Verification note**: canonical fixture reuse reduced HARNESS contract duplication, but the focused suite
+did not get faster (17.95s baseline, 19.12s final). The value is maintainability, not a speed claim; repeated
+CLI startups and the U3 validation remain the measured runtime cost.

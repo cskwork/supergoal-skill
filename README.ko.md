@@ -114,7 +114,7 @@ flowchart TD
 | "이 코드베이스를 학습/온보딩해줘" | **LEARN-DOMAIN** | Survey -> Map -> Ground -> `.domain-agent/` 위키 |
 | "QA만/검증/데이터 비교" (코드 변경 없음) | **QA-ONLY** | 상세 Impact Matrix(기능 영향 범위 QA 지도) + 읽기 전용 DB -> 증거 -> `report.md` |
 | "코드/diff/PR 리뷰만" (수정 없음) | **REVIEW-ONLY** | 독립 리뷰어 2명 -> 검증된 findings -> `report.md` |
-| "구조 개선 / 리팩터링 후보 찾아줘" | **ARCHITECTURE** | 마찰 조사 -> 후보를 시각적 `report.html`로 제시 -> 고른 후보만 grill -> 리팩터링은 LEGACY/WAYFINDER로 |
+| "구조 개선 / 리팩터링 후보 찾아줘" 또는 "draw / diagram / 그려"(구조·흐름·시퀀스·상태) | **ARCHITECTURE** | 그리기만 요청하면 archify로 자체 완결형 HTML을 만들어 전달하고 종료. 그 외에는 마찰 조사 -> 시각적 `report.html` 후보 -> 선택한 후보만 grill -> LEGACY/WAYFINDER로 이동 |
 | "harness 효과 테스트 / 유무 비교" | **HARNESS-EVAL** | 케이스 -> baseline -> harness -> 머신 체크 -> 품질 점수 -> 비교 |
 | "히스토리에서 스킬 생성" (제품 코드 변경 없음) | **SKILL-MINE** | 히스토리 마이닝 -> 랭크 -> 선택 -> 포터블 `SKILL.md` 생성 -> 설치 |
 

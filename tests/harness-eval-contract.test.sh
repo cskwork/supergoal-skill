@@ -35,7 +35,7 @@ require_text() {
   local label="$1"
   local file="$2"
   local text="$3"
-  if tr '\n' ' ' < "$ROOT/$file" | grep -Fq "$text"; then
+  if tr '\n' ' ' < "$ROOT/$file" | grep -Fq -- "$text"; then
     pass "$label"
   else
     fail "$label" "missing: $text"
@@ -178,255 +178,41 @@ mkresult() {
   local file="$1"
   local winner="${2:-harness}"
   local checks="${3:-$PASS_CHECKS}"
-  local proven="${4:-not_proven}"
+  local claim_status="${4:-not_proven}"
   local quality_winner="${5:-harness}"
-  local harness_total="${6:-82}"
-  local baseline_total="${7:-74}"
-  local mutation_status="not_proven"
-  if [ "$winner" = "harness" ] && [ "$proven" = "proven" ]; then
-    mutation_status="adopt"
-  elif [ "$winner" = "harness" ]; then
-    mutation_status="revise"
-  elif [ "$winner" = "baseline" ]; then
-    mutation_status="reject"
+  local template="$ROOT/templates/harness-eval-result.json"
+
+  cp "$template" "$file"
+  if [ "$winner" = "harness" ] &&
+     [ "$checks" = "$PASS_CHECKS" ] &&
+     [ "$claim_status" = "not_proven" ] &&
+     [ "$quality_winner" = "harness" ]; then
+    return
   fi
-  cat > "$file" <<EOF
-{
-  "case_id": "case-001",
-  "runtime_adapter": "codex",
-  "same_repo_snapshot": true,
-  "isolated_worktrees": true,
-  "runtime_preflight": {
-    "host_os": "linux",
-    "preferred_adapter": "codex-exec",
-    "chosen_adapter": "codex-exec",
-    "preflights": {
-      "codex-exec": { "available": true, "ok": true, "reason": "edit ok, tests pass" }
-    }
-  },
-  "role_source": "shipped_files",
-  "statistics": {
-    "seeds_per_arm": 6,
-    "winning_comparison": "harness-vs-baseline",
-    "bca_ci_95": [0.4, 2.6],
-    "permutation_p": 0.03125,
-    "significant": true,
-    "seed_outcomes": [
-      { "arm": "baseline", "seed": 0, "crashed": false, "recorded_loss": false },
-      { "arm": "baseline", "seed": 1, "crashed": false, "recorded_loss": false },
-      { "arm": "baseline", "seed": 2, "crashed": false, "recorded_loss": false },
-      { "arm": "baseline", "seed": 3, "crashed": false, "recorded_loss": false },
-      { "arm": "baseline", "seed": 4, "crashed": false, "recorded_loss": false },
-      { "arm": "baseline", "seed": 5, "crashed": false, "recorded_loss": false },
-      { "arm": "harness", "seed": 0, "crashed": false, "recorded_loss": false },
-      { "arm": "harness", "seed": 1, "crashed": false, "recorded_loss": false },
-      { "arm": "harness", "seed": 2, "crashed": false, "recorded_loss": false },
-      { "arm": "harness", "seed": 3, "crashed": false, "recorded_loss": false },
-      { "arm": "harness", "seed": 4, "crashed": false, "recorded_loss": false },
-      { "arm": "harness", "seed": 5, "crashed": false, "recorded_loss": false }
-    ],
-    "mcnemar": {
-      "discordant_baseline_only": 1,
-      "discordant_harness_only": 5,
-      "p": 0.03125,
-      "significant": true
-    },
-    "snr_filter": {
-      "matched_removed": 8,
-      "discordant_kept": 6,
-      "rule": "remove no-signal matched pass/pass and fail/fail pairs before McNemar"
-    }
-  },
-  "axis_metrics": {
-    "correctness": {
-      "metric": "paired pass/fail plus quality score",
-      "baseline": 0.7,
-      "harness": 0.9,
-      "delta": 0.2
-    },
-    "token_cost": {
-      "metric": "total_tokens per invocation",
-      "baseline": 1000,
-      "harness": 1200,
-      "delta": 200,
-      "source": "adapter telemetry"
-    },
-    "wall_clock": {
-      "metric": "duration_ms per invocation",
-      "baseline": 1000,
-      "harness": 1400,
-      "delta": 400,
-      "source": "adapter telemetry"
-    },
-    "routing_accuracy": {
-      "metric": "held-out trigger accuracy",
-      "baseline": 0.65,
-      "harness": 0.85,
-      "delta": 0.2
-    }
-  },
-  "routing_accuracy": {
-    "applies": true,
-    "prompt_count": 20,
-    "trials_per_prompt": 3,
-    "train_test_split": "60/40",
-    "should_trigger_rate": 0.9,
-    "should_not_trigger_rate": 0.8,
-    "heldout_accuracy": 0.85,
-    "near_miss_failures": ["route-017"],
-    "artifact": "routing/routing-probe.json"
-  },
-  "eval_intent": {
-    "goal": "increase hidden requirement coverage",
-    "constraints": ["preserve the same repo snapshot"],
-    "tradeoffs": ["extra verification cost is acceptable only if correctness improves"],
-    "rejected_approaches": ["self-reported success as evidence"]
-  },
-  "command_manifest": [
-    {
-      "name": "test",
-      "command": "npm test",
-      "source": "frozen_repo",
-      "used_by": "both",
-      "verifies": "visible and hidden tests"
-    },
-    {
-      "name": "lint",
-      "command": "npm run lint",
-      "source": "frozen_repo",
-      "used_by": "both",
-      "verifies": "static rules"
-    },
-    {
-      "name": "build",
-      "command": "npm run build",
-      "source": "frozen_repo",
-      "used_by": "both",
-      "verifies": "bundle succeeds"
-    }
-  ],
-  "decision_gates": [
-    {
-      "id": "r1",
-      "action": "auto-fix",
-      "status": "resolved",
-      "description": "mechanical fix",
-      "recheck": "npm test exit=0"
-    },
-    {
-      "id": "n1",
-      "action": "no-op",
-      "status": "accepted",
-      "description": "informational finding"
-    }
-  ],
-  "adapter_fixture_replay": {
-    "status": "not_required",
-    "adapter_event_schema": "codex-exec-jsonl",
-    "fixtures": [],
-    "redaction": "not required",
-    "replay_command": "not required"
-  },
-  "surface_sync": {
-    "changed_surfaces": ["reference/harness-eval.md", "templates/harness-eval-gate.mjs"],
-    "proof_commands": ["bash tests/harness-eval-contract.test.sh"]
-  },
-  "baseline": {
-    "condition": "without_harness",
-    "machine_checks": $checks,
-    "cost": { "tokens": 1000, "duration_ms": 1000, "tool_calls": 10 },
-    "telemetry": {
-      "artifact_root": "docs/changelog/test-baseline",
-      "logs": ["raw/baseline.log"],
-      "commands": ["npm test", "npm run lint", "npm run build"],
-      "edited_files": ["src/example.js"],
-      "permissions_or_approvals": [],
-      "turns_completed": 1,
-      "exit_code": 0,
-      "crashed": false,
-      "context_exhausted": false
-    }
-  },
-  "harness": {
-    "condition": "with_harness",
-    "machine_checks": $checks,
-    "cost": { "tokens": 1200, "duration_ms": 1400, "tool_calls": 12 },
-    "telemetry": {
-      "artifact_root": "docs/changelog/test-harness",
-      "logs": ["raw/harness.log"],
-      "commands": ["npm test", "npm run lint", "npm run build"],
-      "edited_files": ["src/example.js"],
-      "permissions_or_approvals": [],
-      "turns_completed": 1,
-      "exit_code": 0,
-      "crashed": false,
-      "context_exhausted": false
-    }
-  },
-  "quality": {
-    "method": "RevFactory-style 10 dimensions, each 0-10, total 100",
-    "baseline": {
-      "average_total": $baseline_total,
-      "by_case": {
-        "case-001": {
-          "total": $baseline_total,
-          "dimensions": {
-            "feature_completeness": { "score": 8 },
-            "test_coverage": { "score": 7 },
-            "code_quality": { "score": 7 },
-            "error_handling": { "score": 7 },
-            "efficiency": { "score": 8 },
-            "correctness": { "score": 8 },
-            "architecture": { "score": 7 },
-            "extensibility": { "score": 7 },
-            "documentation": { "score": 7 },
-            "dev_environment": { "score": 8 }
-          }
-        }
-      }
-    },
-    "harness": {
-      "average_total": $harness_total,
-      "by_case": {
-        "case-001": {
-          "total": $harness_total,
-          "dimensions": {
-            "feature_completeness": { "score": 9 },
-            "test_coverage": { "score": 8 },
-            "code_quality": { "score": 8 },
-            "error_handling": { "score": 8 },
-            "efficiency": { "score": 8 },
-            "correctness": { "score": 9 },
-            "architecture": { "score": 8 },
-            "extensibility": { "score": 8 },
-            "documentation": { "score": 8 },
-            "dev_environment": { "score": 8 }
-          }
-        }
-      }
-    },
-    "winner": "$quality_winner"
-  },
-  "harness_mutation_contract": {
-    "status": "$mutation_status",
-    "intended_delta": "increase hidden requirement coverage",
-    "safety_envelope": "no product code edits by the evaluator",
-    "rollback": "restore previous harness contract",
-    "proof_command": "node templates/harness-eval-gate.mjs result.json",
-    "rejected_alternatives": ["prose-only guidance lacks a machine gate"]
-  },
-  "blind_grading": true,
-  "winner": "$winner",
-  "claim_status": "$proven"
-}
-EOF
-}
 
-echo "/supergoal HARNESS-EVAL contract"
-echo "=================================="
-
+  node -e '
+    const fs = require("node:fs");
+    const [path, checksJson, winner, claimStatus, qualityWinner] = process.argv.slice(1);
+    const result = JSON.parse(fs.readFileSync(path, "utf8"));
+    result.baseline.machine_checks = JSON.parse(checksJson);
+    result.harness.machine_checks = JSON.parse(checksJson);
+    result.winner = winner;
+    result.claim_status = claimStatus;
+    result.quality.winner = qualityWinner;
+    result.harness_mutation_contract.status =
+      winner === "harness" && claimStatus === "proven" ? "adopt" :
+      winner === "harness" ? "revise" :
+      winner === "baseline" ? "reject" : "not_proven";
+    if (claimStatus === "proven") {
+      result.surface_sync.changed_surfaces = ["templates/harness-eval-gate.mjs"];
+      result.surface_sync.proof_commands = ["bash tests/harness-eval-contract.test.sh"];
+    }
+    fs.writeFileSync(path, JSON.stringify(result, null, 2));
+  ' "$file" "$checks" "$winner" "$claim_status" "$quality_winner"
+}
 require_file "harness eval reference exists" "reference/harness-eval.md"
 require_file "harness eval gate exists" "templates/harness-eval-gate.mjs"
+require_text "gate exports reusable validator" "templates/harness-eval-gate.mjs" "export function validateHarnessEval(result)"
 require_file "harness eval case template exists" "templates/harness-eval-case.yaml"
 require_file "RevFactory case 001 exists" "templates/harness-eval-cases/revfactory-case-001-rest-api.yaml"
 require_file "RevFactory case 002 exists" "templates/harness-eval-cases/revfactory-case-002-bug-fix.yaml"
@@ -625,6 +411,24 @@ require_text "DeepSWE suite runner owns task selection" "templates/harness-eval-
 require_text "DeepSWE suite runner writes suite summary" "templates/harness-eval-external/deepswe/run-default-suite.mjs" "suite-summary.json"
 require_text "DeepSWE suite runner records dry run" "templates/harness-eval-external/deepswe/run-default-suite.mjs" "dry_run"
 
+run_case "pure validator accepts canonical result" 0 "errors=0" node --input-type=module -e '
+  import fs from "node:fs";
+  const { validateHarnessEval } = await import(process.argv[2]);
+  const result = JSON.parse(fs.readFileSync(process.argv[3], "utf8"));
+  console.log(`errors=${validateHarnessEval(result).length}`);
+' validator-smoke "$GATE" "$ROOT/templates/harness-eval-result.json"
+
+run_case "pure validator rejects invalid result" 0 "same_repo_snapshot" node --input-type=module -e '
+  import fs from "node:fs";
+  const { validateHarnessEval } = await import(process.argv[2]);
+  const result = JSON.parse(fs.readFileSync(process.argv[3], "utf8"));
+  result.same_repo_snapshot = false;
+  console.log(validateHarnessEval(result).join("; "));
+' validator-smoke "$GATE" "$ROOT/templates/harness-eval-result.json"
+
+run_case "gate CLI accepts canonical result" 0 "HARNESS-EVAL PASS" node "$GATE" "$ROOT/templates/harness-eval-result.json"
+run_case "gate CLI reports usage" 2 "usage:" node "$GATE"
+
 mkresult "$T/ok.json" "harness" "$PASS_CHECKS" "proven" "harness"
 run_case "gate accepts complete eval" 0 "HARNESS-EVAL PASS" node "$GATE" "$T/ok.json"
 
@@ -710,7 +514,8 @@ mkresult "$T/no-quality.json"
 node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); delete x.quality; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/no-quality.json"
 run_case "gate blocks missing quality score" 1 "quality is required" node "$GATE" "$T/no-quality.json"
 
-mkresult "$T/bad-quality.json" "harness" "$PASS_CHECKS" "not_proven" "harness" "101"
+mkresult "$T/bad-quality.json"
+node -e "const fs=require('fs'); const p=process.argv[1]; const x=require(p); x.quality.harness.average_total=101; fs.writeFileSync(p, JSON.stringify(x, null, 2));" "$T/bad-quality.json"
 run_case "gate blocks out-of-range quality" 1 "average_total" node "$GATE" "$T/bad-quality.json"
 
 mkresult "$T/bad-case-total.json"

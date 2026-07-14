@@ -32,7 +32,7 @@ which ARCHITECTURE/REVIEW-ONLY treat as a baseline violation. Schema: `templates
 ## Emitting - `templates/observability/sg-emit.sh`
 
 ```
-sg-emit --phase Critic [--mode GREENFIELD] [--task "Add JWT refresh"] \
+sg-emit --phase ExactVerify [--mode GREENFIELD] [--task "Add JWT refresh"] \
         [--task-status in-progress] [--note "2 reds open"] [--slot exec-3f] [--tasks-file board.json]
 ```
 
@@ -51,7 +51,7 @@ sg-emit --phase Critic [--mode GREENFIELD] [--task "Add JWT refresh"] \
 | Stage | Emit |
 |---|---|
 | Register (Frame) | `sg-emit --phase Frame --mode <MODE> --task "<first>" --task-status backlog` |
-| Phase update | `sg-emit --phase Build\|ImproveFullSpec\|ImproveEdgeCases\|MandatoryAdversarialReview\|ExactVerify` (optional `Critic\|Fixer`; carries the board forward) |
+| Phase update | `sg-emit --phase PlanApproval\|Build\|ExactVerify\|Finalize` (conditional `PlanAttack`; carries the board forward) |
 | Task move | `sg-emit --task "<t>" --task-status backlog\|in-progress\|review\|done\|blocked` |
 | Clean exit | `sg-emit --phase Done` |
 

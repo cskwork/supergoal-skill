@@ -7,7 +7,7 @@ and records persist in a workspace they return to across sessions.
 TEACH runs as a **stateful, multi-session teaching workspace**: it fuses supergoal's decomposition +
 process-trace pedagogy with the workspace model from mattpocock/skills `teach` (Knowledge / Skills /
 Wisdom, missions, beautiful HTML lessons, learning records). It skips the default loop (no
-Build/Critic/Fixer/Verify) and all implementation gates. Flow:
+Build/Verify) and all implementation gates. Flow:
 
 `Preference -> Mission -> Resources -> ZPD -> Core question -> Bridge -> Teach loop (lesson) -> Check -> Records -> Journal`
 

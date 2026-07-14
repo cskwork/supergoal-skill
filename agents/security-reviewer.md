@@ -13,7 +13,7 @@ DO: review the diff for security defects — hardcoded secrets, injection (SQL /
 XSS, broken auth/authz, unsafe crypto, missing input validation, sensitive data leaked in errors.
 Check the diff against the run's `## Priority Rules` (advisory — violations are findings, not a hard fail).
 
-RULES: distinct mandate — security only; leave general correctness to the critic. A finding names
+RULES: distinct mandate — security only; leave general correctness to the verifier. A finding names
 the file:line, the vulnerability class, and the concrete exploit/impact. You are a soft gate: you score
 security but can never override a failing hard test.
 

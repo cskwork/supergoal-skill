@@ -12,11 +12,16 @@ dated `## Amendment`.
 ## Intent
 
 - Goal / constraints / tradeoffs / rejected approaches:
-- Completion promise: promised outcome, required proof, stop condition, `max_iterations` (default 8)
+- Completion promise: promised outcome, required proof, stop condition, `max_iterations` (default 3)
 
 ## Steps
 
 1. <exact file paths, symbols, expected diff shape - plain language>
+
+## Acceptance checklist
+
+- [ ] <copied from GOAL.md Success Criteria, including edge-case/resilience criteria - the builder
+  reads ONLY this file, so the checklist must be complete here>
 
 ## Tools & Skills
 

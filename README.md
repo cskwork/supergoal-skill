@@ -119,27 +119,31 @@ flowchart TD
 | "test harness effectiveness / with vs without" | **HARNESS-EVAL** | Cases -> baseline run -> harness run -> machine checks -> quality score -> compare |
 | "make a skill from history - no product code" | **SKILL-MINE** | Mine history -> rank -> you pick -> forge portable `SKILL.md` -> install |
 
-**Default loop (GREENFIELD / DEBUG / LEGACY):** 1) **Frame** the goal: write `GOAL.md` first (the user's
-request verbatim + refined spec + falsifiable Success Criteria checkboxes + browser QA cases for web
-apps), freeze a self-sufficient `PLAN.md` (steps, tools & skills, verification strategy), start `QA.md`
-`## Before` plus `run-state.json`. The Success Criteria already enumerate full-spec coverage and
-edge-case/resilience checks, so the user reviews them at the next gate. For broad GREENFIELD requests,
-Frame first writes an internal `wayfinder/map.md`, creates vertical tickets under `wayfinder/tickets/`,
-selects the first unblocked frontier, and copies only that ticket's acceptance checks into delivery.
-The route remains GREENFIELD; WAYFINDER stays the explicit no-code planning mode. 2) **Plan approval** -
-the user reviews the goal plan (interactive: the user's explicit OK; autonomous: auto-approved,
-recorded); Build never starts before this gate. 3) **Build** the smallest correct change in one
-fresh-context implementer briefed by `PLAN.md` alone, test-first (bug -> failing test first); the
-builder covers every planned criterion in the plan's `## Acceptance checklist` - including the
-edge-case/resilience criteria discovered at Frame - and exits only on a green suite.
-4) **Exact Verify/QA** in one fresh-context verifier with an adversarial stance: re-run the real tests
-and the promised proof layer, diff the implementer's changes against `GOAL.md`, tick each criterion
-proven met, surface hidden `must` requirements as new criteria, and record plain checklist results in
-`QA.md`; unmet criteria go to a timestamped `R-LOOP.md` section and the implementer relaunches - that
-loop-back is the only fix channel. 5) **Finalize**: stop only after every `GOAL.md` box is checked and
-the `Z-<date>.md` completion marker (run branch + timestamp) is written with command output recorded,
-then pass the commit gate and merge after user acceptance. The Build->Verify loop has a default
-3-iteration cap with forced reflection, then escalates to the user.
+**Default loop (GREENFIELD / DEBUG / LEGACY):**
+
+1. **Frame** the goal: write `GOAL.md` first (the user's request verbatim + refined spec + falsifiable
+   Success Criteria checkboxes + browser QA cases for web apps), freeze a self-sufficient `PLAN.md`
+   (steps, tools & skills, verification strategy), start `QA.md` `## Before` plus `run-state.json`.
+   The Success Criteria already enumerate full-spec coverage and edge-case/resilience checks, so the
+   user reviews them at the next gate. For broad GREENFIELD requests, Frame first writes an internal
+   `wayfinder/map.md`, creates vertical tickets under `wayfinder/tickets/`, selects the first unblocked
+   frontier, and copies only that ticket's acceptance checks into delivery. The route remains
+   GREENFIELD; WAYFINDER stays the explicit no-code planning mode.
+2. **Plan approval** - the user reviews the goal plan (interactive: the user's explicit OK; autonomous:
+   auto-approved, recorded); Build never starts before this gate.
+3. **Build** the smallest correct change in one fresh-context implementer briefed by `PLAN.md` alone,
+   test-first (bug -> failing test first); the builder covers every planned criterion in the plan's
+   `## Acceptance checklist` - including the edge-case/resilience criteria discovered at Frame - and
+   exits only on a green suite.
+4. **Exact Verify/QA** in one fresh-context verifier with an adversarial stance: re-run the real tests
+   and the promised proof layer, diff the implementer's changes against `GOAL.md`, tick each criterion
+   proven met, surface hidden `must` requirements as new criteria, and record plain checklist results
+   in `QA.md`; unmet criteria go to a timestamped `R-LOOP.md` section and the implementer relaunches -
+   that loop-back is the only fix channel.
+5. **Finalize**: stop only after every `GOAL.md` box is checked and the `Z-<date>.md` completion marker
+   (run branch + timestamp) is written with command output recorded, then pass the commit gate and merge
+   after user acceptance. The Build->Verify loop has a default 3-iteration cap with forced reflection,
+   then escalates to the user.
 
 Coding/debug runs use a run worktree by default: resolve and verify the source/base branch plus the
 target/integration branch before editing, create the run worktree from source/base, and only commit or

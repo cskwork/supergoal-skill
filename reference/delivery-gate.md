@@ -14,7 +14,7 @@ Required fields and where each lives:
 
 - `eval_intent` -> `PLAN.md` `## Intent`: user goal, constraints, tradeoffs, rejected approaches.
 - `completion_promise` -> `PLAN.md` `## Intent`: promised outcome, required proof, stop condition, and
-  `max_iterations` (default 3).
+  approved `max_iterations`. `run-state.json` mirrors that cap for resume and tracks fulfillment state.
 - `requirement_trace` -> `GOAL.md` `## Success Criteria`: falsifiable checkbox per requirement, each
   naming its verifying check; plus `Backward-trace: clean` in `QA.md` when no diff hunk is orphan scope.
 - `before_state` -> `QA.md` `## Before`: observed current behavior before the change.
@@ -32,8 +32,10 @@ Required fields and where each lives:
 - `after_evidence` -> `QA.md` `## Results` + `## QA`: checklist sentences with command outputs, artifact
   paths, screenshots, DB reads, or API captures proving the after target.
 - `residual_risk` -> `QA.md` `## Residual Risk`: what the checks do not prove.
-- `run_state` -> `run-state.json`: phase, iteration, plan_approval, gates, blockers, next action, last
-  proof command.
+- `run_state` -> `run-state.json`: compact mutable/resumable checkpoint for branch/ref safety,
+  plan approval, phase/iteration/loop cap, completion status, unresolved gates, blockers, regression
+  state, proof checkpoint, next action, forced reflection, and timestamp. Static completion-promise
+  content remains canonical in `PLAN.md`.
 
 ## Before State
 

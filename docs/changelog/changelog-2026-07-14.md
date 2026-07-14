@@ -71,3 +71,23 @@ plus opt-in Critic/Fixer) forced at least five fresh-context dispatches per run 
   critic WAS the tested lever; they are not part of the delivery loop.
 - Verified: `bash tests/run-all.sh` exits 0 with every per-file summary at 0 failed (role-loop 118,
   harness-eval 302, delivery-gate 91, gate-scenarios 65/73, others green).
+
+## Vault language consistency (one vault, one language)
+
+**Change**: all run-vault prose (`GOAL.md`, `PLAN.md`, `QA.md`, `R-LOOP.md`, `Z-*.md`) must use the
+language of the user's original request; a Korean `GOAL.md` means a Korean `PLAN.md`, and every later
+writer (builder QA rows, verifier results, R-LOOP items) keeps that language.
+
+- Why: the user hit vaults where `GOAL.md` came out Korean (it quotes/refines the Korean request) while
+  `PLAN.md` came out English - inconsistent artifacts for the same run, and the plan is exactly the file
+  the user must review at the approval gate.
+- Boundary: template structural markers stay verbatim (section headings, `- [ ]` checkboxes,
+  `Status:`/`Verdict:`/`Backward-trace: clean`/`auto-approved`/`(surfaced: ...)`) because
+  `commit-gate.sh`/`qa-gate.sh` grep for them; code identifiers, paths, and commands stay as-is.
+- Scope note: the existing "match the target repo's dominant prose language" rule still governs
+  repo-committed docs; the vault rule governs session vault files.
+- Enforced in: `reference/role-loop.md` (run-setup bullet), SKILL.md Frame, `agents/executor.md` WRITE,
+  `agents/qa-auditor.md` WRITE; contract-tested in `tests/role-loop-contract.test.sh`.
+- Rejected: translating template headings per language. Gates grep literal markers; localized headings
+  would silently break the commit gate.
+- Verified: `bash tests/run-all.sh` green after the change.

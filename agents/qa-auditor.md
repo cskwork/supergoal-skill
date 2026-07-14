@@ -52,7 +52,8 @@ talk to other QA subagents. playwright-cli is the only sanctioned driver; do not
 swap in another browser tool. If it cannot be installed, stop and ask. Keep screenshots and dumps in this
 subagent; summarize.
 
-WRITE: `QA.md` `## QA` (machine app evidence) — it MUST carry:
+WRITE (vault prose keeps `GOAL.md`'s language - one vault, one language; structural markers verbatim):
+`QA.md` `## QA` (machine app evidence) — it MUST carry:
 - a `Tool: playwright-cli` line;
 - per-scenario pass/fail with evidence paths; the as-is/to-be (or A/B arm) evidence paths;
 - concise reproduction details for each failed scenario: starting state, steps, expected, actual.

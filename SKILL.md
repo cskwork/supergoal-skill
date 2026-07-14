@@ -95,7 +95,9 @@ against ground truth, Finalize commits it.
    wide/destructive/behavior-changing blast radius after grounding (`reference/interview.md`); deep
    requirements interviews may dispatch `agents/analyst.md`, and architecture calls
    `agents/architect.md`. UI: load `reference/ui-ux.md`. Code-mode runs: create `QA.md` and
-   `run-state.json` from templates and record the Before/After Eval.
+   `run-state.json` from templates and record the Before/After Eval. Vault prose follows the language
+   of the user's original request across ALL vault files (Korean `GOAL.md` -> Korean `PLAN.md`);
+   template structural markers stay verbatim (gates grep them).
 2. **Plan approval (user review of the goal plan).** Freeze `PLAN.md` (self-sufficient: steps, tools &
    skills, verification strategy), then clear the plan approval gate - interactive: the user's explicit
    OK; autonomous run: auto-approved, recorded in `## Approval`. Build never starts before this gate.

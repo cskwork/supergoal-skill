@@ -77,6 +77,13 @@ Before any file mutation, create the run vault's `GOAL.md` from `templates/GOAL.
   evaluator-owned proof commands.
 - keep `run-state.json` current: phase, iteration, plan_approval, unresolved gates, blockers, next
   action, regression_ledger, last proof command.
+- **Vault language (one vault, one language)**: all vault prose - `GOAL.md`, `PLAN.md`, `QA.md`,
+  `R-LOOP.md`, `Z-*.md` - uses the language of the user's original request; a Korean `GOAL.md` means a
+  Korean `PLAN.md` too, and every later writer (builder rows, verifier results, R-LOOP items) keeps
+  that language. Structural markers stay verbatim as the templates define them (section headings,
+  `- [ ]` checkboxes, `Status:`/`Verdict:`/`Backward-trace: clean`/`auto-approved`/`(surfaced: ...)`
+  tokens) because gates grep for them; code identifiers, paths, and commands stay in their original
+  form.
 
 ## LEGACY entry (order)
 

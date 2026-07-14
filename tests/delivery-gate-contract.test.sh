@@ -120,7 +120,7 @@ require_text "r-loop template feeds latest section only" "templates/R-LOOP.md" "
 require_text "z template records branch" "templates/Z-DONE.md" "Branch:"
 require_text "z template records completion timestamp" "templates/Z-DONE.md" "Completed:"
 require_text "z template requires all criteria checked" "templates/Z-DONE.md" "ONLY when every"
-require_text "run state records max iterations" "templates/run-state.json" '"max_iterations": 8'
+require_text "run state records max iterations" "templates/run-state.json" '"max_iterations": 3'
 require_text "run state records regression ledger" "templates/run-state.json" "regression_ledger"
 require_text "run state records regressed previously green" "templates/run-state.json" "regressed_previously_green"
 require_text "run state records forced reflection" "templates/run-state.json" "forced_reflection"

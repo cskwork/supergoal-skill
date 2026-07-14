@@ -20,30 +20,34 @@ the smallest correct change, checks the request and project docs against the rea
    Broad new-app builds stay GREENFIELD but first get a `wayfinder/` Frontier Map so only one vertical slice enters delivery.
 2. **Load only the needed playbook.** The root `SKILL.md` stays small; each route loads its own
    `reference/` and `agents/` files only when needed.
-3. **Keep contexts fresh.** Code delivery runs Build, Improve full spec, Improve edge cases, and
-   Final Verify as separate fresh-context roles. The conductor passes the run vault and needed files,
-   then collects short status. Critic/Fixer is an opt-in escalation for under-specified work, not the
-   always-on default.
+3. **Keep contexts fresh, keep dispatches few.** Code delivery runs five gates - Frame -> Plan approval
+   -> Build -> Exact Verify/QA -> Finalize - with exactly one fresh-context builder and one
+   fresh-context verifier dispatch per iteration. Frame discovers full-spec and edge-case coverage into
+   the plan; the builder implements only the approved plan; the verifier carries the adversarial review
+   plus the real proof layer; verify findings loop back to a relaunched builder through `R-LOOP.md`. The
+   only extra dispatch is a trigger-gated pre-Build plan attack for risky/under-specified work.
 4. **Run Before/After Eval.** Capture the before state, define the after target, write a completion
    promise, and keep a resumable run state plus command manifest so the final claim proves the delta
    instead of just saying "tests passed."
 5. **Prove against the real project.** Visible-green is not trusted by itself; the run re-reads the whole
    spec and verifies with the repo's real tests, browser checks, DB evidence when load-bearing, and prose
-   spec. Hidden requirements become durable evidence, and failing tests when the critic escalation is used.
+   spec. Hidden requirements the verifier surfaces become durable `GOAL.md` criteria the builder covers
+   red-first.
 6. **Stop at the verified result.** No open-ended refactor, no proxy checklist, no fake green.
 
 ## What it adds over a plain baseline
 
 A strong model with the real spec is the bar. `/supergoal` adds the part a plain baseline skips under
-pressure: after Build, it runs the current core loop - Improve full spec, Improve edge cases, then Final
-Verify - and records the proof. For genuinely under-specified work, it can escalate to an independent
-critic that writes spec-derived failing tests before a fixer clears them. Once invoked for code delivery,
-`/supergoal` uses the role-loop instead of downgrading to an inline shortcut.
+pressure: a user-reviewed goal plan that already enumerates spec coverage and edge cases, a builder
+that must exit green, and an independent verifier that tries to disprove the result against the real
+proof layer - with the evidence recorded. Once invoked for code delivery, `/supergoal` uses the
+role-loop instead of downgrading to an inline shortcut.
 
 Each role is a bundled file in `agents/`, so dispatch stays harness-agnostic across Claude Code, Codex,
-agy, and other agent CLIs. Build -> Improve full spec -> Improve edge cases -> Final Verify is the
-mandatory core; Critic/Fixer stays available for the under-specified frontier. The conductor stays lean:
-subagents load the heavy references for their phase, and independent units run in parallel.
+agy, and other agent CLIs. Frame -> Plan approval -> Build -> Exact Verify/QA -> Finalize is the
+mandatory core; the conditional plan attack stays available for the under-specified frontier. The
+conductor stays lean: subagents load the heavy references for their phase, and independent units run in
+parallel.
 
 ## Principles
 
@@ -52,7 +56,7 @@ subagents load the heavy references for their phase, and independent units run i
   checklist/verifier and optimize to it.
 - **Smallest correct change.** Match the surrounding code; no whole-file rewrites to change a few lines.
 - **Forced verification before trust.** After Build, compare the request/docs with the current behavior,
-  even when visible tests are green; critic escalation is reserved for latent requirement risk.
+  even when visible tests are green; the plan attack is reserved for latent requirement risk.
 - **Before/After Eval for real code changes.** GREENFIELD proves what was absent or red before; DEBUG
   reproduces the symptom; LEGACY/brownfield captures behavior to preserve before changing it.
 - **Ask only when genuinely ambiguous.** Resolve code-answerable questions by reading the code.
@@ -84,7 +88,7 @@ flowchart TD
     C -->|"harness effectiveness"| HARNESS["HARNESS-EVAL<br/>baseline vs harness"]
     C -->|"make a reusable skill"| SKILLMINE["SKILL-MINE<br/>mine -> forge -> install"]
 
-    GREENFIELD --> LOOP["Default delivery loop<br/>Build -> Improve full spec<br/>-> Improve edge cases -> Final Verify<br/>(Critic/Fixer opt-in)"]
+    GREENFIELD --> LOOP["Default delivery loop<br/>Frame -> Plan approval -> Build<br/>-> Exact Verify/QA -> Finalize<br/>(plan attack opt-in)"]
     DEBUG --> LOOP
     LEGACY --> LOOP
 
@@ -118,25 +122,24 @@ flowchart TD
 **Default loop (GREENFIELD / DEBUG / LEGACY):** 1) **Frame** the goal: write `GOAL.md` first (the user's
 request verbatim + refined spec + falsifiable Success Criteria checkboxes + browser QA cases for web
 apps), freeze a self-sufficient `PLAN.md` (steps, tools & skills, verification strategy), start `QA.md`
-`## Before` plus `run-state.json`, then clear the plan approval gate (interactive: the user's explicit
-OK; autonomous: auto-approved, recorded). For broad GREENFIELD requests, Frame first writes an internal
-`wayfinder/map.md`, creates vertical tickets
-under `wayfinder/tickets/`, selects the first unblocked frontier, and copies only that ticket's
-acceptance checks into delivery. The route remains GREENFIELD; WAYFINDER stays the explicit no-code
-planning mode. 2) **Build** the smallest correct change in a fresh-context
-implementer briefed by `PLAN.md` alone, test-first (bug -> failing test first); 3) **Improve full spec**
-by re-reading the user's request, issue/ticket, README, design/API docs, and `GOAL.md` Success Criteria,
-then fixing the smallest
-gap between that intent and the current behavior; 4) **Improve edge cases** by checking degenerate
-inputs, edge/error paths, state/protocol, compatibility, and security side effects; 5) **Final Verify**
-by re-running the real tests, diffing the implementer's changes against `GOAL.md`, ticking each criterion
-proven met, and recording plain checklist results in `QA.md`; unmet criteria go to a timestamped
-`R-LOOP.md` section and the implementer relaunches; 6) escalate to
-independent **Critic -> Fixer** only for genuinely under-specified or latent-correctness work where
-missing requirements need to become failing tests. Stop only after every `GOAL.md` box is checked and the
-`Z-<date>.md` completion marker (run branch + timestamp) is written with command output recorded. The
-core loop has a default
-8-iteration cap with forced reflection before continuing.
+`## Before` plus `run-state.json`. The Success Criteria already enumerate full-spec coverage and
+edge-case/resilience checks, so the user reviews them at the next gate. For broad GREENFIELD requests,
+Frame first writes an internal `wayfinder/map.md`, creates vertical tickets under `wayfinder/tickets/`,
+selects the first unblocked frontier, and copies only that ticket's acceptance checks into delivery.
+The route remains GREENFIELD; WAYFINDER stays the explicit no-code planning mode. 2) **Plan approval** -
+the user reviews the goal plan (interactive: the user's explicit OK; autonomous: auto-approved,
+recorded); Build never starts before this gate. 3) **Build** the smallest correct change in one
+fresh-context implementer briefed by `PLAN.md` alone, test-first (bug -> failing test first); the
+builder covers every planned criterion in the plan's `## Acceptance checklist` - including the
+edge-case/resilience criteria discovered at Frame - and exits only on a green suite.
+4) **Exact Verify/QA** in one fresh-context verifier with an adversarial stance: re-run the real tests
+and the promised proof layer, diff the implementer's changes against `GOAL.md`, tick each criterion
+proven met, surface hidden `must` requirements as new criteria, and record plain checklist results in
+`QA.md`; unmet criteria go to a timestamped `R-LOOP.md` section and the implementer relaunches - that
+loop-back is the only fix channel. 5) **Finalize**: stop only after every `GOAL.md` box is checked and
+the `Z-<date>.md` completion marker (run branch + timestamp) is written with command output recorded,
+then pass the commit gate and merge after user acceptance. The Build->Verify loop has a default
+3-iteration cap with forced reflection, then escalates to the user.
 
 Coding/debug runs use a run worktree by default: resolve and verify the source/base branch plus the
 target/integration branch before editing, create the run worktree from source/base, and only commit or
@@ -168,8 +171,9 @@ prototypes keep their lightweight, non-visual paths.
 ## Board (optional live dashboard)
 
 Watch progress across concurrent agents in real time. `bash tui/launch.sh &` opens an in-browser
-dashboard (Textual) showing each agent's mode + workflow stage (Frame -> Build -> Improve -> Final Verify,
-with Critic/Fixer only when escalated) and a Jira-like task board, grouped by repo / branch / worktree.
+dashboard (Textual) showing each agent's mode + workflow stage (Frame -> Plan approval -> Build ->
+Exact Verify/QA -> Finalize, with the plan attack only when escalated) and a Jira-like task board,
+grouped by repo / branch / worktree.
 Branch is advisory - never locked, so multiple agents can share a branch freely.
 
 It is pure observability: opt-in, best-effort, and it never gates or blocks a run - if no agent emits,

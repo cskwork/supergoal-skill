@@ -15,7 +15,7 @@
 # files distinct.
 #
 # Usage:
-#   sg-emit --phase Critic [--mode GREENFIELD] [--task "Add JWT refresh"] \
+#   sg-emit --phase ExactVerify [--mode GREENFIELD] [--task "Add JWT refresh"] \
 #           [--task-status in-progress] [--note "2 reds open"] [--slot exec-3f] \
 #           [--tasks-file board.json]   # full tasks[] array; else prior board is carried forward
 #

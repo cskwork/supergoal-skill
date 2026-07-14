@@ -20,7 +20,7 @@
     "promised_outcome": "",
     "required_proof": [],
     "stop_condition": "",
-    "max_iterations": 8,
+    "max_iterations": 3,
     "status": "open|fulfilled|blocked"
   },
   "phase": "Frame",

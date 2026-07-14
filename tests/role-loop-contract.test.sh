@@ -44,27 +44,32 @@ echo "=================================================================="
 echo " /supergoal ROLE-LOOP contract   skill: $ROOT"
 echo "=================================================================="
 
-# Critic records surfaced requirements as appended GOAL.md criteria in the run vault.
-require_text "critic records surfaced requirements as markdown" "reference/role-loop.md" 'docs/changelog/<YYYY-MM>/<DD-topic>/GOAL.md'
+# The verifier records surfaced requirements as appended GOAL.md criteria in the run vault;
+# the relaunched builder covers each one red-first. No standing critic/fixer roles remain.
+require_text "verifier records surfaced requirements as markdown" "reference/role-loop.md" 'docs/changelog/<YYYY-MM>/<DD-topic>/GOAL.md'
 require_text "record explains why a requirement is implied" "reference/role-loop.md" "why it is required though the prompt never stated it"
 require_text "record links the covering failing test" "reference/role-loop.md" "the failing test that now covers it"
 require_text "record entries start open" "reference/role-loop.md" "unchecked box = open"
-require_text "critic classifies inferred requirements" "reference/role-loop.md" 'classify each candidate as `must`, `should`, or `ask-user`'
-require_text "critic only tests must requirements" "reference/role-loop.md" 'Only `must` requirements'
-require_text "critic does not invent stricter semantics" "reference/role-loop.md" "Do not turn silence into stricter semantics"
-require_text "fixer blocks ask-user generated tests" "reference/role-loop.md" "stop and report the decision gate"
+require_text "verifier classifies inferred requirements" "reference/role-loop.md" 'classify each candidate as `must`, `should`, or `ask-user`'
+require_text "verifier only surfaces must requirements" "reference/role-loop.md" 'Only `must` requirements'
+require_text "verifier does not invent stricter semantics" "reference/role-loop.md" "Do not turn silence into stricter semantics"
+require_text "builder blocks ask-user generated criteria" "reference/role-loop.md" "stop and report the decision gate"
 
 # Verifier closes them out.
 require_text "verifier marks surfaced requirements fixed" "reference/role-loop.md" "Tick each surfaced criterion"
 
 # SKILL.md surfaces the route; reference/role-loop.md owns the detailed behavior.
-require_text "SKILL names equal-compute improve loop" "SKILL.md" "Build -> Improve full spec -> Improve edge cases -> Final Verify"
-require_text "role-loop critic step logs surfaced requirements" "reference/role-loop.md" 'run vault'\''s `GOAL.md`'
+require_text "SKILL names the five-gate core" "SKILL.md" "Frame -> Plan approval -> Build -> Exact Verify/QA -> Finalize"
+require_text "role-loop verify step logs surfaced requirements" "reference/role-loop.md" 'run vault'\''s `GOAL.md`'
 require_text "role-loop keeps production ambiguity as ask-user" "reference/role-loop.md" "production/source-code domain ambiguity"
 require_text "role-loop allows conservative no-user default" "reference/role-loop.md" "conservative, reversible default"
-require_text "role-loop names mandatory improve passes" "reference/role-loop.md" "Build -> Improve full spec -> Improve edge cases -> Final Verify"
-require_text "role-loop excludes critic from default loop" "reference/role-loop.md" "Critic/Fixer is not part of the default loop"
-require_text "SKILL excludes critic from default loop" "SKILL.md" "Critic/Fixer is not part of the default loop"
+require_text "role-loop names the five-gate core" "reference/role-loop.md" "Frame -> Plan approval -> Build -> Exact Verify/QA -> Finalize"
+# Critic/Fixer roles are removed entirely (2026-07-14): the verifier surfaces gaps with its
+# adversarial stance; the relaunched builder fixes them. R-LOOP is the only fix channel.
+reject_text "role-loop has no critic/fixer roles" "reference/role-loop.md" "Critic/Fixer"
+reject_text "SKILL has no critic/fixer roles" "SKILL.md" "Critic/Fixer"
+require_text "role-loop names the only fix channel" "reference/role-loop.md" "the only fix channel"
+require_text "builder reproduces R-LOOP items red-first" "reference/role-loop.md" "reproduce it with a failing test first"
 require_text "role-loop dispatches fresh-context roles" "reference/role-loop.md" "fresh-context subagent"
 require_text "SKILL requires separate builder subagent" "SKILL.md" "Implementation runs in a separate fresh-context builder subagent"
 require_text "role-loop requires separate builder subagent" "reference/role-loop.md" "separate fresh-context builder subagent"
@@ -81,26 +86,47 @@ reject_text "role-loop has no very-easy shortcut" "reference/role-loop.md" "very
 reject_text "role-loop has no inline edit shortcut" "reference/role-loop.md" "edit inline"
 reject_text "qa has no very-easy skip" "reference/qa.md" "very easy"
 reject_text "delivery gate has no very-easy threshold" "reference/delivery-gate.md" "very easy"
-require_text "SKILL requires mandatory adversarial review" "SKILL.md" "Mandatory Adversarial Review"
-require_text "role-loop requires mandatory adversarial review" "reference/role-loop.md" "Mandatory Adversarial Review"
+# The verifier absorbs the adversarial review; a standalone mandatory review pass is removed ceremony.
+reject_text "SKILL has no mandatory standalone review pass" "SKILL.md" "Mandatory Adversarial Review"
+reject_text "role-loop has no mandatory standalone review pass" "reference/role-loop.md" "Mandatory Adversarial Review"
+require_text "SKILL verifier carries the adversarial stance" "SKILL.md" "adversarial stance"
+require_text "role-loop verifier carries the adversarial stance" "reference/role-loop.md" "adversarial stance"
 require_text "SKILL exact verification outranks review" "SKILL.md" "exact verification outranks reviewer approval"
 require_text "role-loop exact verification outranks review" "reference/role-loop.md" "Exact verification outranks reviewer approval"
 require_text "SKILL requires actual E2E/live/API/browser run" "SKILL.md" "actual E2E/live/API/browser run"
 require_text "role-loop requires actual E2E/live/API/browser run" "reference/role-loop.md" "actual E2E/live/API/browser run"
 require_text "role-loop compares request docs to behavior" "reference/role-loop.md" "compares the request/docs with current behavior"
-require_text "SKILL full-spec pass names concrete docs" "SKILL.md" "request/ticket, README, design/API docs"
-require_text "executor full-spec pass names concrete docs" "agents/executor.md" "request/ticket, README, design/API docs"
-require_text "role-loop says when to use critic" "reference/role-loop.md" "Use it when the task is under-specified"
-require_text "role-loop says when not to use critic" "reference/role-loop.md" "Do not use it when the spec is explicit"
-require_text "role-loop gates critic escalation" "reference/role-loop.md" "optional gated escalation"
-require_text "role-loop has full-spec improver role" "reference/role-loop.md" "Improve full spec"
-require_text "role-loop has edge-case improver role" "reference/role-loop.md" "Improve edge cases"
+require_text "SKILL frame discovery names concrete docs" "SKILL.md" "request/ticket, README, design/API docs"
+require_text "executor builds from the plan's checklist" "agents/executor.md" "every planned criterion"
+reject_text "executor does not re-read spec docs" "agents/executor.md" "request/ticket, README, design/API docs"
+require_text "role-loop says when to escalate" "reference/role-loop.md" "Use it when the task is under-specified"
+require_text "role-loop says when not to escalate" "reference/role-loop.md" "Do not use it when the spec is explicit"
+require_text "role-loop gates the escalation ladder" "reference/role-loop.md" "optional gated escalation"
+# Standalone improve/review passes are removed: Frame discovers spec+edge coverage into the plan,
+# Build implements only the approved plan, Verify owns the request/docs comparison and review.
+require_text "role-loop frame owns full-spec discovery" "reference/role-loop.md" "Full-spec discovery"
+require_text "discovery explores the actual code" "reference/role-loop.md" "grounded in observed code"
+require_text "role-loop builder covers planned criteria" "reference/role-loop.md" "every planned criterion"
+require_text "role-loop plan carries the acceptance checklist" "reference/role-loop.md" "## Acceptance checklist"
+reject_text "role-loop has no standalone improve pass" "reference/role-loop.md" "standalone fresh-context improver"
+reject_text "role-loop builder does not re-read spec docs" "reference/role-loop.md" "Full-spec sweep"
 require_text "role-loop preserves user feedback for production domain" "reference/role-loop.md" "Production/domain behavior-changing ambiguity needs user feedback"
 require_text "role-loop records conservative no-user default" "reference/role-loop.md" "conservative, reversible default"
-require_text "executor supports full-spec improve mode" "agents/executor.md" "DO (Improve full spec)"
-require_text "executor supports edge-case improve mode" "agents/executor.md" "DO (Improve edge cases)"
-require_text "qa-auditor verifies after improve passes" "agents/qa-auditor.md" "builder and both improve passes"
-require_text "critic is optional escalation" "agents/code-reviewer.md" "Optional Critic escalation"
+require_text "qa-auditor stays fresh of the builder" "agents/qa-auditor.md" "fresh-context relative to the builder"
+require_text "reviewer is trigger-gated escalation" "agents/code-reviewer.md" "trigger-gated escalation"
+
+# Dispatch economy: the default run is builder + verifier only; anything more is
+# trigger-gated escalation with a recorded trigger (turn/token diet, 2026-07-14).
+require_text "SKILL caps default dispatches" "SKILL.md" "one builder + one verifier dispatch per iteration"
+require_text "role-loop caps default dispatches" "reference/role-loop.md" "one builder + one verifier dispatch per iteration"
+require_text "role-loop keeps only the plan attack as escalation" "reference/role-loop.md" "## Escalation (conditional plan attack)"
+require_text "escalation needs a named trigger" "reference/role-loop.md" "named escalation trigger"
+require_text "builder exits on a green suite" "reference/role-loop.md" "return only on a green suite"
+require_text "executor covers planned edge criteria" "agents/executor.md" "edge-case and resilience criteria"
+require_text "qa-auditor owns the adversarial review" "agents/qa-auditor.md" "adversarial stance"
+require_text "role-loop caps default iterations at 3" "reference/role-loop.md" '`max_iterations` (default 3)'
+require_text "frame enumerates edge cases at plan time" "reference/role-loop.md" "edge-case and resilience criteria"
+require_text "verify keeps the R-LOOP loop-back" "reference/role-loop.md" "R-LOOP.md"
 
 # LEGACY captures an existing API's exact behavior before a refactor (preserve-baseline),
 # and Verify diffs the re-capture against it (parallel to DEBUG's screen->endpoint capture).
@@ -159,17 +185,16 @@ require_text "role-loop writes z marker on full completion" "reference/role-loop
 require_text "role-loop never writes z marker early" "reference/role-loop.md" "never earlier"
 require_text "SKILL never writes z marker early" "SKILL.md" "never earlier"
 
-# Critic->fixer loop has a hard stop (3-cycle cap) and a doubt-theater anti-signal.
+# Build->Verify loop has a hard stop with forced reflection, then escalates to the user.
 require_text "role-loop caps build-verify at max iterations" "reference/role-loop.md" "max_iterations"
 require_text "role-loop forces reflection at cap" "reference/role-loop.md" "forced reflection"
+require_text "role-loop escalates to the user at cap" "reference/role-loop.md" "escalate to the user with that state instead of grinding"
 require_text "role-loop reruns regression ledger" "reference/role-loop.md" 'Each iteration re-runs `regression_ledger`'
 require_text "run state stores regression ledger" "templates/run-state.json" "regression_ledger"
-require_text "role-loop caps critic->fixer at 3 cycles" "reference/role-loop.md" "cap the critic->fixer loop at 3 cycles"
-require_text "role-loop names the doubt-theater anti-signal" "reference/role-loop.md" "Doubt-theater anti-signal"
 require_text "role-loop has conditional plan attack" "reference/role-loop.md" "Adversarial plan attack"
 require_text "role-loop gates plan attack to under-specified work" "reference/role-loop.md" "under-specified, wide-blast-radius"
-# Critic carries an explicit adversarial (disprove, not validate) stance.
-require_text "critic stance is to disprove, not rubber-stamp" "agents/code-reviewer.md" "try to DISPROVE"
+# The escalation reviewer carries an explicit adversarial (disprove, not validate) stance.
+require_text "reviewer stance is to disprove, not rubber-stamp" "agents/code-reviewer.md" "try to DISPROVE"
 
 printf '\nSummary: %s passed, %s failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

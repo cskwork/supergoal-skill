@@ -14,7 +14,7 @@ Required fields and where each lives:
 
 - `eval_intent` -> `PLAN.md` `## Intent`: user goal, constraints, tradeoffs, rejected approaches.
 - `completion_promise` -> `PLAN.md` `## Intent`: promised outcome, required proof, stop condition, and
-  `max_iterations` (default 8).
+  `max_iterations` (default 3).
 - `requirement_trace` -> `GOAL.md` `## Success Criteria`: falsifiable checkbox per requirement, each
   naming its verifying check; plus `Backward-trace: clean` in `QA.md` when no diff hunk is orphan scope.
 - `before_state` -> `QA.md` `## Before`: observed current behavior before the change.
@@ -93,8 +93,8 @@ fulfillment is uncertain.
 
 Blocked is fix-first: the role-loop resolves it (fix the red, finish QA, tick the criterion). Ask the
 user about the requirement only when it is requirement-level (ambiguous or unmet), genuinely uncertain, or
-the critic->fixer loop hit its cap (`reference/role-loop.md`); route via `reference/interview.md`. Never
-commit on an assumption - resolve it or get explicit acceptance.
+the Build->Verify loop hit `max_iterations` (`reference/role-loop.md`); route via `reference/interview.md`.
+Never commit on an assumption - resolve it or get explicit acceptance.
 
 Backstop: `bash templates/commit-gate.sh <vault> <browser|cli|none>` must exit 0 before commit/merge.
 Never edit the gate to pass.

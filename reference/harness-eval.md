@@ -70,7 +70,7 @@ Required controls:
   backoff and record the reason + retry count; a crash surviving its retries stays a recorded loss.
 - role fidelity: the harness arm must exercise the ACTUAL shipped skill role files (SKILL.md +
   reference/role-loop.md + agents/*.md) or generate its role prompts FROM them and record the source. A
-  hand-paraphrased inline critic/fixer/verifier prompt can silently drift from the shipped role text, so
+  hand-paraphrased inline builder/verifier prompt can silently drift from the shipped role text, so
   it measures a paraphrase, not the skill.
 
 Required outcome accounting:
@@ -299,9 +299,9 @@ explicit-spec task a capable baseline already passes - expect a TIE at 2-3x cost
   was the forced passes, not role-separation - useful, but the mechanism could be leaner. Report the win
   as (a) "skill vs default" or (b) "mechanism vs compute"; never imply (b) when you only showed (a).
 - Harness arm design: default to the shipped skill's current forced-verification core:
-  Build -> Improve full spec -> Improve edge cases -> Final Verify. Use a critic/fixer loop only when
-  the experiment is explicitly testing the surface-hidden-requirements lever; the critic is that lever.
-  Use single-pass skill-ref to A/B the SKILL text itself. State which, and keep both arms in the same
+  Plan+Build -> Exact Verify/QA (plan-time full-spec and edge-case discovery, builder covers the
+  planned criteria), looping R-LOOP fixes back through the builder up to `max_iterations`. Use
+  single-pass skill-ref to A/B the SKILL text itself. State which, and keep both arms in the same
   runtime profile.
 
 ## Validate the fixture discriminates BEFORE spending compute

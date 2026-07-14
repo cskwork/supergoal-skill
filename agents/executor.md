@@ -30,6 +30,7 @@ does. Honor any Priority Rules the conductor injects (advisory).
 
 WRITE: source code, plus one `## Commands` row per slice/fix in the run vault `QA.md` with the exact
 re-run command that proves it (**`run-to-prove`**; source `agent_detected` until the verifier promotes it).
+Vault prose keeps `PLAN.md`'s language (one vault, one language); commands and identifiers stay as-is.
 
 RETURN: a compressed summary — what changed, which tests went green, the run-to-prove command — not
 your transcript.

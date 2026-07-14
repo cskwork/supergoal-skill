@@ -61,7 +61,7 @@ the existing design system); non-visual work (lib, API, backend, CLI): skip.
 **Board overlay (optional).** If the live dashboard is enabled, the conductor calls `sg-emit` at each
 phase transition; it observes only, never gates (`reference/observability.md`).
 
-## Default loop (GREENFIELD / DEBUG / LEGACY) - verification-first, subagent-default
+## Default loop (GREENFIELD / DEBUG / LEGACY) - five gates, fresh context per gate
 
 Work runs in fresh-context subagents by default; the dispatching agent is the conductor. When the user
 invokes `supergoal` for GREENFIELD, DEBUG, or LEGACY work, that invocation is explicit authorization
@@ -70,57 +70,64 @@ limited delegation, tooling is unavailable, or a safety/permission gate requires
 independent QA shards/review dimensions. Implementation/debug/legacy runs require red-green, plus DB
 evidence when persisted data is load-bearing. Full contract: `reference/role-loop.md`.
 
-Mandatory core: Build -> Improve full spec -> Improve edge cases -> Mandatory Adversarial Review ->
-Exact Verify/QA. Historical contract string: Build -> Improve full spec -> Improve edge cases -> Final
-Verify. Critic/Fixer is not part of the default loop; the mandatory adversarial review is. Use optional
-Critic/Fixer only when hidden requirements are the value being tested.
+Mandatory core: Frame -> Plan approval -> Build -> Exact Verify/QA -> Finalize. Default cost envelope:
+one builder + one verifier dispatch per iteration; the only extra dispatch is the conditional plan
+attack, trigger-gated with the trigger recorded (`reference/role-loop.md`). There are no standing
+critic, fixer, improver, or standalone-review roles: Frame owns full-spec and edge-case discovery
+(into the plan the user approves), Build implements only the approved plan, the verifier surfaces gaps
+with its adversarial stance, and the relaunched builder fixes them through `R-LOOP.md`. Every gate
+exits with the app fully functional: Build returns only on a green suite, Exact Verify/QA proves it
+against ground truth, Finalize commits it.
 
 1. **Frame.** Write `GOAL.md` FIRST from `templates/GOAL.md`: `## Original Request` (user prompt
    verbatim), refined `## Spec`, falsifiable `## Success Criteria` checkboxes each naming its
-   verification, and web apps' `## QA Cases`. GREENFIELD broad/foggy build requests use
-   `reference/wayfinder.md` as an internal scope gate: preserve the destination in
-   `wayfinder/map.md`, write vertical tickets under `wayfinder/tickets/`, select one frontier ticket,
-   and carry only that ticket's acceptance checks into the delivery `GOAL.md` / `PLAN.md`. Write a
-   completion promise in `PLAN.md` `## Intent`:
-   outcome, proof, stop condition, `max_iterations` (default 8). Ask <=5 high-leverage questions only
-   when needed; confirm wide/destructive/behavior-changing blast radius after grounding
-   (`reference/interview.md`); deep requirements interviews may dispatch `agents/analyst.md`, and
-   architecture calls `agents/architect.md`. UI: load `reference/ui-ux.md`. Code-mode runs: create `QA.md` and
-   `run-state.json` from templates and record the Before/After Eval. Freeze `PLAN.md` (self-sufficient:
-   steps, tools & skills, verification strategy), then clear the plan approval gate - interactive:
-   the user's explicit OK; autonomous run: auto-approved, recorded in `## Approval`.
-2. **Build.** Implementation runs in a separate fresh-context builder subagent briefed by the approved
-   `PLAN.md` alone (on an R-LOOP re-entry, also the latest `R-LOOP.md` section). Smallest
-   correct change, test-first, surrounding style. Bug: failing test first (`reference/debugging.md`).
-   Shared code/state changes: capture neighbor characterization baseline before editing.
-3. **Improve full spec.** Fresh-context improver re-reads the request/ticket, README, design/API docs,
-   `GOAL.md` `## Success Criteria`, code, tests, and repo/data rules; fix the smallest gap between those
-   requirements and current behavior.
-   Production/source-code domain ambiguity that changes behavior stops as `ask-user`; generic no-user
-   coding ambiguity uses a conservative, reversible default and records it.
-4. **Improve edge cases.** Separate fresh-context improver attacks degenerate values, error/recovery,
-   state/protocol, concurrency, compatibility, security, and cleanup. Test only grounded `must` behavior;
-   route product/domain choices to the user.
-5. **Mandatory Adversarial Review (no src edits).** Fresh reviewer re-reads request/docs,
-   `GOAL.md`, `PLAN.md`, `QA.md`, current diff, and tests to disprove completeness. Findings become fixes,
-   decision gates, or residual risk; reviewer approval alone never means done.
-6. **Exact Verify/QA.** Re-run REAL tests plus the proof layer promised in Frame. Runtime-facing or
-   user-expected proof: run the actual E2E/live/API/browser run; exact verification outranks reviewer
-   approval. Browser UI: complete browser app verification with `qa-gate.sh <vault> browser`. Diff the
-   implementer's changes against `GOAL.md` and tick each criterion proven met; re-run neighbor baselines,
-   keep `Backward-trace: clean`, and record results as plain checklist sentences in `QA.md`. Criteria
-   still unmet: append a timestamped checklist section to `R-LOOP.md` and relaunch the implementer
-   (reads `PLAN.md` + latest section; capped by `max_iterations`). If the exact layer
-   cannot run, mark it not proven with blocker/residual risk. Every `GOAL.md` box checked: write
-   `Z-<YYYY-MM-DD>.md` (run branch + completion timestamp) - never earlier.
-7. **Critic escalation (opt-in; no src edits).** For under-specified / latent-correctness work, an
-   independent critic classifies inferred behavior as `must`, `should`, or `ask-user`; only grounded
-   `must` becomes FAILING tests. Append each as an unchecked `(surfaced: ...)` criterion to the run
-   vault's `GOAL.md`; fixer clears reds
-   without editing tests. Ambiguous/product-changing semantics are decision gates, not generated REDs.
-   Reserve for the under-specified frontier and keep within the critic->fixer cap.
+   verification - full-spec coverage plus grounded edge-case and resilience criteria enumerated at plan
+   time, so the user reviews them at the approval gate - and web apps' `## QA Cases`. Discovery happens
+   here, once: explore the actual code (`agents/explore.md`, `reference/plan-grounding.md`), re-read
+   the request/ticket, README, design/API docs, and repo/data rules, and copy the criteria into
+   `PLAN.md` `## Acceptance checklist` (the builder reads no other file).
+   GREENFIELD
+   broad/foggy build requests use `reference/wayfinder.md` as an internal scope gate: preserve the
+   destination in `wayfinder/map.md`, write vertical tickets under `wayfinder/tickets/`, select one
+   frontier ticket, and carry only that ticket's acceptance checks into the delivery `GOAL.md` /
+   `PLAN.md`. Write a completion promise in `PLAN.md` `## Intent`: outcome, proof, stop condition,
+   `max_iterations` (default 3). Ask <=5 high-leverage questions only when needed; confirm
+   wide/destructive/behavior-changing blast radius after grounding (`reference/interview.md`); deep
+   requirements interviews may dispatch `agents/analyst.md`, and architecture calls
+   `agents/architect.md`. UI: load `reference/ui-ux.md`. Code-mode runs: create `QA.md` and
+   `run-state.json` from templates and record the Before/After Eval.
+2. **Plan approval (user review of the goal plan).** Freeze `PLAN.md` (self-sufficient: steps, tools &
+   skills, verification strategy), then clear the plan approval gate - interactive: the user's explicit
+   OK; autonomous run: auto-approved, recorded in `## Approval`. Build never starts before this gate.
+3. **Build.** Implementation runs in a separate fresh-context builder subagent briefed by the approved
+   `PLAN.md` alone (on an R-LOOP re-entry, also the latest `R-LOOP.md` section). Smallest correct
+   change, test-first, surrounding style. Bug: failing test first (`reference/debugging.md`). Shared
+   code/state changes: capture neighbor characterization baseline before editing. The builder covers
+   every planned criterion in the plan's `## Acceptance checklist`, including the edge-case and
+   resilience criteria - discovery already happened at Frame, so it re-reads no spec docs.
+   Production/domain ambiguity that changes behavior stops as `ask-user`; generic no-user coding
+   ambiguity uses a conservative, reversible default and records it. Build returns only on a green
+   suite.
+4. **Exact Verify/QA.** One fresh-context verifier with an adversarial stance: re-read request/docs,
+   `GOAL.md`, `PLAN.md`, `QA.md`, current diff, and tests to disprove completeness - findings become
+   fixes, decision gates, or residual risk. Re-run REAL tests plus the proof layer promised in Frame.
+   Runtime-facing or user-expected proof: run the actual E2E/live/API/browser run; exact verification
+   outranks reviewer approval. Browser UI: complete browser app verification with `qa-gate.sh <vault>
+   browser`. Diff the implementer's changes against `GOAL.md` and tick each criterion proven met; re-run
+   neighbor baselines, keep `Backward-trace: clean`, and record results as plain checklist sentences in
+   `QA.md`. Criteria still unmet: append a timestamped checklist section to `R-LOOP.md` and relaunch the
+   builder (reads `PLAN.md` + latest section; capped by `max_iterations`). If the exact layer cannot
+   run, mark it not proven with blocker/residual risk.
+5. **Finalize.** Every `GOAL.md` box checked: write `Z-<YYYY-MM-DD>.md` (run branch + completion
+   timestamp) - never earlier. Pass the commit gate (`reference/delivery-gate.md`), commit/merge into
+   the verified target branch after user acceptance, and report the verified commands.
 
-Roles -> personas: builder/improver/fixer=`agents/executor.md`, critic=`agents/code-reviewer.md`,
+**Escalation (trigger-gated, off by default).** The adversarial plan attack - reviewers against the
+frozen `PLAN.md`, before Build - runs only on a named trigger: under-specified / latent-correctness
+work, or a security/data/concurrency-sensitive or wide-blast-radius change (`reference/role-loop.md`).
+Post-build disproof belongs to the verifier; post-verify gaps route through `R-LOOP.md`.
+
+Roles -> personas: builder/improver=`agents/executor.md`, escalation reviewer=`agents/code-reviewer.md`,
 browser QA=`agents/qa-tester.md`, non-browser/artifact verify=`agents/qa-auditor.md`,
 security=`agents/security-reviewer.md` (others in `agents/<role>.md`).
 

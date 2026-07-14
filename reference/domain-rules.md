@@ -17,8 +17,8 @@ tests, the QA gates, and the read-only DB rule still decide.
 
 Inject only the role-relevant subset into each role prompt. Do not widen vault read scope.
 
-- Build / Fixer: honor the rules while implementing.
-- Critic: flag violations as findings; derive edge-case tests from them.
+- Build: honor the rules while implementing; derive edge-case tests from them.
+- Reviewer (plan attack / REVIEW-ONLY): flag violations as findings.
 - Verify: derive a concrete coverage checklist from the same domain routing - UI means
   a11y/responsive/error states; data pipeline means idempotency/schema/PII; API means error paths and
   auth ordering; security-sensitive input means bypass families. Report each item as

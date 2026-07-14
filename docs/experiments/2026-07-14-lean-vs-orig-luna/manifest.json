@@ -1,0 +1,111 @@
+{
+ "eval": "lean-vs-orig supergoal harness A/B on DeepSWE difficult suite",
+ "date": "2026-07-14",
+ "eval_intent": {
+  "goal": "Does the LEAN delivery core (Plan+Build -> Exact Verify/QA with verdict-gated R-LOOP fix loop, max 3 iterations) keep task accuracy while cutting CLI passes/tokens vs the ORIG core (Build -> Improve full spec -> Improve edge cases -> Final Verify)?",
+  "constraints": [
+   "low-tier external CLI (codex) so harness differences are visible",
+   "same runtime profile both arms",
+   "serial passes",
+   "role prompts derived from each arm's shipped skill files"
+  ],
+  "tradeoffs": [
+   "n=1 per task: directional only, never proven"
+  ],
+  "ruled_out": [
+   "baseline (no-harness) arm - out of scope for this run",
+   "Pier/docker verifier - replicated locally with repo-owned grader + verbatim test commands (recorded)"
+  ]
+ },
+ "arms": {
+  "orig": {
+   "skill_root": "/Users/danny/Documents/PARA/Resource/supergoal-skill/.claude/worktrees/supergoal-orig",
+   "commit": "295992a",
+   "passes": [
+    "frame+build",
+    "improve-fullspec",
+    "improve-edges",
+    "final-verify"
+   ],
+   "note": "parent-defined 4-pass core = shipped 'historical contract string'; shipped file at 295992a also lists Mandatory Adversarial Review as a separate mandatory pass - folded into Final Verify per the parent arm spec + the historical contract string; recorded as deviation"
+  },
+  "lean": {
+   "skill_root": "/Users/danny/Documents/PARA/Resource/supergoal-skill",
+   "commit": "3e4a1cf",
+   "passes": [
+    "frame+plan(auto)+build",
+    "exact-verify",
+    "(conditional rloop-fix + re-verify) x<=2"
+   ],
+   "max_iterations": 3
+  }
+ },
+ "runtime": {
+  "adapter": "codex-exec via templates/harness-eval-runner.mjs",
+  "cli": "codex-cli 0.144.4",
+  "model_requested": "gpt-code-5.6-luna (rejected: not supported on ChatGPT account)",
+  "model_used": "gpt-5.6-luna",
+  "reasoning_effort": "medium",
+  "auth": "ChatGPT auth.json",
+  "sandbox": "workspace-write, network enabled",
+  "host": "darwin arm64, go1.23.0"
+ },
+ "stop_policy": {
+  "per_pass_timeout_ms": 540000,
+  "transient_crash_retries": 0,
+  "manual_transient_retry": "at most one, only for clearly transient non-timeout crash (rate limit/stream error), recorded",
+  "crashed_pass": "recorded loss, no retry-until-green",
+  "capture_patch_after_timeout_or_error": true,
+  "score_captured_patch": true,
+  "manual_interrupt": "invalid"
+ },
+ "task": {
+  "id": "etree-xml-diff-patch",
+  "suite": "deepswe forced default difficult suite (primary scoring task)",
+  "benchmark_ref": "3cda4081fed96103a6395de39c85e9b20275e307",
+  "base_commit": "4032e04c8f2e2f35e43ce5d772fcef14a5df4d74",
+  "instruction_sha256": "4f4d384d226a49687890fffedc17242d5261c7a214c7bf247e3e505331698130",
+  "fixture_validation": {
+   "stub": "reward 0, f2p 0/52, p2p 15/15",
+   "reference": "reward 1, f2p 52/52, p2p 15/15"
+  }
+ },
+ "command_manifest": [
+  {
+   "cmd": "bash local-verify-etree.sh <model.patch> <outdir>",
+   "source": "evaluator_owned",
+   "note": "repo-owned grader.py + config.json f2p/p2p whitelists byte-identical; go test invocations mirrored verbatim from tests/test.sh; env-dir overrides documented by grader.py"
+  },
+  {
+   "cmd": "go test ./... (in-arm)",
+   "source": "arm_detected",
+   "note": "supplemental evidence only"
+  }
+ ],
+ "harness_source_hashes": {
+  "orig": {
+   "SKILL.md": "916bce2a164586d4d8d2671942010a2db8940b2f9675a359ba9af7f4e0f40776",
+   "reference/role-loop.md": "b8c57380aecaffac71c9a87b0edc559b80882c40980552a3bde1632fe5ebe2c9",
+   "agents/executor.md": "183df46f77f8226bbd02cfa37be313674b8b6b9c2bc714f338bc47763a0a2999",
+   "agents/code-reviewer.md": "297fb5c2c4985b1d7813629ab32806343563076516b75c3cdc8318c8f6cd8e9e",
+   "agents/qa-auditor.md": "6e974cf7ead82bed6edf0faf8af44133cf6eba83030d683b8e04618aa3120da8"
+  },
+  "lean": {
+   "SKILL.md": "045e6f97711cc1b66b6179db16fe7ddade39dfa04c2054e58f4c79d06eaca6b6",
+   "reference/role-loop.md": "96639b8f77a831252e45dc862531608d057f561e1ec1fe3aaf95e200681dc9ce",
+   "agents/executor.md": "343c8055f540132adafb7f5214ee31b901cb4788c38475582134a1b65bcf04d0",
+   "agents/qa-auditor.md": "dfb6cba65a01bb99d75c626c371adb5cce6b3769afc187859e02378ab18fa7cc"
+  }
+ },
+ "token_time_capture": {
+  "tokens": "codex --json turn.completed usage (last event), parsed by shipped harness-eval-runner.mjs codex adapter; raw JSONL not persisted by the shipped adapter (recorded limitation)",
+  "wall_clock": "driver Date.now() per pass"
+ },
+ "deviations": [
+  "first attempt aborted: detached background pipeline was terminated when the conductor's turn ended; ORIG pass 1 partial work discarded (runs/etree-aborted-firstattempt/), both fixtures reset, restart from pass 1. Tokens spent by the killed pass are unrecorded overhead.",
+  "per-pass hard timeout lowered 900s -> 540s (foreground tool-call ceiling 600s); declared before the restarted run",
+  "runner auto-retry disabled (SG_RETRIES=0) because a timeout+retry cannot fit the foreground window; manual transient-retry policy recorded in stop_policy",
+  "adapter preflight not re-spent per pass: codex-exec preflight passed on this host this session (selectAdapter 'edit ok, tests pass' at 2026-07-14T13:19:34Z + manual model preflight); recorded here",
+  "model substitution: requested 'gpt code 5.6 luna' id gpt-code-5.6-luna rejected on ChatGPT auth (400); closest available codex model gpt-5.6-luna used at medium effort (models_cache enumeration)"
+ ]
+}

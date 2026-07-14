@@ -11,6 +11,7 @@ no-CDN/no-network rule for run-vault and knowledge-pack artifacts.
   Top recommendation when it clarifies) next to `report.html` (`reference/arch.md`).
 - LEARN-DOMAIN Onboard: the architecture overview and top key-flow diagrams next to `onboarding.html`
   (`reference/learn-domain.md`).
+- Direct "draw / diagram / 그려" ask (ARCHITECTURE draw-only branch): pick a type, render, deliver the `.html` (+ JSON IR) as the artifact; no survey.
 - Any phase that must show structure or flow to a human: pick a type below instead of hand-writing SVG.
 
 | Type | Use for |

@@ -3,7 +3,7 @@
 `playwright-cli` (`@playwright/cli`, microsoft/playwright-cli) is the ONLY sanctioned browser driver
 for supergoal QA, DEBUG observe-first, and LEGACY baseline. No agent-browser, no Playwright MCP, no
 Computer Use, no ad-hoc Chrome, no headless-render fallback. Token-efficient by design: it does not
-force page data into the model. Run it only inside `qa-tester`/`qa-auditor`, never the conductor.
+force page data into the model. Run it only inside `qa-tester`, never `qa-auditor` or the conductor.
 
 ## Get the driver (inside the subagent)
 

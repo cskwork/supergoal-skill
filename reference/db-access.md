@@ -37,9 +37,10 @@ blocker and residual risk instead of treating the DB check as passed.
 | `schema-summary` | inspect table/column shape | compact metadata, no row data |
 | `read-only-query` | fetch named expected values or diffs | small named values/diff only |
 
-Run DB reads inside the dedicated `db-reader` subagent (`agents/db-reader.md`), separate from browser `qa-auditor`.
-Return pass/fail and a small diff; never paste raw row dumps, secrets, credentials, tokens, or PII.
-`db-reader` may write sanitized expected values to `qa/expected.md`; auth stays transient only.
+Run DB reads inside the dedicated `db-reader` subagent (`agents/db-reader.md`), separate from browser
+`qa-tester`. Return pass/fail and a small diff; never paste raw row dumps, secrets, credentials, tokens,
+or PII. `db-reader` may write sanitized expected values to `qa/expected.md`; auth stays transient only.
+`qa-auditor` consumes the sanitized evidence later but never queries the DB.
 
 ## Record
 

@@ -12,7 +12,7 @@ Fix/feature request -> route to DEBUG/LEGACY; QA-ONLY reports findings and stops
 
 ## Pipeline
 
-`Intake -> Target & Access -> Impact Matrix -> Scenario checkpoint -> Exercise -> Cross-check -> Report -> Persist`
+`Intake -> Target & Access -> Impact Matrix -> Scenario checkpoint -> Exercise -> Cross-check -> Audit -> Report -> Persist`
 
 | Phase | Goal | Writes | Exit gate |
 |---|---|---|---|
@@ -20,9 +20,10 @@ Fix/feature request -> route to DEBUG/LEGACY; QA-ONLY reports findings and stops
 | Target & Access | Resolve running-app target (URL/env, NOT built from repo), browser driver, read-only DB access, action budget | `brief.md` | target reachable; driver + DB access named/skipped; `action_cap` set (default 100) |
 | Impact Matrix | Infer the feature's direct, adjacent, before/during/after, data, role, viewport, and failure-risk surface | `brief.md` | coverage plan has priority tiers and explicit exclusions |
 | Scenario checkpoint | Show the detailed scenario list + budget + comparison type; let the user narrow | run note | user confirms or narrows; proceed unless told to wait |
-| Exercise | Drive the app through scenarios via `qa-auditor`, capped | `QA.md` `## QA`, `qa/`, `state.json` | each scenario pass/fail recorded; combined `action_count` written to `state.json`, `<= action_cap` |
+| Exercise | Dispatch `qa-tester` to drive the app and produce execution evidence, capped | `QA.md` `## QA`, `qa/`, `state.json` | each scenario observation + evidence path recorded; combined `action_count` written to `state.json`, `<= action_cap` |
 | Cross-check | Read-only DB checks via `db-reader`: auth, source-of-truth expected values, dataset/env diff | `QA.md` `## QA`, `qa/` | each check pass/fail + small diff recorded; no raw dumps |
-| Report | Human-friendly result with coverage, reproduction steps, and remaining risk | `report.md` | required report headings present |
+| Audit | Audit — dispatch `qa-auditor` to independently reconcile brief, matrix, ledger, tester/DB evidence, and rerun non-browser checks | `QA.md` verdict | gaps and contradictions named; final verdict is evidence-bound |
+| Report | Auditor writes the human-friendly result with coverage, reproduction steps, and remaining risk | `report.md` | required report headings present |
 | Persist | Save reusable suite, index it | `.domain-agent/qa/<suite>.md`, `index.md` | suite + re-run steps saved; no secrets/PII; path gitignored |
 
 ## Target & Access
@@ -30,7 +31,7 @@ Fix/feature request -> route to DEBUG/LEGACY; QA-ONLY reports findings and stops
 - **Target.** Test an existing running app. Ask for URL/env. Start a local server only if asked; never
   build product code to get one. Static single HTML opens via `file://`.
 - **Browser driver.** `playwright-cli` is the only driver (`reference/playwright-cli.md`); install if
-  absent; record `Tool: playwright-cli` in `## QA`. Auth uses native session/state/CDP-attach paths
+  absent inside `qa-tester`; record `Tool: playwright-cli` in `## QA`. Auth uses native session/state/CDP-attach paths
   (`reference/qa.md` "Authenticated sessions").
 - **Navigation map.** Load `.domain-agent/qa/nav-map.md` first to reach gated/popup-heavy screens;
   build it on first entry and correct any drifted rows in place (`reference/qa.md` "Navigation map").
@@ -87,8 +88,9 @@ State one in `brief.md` `Comparison:`; it picks what the Cross-check phase compa
 ## Action cap (anti-context-overload)
 
 Each browser interaction (`open/click/type/fill/snapshot/screenshot`) and DB query counts as one QA
-action. Default `action_cap` is **100**. `functional`: all budget to `qa-auditor`; DB comparisons reserve
-a small `db-reader` sub-budget. Agents report counts; conductor writes `state.json.action_count`. At cap,
+action. Default `action_cap` is **100**. `functional`: all interaction budget goes to `qa-tester`; DB
+comparisons reserve a small `db-reader` sub-budget. Auditor evidence review and non-browser command reruns
+do not consume browser actions. Agents report counts; conductor writes `state.json.action_count`. At cap,
 stop, report done/remaining, and ask before a fresh budget. Gate fails if `action_count > action_cap`.
 
 ## Vault (reduced run folder)
@@ -99,8 +101,8 @@ here; reusable suite goes to the domain pack.
 
 ## Report (the one human-facing deliverable)
 
-Write `report.md` from `templates/qa-report.md` in the docs language (SKILL.md) under English anchor
-headings. Include verdict, coverage, per-scenario pass/fail + evidence path, findings, reproduction
+`qa-auditor` writes `report.md` from `templates/qa-report.md` in the docs language (SKILL.md) under
+English anchor headings. Include verdict, coverage, per-scenario pass/fail + evidence path, findings, reproduction
 steps, not-covered risk, and re-run command/suite. For issues, include URL/env, role/account type (not
 credentials), starting state, exact clicks/inputs, expected vs actual, evidence path, and retry count if
 intermittent.
@@ -133,13 +135,17 @@ pass.
 
 ## Dispatch
 
-Two separate read-only subagents keep concerns/PII isolated. Broad QA may use multiple `qa-auditor`
-instances, but types stay separate:
+Core QA-ONLY uses two separate read-only subagents: `qa-tester` and `qa-auditor`. `qa-tester` produces
+execution evidence; `qa-auditor` owns the independent final verdict. Add `db-reader` as an optional
+third evidence role only when DB truth is required:
 
-- `qa-auditor` (`agents/qa-auditor.md`): drives the running app; screenshots/dumps stay in its context.
+- `qa-tester` (`agents/qa-tester.md`): drives the running app; screenshots/dumps stay in its context.
+- `qa-auditor` (`agents/qa-auditor.md`): consumes tester/DB evidence, reruns non-browser checks, and
+  writes the final verdict/report without driving the app or DB.
 - `db-reader` (`agents/db-reader.md`): reads the DB read-only; raw rows/secrets stay in its context.
 
-For broad QA, split the Impact Matrix into **Scenario shards** only when independent: direct flow,
+For broad QA, split the Impact Matrix across multiple `qa-tester` instances into **Scenario shards**
+only when independent; one `qa-auditor` owns the final verdict: direct flow,
 adjacent surface, role/permission, displayed-data propagation, viewport/a11y, error/retry, env/A-B arms.
 Do not shard ordered flows, shared mutable state, or scarce test data.
 
@@ -150,14 +156,17 @@ Use the vault as the common communication surface:
 - `qa/shards/<shard-id>.md`: one file per QA subagent. The subagent writes only its own shard file and
   evidence under `qa/`; it never edits another shard or the shared ledger directly.
 
-Conductor merges shards into `qa/scenario-ledger.md`, `QA.md`, and `report.md`.
+Conductor merges tester shards and optional DB evidence into `qa/scenario-ledger.md` and `QA.md`, then
+dispatches one fresh `qa-auditor`. The auditor reconciles the complete ledger/evidence and writes the
+canonical `QA.md` verdict plus `report.md`; the conductor does not invent or override the verdict.
 
 Handoff is conductor-mediated through the vault, never agent-to-agent. For `data-integrity`, `db-reader`
 writes sanitized `qa/expected.md` (`field -> expected value`, no raw rows/secrets/PII); the conductor
-passes those small values to `qa-auditor` for UI diffing. Auth/credentials are the exception: hand off
-transiently in the `qa-auditor` prompt, never written to any file. For `ab`/`env`/dataset diffs with no
-UI, `db-reader` returns the diff directly. The conductor receives compressed summaries, assembles
-`report.md`, and must never drive the browser or DB from the conductor.
+passes those small values to `qa-tester` for UI diffing and later exposes the saved evidence to the
+auditor. Auth/credentials are the exception: hand off transiently in the `qa-tester` prompt, never
+written to any file. For `ab`/`env`/dataset diffs with no UI, `db-reader` returns the diff directly.
+The conductor passes compressed evidence summaries to the auditor and must never drive the browser or
+DB or decide the verdict itself.
 
 `qa/expected.md` also becomes the saved **baseline** for a later `before-after` re-run.
 

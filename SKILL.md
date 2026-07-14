@@ -70,16 +70,19 @@ modes is explicit authorization to use its fresh-context subagents; ask again on
 permission gates. Red-green evidence is required, plus DB evidence when persisted data is load-bearing.
 
 Mandatory core: Frame -> Plan approval -> Build -> Exact Verify/QA -> Finalize. Use one builder + one
-verifier dispatch per iteration; only a named, recorded escalation trigger permits the conditional plan
-attack. Frame writes `GOAL.md` first and freezes a self-sufficient `PLAN.md`; Build starts only after
-approval and runs in a separate fresh-context builder from that plan; Exact Verify/QA uses a fresh
-adversarial verifier, REAL tests, and the promised E2E/live/API/browser proof (`qa-gate.sh <vault>
-browser` for browser UI), routing gaps only through `R-LOOP.md`; Finalize requires every criterion green,
-the completion marker, user acceptance, and the commit gate. Exact verification outranks review.
+auditor verifier per iteration; browser/CLI proof adds one evidence-only qa-tester before the auditor.
+Only a named, recorded escalation trigger permits the conditional plan attack. Frame writes `GOAL.md`
+first and freezes a self-sufficient `PLAN.md`; Build starts only after approval and runs in a separate
+fresh-context builder from that plan; `qa-tester` captures the promised browser/CLI evidence, then a
+fresh adversarial verifier (`qa-auditor`) reruns REAL tests, audits the promised E2E/live/API/browser
+proof, and owns the final verdict, GOAL ticks, and R-LOOP.
+Finalize requires every criterion green, the completion marker, user acceptance, and the commit gate.
+Exact verification outranks review.
 
-Roles -> personas: builder/improver=`agents/executor.md`, escalation reviewer=`agents/code-reviewer.md`,
-browser QA=`agents/qa-tester.md`, non-browser/artifact verify=`agents/qa-auditor.md`,
-security=`agents/security-reviewer.md` (others in `agents/<role>.md`).
+Roles -> personas: builder/improver=`agents/executor.md`, evidence-only browser/CLI tester=
+`agents/qa-tester.md`, final verifier for every default-loop path=`agents/qa-auditor.md`, escalation
+reviewer=`agents/code-reviewer.md`, security=`agents/security-reviewer.md` (others in
+`agents/<role>.md`).
 
 ## Reference map (load only what the current phase needs)
 

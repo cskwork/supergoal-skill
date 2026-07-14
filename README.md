@@ -21,11 +21,12 @@ the smallest correct change, checks the request and project docs against the rea
 2. **Load only the needed playbook.** The root `SKILL.md` stays small; each route loads its own
    `reference/` and `agents/` files only when needed.
 3. **Keep contexts fresh, keep dispatches few.** Code delivery runs five gates - Frame -> Plan approval
-   -> Build -> Exact Verify/QA -> Finalize - with exactly one fresh-context builder and one
-   fresh-context verifier dispatch per iteration. Frame discovers full-spec and edge-case coverage into
-   the plan; the builder implements only the approved plan; the verifier carries the adversarial review
-   plus the real proof layer; verify findings loop back to a relaunched builder through `R-LOOP.md`. The
-   only extra dispatch is a trigger-gated pre-Build plan attack for risky/under-specified work.
+   -> Build -> Exact Verify/QA -> Finalize - with one fresh-context builder and one auditor per
+   iteration. Browser/CLI work adds one evidence-only tester before the auditor. Frame discovers
+   full-spec and edge-case coverage into the plan; the builder implements only the approved plan; the
+   tester captures execution evidence; the auditor reruns real tests and owns the verdict, `GOAL.md`
+   ticks, and `R-LOOP.md`. The only optional extra dispatch is a trigger-gated pre-Build plan attack for
+   risky/under-specified work.
 4. **Run Before/After Eval.** Capture the before state, define the after target, write a completion
    promise, and keep a resumable run state plus command manifest so the final claim proves the delta
    instead of just saying "tests passed."
@@ -135,11 +136,12 @@ flowchart TD
    test-first (bug -> failing test first); the builder covers every planned criterion in the plan's
    `## Acceptance checklist` - including the edge-case/resilience criteria discovered at Frame - and
    exits only on a green suite.
-4. **Exact Verify/QA** in one fresh-context verifier with an adversarial stance: re-run the real tests
-   and the promised proof layer, diff the implementer's changes against `GOAL.md`, tick each criterion
-   proven met, surface hidden `must` requirements as new criteria, and record plain checklist results
-   in `QA.md`; unmet criteria go to a timestamped `R-LOOP.md` section and the implementer relaunches -
-   that loop-back is the only fix channel.
+4. **Exact Verify/QA** with a fresh-context auditor in an adversarial stance. Browser/CLI work first
+   dispatches an evidence-only tester for real scenarios and captures, then the auditor consumes that
+   evidence, reruns the real non-browser tests, diffs the change against `GOAL.md`, ticks proven
+   criteria, and owns the final verdict. Non-browser work goes directly to the auditor. Unmet criteria
+   go to a timestamped `R-LOOP.md` section and the implementer relaunches - that loop-back is the only
+   fix channel.
 5. **Finalize**: stop only after every `GOAL.md` box is checked and the `Z-<date>.md` completion marker
    (run branch + timestamp) is written with command output recorded, then pass the commit gate and merge
    after user acceptance. The Build->Verify loop has a default 3-iteration cap with forced reflection,

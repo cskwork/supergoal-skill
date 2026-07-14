@@ -119,15 +119,36 @@ require_text "role-loop records conservative no-user default" "reference/role-lo
 require_text "qa-auditor stays fresh of the builder" "agents/qa-auditor.md" "fresh-context relative to the builder"
 require_text "reviewer is trigger-gated escalation" "agents/code-reviewer.md" "trigger-gated escalation"
 
-# Dispatch economy: the default run is builder + verifier only; anything more is
-# trigger-gated escalation with a recorded trigger (turn/token diet, 2026-07-14).
-require_text "SKILL caps default dispatches" "SKILL.md" "one builder + one verifier dispatch per iteration"
-require_text "role-loop caps default dispatches" "reference/role-loop.md" "one builder + one verifier dispatch per iteration"
-require_text "role-loop keeps only the plan attack as escalation" "reference/role-loop.md" "## Escalation (conditional plan attack)"
+# Dispatch economy: the auditor is always the final verifier. Browser/CLI proof
+# adds an evidence-only tester before it; any optional extra work is escalation.
+require_text "SKILL names auditor as final verifier" "SKILL.md" "one builder + one auditor verifier per iteration"
+require_text "SKILL adds tester only for browser or CLI proof" "SKILL.md" "browser/CLI proof adds one evidence-only qa-tester before the auditor"
+require_text "role-loop names auditor as final verifier" "reference/role-loop.md" "one builder + one auditor verifier per iteration"
+require_text "role-loop adds tester only for browser or CLI proof" "reference/role-loop.md" "browser/CLI proof adds one evidence-only qa-tester before the auditor"
+require_text "role-loop keeps plan attack as optional escalation" "reference/role-loop.md" "## Escalation (conditional plan attack; optional)"
 require_text "escalation needs a named trigger" "reference/role-loop.md" "named escalation trigger"
 require_text "builder exits on a green suite" "reference/role-loop.md" "return only on a green suite"
 require_text "executor covers planned edge criteria" "agents/executor.md" "edge-case and resilience criteria"
 require_text "qa-auditor owns the adversarial review" "agents/qa-auditor.md" "adversarial stance"
+require_text "qa-auditor consumes tester evidence" "agents/qa-auditor.md" "qa-tester evidence summary"
+require_text "qa-auditor never drives the browser" "agents/qa-auditor.md" "Do not drive the browser"
+reject_text "qa-auditor never installs playwright" "agents/qa-auditor.md" "npm install -g @playwright/cli"
+reject_text "qa-auditor never runs playwright setup" "agents/qa-auditor.md" "playwright-cli install"
+reject_text "qa-auditor has no drive-scenarios procedure" "agents/qa-auditor.md" "Drive scenarios"
+require_text "qa-auditor reruns real tests" "agents/qa-auditor.md" "Re-run REAL non-browser proof"
+require_text "qa-auditor owns final verdict" "agents/qa-auditor.md" 'final `Verdict:`'
+require_text "qa-tester is evidence only" "agents/qa-tester.md" "Evidence only"
+require_text "qa-tester never ticks goal" "agents/qa-tester.md" 'Never tick `GOAL.md`'
+require_text "qa-tester never writes final verdict" "agents/qa-tester.md" 'Never write the final `Verdict`'
+require_text "qa-tester never owns r-loop" "agents/qa-tester.md" 'Never write `R-LOOP.md`'
+require_text "role-loop orders browser tester before auditor" "reference/role-loop.md" 'browser/CLI path = fresh `qa-tester` produces evidence -> fresh `qa-auditor`'
+require_text "role-loop uses auditor alone for non-browser" "reference/role-loop.md" 'Non-browser/artifact path = fresh `qa-auditor` alone'
+reject_text "SKILL has no split verifier routing" "SKILL.md" 'non-browser/artifact verify=`agents/qa-auditor.md`'
+reject_text "role-loop exempts required tester from escalation" "reference/role-loop.md" "any dispatch beyond that pair is escalation"
+require_text "README explains tester before auditor" "README.md" "Browser/CLI work adds one evidence-only tester before the auditor"
+require_text "Korean README explains tester before auditor" "README.ko.md" "브라우저/CLI 작업만 auditor 앞에 증거 전용 tester 1회를 추가합니다"
+require_text "landing shows conditional third role" "docs/index.html" "<strong>2+1</strong>"
+require_text "landing explains tester before auditor" "docs/index.html" "browser/CLI proof adds one evidence-only tester before the auditor"
 require_text "role-loop caps default iterations at 3" "reference/role-loop.md" '`max_iterations` (default 3)'
 require_text "frame enumerates edge cases at plan time" "reference/role-loop.md" "edge-case and resilience criteria"
 require_text "verify keeps the R-LOOP loop-back" "reference/role-loop.md" "R-LOOP.md"

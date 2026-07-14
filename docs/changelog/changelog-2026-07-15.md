@@ -83,3 +83,23 @@ only "where can this run safely resume?"; stable intent and evidence belong in t
 **Verification note**: canonical fixture reuse reduced HARNESS contract duplication, but the focused suite
 did not get faster (17.95s baseline, 19.12s final). The value is maintainability, not a speed claim; repeated
 CLI startups and the U3 validation remain the measured runtime cost.
+
+## QA tester and auditor separated by evidence ownership
+
+**Change**: `qa-tester` now owns browser/CLI execution and reproducible evidence only;
+`qa-auditor` is the independent final verifier for every delivery path. Browser/CLI work runs
+tester -> auditor, while non-browser work runs auditor alone. QA-ONLY follows the same boundary, with
+`db-reader` added only when database truth is required.
+
+- Decision: the auditor consumes tester/DB evidence, reruns REAL non-browser checks, and owns the final
+  verdict. In code-delivery mode it also owns `GOAL.md` ticks and `R-LOOP.md`; in QA-ONLY it owns the
+  final report but has no GOAL/R-LOOP because no product code changes.
+- Why: execution and acceptance need independent contexts. A browser-driving auditor was judging its
+  own evidence, while the existing tester role already provided the correct black-box boundary.
+- Cost: browser/CLI proof intentionally adds one tester dispatch before the auditor. This is required
+  proof, not optional escalation; non-browser work keeps the two-role builder + auditor path.
+- Rejected: a third `verifier.md` persona. It duplicates the auditor's existing final-proof duties.
+  Also rejected merging `code-reviewer` into the auditor: the reviewer attacks risky plans before Build;
+  the auditor verifies real output after Build.
+- Synchronized: personas, default loop, QA-ONLY, browser/DB references, both READMEs, landing page, and
+  positive/negative contract tests.

@@ -29,6 +29,28 @@ require_text() {
   fi
 }
 
+require_absent_text() {
+  local label="$1" file="$2" text="$3"
+  local normalized
+  normalized="$(tr '\n\t\r' '   ' < "$ROOT/$file" | tr -s ' ')"
+  if printf '%s' "$normalized" | grep -Fqi -- "$text"; then
+    FAIL=$((FAIL + 1)); printf '  FAIL  %s\n' "$label"
+    printf '        unexpected in %s: %s\n' "$file" "$text"
+  else
+    PASS=$((PASS + 1)); printf '  PASS  %s\n' "$label"
+  fi
+}
+
+require_json() {
+  local label="$1" file="$2" filter="$3"
+  if jq -e "$filter" "$ROOT/$file" >/dev/null; then
+    PASS=$((PASS + 1)); printf '  PASS  %s\n' "$label"
+  else
+    FAIL=$((FAIL + 1)); printf '  FAIL  %s\n' "$label"
+    printf '        JSON contract failed in %s: %s\n' "$file" "$filter"
+  fi
+}
+
 echo "=================================================================="
 echo " /supergoal DELIVERY-GATE contract   skill: $ROOT"
 echo "=================================================================="
@@ -40,6 +62,10 @@ require_file "qa template exists" "templates/QA.md"
 require_file "r-loop template exists" "templates/R-LOOP.md"
 require_file "z-done template exists" "templates/Z-DONE.md"
 require_file "run state template exists" "templates/run-state.json"
+require_json "run state is a valid v2 resumable checkpoint" "templates/run-state.json" \
+  '.schema_version == 2 and .max_iterations == 3 and .forced_reflection == null and
+   (.branches.refs_verified | type) == "boolean" and (.unresolved_gates | type) == "array" and
+   (.blockers | type) == "array" and (.regression_ledger | type) == "array"'
 
 # SKILL.md is the router/gate; the detailed delivery contract lives in reference files.
 require_text "SKILL keeps delivery done hook" "SKILL.md" "Before/After Eval complete"
@@ -58,6 +84,7 @@ require_text "role loop writes goal first" "reference/role-loop.md" '`GOAL.md` i
 require_text "role loop quotes original request verbatim" "reference/role-loop.md" "quotes the user's prompt verbatim"
 require_text "role loop keeps run state current" "reference/role-loop.md" 'keep `run-state.json` current'
 require_text "role loop records regression ledger" "reference/role-loop.md" "regression_ledger"
+require_text "role loop owns capped regression reflection" "reference/role-loop.md" "regressed_previously_green"
 require_text "role loop defines greenfield before proof" "reference/role-loop.md" "absent feature/red acceptance check for GREENFIELD"
 require_text "role loop defines debug before proof" "reference/role-loop.md" "reproduced symptom for DEBUG"
 require_text "role loop defines non-exact debug reproduction" "reference/role-loop.md" "exact reproduction is unavailable"
@@ -120,11 +147,21 @@ require_text "r-loop template feeds latest section only" "templates/R-LOOP.md" "
 require_text "z template records branch" "templates/Z-DONE.md" "Branch:"
 require_text "z template records completion timestamp" "templates/Z-DONE.md" "Completed:"
 require_text "z template requires all criteria checked" "templates/Z-DONE.md" "ONLY when every"
+require_text "run state uses schema version 2" "templates/run-state.json" '"schema_version": 2'
+require_text "run state is limited to code modes" "templates/run-state.json" '"mode": "GREENFIELD|DEBUG|LEGACY"'
 require_text "run state records max iterations" "templates/run-state.json" '"max_iterations": 3'
+require_text "run state records completion status" "templates/run-state.json" '"completion_status": "open|fulfilled|blocked"'
 require_text "run state records regression ledger" "templates/run-state.json" "regression_ledger"
-require_text "run state records regressed previously green" "templates/run-state.json" "regressed_previously_green"
-require_text "run state records forced reflection" "templates/run-state.json" "forced_reflection"
+require_text "run state starts forced reflection empty" "templates/run-state.json" '"forced_reflection": null'
 require_text "run state records plan approval" "templates/run-state.json" "plan_approval"
+require_absent_text "run state omits intent gate" "templates/run-state.json" "intent_gate"
+require_absent_text "run state omits capability refs" "templates/run-state.json" "capability_refs"
+require_absent_text "run state omits promised outcome" "templates/run-state.json" "promised_outcome"
+require_absent_text "run state omits required proof" "templates/run-state.json" "required_proof"
+require_absent_text "run state omits stop condition" "templates/run-state.json" "stop_condition"
+require_absent_text "run state omits cap sentinel" "templates/run-state.json" "required_when_iteration_cap_hit"
+require_absent_text "run state defers capped regression reflection" "templates/run-state.json" "regressed_previously_green"
+require_absent_text "run state omits duplicate smallest next action" "templates/run-state.json" "smallest_next_action"
 require_text "commit gate parses success criteria" "templates/commit-gate.sh" "Success Criteria"
 require_text "commit gate parses backward trace" "templates/commit-gate.sh" "Backward-trace"
 require_text "commit gate parses reproduction fidelity" "templates/commit-gate.sh" "Reproduction Fidelity"

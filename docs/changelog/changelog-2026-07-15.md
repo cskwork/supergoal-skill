@@ -1,5 +1,15 @@
 # Changelog - 2026-07-15
 
+## README default loop rendered as an ordered list
+
+**Change**: reformatted the English README's five-gate default loop from one continuous paragraph into
+a Markdown ordered list. The workflow wording and behavior are unchanged.
+
+- Decision: mirror the already-correct Korean README structure so each gate is independently scannable
+  and the five-step sequence is exposed to Markdown renderers and assistive technology.
+- Rejected: manual line breaks or `<br>` tags. They change appearance without restoring list semantics.
+- Touch: `README.md` only; `README.ko.md` already used the intended 1-5 list format.
+
 ## "draw / diagram / 그려" routes to archify, folded into ARCHITECTURE (no new router row)
 
 **Change**: a bare draw/diagram/그려 request (arch, flow, sequence, state) now renders a
@@ -27,3 +37,15 @@ edges passes, "4 core roles", a 7-step route-map). Synced every surface to the c
   five-gate change. Vercel hosting and draw/diagram deliberately left off the landing (per request);
   draw/diagram documented in README only.
 
+## Compact resumable run state
+
+**Change**: `templates/run-state.json` schema v2 now stores the compact conductor checkpoint. Static
+mode routing remains in the router; `PLAN.md` owns the approved completion promise and loop cap, while
+the checkpoint mirrors that cap for resume and tracks mutable fulfillment state.
+
+- Decision: preserve branch/ref safety, approval, loop cap, gate/blocker separation, regression state,
+  proof checkpoint, next action, forced reflection, and timestamp while removing duplicated context.
+- Rejected: minifying JSON only; it saves whitespace but not duplicated state. Also rejected merging
+  branch, gate, or blocker safety state; those fields answer distinct resume and safety questions.
+- Touch: `templates/run-state.json`, `reference/role-loop.md`, `reference/delivery-gate.md`, and
+  `tests/delivery-gate-contract.test.sh`.

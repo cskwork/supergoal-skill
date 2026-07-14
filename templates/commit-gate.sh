@@ -10,9 +10,10 @@
 #   5) QA.md Backward-trace is exactly 'clean' (no orphan scope),
 #   6) non-exact Reproduction Fidelity records residual risk and post-deploy confirmation (QA.md),
 #   7) QA.md ## Results has >=1 checked row and no unchecked row,
-#   8) QA verdict is PASS (FAIL or PARTIAL/incomplete blocks); for an app run, browser/CLI QA evidence passes,
+#   8) QA.md has exactly one canonical '- Verdict: PASS'; for an app run, browser/CLI QA evidence passes,
 #   9) at least one trusted command (frozen_repo/evaluator_owned) backs QA.md,
-#  10) exactly one Z-<date>.md completion marker exists with Branch: and Completed: lines.
+#  10) final run-state.json proves verified refs, Finalize phase, and no blockers,
+#  11) exactly one Z-<date>.md completion marker exists with Branch: and Completed: lines.
 # NEVER edit this script to make a non-green run commit — resolve the gap or ask the user instead.
 #
 # Usage: commit-gate.sh <vault-dir> [browser|cli|none]
@@ -27,6 +28,7 @@ VAULT="$1"; APPTYPE="${2:-none}"
 GOAL="$VAULT/GOAL.md"
 PLAN="$VAULT/PLAN.md"
 QAMD="$VAULT/QA.md"
+RUNSTATE="$VAULT/run-state.json"
 fail() { echo "COMMIT-GATE FAIL: $*" >&2; exit 1; }
 
 case "$APPTYPE" in browser|cli|none) ;; *) usage ;; esac
@@ -158,15 +160,21 @@ case "$results_state" in
   *)     fail "QA.md ## Results has no checked row — the after target is not evidenced; finish verification before commit" ;;
 esac
 
-# 8) QA verdict: block on ANY FAIL/PARTIAL anywhere in the vault (not just the first), and on an un-filled
-#    '<PASS | FAIL | PARTIAL>' placeholder (a started-but-incomplete QA report). For an app run, delegate
-#    browser/CLI evidence to the shared qa-gate.sh.
-if grep -rhiE 'Verdict:[[:space:]]*(FAIL|PARTIAL)([[:space:]]|$)' "$VAULT" >/dev/null 2>&1; then
-  fail "QA verdict FAIL/PARTIAL present — failed/incomplete QA blocks commit; finish QA or ask the user"
-fi
-if grep -rhiE 'Verdict:[[:space:]]*(<|PASS[[:space:]]*\|)' "$VAULT" >/dev/null 2>&1; then
-  fail "QA report has an un-filled Verdict placeholder — QA is incomplete; finish it or ask the user"
-fi
+# 8) QA verdict: QA.md is the canonical verification record. It must contain exactly one verdict marker,
+#    and that marker must be the literal template token '- Verdict: PASS'. Unknown values, placeholders,
+#    missing markers, and duplicate markers are incomplete proof. Other vault files are not verdict sources.
+verdict_state="$(awk '
+  {
+    line=$0; sub(/\r$/, "", line)
+    low=tolower(line)
+    if (low ~ /^[[:space:]]*-?[[:space:]]*verdict[[:space:]]*:/) total++
+    if (line == "- Verdict: PASS") pass++
+  }
+  END { printf "%d %d", total+0, pass+0 }
+' "$QAMD")"
+set -- $verdict_state
+[ "$1" -eq 1 ] && [ "$2" -eq 1 ] \
+  || fail "QA.md must contain exactly one canonical '- Verdict: PASS' line — missing, duplicate, placeholder, FAIL/PARTIAL, or unknown verdicts block commit"
 if [ "$APPTYPE" != none ]; then
   QAGATE="$(dirname "$0")/qa-gate.sh"
   [ -f "$QAGATE" ] || fail "qa-gate.sh not found next to commit-gate.sh — cannot verify $APPTYPE QA evidence"
@@ -179,7 +187,14 @@ grep -qE 'frozen_repo|evaluator_owned' "$QAMD" \
   || fail "no trusted command (frozen_repo/evaluator_owned) in QA.md — agent-detected alone cannot prove done"
 echo "  ok: trusted command present"
 
-# 10) Completion marker: exactly one Z-<date>.md, created only after every criterion was checked (checks
+# 10) Final run state: the mutable checkpoint must parse and prove ref safety, final phase, and no open
+#     blockers/gates. PLAN.md and QA.md remain canonical for approval and proof commands.
+RUNSTATE_GATE="$(dirname "$0")/run-state-gate.mjs"
+[ -f "$RUNSTATE_GATE" ] || fail "run-state-gate.mjs not found next to commit-gate.sh — cannot verify final run state"
+node "$RUNSTATE_GATE" "$RUNSTATE" || fail "final run-state gate failed (see run-state output above)"
+echo "  ok: final run state is safe"
+
+# 11) Completion marker: exactly one Z-<date>.md, created only after every criterion was checked (checks
 #     1-3 above prove that), carrying the run branch and the completion timestamp.
 z_count=0; z_file=""
 for z in "$VAULT"/Z-*.md; do

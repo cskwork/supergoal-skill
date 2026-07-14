@@ -233,6 +233,28 @@ EOF
 - Branch: run/s13 -> main
 - Completed: 2026-07-06T12:00:00+09:00
 EOF
+  cat > "$1/run-state.json" <<'EOF'
+{
+  "schema_version": 3,
+  "mode": "DEBUG",
+  "branches": {
+    "source_base_branch": "main",
+    "target_integration_branch": "main",
+    "run_branch": "run/s13",
+    "worktree_path": "/tmp/s13",
+    "refs_verified": true
+  },
+  "phase": "Finalize",
+  "iteration": 1,
+  "max_iterations": 3,
+  "unresolved_gates": [],
+  "blockers": [],
+  "regression_ledger": [],
+  "next_action": "",
+  "forced_reflection": null,
+  "updated_at": "2026-07-06T12:00:00+09:00"
+}
+EOF
 }
 v=$(mkvault s13)
 run_case "13.0 no args -> usage (exit 2)"             2 "usage"                    bash "$COMMITGATE"
@@ -248,21 +270,33 @@ run_case "13.4 unchecked surfaced criterion -> blocked (Z premature)" 1 "uncheck
 mkgreen "$v"
 sed 's/^- \[x\] preserve existing behavior - verify: `npm test`$/- [x] preserve existing behavior - verify: `npm test` (surfaced: implied by data rule)/' "$v/GOAL.md" > "$v/p"; mv "$v/p" "$v/GOAL.md"
 run_case "13.5 ticked surfaced criterion -> PASS"     0 "COMMIT GATE PASS"         bash "$COMMITGATE" "$v" none
-printf 'Verdict: PARTIAL   Actions used: 2/100\n' > "$v/report.md"
-run_case "13.6 QA verdict PARTIAL -> blocked"         1 "FAIL/PARTIAL"             bash "$COMMITGATE" "$v" none
-printf 'Verdict: PASS   Actions used: 2/100\n' > "$v/report.md"
-run_case "13.7 QA verdict PASS -> PASS"               0 "COMMIT GATE PASS"         bash "$COMMITGATE" "$v" none
+sed 's/^- Verdict: PASS$/- Verdict: PARTIAL/' "$v/QA.md" > "$v/p"; mv "$v/p" "$v/QA.md"
+run_case "13.6 QA verdict PARTIAL -> blocked"         1 "exactly one canonical"    bash "$COMMITGATE" "$v" none
+mkgreen "$v"
+sed 's/^- Verdict: PASS$/- Verdict: FAIL/' "$v/QA.md" > "$v/p"; mv "$v/p" "$v/QA.md"
+run_case "13.7 QA verdict FAIL -> blocked"            1 "exactly one canonical"    bash "$COMMITGATE" "$v" none
+mkgreen "$v"
+sed 's/^- Verdict: PASS$/- Verdict: RED/' "$v/QA.md" > "$v/p"; mv "$v/p" "$v/QA.md"
+run_case "13.7b unknown QA verdict -> blocked"        1 "exactly one canonical"    bash "$COMMITGATE" "$v" none
+mkgreen "$v"
+sed '/^- Verdict: PASS$/d' "$v/QA.md" > "$v/p"; mv "$v/p" "$v/QA.md"
+run_case "13.7c missing QA verdict -> blocked"        1 "exactly one canonical"    bash "$COMMITGATE" "$v" none
+mkgreen "$v"
+sed 's/^- Verdict: PASS$/- Verdict: PASS | FAIL | PARTIAL/' "$v/QA.md" > "$v/p"; mv "$v/p" "$v/QA.md"
+run_case "13.7d placeholder QA verdict -> blocked"    1 "exactly one canonical"    bash "$COMMITGATE" "$v" none
+mkgreen "$v"
+sed '/^- Verdict: PASS$/a\
+- Verdict: PASS' "$v/QA.md" > "$v/p"; mv "$v/p" "$v/QA.md"
+run_case "13.7e duplicate QA verdict -> blocked"      1 "exactly one canonical"    bash "$COMMITGATE" "$v" none
+mkgreen "$v"
+printf 'Verdict: FAIL\n' > "$v/report.md"
+run_case "13.7f non-canonical report verdict ignored" 0 "COMMIT GATE PASS"         bash "$COMMITGATE" "$v" none
 sed 's/frozen_repo/agent_detected/g' "$v/QA.md" > "$v/p"; mv "$v/p" "$v/QA.md"
 run_case "13.8 no trusted command -> blocked"         1 "no trusted command"       bash "$COMMITGATE" "$v" none
 mkgreen "$v"; rm -f "$v/report.md"
 sed 's/^- \[x\] suite green after change.*/- [ ] suite green after change - `npm test` (frozen_repo)/' "$v/QA.md" > "$v/p"; mv "$v/p" "$v/QA.md"
 run_case "13.9 unchecked Results row -> blocked"      1 "unchecked row"            bash "$COMMITGATE" "$v" none
 mkgreen "$v"
-printf 'Verdict: PASS\nlater run:\nVerdict: FAIL\n' > "$v/report.md"   # H1: FAIL hidden behind earlier PASS
-run_case "13.10 FAIL behind earlier PASS -> blocked"  1 "FAIL/PARTIAL"             bash "$COMMITGATE" "$v" none
-printf 'Verdict: <PASS | FAIL | PARTIAL>\n' > "$v/report.md"          # M1: started-but-incomplete report
-run_case "13.11 un-filled Verdict placeholder -> blocked" 1 "un-filled Verdict"    bash "$COMMITGATE" "$v" none
-rm -f "$v/report.md"
 run_case "13.12 app run w/o QA evidence -> blocked"   1 "QA evidence gate failed"  bash "$COMMITGATE" "$v" browser
 mkgreen "$v"
 sed 's/- Status: approved-by-user/- Status: pending/' "$v/PLAN.md" > "$v/p"; mv "$v/p" "$v/PLAN.md"
@@ -302,6 +336,24 @@ run_case "13.20 empty Z marker -> blocked"              1 "empty"               
 mkgreen "$v"
 sed '/- Branch: run\/s13 -> main/d' "$v/Z-2026-07-06.md" > "$v/p"; mv "$v/p" "$v/Z-2026-07-06.md"
 run_case "13.21 Z marker without branch -> blocked"     1 "Branch:"                bash "$COMMITGATE" "$v" none
+mkgreen "$v"
+rm -f "$v/run-state.json"
+run_case "13.22 missing run-state -> blocked"           1 "run-state.json missing"  bash "$COMMITGATE" "$v" none
+mkgreen "$v"
+printf '{not json\n' > "$v/run-state.json"
+run_case "13.23 malformed run-state -> blocked"         1 "cannot parse"            bash "$COMMITGATE" "$v" none
+mkgreen "$v"
+sed 's/"refs_verified": true/"refs_verified": false/' "$v/run-state.json" > "$v/p"; mv "$v/p" "$v/run-state.json"
+run_case "13.24 unverified refs -> blocked"             1 "refs_verified"           bash "$COMMITGATE" "$v" none
+mkgreen "$v"
+sed 's/"phase": "Finalize"/"phase": "ExactVerify"/' "$v/run-state.json" > "$v/p"; mv "$v/p" "$v/run-state.json"
+run_case "13.25 non-final phase -> blocked"             1 "phase must be Finalize"   bash "$COMMITGATE" "$v" none
+mkgreen "$v"
+sed 's/"blockers": \[\]/"blockers": ["open red"]/' "$v/run-state.json" > "$v/p"; mv "$v/p" "$v/run-state.json"
+run_case "13.26 blockers remain -> blocked"             1 "blockers must be empty"   bash "$COMMITGATE" "$v" none
+mkgreen "$v"
+sed 's/"unresolved_gates": \[\]/"unresolved_gates": ["ask-user"]/' "$v/run-state.json" > "$v/p"; mv "$v/p" "$v/run-state.json"
+run_case "13.27 unresolved gate -> blocked"             1 "unresolved_gates"         bash "$COMMITGATE" "$v" none
 
 # ----------------------------------------------------------------------
 echo

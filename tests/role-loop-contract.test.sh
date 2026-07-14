@@ -58,8 +58,10 @@ require_text "builder blocks ask-user generated criteria" "reference/role-loop.m
 # Verifier closes them out.
 require_text "verifier marks surfaced requirements fixed" "reference/role-loop.md" "Tick each surfaced criterion"
 
-# SKILL.md surfaces the route; reference/role-loop.md owns the detailed behavior.
+# SKILL.md surfaces routing/invariants; reference/role-loop.md owns detailed behavior.
 require_text "SKILL names the five-gate core" "SKILL.md" "Frame -> Plan approval -> Build -> Exact Verify/QA -> Finalize"
+require_text "SKILL delegates detailed loop authority" "SKILL.md" "sole detailed authority"
+require_text "SKILL excludes pure brainstorming by default" "SKILL.md" "pure brainstorming and user-driven step-by-step work use normal direct collaboration"
 require_text "role-loop verify step logs surfaced requirements" "reference/role-loop.md" 'run vault'\''s `GOAL.md`'
 require_text "role-loop keeps production ambiguity as ask-user" "reference/role-loop.md" "production/source-code domain ambiguity"
 require_text "role-loop allows conservative no-user default" "reference/role-loop.md" "conservative, reversible default"
@@ -71,9 +73,8 @@ reject_text "SKILL has no critic/fixer roles" "SKILL.md" "Critic/Fixer"
 require_text "role-loop names the only fix channel" "reference/role-loop.md" "the only fix channel"
 require_text "builder reproduces R-LOOP items red-first" "reference/role-loop.md" "reproduce it with a failing test first"
 require_text "role-loop dispatches fresh-context roles" "reference/role-loop.md" "fresh-context subagent"
-require_text "SKILL requires separate builder subagent" "SKILL.md" "Implementation runs in a separate fresh-context builder subagent"
 require_text "role-loop requires separate builder subagent" "reference/role-loop.md" "separate fresh-context builder subagent"
-require_text "SKILL treats supergoal invocation as subagent authorization" "SKILL.md" "explicit authorization to use the role-loop subagents"
+require_text "SKILL treats supergoal invocation as subagent authorization" "SKILL.md" "explicit authorization to use its fresh-context subagents"
 require_text "role-loop treats supergoal invocation as subagent authorization" "reference/role-loop.md" "explicit authorization to spawn the role-loop subagents"
 require_text "role-loop avoids second subagent permission question" "reference/role-loop.md" 'Do not ask a second "may I use subagents?" question'
 require_text "SKILL says invoked supergoal does not downgrade" "SKILL.md" "instead of downgrading to an inline shortcut"
@@ -89,14 +90,14 @@ reject_text "delivery gate has no very-easy threshold" "reference/delivery-gate.
 # The verifier absorbs the adversarial review; a standalone mandatory review pass is removed ceremony.
 reject_text "SKILL has no mandatory standalone review pass" "SKILL.md" "Mandatory Adversarial Review"
 reject_text "role-loop has no mandatory standalone review pass" "reference/role-loop.md" "Mandatory Adversarial Review"
-require_text "SKILL verifier carries the adversarial stance" "SKILL.md" "adversarial stance"
+require_text "SKILL verifier stays fresh and adversarial" "SKILL.md" "fresh adversarial verifier"
 require_text "role-loop verifier carries the adversarial stance" "reference/role-loop.md" "adversarial stance"
-require_text "SKILL exact verification outranks review" "SKILL.md" "exact verification outranks reviewer approval"
+require_text "SKILL exact verification outranks review" "SKILL.md" "Exact verification outranks review"
 require_text "role-loop exact verification outranks review" "reference/role-loop.md" "Exact verification outranks reviewer approval"
-require_text "SKILL requires actual E2E/live/API/browser run" "SKILL.md" "actual E2E/live/API/browser run"
+require_text "SKILL requires E2E/live/API/browser proof" "SKILL.md" "E2E/live/API/browser proof"
 require_text "role-loop requires actual E2E/live/API/browser run" "reference/role-loop.md" "actual E2E/live/API/browser run"
 require_text "role-loop compares request docs to behavior" "reference/role-loop.md" "compares the request/docs with current behavior"
-require_text "SKILL frame discovery names concrete docs" "SKILL.md" "request/ticket, README, design/API docs"
+require_text "role-loop frame discovery names concrete docs" "reference/role-loop.md" "request/ticket, README, design/API docs"
 require_text "executor builds from the plan's checklist" "agents/executor.md" "every planned criterion"
 reject_text "executor does not re-read spec docs" "agents/executor.md" "request/ticket, README, design/API docs"
 require_text "role-loop says when to escalate" "reference/role-loop.md" "Use it when the task is under-specified"
@@ -165,17 +166,16 @@ require_text "code-reviewer carries requirement threshold" "agents/code-reviewer
 require_text "executor blocks speculative critic tests" "agents/executor.md" "stop and report a decision gate"
 
 # GOAL.md is the single source of done; the verifier owns the checkboxes.
-require_text "SKILL writes goal first with verbatim request" "SKILL.md" "user prompt verbatim"
+require_text "role-loop writes goal first with verbatim request" "reference/role-loop.md" "user's prompt verbatim"
 require_text "only the verifier ticks criteria" "reference/role-loop.md" "only the verifier ticks"
-require_text "SKILL verify diffs implementer changes vs goal" "SKILL.md" 'Diff the implementer'\''s changes against `GOAL.md`'
 require_text "role-loop verify diffs implementer changes vs goal" "reference/role-loop.md" 'Diff the implementer'\''s changes (git diff in the run worktree) against `GOAL.md`'
-require_text "SKILL records plain checklist QA results" "SKILL.md" 'plain checklist sentences in `QA.md`'
+require_text "role-loop records plain checklist QA results" "reference/role-loop.md" '`## Results` checklist sentences'
 
 # Plan approval gate: blocking in interactive sessions, auto-approved (recorded) in autonomous runs.
 require_text "role-loop has blocking plan approval gate" "reference/role-loop.md" "Plan approval gate (blocking"
 require_text "role-loop waits for explicit user OK" "reference/role-loop.md" "WAIT for the user's explicit OK"
 require_text "role-loop auto-approves autonomous runs" "reference/role-loop.md" "auto-approved"
-require_text "SKILL clears approval gate before build" "SKILL.md" "clear the plan approval gate"
+require_text "SKILL blocks Build before approval" "SKILL.md" "Build starts only after approval"
 require_text "executor is briefed by the plan alone" "agents/executor.md" "the frozen plan is your whole brief"
 
 # R-LOOP channel: verifier appends timestamped gap sections; relaunched implementer reads the latest.
@@ -186,7 +186,6 @@ require_text "implementer re-entry reads latest r-loop section" "agents/executor
 # Z completion marker: written only when every criterion is checked.
 require_text "role-loop writes z marker on full completion" "reference/role-loop.md" 'write `Z-<YYYY-MM-DD>.md`'
 require_text "role-loop never writes z marker early" "reference/role-loop.md" "never earlier"
-require_text "SKILL never writes z marker early" "SKILL.md" "never earlier"
 
 # Build->Verify loop has a hard stop with forced reflection, then escalates to the user.
 require_text "role-loop caps build-verify at max iterations" "reference/role-loop.md" "max_iterations"

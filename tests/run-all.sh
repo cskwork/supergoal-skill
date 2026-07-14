@@ -3,9 +3,10 @@
 # syntax-checks Node templates, and exercises the optional zero-dependency example
 # when the checkout vendors it.
 
-set -euo pipefail
+set -uo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+FAILURES=0
 
 echo "== /supergoal all checks =="
 echo "root: $ROOT"
@@ -13,25 +14,37 @@ echo "root: $ROOT"
 for test in "$ROOT"/tests/*.test.sh; do
   echo
   echo "== bash ${test#"$ROOT"/} =="
-  bash "$test"
+  if ! bash "$test"; then
+    FAILURES=$((FAILURES + 1))
+  fi
 done
 
 echo
 echo "== node --check templates =="
-for file in "$ROOT"/templates/*.mjs "$ROOT"/templates/teach/assets/*.js; do
+while IFS= read -r file; do
   echo "node --check ${file#"$ROOT"/}"
-  node --check "$file" >/dev/null
-done
+  if ! node --check "$file" >/dev/null; then
+    FAILURES=$((FAILURES + 1))
+  fi
+done < <(find "$ROOT/templates" -type f \( -name '*.js' -o -name '*.mjs' \) -print | sort)
 
 echo
 echo "== example url-shortener =="
 if [ ! -d "$ROOT/examples/url-shortener" ]; then
   echo "SKIP examples/url-shortener not present in this checkout"
 elif command -v npm >/dev/null 2>&1; then
-  (cd "$ROOT/examples/url-shortener" && npm test)
+  if ! (cd "$ROOT/examples/url-shortener" && npm test); then
+    FAILURES=$((FAILURES + 1))
+  fi
 else
   echo "SKIP npm not on PATH"
 fi
 
 echo
-echo "== /supergoal all checks passed =="
+if [ "$FAILURES" -eq 0 ]; then
+  echo "== /supergoal all checks passed =="
+else
+  echo "== /supergoal checks failed: $FAILURES step(s) =="
+fi
+
+exit "$FAILURES"

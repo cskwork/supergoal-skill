@@ -1,0 +1,22 @@
+{
+  "schema_version": 3,
+  "mode": "LEGACY",
+  "branches": {
+    "source_base_branch": "dev-v2",
+    "target_integration_branch": "dev-v2",
+    "run_branch": "codex/v064-skill-simplification",
+    "worktree_path": "/private/tmp/supergoal-v064-skill-simplification",
+    "refs_verified": true
+  },
+  "phase": "Finalize",
+  "iteration": 1,
+  "max_iterations": 3,
+  "unresolved_gates": [],
+  "blockers": [],
+  "regression_ledger": [
+    "bash tests/run-all.sh"
+  ],
+  "next_action": "Pass commit gate, commit, merge to dev-v2, push, and publish v0.6.4",
+  "forced_reflection": null,
+  "updated_at": "2026-07-15T05:33:06+09:00"
+}

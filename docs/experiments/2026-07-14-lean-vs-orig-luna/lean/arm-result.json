@@ -1,0 +1,101 @@
+{
+  "arm": "lean",
+  "app": "/private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/app",
+  "vault": "/private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault",
+  "model": "gpt-5.6-luna",
+  "effort": "medium",
+  "timeout_ms": 540000,
+  "retries_allowed": 0,
+  "started_at": "2026-07-14T13:51:23.587Z",
+  "adapter": "codex-exec",
+  "preflight": {
+    "reused": "host preflight passed earlier this session (edit ok, tests pass); not re-spent"
+  },
+  "passes": [
+    {
+      "name": "i1-frame-plan-build",
+      "role_file": "pass1-frame-plan-build.md",
+      "at": "2026-07-14T14:00:23.606Z",
+      "exit": null,
+      "crashed": true,
+      "reason": "timeout",
+      "cost": 0,
+      "tokens": 0,
+      "turns": 0,
+      "duration_ms": 540014,
+      "retries": 0
+    },
+    {
+      "name": "i1-exact-verify",
+      "role_file": "pass2-exact-verify.md",
+      "at": "2026-07-14T14:03:16.728Z",
+      "exit": 0,
+      "crashed": false,
+      "reason": "",
+      "cost": 0,
+      "tokens": 571793,
+      "turns": 1,
+      "duration_ms": 103416,
+      "retries": 0
+    },
+    {
+      "name": "i2-rloop-fix",
+      "role_file": "pass3-rloop-fix.md",
+      "at": "2026-07-14T14:07:15.687Z",
+      "exit": 0,
+      "crashed": false,
+      "reason": "",
+      "cost": 0,
+      "tokens": 1717375,
+      "turns": 1,
+      "duration_ms": 214688,
+      "retries": 0
+    },
+    {
+      "name": "i2-exact-verify",
+      "role_file": "pass2-exact-verify.md",
+      "at": "2026-07-14T14:10:20.784Z",
+      "exit": 0,
+      "crashed": false,
+      "reason": "",
+      "cost": 0,
+      "tokens": 757232,
+      "turns": 1,
+      "duration_ms": 160174,
+      "retries": 0
+    },
+    {
+      "name": "i3-rloop-fix",
+      "role_file": "pass3-rloop-fix.md",
+      "at": "2026-07-14T14:13:56.886Z",
+      "exit": 0,
+      "crashed": false,
+      "reason": "",
+      "cost": 0,
+      "tokens": 1191691,
+      "turns": 1,
+      "duration_ms": 196032,
+      "retries": 0
+    },
+    {
+      "name": "i3-exact-verify",
+      "role_file": "pass2-exact-verify.md",
+      "at": "2026-07-14T14:17:52.984Z",
+      "exit": 0,
+      "crashed": false,
+      "reason": "",
+      "cost": 0,
+      "tokens": 1110507,
+      "turns": 1,
+      "duration_ms": 215643,
+      "retries": 0
+    }
+  ],
+  "capture_commit_needed": false,
+  "patch_bytes": 29686,
+  "head": "5ab219ebd9422506b3c6c4f93e31a420dc13a1dd",
+  "branch": "feat/xml-diff-patch",
+  "finished_at": "2026-07-14T14:18:30.344Z",
+  "total_pass_duration_ms": 1429967,
+  "total_tokens": 5348598
+}

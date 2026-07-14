@@ -1,0 +1,22 @@
+{
+  "phase": "verify",
+  "iteration": 3,
+  "plan_approval": "auto",
+  "status": "blocked",
+  "gate": "RED",
+  "blockers": [
+    "Newly exported diff/patch/merge declarations in diff.go have no Go doc comments.",
+    "The checked-in focused tests do not fully prove all requested identity, selector, conflict, and summary behavior.",
+    "The separate disposable-copy task-test patch referenced in QA.md is not present in this checkout.",
+    "Independent sibling additions share the parent OpAdd.Path and are likely falsely classified as merge conflicts; focused proof and a fix are required."
+  ],
+  "next_action": "Relaunch builder to add broader focused coverage and fix independent sibling-addition conflict detection, then rerun exact verification.",
+  "last_proof_command": "GOCACHE=/tmp/sg-gocache go test -tags diff ./... (exit 0)",
+  "completion_promise": "not_complete",
+  "regression_ledger": [
+    "2026-07-14 verifier: go test ./... PASS",
+    "2026-07-14 verifier: go vet ./... PASS",
+    "2026-07-14 verifier: public API doc inspection GREEN",
+    "2026-07-14 verifier: full requested behavior remains unproven; sibling-addition merge conflict found by inspection"
+  ]
+}

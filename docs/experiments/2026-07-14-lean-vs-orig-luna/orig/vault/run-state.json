@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "mode": "LEGACY",
+  "intent_gate": {"intent":"build XML diff patch merge API","confidence":"high","mode":"LEGACY","capability_refs":["supergoal"],"uncertainty":"implementation edge semantics verified from existing code"},
+  "branches": {"source_base_branch":"main","target_integration_branch":"main","run_branch":"feat/xml-diff-patch-merge","worktree_path":"/private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/app","refs_verified":true},
+  "plan_approval":"auto",
+  "completion_promise":{"promised_outcome":"complete tested and committed etree API","required_proof":["go test ./...","git diff --check","branch commit"],"stop_condition":"tests green and commit created","max_iterations":8,"status":"blocked"},
+  "phase":"Verify","iteration":1,"unresolved_gates":["full-spec adversarial review","root patch transitions","move patch application","reverse element-add selector","merge descendant modify-delete","custom resolution application"],"regression_ledger":["module-mode full suite green","GO111MODULE=off full suite green","git diff --check green","gofmt -d clean"],"blockers":["implementation gaps found in root patching, move handling, reverse add selectors, and merge conflict/resolution semantics"],"last_proof_command":"GOCACHE=/tmp/sg-gocache go test ./...","next_action":"Builder fixes R-LOOP findings and verifier reruns exact commands",
+  "forced_reflection":{"required_when_iteration_cap_hit":true,"what_keeps_failing":"","likely_root_cause":"","unproven_requirement":"","regressed_previously_green":"","smallest_next_action":""},
+  "updated_at":"2026-07-14T13:49:06Z"
+}

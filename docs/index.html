@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>/supergoal - the smallest correct change, verified</title>
-<meta name="description" content="/supergoal is a baseline-first delivery skill: make the smallest correct change, compare request/docs with current behavior, run real tests, and escalate to critic/fixer only for under-specified work. English and Korean." />
+<meta name="description" content="/supergoal is a baseline-first delivery skill: make the smallest correct change, compare request/docs with current behavior, run real tests, and finalize behind a commit gate. English and Korean." />
 <meta property="og:title" content="/supergoal - the smallest correct change, verified" />
 <meta property="og:description" content="One objective in, a verified result out. Baseline-first: smallest change, request/docs check, edge pass, real tests, no generated proxy. English and Korean." />
 <meta property="og:type" content="website" />
@@ -911,8 +911,8 @@
       <h1><span>/</span>supergoal</h1>
       <p class="hero-sub en">The smallest correct change, verified.</p>
       <p class="hero-sub ko">필요한 만큼만 고치고, 실제 테스트와 요구사항으로 확인합니다.</p>
-      <p class="hero-copy en">Hand `/supergoal` one objective. It makes the smallest correct change, then distrusts visible green: compare the request/docs with current behavior, check edge paths, run the real tests, and escalate to Critic/Fixer only when hidden requirements are the risk.</p>
-      <p class="hero-copy ko">`/supergoal`에 목표 하나를 맡기세요. 필요한 만큼만 고친 뒤, 테스트 통과 표시만으로 끝내지 않습니다. 요청/문서와 현재 동작을 대조하고, 예외 경로를 확인한 다음 프로젝트 테스트를 다시 돌립니다. 숨은 요구사항 위험이 클 때만 Critic/Fixer로 확장합니다.</p>
+      <p class="hero-copy en">Hand `/supergoal` one objective. It makes the smallest correct change, then distrusts visible green: compare the request/docs with current behavior, check edge paths, run the real tests, and finalize only when every criterion is checked.</p>
+      <p class="hero-copy ko">`/supergoal`에 목표 하나를 맡기세요. 필요한 만큼만 고친 뒤, 테스트 통과 표시만으로 끝내지 않습니다. 요청/문서와 현재 동작을 대조하고, 예외 경로를 확인한 다음 프로젝트 테스트를 다시 돌립니다. 모든 기준이 확인될 때만 마무리합니다.</p>
       <div class="cta-row">
         <a class="btn primary" href="#install"><span class="en">Install</span><span class="ko">설치</span></a>
         <a class="btn" href="#workflow"><span class="en">The loop</span><span class="ko">루프</span></a>
@@ -931,13 +931,13 @@
 <pre class="en"><span class="c-cyan">/supergoal</span> add SSO to legacy app
 <span class="c-soft">mode</span> LEGACY
 <span class="c-green">build</span> minimal patch
-<span class="c-red">improve_spec</span> found 2 behavior gaps
+<span class="c-red">plan</span> framed 2 hidden criteria
 <span class="c-green">verify</span> real suite stable
 <span class="c-green">done</span> exit 0</pre>
 <pre class="ko"><span class="c-cyan">/supergoal</span> 레거시 앱에 SSO 추가
 <span class="c-soft">mode</span> LEGACY
 <span class="c-green">build</span> 필요한 만큼만 패치
-<span class="c-red">improve_spec</span> 동작 차이 2개 발견
+<span class="c-red">plan</span> 숨은 기준 2개 발굴
 <span class="c-green">verify</span> 프로젝트 테스트 안정 통과
 <span class="c-green">done</span> exit 0</pre>
       </div>
@@ -978,7 +978,7 @@
       </div>
       <div class="metric-grid">
         <div class="metric reveal"><strong>12</strong><span class="en">modes; the objective picks the lane.</span><span class="ko">개 모드. 목표에 맞춰 경로를 고릅니다.</span></div>
-        <div class="metric reveal"><strong>4</strong><span class="en">core fresh-context roles: Build, Improve spec, Improve edges, Final Verify.</span><span class="ko">핵심 역할 4개: Build, Improve spec, Improve edges, Final Verify.</span></div>
+        <div class="metric reveal"><strong>2</strong><span class="en">core fresh-context roles per iteration: Build, Verify.</span><span class="ko">반복마다 핵심 역할 2개: Build, Verify.</span></div>
         <div class="metric reveal"><strong>0</strong><span class="en">generated-proxy verifiers; only your real tests grade the work.</span><span class="ko">자체 생성 검증기를 쓰지 않습니다. 프로젝트 테스트로 결과를 판단합니다.</span></div>
         <div class="metric reveal"><strong>10</strong><span class="en">production-pilot rows planned: metrics only.</span><span class="ko">프로덕션 파일럿 10건: 날짜, 모드, 발견한 격차, 게이트 결과만 기록합니다.</span></div>
       </div>
@@ -1006,12 +1006,10 @@
       </div>
       <div class="route-map reveal" aria-label="Supergoal loop">
         <div class="route-step pass"><b>01 Frame</b><span>GOAL.md: request + criteria</span></div>
-        <div class="route-step pass"><b>02 Plan</b><span>PLAN.md frozen, user OK</span></div>
-        <div class="route-step pass"><b>03 Build</b><span>implementer reads PLAN.md</span></div>
-        <div class="route-step red"><b>04 Improve spec</b><span>docs vs behavior</span></div>
-        <div class="route-step red"><b>05 Improve edges</b><span>edge/error paths</span></div>
-        <div class="route-step pass"><b>06 Verify</b><span>tick GOAL.md; gaps -&gt; R-LOOP.md</span></div>
-        <div class="route-step pass"><b>07 Done</b><span>all boxes -&gt; Z-&lt;date&gt;.md</span></div>
+        <div class="route-step pass"><b>02 Plan approval</b><span>PLAN.md frozen, user OK</span></div>
+        <div class="route-step pass"><b>03 Build</b><span>one implementer reads PLAN.md</span></div>
+        <div class="route-step pass"><b>04 Verify</b><span>Exact Verify/QA; gaps -&gt; R-LOOP.md</span></div>
+        <div class="route-step pass"><b>05 Finalize</b><span>all boxes -&gt; Z-&lt;date&gt;.md, commit gate</span></div>
       </div>
     </div>
   </section>
@@ -1036,14 +1034,14 @@
           <h3><span class="en">Fix a hard failure.</span><span class="ko">까다로운 실패를 고칩니다.</span></h3>
           <p class="en">Reproduce with a failing test first, then make it pass with the smallest change.</p>
           <p class="ko">먼저 실패 테스트로 재현하고, 가장 작은 변경으로 통과시킵니다.</p>
-          <div class="mode-pipe">Frame -> <b>Reproduce</b> -> Build -> Improve -> Final Verify</div>
+          <div class="mode-pipe">Frame -> <b>Reproduce</b> -> Build -> Verify</div>
         </article>
         <article class="mode-card legacy reveal">
           <span class="mode-label">LEGACY</span>
           <h3><span class="en">Add to existing code.</span><span class="ko">기존 코드에 기능을 더합니다.</span></h3>
           <p class="en">Map the touched area, then make the smallest accurate edit.</p>
           <p class="ko">영향 범위를 파악한 뒤 가장 작고 정확하게 수정합니다.</p>
-          <div class="mode-pipe">Frame -> <b>Map</b> -> Build -> Improve -> Final Verify</div>
+          <div class="mode-pipe">Frame -> <b>Map</b> -> Build -> Verify</div>
         </article>
         <article class="mode-card wayfinder reveal">
           <span class="mode-label">WAYFINDER</span>
@@ -1122,7 +1120,7 @@
       <div class="gate-grid">
         <article class="gate-item reveal"><span class="gate-no">1</span><h3><span class="en">Verify against ground truth</span><span class="ko">테스트와 문서로 검증</span></h3><p class="en">Re-run the real tests; re-check the request, ticket, README, design/API docs, and repo rules for gaps they miss. Never optimize to a generated proxy.</p><p class="ko">프로젝트 테스트를 다시 돌리고, 테스트가 놓친 규칙은 요청, 티켓, README, 설계/API 문서, 저장소 규칙에서 다시 확인합니다. 스스로 만든 기준에 맞춰 결과를 꾸미지 않습니다.</p></article>
         <article class="gate-item reveal"><span class="gate-no">2</span><h3><span class="en">Smallest correct change</span><span class="ko">필요한 만큼만 변경</span></h3><p class="en">Match the surrounding code. No whole-file rewrite to change a few lines.</p><p class="ko">주변 코드 스타일을 따릅니다. 몇 줄 바꾸려고 파일 전체를 다시 쓰지 않습니다.</p></article>
-        <article class="gate-item reveal"><span class="gate-no">3</span><h3><span class="en">Escalate when hidden requirements matter</span><span class="ko">숨은 요구사항 위험이 클 때 확장</span></h3><p class="en">Critic/Fixer is available for under-specified work, but the default core is Build -> Improve spec -> Improve edges -> Final Verify.</p><p class="ko">Critic/Fixer는 요구사항이 덜 명시된 작업에서 쓰는 확장입니다. 기본 핵심은 Build -> Improve spec -> Improve edges -> Final Verify입니다.</p></article>
+        <article class="gate-item reveal"><span class="gate-no">3</span><h3><span class="en">Hidden requirements surface at plan time</span><span class="ko">숨은 요구사항은 Plan 단계에서 드러냅니다</span></h3><p class="en">Full-spec and edge cases are discovered at Frame/Plan, not in extra passes. The default core is Frame -> Plan approval -> Build -> Verify -> Finalize, one builder + one verifier per iteration.</p><p class="ko">전체 스펙과 엣지 케이스는 별도 패스가 아니라 Frame/Plan 단계에서 발굴합니다. 기본 핵심은 Frame -> Plan approval -> Build -> Verify -> Finalize이며, 반복마다 구현자 1 + 검증자 1만 실행합니다.</p></article>
         <article class="gate-item reveal"><span class="gate-no">4</span><h3><span class="en">Ask only when ambiguous</span><span class="ko">모호할 때만 질문</span></h3><p class="en">Resolve code-answerable questions by reading the code. Interrupt only for genuine forks.</p><p class="ko">코드로 답할 수 있는 것은 먼저 코드를 읽어 해결합니다. 진짜 선택지가 갈릴 때만 멈춥니다.</p></article>
         <article class="gate-item reveal"><span class="gate-no">5</span><h3><span class="en">Hard stops</span><span class="ko">멈춰야 할 곳에서 멈춤</span></h3><p class="en">Destructive or irreversible steps need consent. If the real tests can't pass, report it - never fake a pass.</p><p class="ko">파괴적이거나 되돌릴 수 없는 단계는 동의를 구합니다. 프로젝트 테스트가 통과하지 못하면 그대로 보고합니다.</p></article>
       </div>
@@ -1138,7 +1136,7 @@
         <div class="file-list">
           <div class="file-chip"><code>SKILL.md</code><span class="en">baseline-first loop, modes, map</span><span class="ko">핵심 루프, 모드, 레퍼런스 맵</span></div>
           <div class="file-chip"><code>agents/&lt;role&gt;.md</code><span class="en">one persona per role</span><span class="ko">역할별 지침 파일</span></div>
-          <div class="file-chip"><code>reference/role-loop.md</code><span class="en">Build -> Improve spec -> Improve edges -> Final Verify</span><span class="ko">Build -> Improve spec -> Improve edges -> Final Verify</span></div>
+          <div class="file-chip"><code>reference/role-loop.md</code><span class="en">Frame -> Plan approval -> Build -> Verify -> Finalize</span><span class="ko">Frame -> Plan approval -> Build -> Verify -> Finalize</span></div>
           <div class="file-chip"><code>templates/</code><span class="en">GOAL / PLAN / QA / R-LOOP / Z vault templates + commit gate</span><span class="ko">GOAL / PLAN / QA / R-LOOP / Z 볼트 템플릿 + 커밋 게이트</span></div>
           <div class="file-chip"><code>reference/domain-context.md</code><span class="en">surface hidden requirements</span><span class="ko">숨은 요구사항 찾기</span></div>
           <div class="file-chip"><code>reference/debugging.md</code><span class="en">reproduce-first diagnose loop</span><span class="ko">재현 우선 진단 루프</span></div>
@@ -1307,10 +1305,10 @@ node templates/skill-install-audit.mjs "$(pwd)/supergoal-skill"
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     var nodes = [
       { x: .12, y: .28, label: "Frame" },
-      { x: .31, y: .19, label: "Build" },
-      { x: .50, y: .37, label: "Verify" },
-      { x: .69, y: .22, label: "Escalate" },
-      { x: .88, y: .33, label: "Done" }
+      { x: .31, y: .19, label: "Plan" },
+      { x: .50, y: .37, label: "Build" },
+      { x: .69, y: .22, label: "Verify" },
+      { x: .88, y: .33, label: "Finalize" }
     ];
 
     function resize() {

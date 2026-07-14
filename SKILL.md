@@ -45,7 +45,7 @@ on assumption. Full contract: `reference/role-loop.md`.
 | learn / onboard / map this codebase (persist a wiki) | LEARN-DOMAIN | Survey -> Map -> Ground -> Onboard a `.domain-agent/` wiki (`reference/learn-domain.md`; gate `learn-grounding-gate.mjs`) |
 | QA / verify / 검증만 / compare data (no code) | QA-ONLY | Impact Matrix QA (`reference/qa-only.md`; gate `templates/qa-only-gate.sh`) |
 | review / audit this code/diff/PR (no fixes) | REVIEW-ONLY | `reference/review-only.md` |
-| improve the architecture / find refactoring opportunities / 구조 개선 | ARCHITECTURE | friction survey -> candidates -> grill the pick -> route to LEGACY/WAYFINDER (`reference/arch.md`) |
+| improve the architecture / find refactoring opportunities / 구조 개선 / draw · diagram · 그려 (arch·flow·sequence·state) | ARCHITECTURE | draw-only ask: render self-contained HTML via `reference/archify.md`, deliver the `.html`, stop. Else friction survey -> candidates -> grill the pick -> route to LEGACY/WAYFINDER (`reference/arch.md`) |
 | test harness/skill effectiveness / with vs without / does the skill help / measure skill lift | HARNESS-EVAL | `reference/harness-eval.md` |
 | turn repeated work into a reusable skill | SKILL-MINE | `reference/skill-mine.md` |
 

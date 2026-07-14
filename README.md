@@ -115,7 +115,7 @@ flowchart TD
 | "learn / map / onboard onto this codebase" | **LEARN-DOMAIN** | Survey -> Map -> Ground -> Persist a `.domain-agent/` wiki |
 | "QA only / verify / compare data - no code" | **QA-ONLY** | Detailed Impact Matrix (feature-impact QA map) + read-only DB -> evidence -> `report.md` |
 | "review / audit this code/diff/PR - no fixes" | **REVIEW-ONLY** | Two independent reviewers -> verified findings -> `report.md` |
-| "improve the architecture / find refactoring opportunities" | **ARCHITECTURE** | Friction survey -> candidates as a visual `report.html` -> grill the pick -> refactor routes to LEGACY/WAYFINDER |
+| "improve the architecture / find refactoring opportunities" or "draw / diagram / 그려" (arch, flow, sequence, state) | **ARCHITECTURE** | Draw-only ask: render a self-contained HTML diagram via archify and stop. Else friction survey -> candidates as a visual `report.html` -> grill the pick -> refactor routes to LEGACY/WAYFINDER |
 | "test harness effectiveness / with vs without" | **HARNESS-EVAL** | Cases -> baseline run -> harness run -> machine checks -> quality score -> compare |
 | "make a skill from history - no product code" | **SKILL-MINE** | Mine history -> rank -> you pick -> forge portable `SKILL.md` -> install |
 

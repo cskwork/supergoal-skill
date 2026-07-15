@@ -1,0 +1,44 @@
+{
+  "experiment": "regression-reconcile-ab",
+  "date": "2026-07-15T14:26:20.049Z",
+  "question": "Does diff-driven regression reconciliation reduce broken existing behavior?",
+  "arms": {
+    "old": {
+      "sha": "eb1b5c7c8dd37c8b3fcd4d6e008c699d72ee0cb4"
+    },
+    "new": {
+      "sha": "8c01712aedda44856d561441eba0e98a81a65415"
+    }
+  },
+  "cases": {
+    "004": {
+      "fixture": "sideeffect-004-shared-format",
+      "title": "Shared-helper change with unmentioned consumers (LEGACY side-effect, discriminator)"
+    }
+  },
+  "seeds_per_case_per_arm": 6,
+  "adapter": {
+    "chosen": "codex-exec",
+    "host_os": "darwin",
+    "preflights": {
+      "codex-exec": {
+        "available": true,
+        "ok": true,
+        "reason": "edit ok, tests pass"
+      }
+    },
+    "claude_model": "sonnet (adapter default)",
+    "codex_model": "gpt-5.5",
+    "codex_effort": "low"
+  },
+  "stop_policy": "per-pass timeout 720000ms, runner-default crash retries, no manual interruption; timeout/crash surviving retries = recorded loss; sandbox scored as-is",
+  "passes_per_unit": [
+    "build (consults arm's shipped SKILL.md/role-loop.md/qa.md)",
+    "verify (consults arm's shipped qa-auditor.md/qa.md/role-loop.md Verify)"
+  ],
+  "role_fidelity": "prompts point at the per-arm shipped skill files via --add-dir; no paraphrased role text",
+  "known_limits": [
+    "nested CLI loads the user's global CLAUDE.md; identical in both arms",
+    "installed skills are listed in the child's system prompt but the Skill tool is not in --allowedTools; both arms instructed to use only the ref copy"
+  ]
+}

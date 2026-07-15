@@ -1,0 +1,82 @@
+[
+  {
+    "caseKey": "002",
+    "arm": "old",
+    "seed": 0,
+    "crashed": false,
+    "crash_reasons": [],
+    "granular": [
+      {
+        "name": "loads then caches; a second sequential get does not reload",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "clear() drops cached values",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "distinct keys load independently",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "concurrent gets for the same key call loader exactly once",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "repeated concurrent bursts each load once on a fresh cache",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "different keys load concurrently, not serialized",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "a failing loader is not cached and the next call retries",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "all concurrent callers reject when the shared in-flight load fails",
+        "kind": "hidden",
+        "status": "pass"
+      }
+    ],
+    "visible_fraction": 1,
+    "hidden_fraction": 1,
+    "all_pass": true,
+    "false_green": false,
+    "cost_usd": 2.0254000000000003,
+    "tokens": 36528,
+    "turns": 29,
+    "duration_ms": 310846,
+    "passes": [
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 1.193,
+        "tokens": 15709,
+        "turns": 17,
+        "duration_ms": 134012,
+        "retries": 0
+      },
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0.8324,
+        "tokens": 20819,
+        "turns": 12,
+        "duration_ms": 175888,
+        "retries": 0
+      }
+    ],
+    "src_snapshot": "// AsyncCache memoizes async loader results by key.\nexport class AsyncCache {\n  constructor() {\n    this.values = new Map();\n    this.inflight = new Map();\n  }\n\n  // Returns the cached value for key, or loads + caches it via loader(key).\n  // Concurrent calls for the same key share one in-flight loader call.\n  async get(key, loader) {\n    if (this.values.has(key)) {\n      return this.values.get(key);\n    }\n    if (this.inflight.has(key)) {\n      return this.inflight.get(key);\n    }\n    const promise = (async () => {\n      try {\n        const value = await loader(key);\n        this.values.set(key, value);\n        return value;\n      } finally {\n        this.inflight.delete(key);\n      }\n    })();\n    this.inflight.set(key, promise);\n    return promise;\n  }\n\n  has(key) {\n    return this.values.has(key);\n  }\n\n  clear() {\n    this.values.clear();\n  }\n}\n"
+  }
+]

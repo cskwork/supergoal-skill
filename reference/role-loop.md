@@ -140,10 +140,6 @@ requires `qa-tester` evidence before the auditor; the conditional plan attack be
      `## Decision Gates` (resolved). Add or adjust tests only for grounded `must` behavior.
    - **Green exit** - run the local suite and return only on a green suite; the app is left fully
      functional. Keep the diff minimal; no padding, rewrites, or unrelated cleanup.
-   - **Scope extension** - when the builder reports `scope-extension: <file:symbol>` (the smallest
-     correct change reached past the plan's blast-radius map), the conductor captures consumer coverage
-     for the new area (`reference/qa.md` "Characterization baseline") before Verify; a module/service
-     boundary crossing re-fires the blast-radius confirm (`reference/interview.md`).
 
 2. **Exact Verify/QA vs ground truth (mandatory core; Final Verify/QA)** (`agents/qa-auditor.md` is
    always the final verifier; `agents/qa-tester.md` supplies browser/CLI execution evidence first;
@@ -182,13 +178,6 @@ requires `qa-tester` evidence before the auditor; the conditional plan attack be
    - Re-run every captured neighbor characterization baseline; unnamed drift is red. API refactor:
      re-capture the same call and diff against the pre-refactor baseline; unintended drift is a red to
      resolve.
-   - **Diff reconciliation** - the FINAL diff, not the plan, is the regression surface: enumerate the
-     modified symbols from the current diff; each must carry consumer coverage - a re-run REAL test, a
-     captured baseline, or a named residual-risk line. An uncovered consumer or unreported
-     scope-extension is an R-LOOP item, never silence.
-   - **Test-scope floor** - re-run at minimum the test scope owning each modified file plus every
-     `regression_ledger` baseline; running narrower than the floor must be named with its reason in
-     `QA.md`.
    - Close `GOAL.md`: every Success Criterion checkbox is ticked with a verifying check, and
      `Backward-trace: clean` in `QA.md` proves no diff hunk is orphan scope.
    - Exact Verify for neighbor baselines and trace closure is fresh-context: self-review is not a

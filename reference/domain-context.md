@@ -52,8 +52,8 @@ Use these folder/file names even when the user chooses a different root path:
   not every ticket.
 - `qa/*.md` - Reusable QA suites from QA-ONLY runs (`reference/qa-only.md`): Impact Matrix, scenario
   list, `Comparison:` type, named DB checks, saved baseline values, reproduction notes, coverage,
-  uncovered areas, residual risks, and the re-run command / Playwright spec path; indexed in
-  `index.md` under `## QA Suites`. No secrets, raw rows, or PII.
+  uncovered areas, residual risks, and driver-neutral re-run steps; Playwright spec paths only for
+  documented fallback runs. Indexed in `index.md` under `## QA Suites`. No secrets, raw rows, or PII.
 - `qa/nav-map.md` - one browser navigation map: entry/auth, `screen -> URL`, popup/new-tab handling,
   stable selectors, real API calls. Load before browser QA/observe and self-heal on drift
   (`reference/qa.md` "Navigation map"). No secrets, raw rows, or PII.

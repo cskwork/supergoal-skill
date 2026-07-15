@@ -25,7 +25,7 @@ dated `## Amendment`.
 
 ## Tools & Skills
 
-- <test command(s), dev server, playwright-cli, db client, skills the implementer should load>
+- <test command(s), dev server, agent-browser, fallback driver, db client, skills to load>
 
 ## Verification strategy
 

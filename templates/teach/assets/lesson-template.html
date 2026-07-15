@@ -72,6 +72,18 @@
       </div>
     </section>
 
+    <!-- Archify is the default for structure/flow/state visuals. Render the JSON + HTML into
+         teach/<topic>/diagrams/ first. Remove this page only when the lesson is purely definitional
+         or syntactic and record the reason in NOTES.md. -->
+    <section id="diagram" data-title="한눈에 보기">
+      <div class="page-inner diagram-page">
+        <h2>Archify로 한눈에 보기</h2>
+        <iframe class="archify-frame" src="../diagrams/{{NNNN-SLUG}}.html"
+                title="{{LESSON TITLE}} 관계와 흐름 다이어그램" loading="lazy"></iframe>
+        <p><a href="../diagrams/{{NNNN-SLUG}}.html" target="_blank" rel="noopener">전체 다이어그램에서 보기</a></p>
+      </div>
+    </section>
+
     <section id="play" data-title="직접 돌려보기">
       <div class="page-inner">
         <h2>직접 돌려보기</h2>

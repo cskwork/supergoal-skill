@@ -12,6 +12,9 @@ no-CDN/no-network rule for run-vault and knowledge-pack artifacts.
 - LEARN-DOMAIN Onboard: the architecture overview and top key-flow diagrams next to `onboarding.html`
   (`reference/learn-domain.md`).
 - Direct "draw / diagram / 그려" ask (ARCHITECTURE draw-only branch): pick a type, render, deliver the `.html` (+ JSON IR) as the artifact; no survey.
+- TEACH lesson: the default visual for system structure, workflow, call sequence, data movement, or
+  lifecycle teaching; keep its JSON + HTML under `teach/<topic>/diagrams/` and embed/link it from the
+  lesson (`reference/teach.md`).
 - Any phase that must show structure or flow to a human: pick a type below instead of hand-writing SVG.
 
 | Type | Use for |
@@ -46,7 +49,7 @@ knowledge path).
 ## Embedding
 
 - Diagram HTML files are self-contained: put them in a `diagrams/` dir beside the host document and link
-  them from `report.html` / `onboarding.html`.
+  them from `report.html`, `onboarding.html`, or a TEACH lesson.
 - When the host document must stay single-file (LEARN-DOMAIN handbook), extract the `<svg>...</svg>`
   element from the rendered HTML and inline it (static snapshot); the sibling HTML stays the interactive
   copy.

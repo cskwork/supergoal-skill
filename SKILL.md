@@ -1,6 +1,6 @@
 ---
 name: supergoal
-description: Use for "fix this bug", "add/build/plan/spec this feature", "prototype this", "QA / verify", "code review", "improve architecture", "learn codebase", "make skill", or "eval a harness".
+description: Use for "fix this bug", "add/build/plan/spec this feature", "prototype this", "QA / verify", "code review", "improve architecture", "teach/explain", "learn codebase", "make skill", or "eval a harness".
 ---
 
 # About
@@ -42,7 +42,7 @@ on assumption. Full contract: `reference/role-loop.md`.
 | add / integrate / refactor existing code | LEGACY | default loop; map first (`agents/explore.md`, `reference/domain-context.md`); optional DB evidence (`reference/db-access.md`); existing API: capture its exact behavior first as a preserve-baseline; shared code/state changes: characterization baseline (`reference/qa.md`) |
 | spec / requirements first / break down / tickets / roadmap / big vague effort / frontier / what should we do first | WAYFINDER | map the destination, optional ticket-depth requirements, ticket graph, blockers, and next frontier; no product code by default (`reference/wayfinder.md`) |
 | prototype / spike / try variants / prove approach before build | PROTOTYPE | throwaway proof that answers one question, then delete/quarantine or route to delivery (`reference/prototype.md`) |
-| explain / teach / how does X work (no code) | TEACH | stateful `teach/<topic>/` workspace (`reference/teach.md`); lessons must pass `node templates/teach-lesson-gate.mjs` |
+| explain / teach / how does X work (no code) | TEACH | stateful `teach/<topic>/` workspace (`reference/teach.md`); use an Archify diagram by default for structure/flow; lessons must pass `node templates/teach-lesson-gate.mjs` |
 | learn / onboard / map this codebase (persist a wiki) | LEARN-DOMAIN | Survey -> Map -> Ground -> Onboard a `.domain-agent/` wiki (`reference/learn-domain.md`; gate `learn-grounding-gate.mjs`) |
 | QA / verify / 검증만 / compare data (no code) | QA-ONLY | Impact Matrix QA (`reference/qa-only.md`; gate `templates/qa-only-gate.sh`) |
 | review / audit this code/diff/PR (no fixes) | REVIEW-ONLY | `reference/review-only.md` |
@@ -105,7 +105,7 @@ reviewer=`agents/code-reviewer.md`, security=`agents/security-reviewer.md` (othe
 | `reference/qa.md`, `qa-only.md`, `playwright-cli.md` | QA / no-code verify; single browser driver = playwright-cli |
 | `reference/review-only.md` | REVIEW-ONLY: findings, no fixes |
 | `reference/arch.md` | ARCHITECTURE: friction survey -> route out |
-| `reference/archify.md`, `templates/archify/` | diagrams as self-contained HTML (typed JSON IR -> validated render): ARCHITECTURE report system diagram, LEARN-DOMAIN onboard architecture/flow diagrams |
+| `reference/archify.md`, `templates/archify/` | diagrams as self-contained HTML (typed JSON IR -> validated render): ARCHITECTURE reports, TEACH lessons, and LEARN-DOMAIN onboarding |
 | `reference/teach.md`, `learn-domain.md` | teach a human / onboard the agent |
 | `reference/ui-ux.md`, `taste-skill-v2.md`, `functional-ui.md`, `taste-aesthetics.md`, `engagement.md` | user-facing UI tier |
 | `reference/harness-eval.md`, `templates/harness-eval-runner.mjs`, `templates/harness-eval-external/deepswe/run-default-suite.mjs` | HARNESS-EVAL; the runner is the DEFAULT portable eval driver (adapters + preflight + fallback + retry, serial by default). Difficult SWE/harness-effectiveness claims default to the forced five-task DeepSWE suite (measured-difficult tasks) - use it, don't hand-roll a single-CLI run.mjs |

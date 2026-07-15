@@ -110,7 +110,7 @@ flowchart TD
 | "기존/레거시 코드에 X를 추가한다" | **LEGACY** | 기본 루프; 코드 구조부터 파악 |
 | "스펙 문서부터 구조화해줘 / 티켓으로 쪼개줘 / 로드맵 / 뭐부터 하지?" | **WAYFINDER** | 실행 vault의 `wayfinder/` 폴더에 지도를 만들고, 필요할 때만 티켓 안에 glossary, user story, EARS checks, design notes, tasks를 추가, 외부 사실 확인이 필요하면 `reference/research.md`로 인용된 research asset을 남김 -> 세로 슬라이스 티켓 -> blocker edge -> 다음 frontier; 티켓 하나만 delivery로 넘기고 멈춘 뒤 context clear + integration test를 요청 |
 | "prototype / spike / variant를 먼저 보자" | **PROTOTYPE** | 질문 하나에 답하는 throwaway proof를 만듦. UI/interaction prototype은 SuperDesign을 로드해 디자인·렌더 검증을 적용하고, 이후 삭제/격리하거나 결정만 delivery로 넘김 |
-| "X를 설명/가르쳐줘" (코드 변경 없음) | **TEACH** | Mission -> Source -> Bridge -> Teach -> Check |
+| "X를 설명/가르쳐줘" (코드 변경 없음) | **TEACH** | Mission -> Source -> Bridge -> Teach (관계가 중요하면 Archify) -> Check |
 | "이 코드베이스를 학습/온보딩해줘" | **LEARN-DOMAIN** | Survey -> Map -> Ground -> `.domain-agent/` 위키 |
 | "QA만/검증/데이터 비교" (코드 변경 없음) | **QA-ONLY** | 상세 Impact Matrix(기능 영향 범위 QA 지도) + 읽기 전용 DB -> 증거 -> `report.md` |
 | "코드/diff/PR 리뷰만" (수정 없음) | **REVIEW-ONLY** | 독립 리뷰어 2명 -> 검증된 findings -> `report.md` |

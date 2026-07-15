@@ -79,6 +79,22 @@ assert_text_ci_normalized "learn computes zone of proximal development" "referen
 assert_text_ci_normalized "learn makes the HTML lesson the primary unit" "reference/teach.md" "primary teaching unit"
 assert_text_ci_normalized "learn keeps ADR-style learning records" "reference/teach.md" "learning-records/"
 
+# --- Archify is the default teaching diagram system when relationships matter ---
+assert_text_ci_normalized "skill metadata triggers for teaching" "SKILL.md" '"teach/explain"'
+assert_text_ci_normalized "skill router defaults TEACH diagrams to Archify" "SKILL.md" "Archify diagram by default"
+assert_text_ci_normalized "teach defaults relationship diagrams to Archify" "reference/teach.md" "Archify is the default diagram system"
+assert_text_ci_normalized "teach keeps diagrams conditional on explanatory value" "reference/teach.md" "when a lesson teaches relationships or ordered change"
+assert_text_ci_normalized "teach keeps diagram source beside the lesson" "reference/teach.md" "teach/<topic>/diagrams/"
+assert_text_ci_normalized "teach diagrams do not replace the required quiz" "reference/teach.md" "does not replace the required quiz"
+assert_text_ci_normalized "archify reference routes TEACH lessons" "reference/archify.md" "TEACH lesson"
+assert_text_ci_normalized "teach README explains the Archify diagram path" "templates/teach/README.md" "teach/<topic>/diagrams/"
+assert_text_ci_normalized "lesson template embeds an Archify diagram" "templates/teach/assets/lesson-template.html" 'class="archify-frame"'
+assert_text_ci_normalized "lesson template points to the topic diagram" "templates/teach/assets/lesson-template.html" 'src="../diagrams/'
+assert_text_ci_normalized "lesson template titles the diagram iframe" "templates/teach/assets/lesson-template.html" 'title="{{LESSON TITLE}}'
+assert_text_ci_normalized "lesson stylesheet sizes Archify embeds" "templates/teach/assets/lesson.css" ".archify-frame"
+assert_text_ci_normalized "English README makes TEACH Archify conditional" "README.md" "Archify when relationships matter"
+assert_text_ci_normalized "Korean README makes TEACH Archify conditional" "README.ko.md" "관계가 중요하면 Archify"
+
 # --- workspace format guides must ship ---
 assert_file "mission format guide exists" "teach/MISSION-FORMAT.md"
 assert_file "resources format guide exists" "teach/RESOURCES-FORMAT.md"

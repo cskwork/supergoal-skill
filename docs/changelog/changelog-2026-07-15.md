@@ -103,3 +103,28 @@ tester -> auditor, while non-browser work runs auditor alone. QA-ONLY follows th
   the auditor verifies real output after Build.
 - Synchronized: personas, default loop, QA-ONLY, browser/DB references, both READMEs, landing page, and
   positive/negative contract tests.
+
+## Diff-driven regression reconciliation for complex tasks
+
+**Change**: regression checks now anchor on the FINAL diff instead of the plan-time prediction.
+Four sentence-level edits, no new roles or gates: (1) `reference/qa.md` characterization baselines are
+derived by enumerating each modified symbol's direct consumers (callers, importers, shared-state
+readers, contract consumers) and covering every one with a baseline, a named REAL test, or a named
+residual risk — silence is red; (2) `agents/executor.md` reports `scope-extension: <file:symbol>` when
+the smallest correct change reaches past the plan's blast-radius map, and the conductor captures
+coverage for the new area before Verify (module boundary crossing re-fires the blast-radius confirm);
+(3) `agents/qa-auditor.md` + role-loop Verify reconcile the final diff: every modified symbol needs a
+consumer-coverage story, uncovered = R-LOOP item; (4) a test-scope floor — at minimum the test scope
+owning each modified file plus every `regression_ledger` baseline; narrower runs must be named.
+
+- Why: on complex tasks the diff grows past the Frame-time prediction through R-LOOP iterations, and
+  every existing device (baselines, ledger, Backward-trace) keyed off the prediction. Side effects came
+  exactly from the unpredicted hunks nobody had eyes on. The fix closes the predicted-vs-actual loop at
+  the three points where drift happens: selection (enumerate, don't pick), build (report extension),
+  verify (reconcile the diff).
+- Rejected: a standalone regression-review pass or impact-analysis agent — 2026-07-14 evals showed
+  ceremony passes get rejected and never beat the lean loop; these are rule edits inside existing roles.
+- Rejected: mandating the QA-ONLY Impact Matrix for all code runs — too heavy for the lean default;
+  the matrix stays opt-in for high-blast-radius changes.
+- Verified: `tests/run-all.sh` green; 11 new contract greps in `tests/role-loop-contract.test.sh`
+  (154 passed) lock the phrases.

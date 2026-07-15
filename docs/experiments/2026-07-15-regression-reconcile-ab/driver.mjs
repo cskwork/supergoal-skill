@@ -36,20 +36,6 @@ const OLD_SHA = process.env.SG_AB_OLD || "eb1b5c7";
 const NEW_SHA = process.env.SG_AB_NEW || "HEAD";
 
 const CASES = {
-  "004": {
-    fixture: "sideeffect-004-shared-format",
-    source: "src/invoice.mjs",
-    visible: "test/invoice.visible.test.mjs",
-    hidden: "test/neighbors.hidden.test.mjs",
-    title: "Shared-helper change with unmentioned consumers (LEGACY side-effect, discriminator)",
-    task: [
-      "The finance team wants invoice amounts shown in currency style.",
-      "Update the invoice rendering in src/invoice.mjs so every amount renders like",
-      "$1,234.50 - a leading dollar sign, comma thousands separators, and exactly two",
-      "decimals (test/invoice.visible.test.mjs encodes the expected format).",
-      "Keep the change minimal and dependency-free.",
-    ].join("\n"),
-  },
   "002": {
     fixture: "revfactory-case-002-async-race",
     source: "src/cache.mjs",

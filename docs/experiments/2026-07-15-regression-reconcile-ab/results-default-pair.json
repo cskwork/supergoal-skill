@@ -1,0 +1,1142 @@
+[
+  {
+    "caseKey": "002",
+    "arm": "old",
+    "seed": 0,
+    "crashed": false,
+    "crash_reasons": [],
+    "granular": [
+      {
+        "name": "loads then caches; a second sequential get does not reload",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "clear() drops cached values",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "distinct keys load independently",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "concurrent gets for the same key call loader exactly once",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "repeated concurrent bursts each load once on a fresh cache",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "different keys load concurrently, not serialized",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "a failing loader is not cached and the next call retries",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "all concurrent callers reject when the shared in-flight load fails",
+        "kind": "hidden",
+        "status": "pass"
+      }
+    ],
+    "visible_fraction": 1,
+    "hidden_fraction": 1,
+    "all_pass": true,
+    "false_green": false,
+    "cost_usd": 0,
+    "tokens": 810612,
+    "turns": 2,
+    "duration_ms": 154525,
+    "passes": [
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 336116,
+        "turns": 1,
+        "duration_ms": 74314,
+        "retries": 0
+      },
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 474496,
+        "turns": 1,
+        "duration_ms": 79290,
+        "retries": 0
+      }
+    ],
+    "src_snapshot": "// AsyncCache memoizes async loader results by key.\nexport class AsyncCache {\n  constructor() {\n    this.values = new Map();\n    this.inflight = new Map();\n  }\n\n  // Returns the cached value for key, or loads + caches it via loader(key).\n  async get(key, loader) {\n    if (this.values.has(key)) {\n      return this.values.get(key);\n    }\n    if (!this.inflight.has(key)) {\n      const load = Promise.resolve()\n        .then(() => loader(key))\n        .then((value) => {\n          this.values.set(key, value);\n          return value;\n        })\n        .finally(() => {\n          this.inflight.delete(key);\n        });\n      this.inflight.set(key, load);\n    }\n    return this.inflight.get(key);\n  }\n\n  has(key) {\n    return this.values.has(key);\n  }\n\n  clear() {\n    this.values.clear();\n    this.inflight.clear();\n  }\n}\n"
+  },
+  {
+    "caseKey": "002",
+    "arm": "new",
+    "seed": 0,
+    "crashed": false,
+    "crash_reasons": [],
+    "granular": [
+      {
+        "name": "loads then caches; a second sequential get does not reload",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "clear() drops cached values",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "distinct keys load independently",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "concurrent gets for the same key call loader exactly once",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "repeated concurrent bursts each load once on a fresh cache",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "different keys load concurrently, not serialized",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "a failing loader is not cached and the next call retries",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "all concurrent callers reject when the shared in-flight load fails",
+        "kind": "hidden",
+        "status": "pass"
+      }
+    ],
+    "visible_fraction": 1,
+    "hidden_fraction": 1,
+    "all_pass": true,
+    "false_green": false,
+    "cost_usd": 0,
+    "tokens": 814291,
+    "turns": 2,
+    "duration_ms": 161479,
+    "passes": [
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 464844,
+        "turns": 1,
+        "duration_ms": 77895,
+        "retries": 0
+      },
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 349447,
+        "turns": 1,
+        "duration_ms": 82545,
+        "retries": 0
+      }
+    ],
+    "src_snapshot": "// AsyncCache memoizes async loader results by key.\nexport class AsyncCache {\n  constructor() {\n    this.values = new Map();\n    this.inFlight = new Map();\n  }\n\n  // Returns the cached value for key, or loads + caches it via loader(key).\n  async get(key, loader) {\n    if (this.values.has(key)) {\n      return this.values.get(key);\n    }\n    if (this.inFlight.has(key)) {\n      return this.inFlight.get(key);\n    }\n\n    let resolveLoad;\n    let rejectLoad;\n    const load = new Promise((resolve, reject) => {\n      resolveLoad = resolve;\n      rejectLoad = reject;\n    });\n    this.inFlight.set(key, load);\n\n    try {\n      Promise.resolve(loader(key)).then(resolveLoad, rejectLoad);\n    } catch (error) {\n      rejectLoad(error);\n    }\n\n    load.then(\n      (value) => {\n        this.values.set(key, value);\n        this.inFlight.delete(key);\n      },\n      () => {\n        this.inFlight.delete(key);\n      },\n    );\n    return load;\n  }\n\n  has(key) {\n    return this.values.has(key);\n  }\n\n  clear() {\n    this.values.clear();\n    this.inFlight.clear();\n  }\n}\n"
+  },
+  {
+    "caseKey": "002",
+    "arm": "old",
+    "seed": 1,
+    "crashed": false,
+    "crash_reasons": [],
+    "granular": [
+      {
+        "name": "loads then caches; a second sequential get does not reload",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "clear() drops cached values",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "distinct keys load independently",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "concurrent gets for the same key call loader exactly once",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "repeated concurrent bursts each load once on a fresh cache",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "different keys load concurrently, not serialized",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "a failing loader is not cached and the next call retries",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "all concurrent callers reject when the shared in-flight load fails",
+        "kind": "hidden",
+        "status": "pass"
+      }
+    ],
+    "visible_fraction": 1,
+    "hidden_fraction": 1,
+    "all_pass": true,
+    "false_green": false,
+    "cost_usd": 0,
+    "tokens": 846173,
+    "turns": 2,
+    "duration_ms": 138919,
+    "passes": [
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 677309,
+        "turns": 1,
+        "duration_ms": 90980,
+        "retries": 0
+      },
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 168864,
+        "turns": 1,
+        "duration_ms": 46941,
+        "retries": 0
+      }
+    ],
+    "src_snapshot": "// AsyncCache memoizes async loader results by key.\nexport class AsyncCache {\n  constructor() {\n    this.values = new Map();\n    this.inFlight = new Map();\n  }\n\n  // Returns the cached value for key, or loads + caches it via loader(key).\n  async get(key, loader) {\n    if (this.values.has(key)) {\n      return this.values.get(key);\n    }\n    if (this.inFlight.has(key)) {\n      return this.inFlight.get(key);\n    }\n\n    const load = (async () => loader(key))();\n    this.inFlight.set(key, load);\n\n    try {\n      const value = await load;\n      if (this.inFlight.get(key) === load) {\n        this.values.set(key, value);\n        this.inFlight.delete(key);\n      }\n      return value;\n    } catch (error) {\n      if (this.inFlight.get(key) === load) {\n        this.inFlight.delete(key);\n      }\n      throw error;\n    }\n  }\n\n  has(key) {\n    return this.values.has(key);\n  }\n\n  clear() {\n    this.values.clear();\n    this.inFlight.clear();\n  }\n}\n"
+  },
+  {
+    "caseKey": "002",
+    "arm": "new",
+    "seed": 1,
+    "crashed": false,
+    "crash_reasons": [],
+    "granular": [
+      {
+        "name": "loads then caches; a second sequential get does not reload",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "clear() drops cached values",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "distinct keys load independently",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "concurrent gets for the same key call loader exactly once",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "repeated concurrent bursts each load once on a fresh cache",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "different keys load concurrently, not serialized",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "a failing loader is not cached and the next call retries",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "all concurrent callers reject when the shared in-flight load fails",
+        "kind": "hidden",
+        "status": "pass"
+      }
+    ],
+    "visible_fraction": 1,
+    "hidden_fraction": 1,
+    "all_pass": true,
+    "false_green": false,
+    "cost_usd": 0,
+    "tokens": 916868,
+    "turns": 2,
+    "duration_ms": 172393,
+    "passes": [
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 548756,
+        "turns": 1,
+        "duration_ms": 85965,
+        "retries": 0
+      },
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 368112,
+        "turns": 1,
+        "duration_ms": 85293,
+        "retries": 0
+      }
+    ],
+    "src_snapshot": "// AsyncCache memoizes async loader results by key.\nexport class AsyncCache {\n  constructor() {\n    this.values = new Map();\n    this.inFlight = new Map();\n  }\n\n  // Returns the cached value for key, or loads + caches it via loader(key).\n  async get(key, loader) {\n    if (this.values.has(key)) {\n      return this.values.get(key);\n    }\n    if (!this.inFlight.has(key)) {\n      const load = Promise.resolve()\n        .then(() => loader(key))\n        .then((value) => {\n          if (this.inFlight.get(key) === load) {\n            this.values.set(key, value);\n          }\n          return value;\n        })\n        .finally(() => {\n          if (this.inFlight.get(key) === load) {\n            this.inFlight.delete(key);\n          }\n        });\n      this.inFlight.set(key, load);\n    }\n    return this.inFlight.get(key);\n  }\n\n  has(key) {\n    return this.values.has(key);\n  }\n\n  clear() {\n    this.values.clear();\n    this.inFlight.clear();\n  }\n}\n"
+  },
+  {
+    "caseKey": "002",
+    "arm": "old",
+    "seed": 2,
+    "crashed": false,
+    "crash_reasons": [],
+    "granular": [
+      {
+        "name": "loads then caches; a second sequential get does not reload",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "clear() drops cached values",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "distinct keys load independently",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "concurrent gets for the same key call loader exactly once",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "repeated concurrent bursts each load once on a fresh cache",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "different keys load concurrently, not serialized",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "a failing loader is not cached and the next call retries",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "all concurrent callers reject when the shared in-flight load fails",
+        "kind": "hidden",
+        "status": "pass"
+      }
+    ],
+    "visible_fraction": 1,
+    "hidden_fraction": 1,
+    "all_pass": true,
+    "false_green": false,
+    "cost_usd": 0,
+    "tokens": 632334,
+    "turns": 2,
+    "duration_ms": 125024,
+    "passes": [
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 295862,
+        "turns": 1,
+        "duration_ms": 71501,
+        "retries": 0
+      },
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 336472,
+        "turns": 1,
+        "duration_ms": 52578,
+        "retries": 0
+      }
+    ],
+    "src_snapshot": "// AsyncCache memoizes async loader results by key.\nexport class AsyncCache {\n  constructor() {\n    this.values = new Map();\n    this.inFlight = new Map();\n  }\n\n  // Returns the cached value for key, or loads + caches it via loader(key).\n  async get(key, loader) {\n    if (this.values.has(key)) {\n      return this.values.get(key);\n    }\n    if (this.inFlight.has(key)) {\n      return this.inFlight.get(key);\n    }\n\n    const load = Promise.resolve()\n      .then(() => loader(key))\n      .then((value) => {\n        this.values.set(key, value);\n        return value;\n      })\n      .finally(() => {\n        this.inFlight.delete(key);\n      });\n\n    this.inFlight.set(key, load);\n    return load;\n  }\n\n  has(key) {\n    return this.values.has(key);\n  }\n\n  clear() {\n    this.values.clear();\n  }\n}\n"
+  },
+  {
+    "caseKey": "002",
+    "arm": "new",
+    "seed": 2,
+    "crashed": false,
+    "crash_reasons": [],
+    "granular": [
+      {
+        "name": "loads then caches; a second sequential get does not reload",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "clear() drops cached values",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "distinct keys load independently",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "concurrent gets for the same key call loader exactly once",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "repeated concurrent bursts each load once on a fresh cache",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "different keys load concurrently, not serialized",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "a failing loader is not cached and the next call retries",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "all concurrent callers reject when the shared in-flight load fails",
+        "kind": "hidden",
+        "status": "pass"
+      }
+    ],
+    "visible_fraction": 1,
+    "hidden_fraction": 1,
+    "all_pass": true,
+    "false_green": false,
+    "cost_usd": 0,
+    "tokens": 1002352,
+    "turns": 2,
+    "duration_ms": 170939,
+    "passes": [
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 418903,
+        "turns": 1,
+        "duration_ms": 79754,
+        "retries": 0
+      },
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 583449,
+        "turns": 1,
+        "duration_ms": 90298,
+        "retries": 0
+      }
+    ],
+    "src_snapshot": "// AsyncCache memoizes async loader results by key.\nexport class AsyncCache {\n  constructor() {\n    this.values = new Map();\n    this.pending = new Map();\n  }\n\n  // Returns the cached value for key, or loads + caches it via loader(key).\n  async get(key, loader) {\n    if (this.values.has(key)) {\n      return this.values.get(key);\n    }\n    if (!this.pending.has(key)) {\n      const load = Promise.resolve(loader(key))\n        .then((value) => {\n          if (this.pending.get(key) === load) {\n            this.values.set(key, value);\n          }\n          return value;\n        })\n        .finally(() => {\n          if (this.pending.get(key) === load) {\n            this.pending.delete(key);\n          }\n        });\n      this.pending.set(key, load);\n    }\n    return this.pending.get(key);\n  }\n\n  has(key) {\n    return this.values.has(key);\n  }\n\n  clear() {\n    this.values.clear();\n    this.pending.clear();\n  }\n}\n"
+  },
+  {
+    "caseKey": "003",
+    "arm": "old",
+    "seed": 0,
+    "crashed": false,
+    "crash_reasons": [],
+    "granular": [
+      {
+        "name": "basic US order with no coupon",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "SAVE10 coupon applies 10%",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "HALF coupon for VIP applies 50%",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "EU tax rate is 20%",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "empty order still charges base shipping",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "SAVE20 over threshold applies 20%",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "SAVE20 under threshold falls back to 10%",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "HALF coupon is ignored for non-VIP",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "VIP floor gives 5% when no coupon",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "VIP floor never reduces a larger coupon discount",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "express fee is additive on free-shipping tier",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "express fee is additive on the lowest shipping tier",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "unknown region uses the 10% default tax",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "cent rounding on fractional line totals",
+        "kind": "hidden",
+        "status": "pass"
+      }
+    ],
+    "visible_fraction": 1,
+    "hidden_fraction": 1,
+    "all_pass": true,
+    "false_green": false,
+    "cost_usd": 0,
+    "tokens": 545454,
+    "turns": 2,
+    "duration_ms": 140262,
+    "passes": [
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 217705,
+        "turns": 1,
+        "duration_ms": 56662,
+        "retries": 0
+      },
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 327749,
+        "turns": 1,
+        "duration_ms": 82243,
+        "retries": 0
+      }
+    ],
+    "src_snapshot": "function roundToCents(value) {\n  return Math.round(value * 100) / 100;\n}\n\nfunction calculateSubtotal(items) {\n  let subtotal = 0;\n  for (let i = 0; i < items.length; i++) {\n    subtotal += items[i].price * items[i].qty;\n  }\n  return subtotal;\n}\n\nfunction calculateDiscount(order, subtotal) {\n  let discount = 0;\n  if (order.coupon) {\n    if (order.coupon === 'SAVE10') {\n      discount = subtotal * 0.1;\n    } else if (order.coupon === 'SAVE20') {\n      if (subtotal >= 100) {\n        discount = subtotal * 0.2;\n      } else {\n        discount = subtotal * 0.1;\n      }\n    } else if (order.coupon === 'HALF' && order.vip) {\n      discount = subtotal * 0.5;\n    }\n  }\n  if (order.vip && discount < subtotal * 0.05) {\n    discount = subtotal * 0.05;\n  }\n  return discount;\n}\n\nfunction calculateTax(region, taxed) {\n  let tax = 0;\n  if (region === 'US') {\n    tax = taxed * 0.07;\n  } else if (region === 'EU') {\n    tax = taxed * 0.2;\n  } else {\n    tax = taxed * 0.1;\n  }\n  return tax;\n}\n\nfunction calculateShipping(order, taxed) {\n  let shipping = 0;\n  if (taxed < 50) {\n    shipping = 7.5;\n  } else if (taxed < 100) {\n    shipping = 3;\n  } else {\n    shipping = 0;\n  }\n  if (order.express) {\n    shipping += 12;\n  }\n  return shipping;\n}\n\nexport function calculateInvoice(order) {\n  let subtotal = calculateSubtotal(order.items);\n  let discount = calculateDiscount(order, subtotal);\n  let taxed = subtotal - discount;\n  let tax = calculateTax(order.region, taxed);\n  let shipping = calculateShipping(order, taxed);\n  let total = taxed + tax + shipping;\n  return {\n    subtotal: roundToCents(subtotal),\n    discount: roundToCents(discount),\n    tax: roundToCents(tax),\n    shipping: roundToCents(shipping),\n    total: roundToCents(total),\n  };\n}\n"
+  },
+  {
+    "caseKey": "003",
+    "arm": "new",
+    "seed": 0,
+    "crashed": false,
+    "crash_reasons": [],
+    "granular": [
+      {
+        "name": "basic US order with no coupon",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "SAVE10 coupon applies 10%",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "HALF coupon for VIP applies 50%",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "EU tax rate is 20%",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "empty order still charges base shipping",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "SAVE20 over threshold applies 20%",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "SAVE20 under threshold falls back to 10%",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "HALF coupon is ignored for non-VIP",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "VIP floor gives 5% when no coupon",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "VIP floor never reduces a larger coupon discount",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "express fee is additive on free-shipping tier",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "express fee is additive on the lowest shipping tier",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "unknown region uses the 10% default tax",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "cent rounding on fractional line totals",
+        "kind": "hidden",
+        "status": "pass"
+      }
+    ],
+    "visible_fraction": 1,
+    "hidden_fraction": 1,
+    "all_pass": true,
+    "false_green": false,
+    "cost_usd": 0,
+    "tokens": 757682,
+    "turns": 2,
+    "duration_ms": 150306,
+    "passes": [
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 401315,
+        "turns": 1,
+        "duration_ms": 66660,
+        "retries": 0
+      },
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 356367,
+        "turns": 1,
+        "duration_ms": 82255,
+        "retries": 0
+      }
+    ],
+    "src_snapshot": "export function calculateInvoice(order) {\n  const subtotal = calculateSubtotal(order);\n  const discount = calculateDiscount(order, subtotal);\n  const taxed = subtotal - discount;\n  const tax = calculateTax(order, taxed);\n  const shipping = calculateShipping(order, taxed);\n  const total = taxed + tax + shipping;\n\n  return {\n    subtotal: roundCents(subtotal),\n    discount: roundCents(discount),\n    tax: roundCents(tax),\n    shipping: roundCents(shipping),\n    total: roundCents(total),\n  };\n}\n\nfunction calculateSubtotal(order) {\n  let subtotal = 0;\n  for (let i = 0; i < order.items.length; i++) {\n    subtotal += order.items[i].price * order.items[i].qty;\n  }\n  return subtotal;\n}\n\nfunction calculateDiscount(order, subtotal) {\n  let discount = 0;\n  if (order.coupon) {\n    if (order.coupon === 'SAVE10') {\n      discount = subtotal * 0.1;\n    } else if (order.coupon === 'SAVE20') {\n      if (subtotal >= 100) {\n        discount = subtotal * 0.2;\n      } else {\n        discount = subtotal * 0.1;\n      }\n    } else if (order.coupon === 'HALF' && order.vip) {\n      discount = subtotal * 0.5;\n    }\n  }\n  if (order.vip && discount < subtotal * 0.05) {\n    discount = subtotal * 0.05;\n  }\n  return discount;\n}\n\nfunction calculateTax(order, taxed) {\n  let tax = 0;\n  if (order.region === 'US') {\n    tax = taxed * 0.07;\n  } else if (order.region === 'EU') {\n    tax = taxed * 0.2;\n  } else {\n    tax = taxed * 0.1;\n  }\n  return tax;\n}\n\nfunction calculateShipping(order, taxed) {\n  let shipping = 0;\n  if (taxed < 50) {\n    shipping = 7.5;\n  } else if (taxed < 100) {\n    shipping = 3;\n  } else {\n    shipping = 0;\n  }\n  if (order.express) {\n    shipping += 12;\n  }\n  return shipping;\n}\n\nfunction roundCents(value) {\n  return Math.round(value * 100) / 100;\n}\n"
+  },
+  {
+    "caseKey": "003",
+    "arm": "old",
+    "seed": 1,
+    "crashed": false,
+    "crash_reasons": [],
+    "granular": [
+      {
+        "name": "basic US order with no coupon",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "SAVE10 coupon applies 10%",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "HALF coupon for VIP applies 50%",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "EU tax rate is 20%",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "empty order still charges base shipping",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "SAVE20 over threshold applies 20%",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "SAVE20 under threshold falls back to 10%",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "HALF coupon is ignored for non-VIP",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "VIP floor gives 5% when no coupon",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "VIP floor never reduces a larger coupon discount",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "express fee is additive on free-shipping tier",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "express fee is additive on the lowest shipping tier",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "unknown region uses the 10% default tax",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "cent rounding on fractional line totals",
+        "kind": "hidden",
+        "status": "pass"
+      }
+    ],
+    "visible_fraction": 1,
+    "hidden_fraction": 1,
+    "all_pass": true,
+    "false_green": false,
+    "cost_usd": 0,
+    "tokens": 797945,
+    "turns": 2,
+    "duration_ms": 168367,
+    "passes": [
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 386325,
+        "turns": 1,
+        "duration_ms": 81688,
+        "retries": 0
+      },
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 411620,
+        "turns": 1,
+        "duration_ms": 85305,
+        "retries": 0
+      }
+    ],
+    "src_snapshot": "export function calculateInvoice(order) {\n  const subtotal = calculateSubtotal(order.items);\n  const discount = calculateDiscount(order, subtotal);\n  const taxableAmount = subtotal - discount;\n  const tax = calculateTax(order.region, taxableAmount);\n  const shipping = calculateShipping(order.express, taxableAmount);\n  const total = taxableAmount + tax + shipping;\n\n  return {\n    subtotal: roundCents(subtotal),\n    discount: roundCents(discount),\n    tax: roundCents(tax),\n    shipping: roundCents(shipping),\n    total: roundCents(total),\n  };\n}\n\nfunction calculateSubtotal(items) {\n  let subtotal = 0;\n  for (let i = 0; i < items.length; i++) {\n    subtotal += items[i].price * items[i].qty;\n  }\n\n  return subtotal;\n}\n\nfunction calculateDiscount(order, subtotal) {\n  let discount = 0;\n  if (order.coupon) {\n    if (order.coupon === 'SAVE10') {\n      discount = subtotal * 0.1;\n    } else if (order.coupon === 'SAVE20') {\n      if (subtotal >= 100) {\n        discount = subtotal * 0.2;\n      } else {\n        discount = subtotal * 0.1;\n      }\n    } else if (order.coupon === 'HALF' && order.vip) {\n      discount = subtotal * 0.5;\n    }\n  }\n  if (order.vip && discount < subtotal * 0.05) {\n    discount = subtotal * 0.05;\n  }\n\n  return discount;\n}\n\nfunction calculateTax(region, taxableAmount) {\n  let tax = 0;\n  if (region === 'US') {\n    tax = taxableAmount * 0.07;\n  } else if (region === 'EU') {\n    tax = taxableAmount * 0.2;\n  } else {\n    tax = taxableAmount * 0.1;\n  }\n\n  return tax;\n}\n\nfunction calculateShipping(express, taxableAmount) {\n  let shipping = 0;\n  if (taxableAmount < 50) {\n    shipping = 7.5;\n  } else if (taxableAmount < 100) {\n    shipping = 3;\n  } else {\n    shipping = 0;\n  }\n  if (express) {\n    shipping += 12;\n  }\n\n  return shipping;\n}\n\nfunction roundCents(amount) {\n  return Math.round(amount * 100) / 100;\n}\n"
+  },
+  {
+    "caseKey": "003",
+    "arm": "new",
+    "seed": 1,
+    "crashed": false,
+    "crash_reasons": [],
+    "granular": [
+      {
+        "name": "basic US order with no coupon",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "SAVE10 coupon applies 10%",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "HALF coupon for VIP applies 50%",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "EU tax rate is 20%",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "empty order still charges base shipping",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "SAVE20 over threshold applies 20%",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "SAVE20 under threshold falls back to 10%",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "HALF coupon is ignored for non-VIP",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "VIP floor gives 5% when no coupon",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "VIP floor never reduces a larger coupon discount",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "express fee is additive on free-shipping tier",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "express fee is additive on the lowest shipping tier",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "unknown region uses the 10% default tax",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "cent rounding on fractional line totals",
+        "kind": "hidden",
+        "status": "pass"
+      }
+    ],
+    "visible_fraction": 1,
+    "hidden_fraction": 1,
+    "all_pass": true,
+    "false_green": false,
+    "cost_usd": 0,
+    "tokens": 940032,
+    "turns": 2,
+    "duration_ms": 177811,
+    "passes": [
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 214627,
+        "turns": 1,
+        "duration_ms": 48647,
+        "retries": 0
+      },
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 725405,
+        "turns": 1,
+        "duration_ms": 127679,
+        "retries": 0
+      }
+    ],
+    "src_snapshot": "export function calculateInvoice(order) {\n  const subtotal = calculateSubtotal(order.items);\n  const discount = calculateDiscount(order, subtotal);\n  const taxableAmount = subtotal - discount;\n  const tax = calculateTax(order.region, taxableAmount);\n  const shipping = calculateShipping(order.express, taxableAmount);\n  const total = taxableAmount + tax + shipping;\n\n  return {\n    subtotal: roundToCents(subtotal),\n    discount: roundToCents(discount),\n    tax: roundToCents(tax),\n    shipping: roundToCents(shipping),\n    total: roundToCents(total),\n  };\n}\n\nfunction calculateSubtotal(items) {\n  let subtotal = 0;\n  for (let i = 0; i < items.length; i++) {\n    subtotal += items[i].price * items[i].qty;\n  }\n  return subtotal;\n}\n\nfunction calculateDiscount(order, subtotal) {\n  let discount = 0;\n  if (order.coupon) {\n    if (order.coupon === 'SAVE10') {\n      discount = subtotal * 0.1;\n    } else if (order.coupon === 'SAVE20') {\n      if (subtotal >= 100) {\n        discount = subtotal * 0.2;\n      } else {\n        discount = subtotal * 0.1;\n      }\n    } else if (order.coupon === 'HALF' && order.vip) {\n      discount = subtotal * 0.5;\n    }\n  }\n\n  if (order.vip && discount < subtotal * 0.05) {\n    discount = subtotal * 0.05;\n  }\n\n  return discount;\n}\n\nfunction calculateTax(region, taxableAmount) {\n  let tax = 0;\n  if (region === 'US') {\n    tax = taxableAmount * 0.07;\n  } else if (region === 'EU') {\n    tax = taxableAmount * 0.2;\n  } else {\n    tax = taxableAmount * 0.1;\n  }\n  return tax;\n}\n\nfunction calculateShipping(express, taxableAmount) {\n  let shipping = 0;\n  if (taxableAmount < 50) {\n    shipping = 7.5;\n  } else if (taxableAmount < 100) {\n    shipping = 3;\n  } else {\n    shipping = 0;\n  }\n  if (express) {\n    shipping += 12;\n  }\n  return shipping;\n}\n\nfunction roundToCents(value) {\n  return Math.round(value * 100) / 100;\n}\n"
+  },
+  {
+    "caseKey": "003",
+    "arm": "old",
+    "seed": 2,
+    "crashed": false,
+    "crash_reasons": [],
+    "granular": [
+      {
+        "name": "basic US order with no coupon",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "SAVE10 coupon applies 10%",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "HALF coupon for VIP applies 50%",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "EU tax rate is 20%",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "empty order still charges base shipping",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "SAVE20 over threshold applies 20%",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "SAVE20 under threshold falls back to 10%",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "HALF coupon is ignored for non-VIP",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "VIP floor gives 5% when no coupon",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "VIP floor never reduces a larger coupon discount",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "express fee is additive on free-shipping tier",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "express fee is additive on the lowest shipping tier",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "unknown region uses the 10% default tax",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "cent rounding on fractional line totals",
+        "kind": "hidden",
+        "status": "pass"
+      }
+    ],
+    "visible_fraction": 1,
+    "hidden_fraction": 1,
+    "all_pass": true,
+    "false_green": false,
+    "cost_usd": 0,
+    "tokens": 541309,
+    "turns": 2,
+    "duration_ms": 133951,
+    "passes": [
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 220580,
+        "turns": 1,
+        "duration_ms": 57670,
+        "retries": 0
+      },
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 320729,
+        "turns": 1,
+        "duration_ms": 74864,
+        "retries": 0
+      }
+    ],
+    "src_snapshot": "export function calculateInvoice(order) {\n  const subtotal = calculateSubtotal(order.items);\n  const discount = calculateDiscount(order, subtotal);\n  const taxed = subtotal - discount;\n  const tax = calculateTax(order.region, taxed);\n  const shipping = calculateShipping(order, taxed);\n  const total = taxed + tax + shipping;\n\n  return {\n    subtotal: roundToCents(subtotal),\n    discount: roundToCents(discount),\n    tax: roundToCents(tax),\n    shipping: roundToCents(shipping),\n    total: roundToCents(total),\n  };\n}\n\nfunction calculateSubtotal(items) {\n  let subtotal = 0;\n  for (let i = 0; i < items.length; i++) {\n    subtotal += items[i].price * items[i].qty;\n  }\n\n  return subtotal;\n}\n\nfunction calculateDiscount(order, subtotal) {\n  let discount = 0;\n\n  if (order.coupon) {\n    if (order.coupon === 'SAVE10') {\n      discount = subtotal * 0.1;\n    } else if (order.coupon === 'SAVE20') {\n      if (subtotal >= 100) {\n        discount = subtotal * 0.2;\n      } else {\n        discount = subtotal * 0.1;\n      }\n    } else if (order.coupon === 'HALF' && order.vip) {\n      discount = subtotal * 0.5;\n    }\n  }\n\n  if (order.vip && discount < subtotal * 0.05) {\n    discount = subtotal * 0.05;\n  }\n\n  return discount;\n}\n\nfunction calculateTax(region, taxed) {\n  if (region === 'US') {\n    return taxed * 0.07;\n  }\n  if (region === 'EU') {\n    return taxed * 0.2;\n  }\n\n  return taxed * 0.1;\n}\n\nfunction calculateShipping(order, taxed) {\n  let shipping = 0;\n\n  if (taxed < 50) {\n    shipping = 7.5;\n  } else if (taxed < 100) {\n    shipping = 3;\n  } else {\n    shipping = 0;\n  }\n\n  if (order.express) {\n    shipping += 12;\n  }\n\n  return shipping;\n}\n\nfunction roundToCents(amount) {\n  return Math.round(amount * 100) / 100;\n}\n"
+  },
+  {
+    "caseKey": "003",
+    "arm": "new",
+    "seed": 2,
+    "crashed": false,
+    "crash_reasons": [],
+    "granular": [
+      {
+        "name": "basic US order with no coupon",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "SAVE10 coupon applies 10%",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "HALF coupon for VIP applies 50%",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "EU tax rate is 20%",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "empty order still charges base shipping",
+        "kind": "visible",
+        "status": "pass"
+      },
+      {
+        "name": "SAVE20 over threshold applies 20%",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "SAVE20 under threshold falls back to 10%",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "HALF coupon is ignored for non-VIP",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "VIP floor gives 5% when no coupon",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "VIP floor never reduces a larger coupon discount",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "express fee is additive on free-shipping tier",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "express fee is additive on the lowest shipping tier",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "unknown region uses the 10% default tax",
+        "kind": "hidden",
+        "status": "pass"
+      },
+      {
+        "name": "cent rounding on fractional line totals",
+        "kind": "hidden",
+        "status": "pass"
+      }
+    ],
+    "visible_fraction": 1,
+    "hidden_fraction": 1,
+    "all_pass": true,
+    "false_green": false,
+    "cost_usd": 0,
+    "tokens": 860622,
+    "turns": 2,
+    "duration_ms": 148451,
+    "passes": [
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 334637,
+        "turns": 1,
+        "duration_ms": 67592,
+        "retries": 0
+      },
+      {
+        "exit": 0,
+        "crashed": false,
+        "reason": "",
+        "cost": 0,
+        "tokens": 525985,
+        "turns": 1,
+        "duration_ms": 78946,
+        "retries": 0
+      }
+    ],
+    "src_snapshot": "export function calculateInvoice(order) {\n  const subtotal = calculateSubtotal(order);\n  const discount = calculateDiscount(order, subtotal);\n  const taxed = subtotal - discount;\n  const tax = calculateTax(order, taxed);\n  const shipping = calculateShipping(order, taxed);\n  const total = taxed + tax + shipping;\n\n  return {\n    subtotal: roundToCents(subtotal),\n    discount: roundToCents(discount),\n    tax: roundToCents(tax),\n    shipping: roundToCents(shipping),\n    total: roundToCents(total),\n  };\n}\n\nfunction calculateSubtotal(order) {\n  let subtotal = 0;\n  for (let i = 0; i < order.items.length; i++) {\n    subtotal += order.items[i].price * order.items[i].qty;\n  }\n  return subtotal;\n}\n\nfunction calculateDiscount(order, subtotal) {\n  let discount = 0;\n  if (order.coupon) {\n    if (order.coupon === 'SAVE10') {\n      discount = subtotal * 0.1;\n    } else if (order.coupon === 'SAVE20') {\n      if (subtotal >= 100) {\n        discount = subtotal * 0.2;\n      } else {\n        discount = subtotal * 0.1;\n      }\n    } else if (order.coupon === 'HALF' && order.vip) {\n      discount = subtotal * 0.5;\n    }\n  }\n  if (order.vip && discount < subtotal * 0.05) {\n    discount = subtotal * 0.05;\n  }\n  return discount;\n}\n\nfunction calculateTax(order, taxed) {\n  let tax = 0;\n  if (order.region === 'US') {\n    tax = taxed * 0.07;\n  } else if (order.region === 'EU') {\n    tax = taxed * 0.2;\n  } else {\n    tax = taxed * 0.1;\n  }\n  return tax;\n}\n\nfunction calculateShipping(order, taxed) {\n  let shipping = 0;\n  if (taxed < 50) {\n    shipping = 7.5;\n  } else if (taxed < 100) {\n    shipping = 3;\n  } else {\n    shipping = 0;\n  }\n  if (order.express) {\n    shipping += 12;\n  }\n  return shipping;\n}\n\nfunction roundToCents(value) {\n  return Math.round(value * 100) / 100;\n}\n"
+  }
+]

@@ -20,6 +20,11 @@ Topic-specific interactive parts (a visualizer/simulator) are written as
 `teach/<topic>/assets/<topic>-viz.js` and mounted in the lesson's `#viz` node.
 Reuse the shared files; never inline-duplicate a future lesson would share.
 
+Relationship and process visuals use Archify by default. Render the editable JSON IR and standalone
+HTML into `teach/<topic>/diagrams/`, then point the lesson template's `.archify-frame` and direct link
+at that HTML. The diagram teaches the mental model; keep the required quiz, and also keep a simulator
+or task when active manipulation is the skill being taught.
+
 ## Book layout (left TOC + horizontal page-turn)
 
 Lessons read like a book, not a long scroll: a left table of contents jumps to any

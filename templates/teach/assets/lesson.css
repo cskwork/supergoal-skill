@@ -225,6 +225,16 @@ main.book {
 .pages-track > section { flex: 0 0 auto; height: 100%; overflow-y: auto; display: flex; flex-direction: column; padding: var(--space-5) var(--space-4); }
 .page-inner { width: 100%; max-width: var(--measure); margin: auto; }
 .page-inner > :first-child { margin-top: 0; }
+.page-inner.diagram-page { max-width: min(100%, 1040px); }
+.archify-frame {
+  display: block;
+  width: 100%;
+  min-height: clamp(28rem, 68vh, 44rem);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
 
 /* pager bar */
 .pager { grid-area: pager; display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); padding: var(--space-2) var(--space-3); background: var(--surface); border-top: 1px solid var(--line); }
@@ -243,4 +253,5 @@ main.book {
   .toc li button { white-space: nowrap; border-left: 0; border-bottom: 3px solid transparent; border-radius: 8px; }
   .toc li button[aria-current="true"] { border-left-color: transparent; border-bottom-color: var(--accent); }
   .pages-track > section { padding: var(--space-4) var(--space-3); }
+  .archify-frame { min-height: 26rem; }
 }

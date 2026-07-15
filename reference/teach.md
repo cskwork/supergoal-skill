@@ -13,7 +13,7 @@ Build/Verify) and all implementation gates. Flow:
 
 Sections (jump, don't rescan): Goal-tool boundary | Teaching workspace | Philosophy (K/S/W) |
 The mission | Resources | Zone of proximal development | Decomposition | Textbook depth | Process
-explanation gate | Flow | Interview check | Lessons | Reference documents & glossary | Wisdom &
+explanation gate | Flow | Interview check | Lessons | Diagrams | Reference documents & glossary | Wisdom &
 communities | Assets | Opening output format | Human-to-Code bridge | Prerequisite scaffolding |
 Difficulty ladder | Difficulty tuning | User preference profile | Tutor contract.
 
@@ -38,6 +38,7 @@ workspace - a second unrelated topic is a second workspace. The global profile
 | `teach/<topic>/GLOSSARY.md` | Canonical terminology; every lesson adheres to it | `teach/GLOSSARY-FORMAT.md` |
 | `teach/<topic>/learning-records/NNNN-slug.md` | ADR-style records of genuine learning; set the next ZPD | `teach/LEARNING-RECORD-FORMAT.md` |
 | `teach/<topic>/lessons/NNNN-slug.html` | Primary teaching unit: one self-contained beautiful HTML lesson | **Lessons** below |
+| `teach/<topic>/diagrams/NNNN-slug.{json,html}` | Editable Archify source + validated interactive diagram for a lesson | **Diagrams** below |
 | `teach/<topic>/reference/*.html` | Compressed cheat-sheets revisited later | **Reference documents** below |
 | `teach/<topic>/assets/*` | Reusable components shared across lessons | **Assets** below |
 | `teach/<topic>/NOTES.md` | Scratchpad for teaching preferences and working notes | free-form |
@@ -166,9 +167,10 @@ the final output for that input (the actual result the user would see), so the c
    (`teach/LEARNING-RECORD-FORMAT.md`) - the records, not a flat journal, set the next ZPD and
    survive sessions. Promote settled terms into `GLOSSARY.md`. Append the live chat journal to
    `teach/<topic>/<topic>-YYYY-MM-DD.md` (question, bridge, terms, user explanation, open questions);
-   create the workspace if missing per `teach/README.md`. Write the interactive HTML lesson by
-   default (see **Lessons**), run `node templates/teach-lesson-gate.mjs` on it, and open it once the
-   gate passes; only an explicit throwaway explain-back skips it.
+   create the workspace if missing per `teach/README.md`. For relationship-heavy material, render the
+   default Archify diagram first (see **Diagrams**), then write the interactive HTML lesson, run
+   `node templates/teach-lesson-gate.mjs` on it, and open it once the gate passes; only an explicit
+   throwaway explain-back skips it.
 
 ## Interview check
 
@@ -251,6 +253,21 @@ use the chat opening alone.
   deterministically rejects a page that is off-scaffold, a long scroll, or reading-only (no hydrated
   `.sg-quiz` with a `data-correct` option). On failure, fix the lesson - never the gate.
 - **Open it.** After the gate passes, open the lesson in the user's browser with a CLI command.
+
+## Diagrams (Archify by default)
+
+Archify is the default diagram system when a lesson teaches relationships or ordered change: system
+structure, a workflow, a call sequence, data movement, or a lifecycle. Follow `reference/archify.md`,
+pick the matching renderer, and keep both the editable JSON IR and validated HTML under
+`teach/<topic>/diagrams/` with the lesson number and slug. Embed the HTML in the lesson's supplied
+`.archify-frame` page and include a direct link so the user can open the full diagram and use its
+theme/export controls.
+
+The diagram explains the mental model; it does not replace the required quiz. When active manipulation
+is the skill being taught, it also does not replace the simulator or task that provides practice and
+feedback. Skip Archify only for a purely definitional or syntax lesson where no meaningful relationship
+can be drawn, and record that reason in `NOTES.md` so omission is a conscious teaching choice rather
+than drift.
 
 ## Reference documents & glossary
 
@@ -467,4 +484,4 @@ Exit checklist; each rule is owned by the named section:
 3. Anchor every process or flow in one real worked scenario traced end-to-end with sourced values (**Process explanation gate**).
 4. Every turn ends with the interview check and the difficulty menu; a miss means a missing piece below - back up, never rephrase at the same level (**Interview check**, **Prerequisite scaffolding**).
 5. Mission-grounded, sourced, never parametric; difficulty and interests come from the saved profile (**The mission**, **Resources**, **User preference profile**).
-6. Ship the interactive HTML lesson, pass `teach-lesson-gate.mjs`, record learning, promote glossary terms (**Lessons**, **Flow** step 5).
+6. Default relationship/flow visuals to Archify, then ship the interactive HTML lesson, pass `teach-lesson-gate.mjs`, record learning, and promote glossary terms (**Diagrams**, **Lessons**, **Flow** step 5).

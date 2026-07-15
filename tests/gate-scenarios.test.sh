@@ -39,7 +39,7 @@ echo " node $(node --version)   bash ${BASH_VERSION%%(*}"
 echo "=================================================================="
 
 # ----------------------------------------------------------------------
-echo; echo "SCENARIO 6 — qa-gate.sh : playwright-cli single-driver + as-is/to-be evidence enforcement"
+echo; echo "SCENARIO 6 — qa-gate.sh : agent-browser default + documented playwright-cli fallback"
 # ----------------------------------------------------------------------
 QAGATE="$SKILL_DIR/templates/qa-gate.sh"
 v=$(mkvault s6)
@@ -54,7 +54,7 @@ run_case "6.4 browser, no as-is/to-be -> blocked"   1 "no 'qa/as-is"         bas
 mkdir -p "$v/qa"; printf 'as-is proof\n' > "$v/qa/as-is-1040.png"
 run_case "6.5 as-is only, no to-be -> blocked"      1 "no 'qa/to-be"         bash "$QAGATE" "$v" browser
 printf 'to-be proof\n' > "$v/qa/to-be-1040.png"
-printf 'verdict: GREEN\n## QA\nTool: playwright-cli\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
+printf 'verdict: GREEN\n## QA\nTool: agent-browser\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
 : > "$v/qa/as-is-1040.png"
 run_case "6.6 empty as-is evidence -> blocked"      1 "empty 'qa/as-is"      bash "$QAGATE" "$v" browser
 printf 'as-is proof\n' > "$v/qa/as-is-1040.png"; : > "$v/qa/to-be-1040.png"
@@ -63,13 +63,43 @@ printf 'to-be proof\n' > "$v/qa/to-be-1040.png"
 printf 'verdict: GREEN\n## QA\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
 run_case "6.6c evidence but no Tool line -> blocked" 1 "no 'Tool:' line"     bash "$QAGATE" "$v" browser
 printf 'verdict: GREEN\n## QA\nTool: agent-browser\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
-run_case "6.7 agent-browser driver -> blocked"      1 "not playwright-cli"   bash "$QAGATE" "$v" browser
-printf 'verdict: GREEN\nTool: playwright-cli\n## QA\nTool: agent-browser\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
-run_case "6.7b non-QA Tool cannot mask QA driver"   1 "not playwright-cli"   bash "$QAGATE" "$v" browser
+run_case "6.7 agent-browser default -> PASS"        0 "QA GATE PASS"         bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\n## QA\nTool: agent-browser | playwright-cli\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
+run_case "6.7a combined/template Tool -> blocked"   1 "exactly 'agent-browser'" bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\n## QA\nTool: agent-browser\nTool: playwright-cli\nFallback: agent-browser failed to preserve the authenticated popup session.\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
+run_case "6.7b duplicate Tool lines -> blocked"     1 "exactly one 'Tool:'"   bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\n## QA\nTool: agent-browser via wrapper\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
+run_case "6.7c suffixed agent-browser -> blocked"   1 "exactly 'agent-browser'" bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli fallback\nFallback: agent-browser failed to preserve the authenticated popup session.\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
+run_case "6.7d suffixed playwright-cli -> blocked"  1 "exactly 'agent-browser'" bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\n## QA\nTool: agent-browser\nFallback: agent-browser failed to preserve the authenticated popup session.\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
+run_case "6.7e agent-browser with fallback -> blocked" 1 "no 'Fallback:'"      bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\nTool: agent-browser\n## QA\nTool: headless Chrome\n- render-1040 captured\n' > "$v/QA.md"
+run_case "6.7f non-QA Tool cannot mask QA driver"   1 "exactly 'agent-browser'" bash "$QAGATE" "$v" browser
 printf 'verdict: GREEN\n## QA\nTool: headless Chrome\n- render-1040 captured\n' > "$v/QA.md"
-run_case "6.8 headless-Chrome render -> blocked"    1 "not playwright-cli"   bash "$QAGATE" "$v" browser
+run_case "6.8 headless-Chrome render -> blocked"    1 "unsupported"          bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\n## QA\nTool: Playwright MCP\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
+run_case "6.9 unsupported driver -> blocked"        1 "unsupported"          bash "$QAGATE" "$v" browser
 printf 'verdict: GREEN\n## QA\nTool: playwright-cli\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
-run_case "6.9 playwright-cli + evidence -> PASS"    0 "QA GATE PASS"         bash "$QAGATE" "$v" browser
+run_case "6.10 playwright without fallback -> blocked" 1 "Fallback:"          bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nFallback:\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
+run_case "6.11 empty fallback reason -> blocked"    1 "fallback"              bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nFallback: preferred CLI for this run\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
+run_case "6.12 fallback must name agent-browser"    1 "agent-browser"         bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nFallback: agent-browser\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
+run_case "6.13 fallback must explain why"           1 "reason"                bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nFallback: agent-browser no go\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
+run_case "6.13a vague fallback -> blocked"          1 "concrete"              bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nFallback: agent-browser failed to preserve the authenticated popup session.\nFallback: agent-browser could not inspect the popup DOM.\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
+run_case "6.13b duplicate Fallback lines -> blocked" 1 "exactly one 'Fallback:'" bash "$QAGATE" "$v" browser
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nFallback: agent-browser could not complete reliable QA because the authenticated popup was not inspectable.\n- as-is/to-be at 1040px captured\n' > "$v/QA.md"
+run_case "6.14 documented playwright fallback -> PASS" 0 "QA GATE PASS"       bash "$QAGATE" "$v" browser
+
+if [ "${QA_DRIVER_ONLY:-0}" = 1 ]; then
+  printf '\nQA driver result: %d passed, %d failed\n' "$PASS" "$FAIL"
+  [ "$FAIL" -eq 0 ]
+  exit
+fi
 
 # ----------------------------------------------------------------------
 echo; echo "SCENARIO 7 — contrast-gate.mjs : computed WCAG ratios (UI/UX)"
@@ -103,7 +133,7 @@ echo; echo "SCENARIO 9 — qa-gate.sh : contrast gate is wired in for UI runs"
 # ----------------------------------------------------------------------
 QAGATE="$SKILL_DIR/templates/qa-gate.sh"
 v=$(mkvault s9); mkdir -p "$v/qa"; printf 'as-is proof\n' > "$v/qa/as-is-1040.png"; printf 'to-be proof\n' > "$v/qa/to-be-1040.png"
-printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nUI-tier: Functional\n- as-is/to-be captured\n' > "$v/QA.md"
+printf 'verdict: GREEN\n## QA\nTool: agent-browser\nUI-tier: Functional\n- as-is/to-be captured\n' > "$v/QA.md"
 run_case "9.1 UI-tier declared, no pairs file -> blocked" 1 "no 'qa/contrast-pairs.json'" bash "$QAGATE" "$v" browser
 printf '[{"el":"body","fg":"#f4efe7","bg":"#16140f","size":"body"},{"el":"t","fg":"#8a8275","bg":"#221e17","size":"normal"}]\n' > "$v/qa/contrast-pairs.json"
 run_case "9.2 UI-tier + sub-AA pair -> blocked"      1 "contrast gate failed" bash "$QAGATE" "$v" browser
@@ -111,7 +141,7 @@ printf '[{"el":"body","fg":"#f4efe7","bg":"#16140f","size":"body"},{"el":"t","fg
 run_case "9.3 UI-tier + passing palette -> PASS"     0 "QA GATE PASS"         bash "$QAGATE" "$v" browser
 # No UI-tier and no pairs file: contrast block is skipped, behaviour unchanged.
 rm -f "$v/qa/contrast-pairs.json"
-printf 'verdict: GREEN\n## QA\nTool: playwright-cli\n- as-is/to-be captured\n' > "$v/QA.md"
+printf 'verdict: GREEN\n## QA\nTool: agent-browser\n- as-is/to-be captured\n' > "$v/QA.md"
 run_case "9.4 no UI-tier, no pairs -> PASS (unaffected)" 0 "QA GATE PASS"     bash "$QAGATE" "$v" browser
 
 # ----------------------------------------------------------------------

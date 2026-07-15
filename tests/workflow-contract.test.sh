@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # /supergoal workflow contract.
 # Fails if coding/debug runs can mutate the original checkout, skip source/target
-# branch verification, or ship browser UI without playwright-cli QA evidence.
+# branch verification, or ship browser UI without accepted browser-driver QA evidence.
 
 set -u
 
@@ -28,9 +28,11 @@ assert_text_ci_normalized "role-loop creates branch-scoped worktree" "reference/
 assert_text_ci_normalized "role-loop protects original checkout" "reference/role-loop.md" "never edit the original checkout"
 assert_text_ci_normalized "role-loop commits only through target branch" "reference/role-loop.md" "verified target/integration branch"
 
-# Browser UI verification cannot end at lint/typecheck; playwright-cli evidence is a hard exit condition.
+# Browser UI verification cannot end at lint/typecheck; agent-browser evidence is the default exit condition.
 assert_text_ci_normalized "role-loop sends UI work through browser QA gate" "reference/role-loop.md" 'qa-gate.sh <vault> browser'
-assert_text_ci_normalized "role-loop names playwright-cli for UI verification" "reference/role-loop.md" "Tool: playwright-cli"
+assert_text_ci_normalized "role-loop defaults UI verification to agent-browser" "reference/role-loop.md" "Tool: agent-browser"
+assert_text_ci_normalized "role-loop limits playwright-cli to fallback" "reference/role-loop.md" "playwright-cli is fallback-only"
+assert_text_ci_normalized "role-loop records why default QA failed" "reference/role-loop.md" "why agent-browser could not complete reliable QA"
 assert_text_ci_normalized "qa says UI changes are browser app verification" "reference/qa.md" "UI changes are browser app verification"
 assert_text_ci_normalized "qa exposes code-change scenario stencil" "reference/qa.md" "Scenario stencil (code changes)"
 assert_text_ci_normalized "qa scenario stencil includes regression" "reference/qa.md" "Regression: previous passing neighbor scenarios"

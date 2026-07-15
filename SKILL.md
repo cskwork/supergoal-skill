@@ -38,7 +38,7 @@ on assumption. Full contract: `reference/role-loop.md`.
 | Signal in the objective | Mode | Route |
 |---|---|---|
 | build / make / ship a new app/tool | GREENFIELD | default loop; broad/foggy builds first use a `wayfinder/` Frontier Map inside the run vault, then deliver one selected frontier ticket |
-| fix / broken / failing / crash / why does | DEBUG | default loop; observe live symptom, then failing-test repro (`reference/debugging.md`, driver persona `agents/debugger.md`); web: `reference/qa.md`, `reference/playwright-cli.md` |
+| fix / broken / failing / crash / why does | DEBUG | default loop; observe live symptom, then failing-test repro (`reference/debugging.md`, driver persona `agents/debugger.md`); web: `reference/qa.md`, `reference/agent-browser.md` |
 | add / integrate / refactor existing code | LEGACY | default loop; map first (`agents/explore.md`, `reference/domain-context.md`); optional DB evidence (`reference/db-access.md`); existing API: capture its exact behavior first as a preserve-baseline; shared code/state changes: characterization baseline (`reference/qa.md`) |
 | spec / requirements first / break down / tickets / roadmap / big vague effort / frontier / what should we do first | WAYFINDER | map the destination, optional ticket-depth requirements, ticket graph, blockers, and next frontier; no product code by default (`reference/wayfinder.md`) |
 | prototype / spike / try variants / prove approach before build | PROTOTYPE | throwaway proof that answers one question, then delete/quarantine or route to delivery (`reference/prototype.md`) |
@@ -102,7 +102,7 @@ reviewer=`agents/code-reviewer.md`, security=`agents/security-reviewer.md` (othe
 | `reference/vercel-host.md` | PROTOTYPE: after explicit approval, publish an isolated browser prototype to a public Vercel URL and verify anonymous access |
 | `reference/plan-grounding.md` | ground the approach before committing |
 | `reference/db-access.md`, `templates/db-access/` | read-only DB evidence (required when persisted data is load-bearing) |
-| `reference/qa.md`, `qa-only.md`, `playwright-cli.md` | QA / no-code verify; single browser driver = playwright-cli |
+| `reference/qa.md`, `qa-only.md`, `agent-browser.md`, `playwright-cli.md` | QA / no-code verify; agent-browser default, playwright-cli fallback |
 | `reference/review-only.md` | REVIEW-ONLY: findings, no fixes |
 | `reference/arch.md` | ARCHITECTURE: friction survey -> route out |
 | `reference/archify.md`, `templates/archify/` | diagrams as self-contained HTML (typed JSON IR -> validated render): ARCHITECTURE reports, TEACH lessons, and LEARN-DOMAIN onboarding |

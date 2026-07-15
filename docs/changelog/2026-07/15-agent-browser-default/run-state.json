@@ -1,0 +1,20 @@
+{
+  "schema_version": 3,
+  "mode": "LEGACY",
+  "branches": {
+    "source_base_branch": "dev-v2",
+    "target_integration_branch": "main",
+    "run_branch": "codex/agent-browser-default",
+    "worktree_path": ".worktrees/agent-browser-default",
+    "refs_verified": true
+  },
+  "phase": "Finalize",
+  "iteration": 1,
+  "max_iterations": 3,
+  "unresolved_gates": [],
+  "blockers": [],
+  "regression_ledger": [],
+  "next_action": "commit, merge to main, release v0.8.0",
+  "forced_reflection": null,
+  "updated_at": "2026-07-15T05:11:03Z"
+}

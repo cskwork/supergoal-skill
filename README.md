@@ -150,7 +150,7 @@ flowchart TD
 Coding/debug runs use a run worktree by default: resolve and verify the source/base branch plus the
 target/integration branch before editing, create the run worktree from source/base, and only commit or
 merge into the verified target/integration branch after green verification and user acceptance. Browser UI
-changes also require real browser QA: `Tool: playwright-cli` evidence and `qa-gate.sh <vault> browser`.
+changes also require real browser QA: `Tool: agent-browser` evidence and `qa-gate.sh <vault> browser`.
 
 ```text
 /supergoal build a habit-tracker app and ship it

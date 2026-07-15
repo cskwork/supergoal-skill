@@ -22,8 +22,8 @@ History narrows WHEN; live observation narrows WHERE. Do WHERE first.
    field, an out-of-order dependency call, or an unexpected status often ends the search in
    minutes. For a web/UI symptom, drive this through `qa-tester` (`reference/qa.md`): load the
    repo's `.domain-agent/qa/nav-map.md` to reach the exact screen (its entry/auth flow, popups,
-   new tabs), then capture the screen's real calls with `playwright-cli requests` (grep by path;
-   `request <index>` for one) - the method + path + status it actually fires. That pins screen -> exact
+   new tabs), then capture the screen's real calls with `agent-browser network requests`
+   (`network request <id>` for details) - the method + path + status it actually fires. That pins screen -> exact
    endpoint, so you open only the backend code that owns it instead of guessing where the symptom
    lives. If no nav-map exists yet, build one first (`reference/qa.md` "Navigation map"); if a saved
    entry no longer matches the live site (selector miss, route 404, popup target moved, API path

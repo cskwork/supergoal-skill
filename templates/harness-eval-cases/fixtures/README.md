@@ -11,7 +11,6 @@ and ships its visible + hidden suites. Validated to DISCRIMINATE before use (see
 | `underspec-001-deepmerge/` | under-specified | stub throws (greenfield) | deep merge, **prototype-pollution guard**, null source, type replacement |
 | `underspec-002-csvline/` | under-specified | stub throws (greenfield) | quoted commas, escaped `""`, empty/trailing fields, quoted spaces |
 | `underspec-003-authz-cache/` | under-specified hard-low-effort | visible pass, 1/8 hidden pass | tenant/user/action/version authz leaks, denied-decision staleness, in-flight dedupe |
-| `sideeffect-004-shared-format/` | side-effect discriminator | visible 0/2 fail (feature absent), hidden 4/4 pass | consumers the task never mentions: editing the shared `formatMoney` default breaks report parseability + CSV column count (false-GREEN); a scoped fix preserves all |
 
 ## Discrimination property (validated)
 
@@ -20,12 +19,6 @@ and ships its visible + hidden suites. Validated to DISCRIMINATE before use (see
 - greenfield (u1/u2): stub fails all; a reference impl passes all; a lazy impl
   (`{...t,...s}` / `split(',')`) fails the discriminating hidden checks.
 - authz-cache (u3): starter and lazy impl pass visible 3/3 but hidden 1/8; reference passes hidden 8/8.
-- shared-format (004): starter fails visible 2/2, passes hidden 4/4; the tempting shared-default edit
-  passes visible 2/2 but fails hidden 4/4 (false-GREEN); a scoped invoice-local fix passes all
-  (validated 2026-07-15, `docs/experiments/2026-07-15-regression-reconcile-ab/`).
-  CAUTION: variant-validated only - in live runs at gpt-5.5-low, all 18 units (skill old/new AND
-  bare baseline) avoided the trap, so this fixture has NOT proven it discriminates agent behavior;
-  harden (drop the format.mjs warning comment, deepen the import chain) before relying on it.
 
 Re-validate any case with the no-codex path in its runner:
 

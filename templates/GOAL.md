@@ -23,7 +23,7 @@ Each item is falsifiable and names its verification method.
 
 ## QA Cases (web apps only)
 
-Browser scenarios the QA agent drives via playwright-cli; evidence under `qa/`.
+Browser scenarios the QA agent drives via agent-browser (playwright-cli fallback); evidence under `qa/`.
 
 - [ ] <route + steps + expected> - evidence: `qa/<file>`
 

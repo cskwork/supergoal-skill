@@ -15,7 +15,7 @@ DO: run the feedback-loop method in `reference/debugging.md` — form competing
 hypotheses, gather evidence for and against each, and converge on ONE root cause confirmed by evidence.
 Then write the smallest-blast-radius fix plan. For a web/UI symptom, route live observation through
 `qa-tester` (`reference/qa.md`): reach the screen via `.domain-agent/qa/nav-map.md` and capture its
-exact API calls with `playwright-cli requests` to pin `screen -> endpoint` before opening
+exact API calls with `agent-browser network requests` to pin `screen -> endpoint` before opening
 backend code.
 
 RULES: evidence-driven — track each hypothesis with evidence and uncertainty; a confirmed cause needs

@@ -30,9 +30,9 @@ Fix/feature request -> route to DEBUG/LEGACY; QA-ONLY reports findings and stops
 
 - **Target.** Test an existing running app. Ask for URL/env. Start a local server only if asked; never
   build product code to get one. Static single HTML opens via `file://`.
-- **Browser driver.** `playwright-cli` is the only driver (`reference/playwright-cli.md`); install if
-  absent inside `qa-tester`; record `Tool: playwright-cli` in `## QA`. Auth uses native session/state/CDP-attach paths
-  (`reference/qa.md` "Authenticated sessions").
+- **Browser driver.** Use `agent-browser` by default (`reference/agent-browser.md`). Use
+  `playwright-cli` only when agent-browser cannot complete reliable QA; record `Tool:` and `Fallback:`
+  per `reference/qa.md`. Auth uses native session/state/CDP paths.
 - **Navigation map.** Load `.domain-agent/qa/nav-map.md` first to reach gated/popup-heavy screens;
   build it on first entry and correct any drifted rows in place (`reference/qa.md` "Navigation map").
 - **DB access.** Read-only, DB-independent (`reference/db-access.md`): fetch test auth, verify UI values
@@ -113,14 +113,16 @@ Save reusable suites under the domain pack (`reference/domain-context.md` saving
 
 - `.domain-agent/qa/<suite>.md`: Impact Matrix, scenario list, steps, `Comparison:` type, named DB
   checks (no raw secrets/data), saved `before-after` baseline values, reproduction notes, coverage,
-  uncovered areas, and residual risks, re-run command / Playwright spec path.
+  uncovered areas, and residual risks, plus driver-neutral re-run steps. For a Playwright fallback, include
+  the spec path and agent-browser limitation.
 - Index it in `.domain-agent/index.md` under `## QA Suites` so "re-run the <feature> QA" routes
   instantly.
 - `.domain-agent/qa/nav-map.md`: one shared navigation map per repo (entry/auth, routes, popups/new
   tabs, selectors, `screen -> API`). Load it before driving; correct touched drifted rows.
 - Same domain-pack rules: read-only repo write, gitignored path, no secrets/tokens/PII/raw rows.
 
-Repeatable Playwright spec path: `.domain-agent/qa/<suite>/<flow>.spec.ts` (first run may be hand-driven).
+Repeatable QA defaults to saved agent-browser steps. Only a documented Playwright fallback saves
+`.domain-agent/qa/<suite>/<flow>.spec.ts` (first run may be hand-driven).
 
 `before-after` re-run: confirm saved baseline date and schema/contract still fit; otherwise re-derive
 before diffing.

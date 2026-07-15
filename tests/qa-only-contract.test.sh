@@ -71,21 +71,23 @@ assert_text_ci_normalized "db-access runs in db-reader"        "reference/db-acc
 assert_text_ci_normalized "qa-auditor does not read DB"        "agents/qa-auditor.md" "Do not query the database"
 assert_text_ci_normalized "qa-auditor does not drive browser"  "agents/qa-auditor.md" "Do not drive the browser"
 refute_text_ci_normalized "qa-auditor has no playwright install" "agents/qa-auditor.md" "npm install -g @playwright/cli"
-assert_text_ci_normalized "qa-tester owns browser driver"      "agents/qa-tester.md" "Playwright CLI is the only browser driver"
-assert_text_ci_normalized "qa-tester auth via native paths"    "agents/qa-tester.md" "native paths"
-refute_text_ci_normalized "playwright reference excludes auditor driver" "reference/playwright-cli.md" "\`qa-tester\`/\`qa-auditor\`"
+assert_text_ci_normalized "qa-tester defaults to agent-browser" "agents/qa-tester.md" "agent-browser is the default browser driver"
+assert_text_ci_normalized "qa-tester limits playwright-cli to fallback" "agents/qa-tester.md" "playwright-cli is fallback-only"
+assert_text_ci_normalized "qa-tester records fallback reason"  "agents/qa-tester.md" "why agent-browser could not complete reliable QA"
+assert_text_ci_normalized "qa reference defaults to agent-browser" "reference/qa.md" "agent-browser is the default browser driver"
+assert_text_ci_normalized "qa reference requires fallback record" "reference/qa.md" "Fallback:"
+assert_text_ci_normalized "playwright reference marks fallback-only" "reference/playwright-cli.md" "playwright-cli is fallback-only"
 refute_text_ci_normalized "db reference excludes auditor browser role" "reference/db-access.md" "browser \`qa-auditor\`"
 assert_text_ci_normalized "db-reader is select-only"           "agents/db-reader.md" "Read-only ONLY"
 assert_text_ci_normalized "db-reader never writes auth to file" "agents/db-reader.md" "NEVER write auth/credentials to any file"
 
-assert_text_ci_normalized "qa.md has native auth policy"       "reference/qa.md" "Authenticated sessions (native playwright-cli)"
+assert_text_ci_normalized "qa.md keeps authenticated QA on accepted drivers" "reference/qa.md" "Authenticated sessions"
 assert_text_ci_normalized "domain-context registers qa suites" "reference/domain-context.md" "Reusable QA suites from QA-ONLY runs"
 assert_text_ci_normalized "index template has QA Suites"       "templates/domain-agent/index.md" "## QA Suites"
 assert_text_ci_normalized "db-reader may write its evidence"   "agents/db-reader.md" "Read, Grep, Glob, Bash, Write"
-assert_text_ci_normalized "qa-tester installs pinned playwright-cli" "agents/qa-tester.md" "npm install -g @playwright/cli@0.1.14"
 assert_text_ci_normalized "playwright-cli reference records pinned version" "reference/playwright-cli.md" "@playwright/cli@0.1.14"
-assert_text_ci_normalized "qa-tester carries the same playwright-cli pin" "agents/qa-tester.md" "@playwright/cli@0.1.14"
-assert_text_ci_normalized "qa reference carries the same playwright-cli pin" "reference/qa.md" "@playwright/cli@0.1.14"
+assert_text_ci_normalized "QA template defaults Tool to agent-browser" "templates/QA.md" "Tool: agent-browser"
+assert_text_ci_normalized "QA template exposes fallback reason" "templates/QA.md" "Fallback:"
 
 # ---- Part B: qa-only-gate.sh scenarios -----------------------------------
 GATE="$ROOT/templates/qa-only-gate.sh"
@@ -108,7 +110,7 @@ mkbrowser() {
   printf 'QA scope: checkout flow on staging\n' > "$v/brief.md"
   printf '# Scenario ledger\n\n## Impact Matrix\n- direct flow\n\n## Shards\n| Scenario | Status | Evidence |\n|---|---|---|\n| direct-flow | PASS | qa/to-be-1040.png |\n' > "$v/qa/scenario-ledger.md"
   printf '# QA report\n## Impact coverage\n- direct flow, adjacent totals, refresh/reopen\n## What worked\n- login -> PASS\n## What didn'"'"'t\n- none\n## What I discovered\n- nothing\n## Reproduction notes\n- No issues to reproduce.\n## Not covered\n- none\n## How to re-run\n- `.domain-agent/qa/checkout.md`\n' > "$v/report.md"
-  printf 'verdict: GREEN\n## QA\nTool: playwright-cli\n- as-is/to-be captured\n' > "$v/QA.md"
+  printf 'verdict: GREEN\n## QA\nTool: agent-browser\n- as-is/to-be captured\n' > "$v/QA.md"
   printf 'as-is proof\n' > "$v/qa/as-is-1040.png"; printf 'to-be proof\n' > "$v/qa/to-be-1040.png"
   printf '{ "action_count": 12, "action_cap": 100 }\n' > "$v/state.json"
   echo "$v"
@@ -140,31 +142,31 @@ run_case "2.2 no numeric action_count -> blocked"  1 "action_count"       bash "
 v=$(mkbrowser g3); printf '{ "action_count": 50 }\n' > "$v/state.json"
 run_case "3.1 action_cap defaults to 100 -> PASS"  0 "within cap 100"     bash "$GATE" "$v" browser
 
-# Authenticated session: native playwright-cli (named session / state-load / CDP attach), one driver.
+# Authenticated session: documented playwright-cli fallback when agent-browser cannot complete reliable QA.
 v=$(mkbrowser g3b)
-printf 'verdict: GREEN\n## QA\nTool: playwright-cli\n- auth via state-load; as-is/to-be captured\n' > "$v/QA.md"
-run_case "3.2 native auth session -> PASS"         0 "QA-ONLY GATE PASS"  bash "$GATE" "$v" browser
+printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nFallback: agent-browser could not complete reliable QA because the authenticated popup was not inspectable.\n- auth via state-load; as-is/to-be captured\n' > "$v/QA.md"
+run_case "3.2 documented auth fallback -> PASS"    0 "QA-ONLY GATE PASS"  bash "$GATE" "$v" browser
 
 # DB read-only backstop.
 v=$(mkbrowser g4)
-printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: mysql (read-only via aidt-mysql-cli)\n- as-is/to-be captured\n' > "$v/QA.md"
+printf 'verdict: GREEN\n## QA\nTool: agent-browser\nDB: mysql (read-only via aidt-mysql-cli)\n- as-is/to-be captured\n' > "$v/QA.md"
 run_case "4.1 DB read-only, no writes -> PASS"     0 "every DB: line marked read-only" bash "$GATE" "$v" browser
 v=$(mkbrowser g4b)
-printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: mysql (via cli)\n- as-is/to-be captured\n' > "$v/QA.md"
+printf 'verdict: GREEN\n## QA\nTool: agent-browser\nDB: mysql (via cli)\n- as-is/to-be captured\n' > "$v/QA.md"
 run_case "4.2 DB line not read-only -> blocked"    1 "not marked read-only" bash "$GATE" "$v" browser
 v=$(mkbrowser g4c)
-printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: mysql (read-only via cli)\nran: UPDATE orders SET total=1\n- as-is/to-be captured\n' > "$v/QA.md"
+printf 'verdict: GREEN\n## QA\nTool: agent-browser\nDB: mysql (read-only via cli)\nran: UPDATE orders SET total=1\n- as-is/to-be captured\n' > "$v/QA.md"
 run_case "4.3 DB write SQL recorded -> blocked"    1 "DB write statement"  bash "$GATE" "$v" browser
 # Second DB line unmarked rides behind a first read-only line -> must be caught per-line.
 v=$(mkbrowser g4d)
-printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: postgres (read-only via psql)\nDB: mysql (via cli)\n- as-is/to-be captured\n' > "$v/QA.md"
+printf 'verdict: GREEN\n## QA\nTool: agent-browser\nDB: postgres (read-only via psql)\nDB: mysql (via cli)\n- as-is/to-be captured\n' > "$v/QA.md"
 run_case "4.4 mixed DB lines, one unmarked -> blocked" 1 "not marked read-only" bash "$GATE" "$v" browser
 # REPLACE INTO / GRANT are writes too.
 v=$(mkbrowser g4e)
-printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: mysql (read-only via cli)\nran: REPLACE INTO cache VALUES (1)\n- as-is/to-be captured\n' > "$v/QA.md"
+printf 'verdict: GREEN\n## QA\nTool: agent-browser\nDB: mysql (read-only via cli)\nran: REPLACE INTO cache VALUES (1)\n- as-is/to-be captured\n' > "$v/QA.md"
 run_case "4.5 REPLACE INTO -> blocked"             1 "DB write statement"  bash "$GATE" "$v" browser
 v=$(mkbrowser g4f)
-printf 'verdict: GREEN\n## QA\nTool: playwright-cli\nDB: mysql (read-only via cli)\nran: GRANT SELECT ON db.* TO qa\n- as-is/to-be captured\n' > "$v/QA.md"
+printf 'verdict: GREEN\n## QA\nTool: agent-browser\nDB: mysql (read-only via cli)\nran: GRANT SELECT ON db.* TO qa\n- as-is/to-be captured\n' > "$v/QA.md"
 run_case "4.6 GRANT -> blocked"                    1 "DB write statement"  bash "$GATE" "$v" browser
 
 # CLI app-type: qa-gate.sh needs only ## QA; everything else still enforced.

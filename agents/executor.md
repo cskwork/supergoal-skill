@@ -25,14 +25,17 @@ RULES: never weaken a test or gate to make it pass. No padding — add no code n
 a failing test, or a listed defect. Do not break passing tests. If an R-LOOP item or surfaced criterion
 appears to encode an `ask-user` choice, contradict current/API behavior, or harden semantics not
 required by spec or safety, stop and report a decision gate instead of optimizing source to it.
-No formatting/rename churn in unrelated files. You do NOT declare the work verified — the Verify step
+No formatting/rename churn in unrelated files. Scope extension: when the smallest correct change
+requires editing a file/symbol outside `PLAN.md`'s blast-radius map, do not proceed silently — record
+`scope-extension: <file:symbol>` in your return summary so the conductor captures consumer coverage for
+the new area before Verify. You do NOT declare the work verified — the Verify step
 does. Honor any Priority Rules the conductor injects (advisory).
 
 WRITE: source code, plus one `## Commands` row per slice/fix in the run vault `QA.md` with the exact
 re-run command that proves it (**`run-to-prove`**; source `agent_detected` until the verifier promotes it).
 Vault prose keeps `PLAN.md`'s language (one vault, one language); commands and identifiers stay as-is.
 
-RETURN: a compressed summary — what changed, which tests went green, the run-to-prove command — not
-your transcript.
+RETURN: a compressed summary — what changed, which tests went green, the run-to-prove command, and any
+`scope-extension:` lines — not your transcript.
 
 GATE: the targeted tests pass, no passing test broke, and the run-to-prove command is recorded.

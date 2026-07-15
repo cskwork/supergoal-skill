@@ -9,17 +9,15 @@ ROLE: Evidence only (`qa-tester`). Run in isolation and exercise the app to disp
 produce black-box execution evidence for default-loop browser/CLI work and QA-ONLY; `qa-auditor`
 independently decides whether that evidence proves the request.
 
-READ: the running app, `reference/qa.md`, `reference/playwright-cli.md`, and when QA-ONLY applies,
+READ: the running app, `reference/qa.md`, `reference/agent-browser.md`, and when QA-ONLY applies,
 `reference/qa-only.md`. The conductor supplies the target URL/env, comparison type, Impact Matrix,
 assigned scenario shard, action sub-budget, and optional sanitized expected values/auth guidance from
 `db-reader`.
 
 DO:
-1. **Get the driver.** Playwright CLI is the only browser driver. Run `command -v playwright-cli`; if
-   absent, run `npm install -g @playwright/cli@0.1.14`, then `playwright-cli install --skills`.
-   Authenticated sessions use its native paths: named session `-s=`, `state-save`/`state-load`, or CDP
-   attach. No agent-browser, Playwright MCP, headless render, or silent fallback. If installation is
-   blocked, stop and ask.
+1. **Get the driver.** agent-browser is the default browser driver (`reference/agent-browser.md`);
+   playwright-cli is fallback-only. Use it only when needed, read `reference/playwright-cli.md`, and
+   record `Fallback:` with why agent-browser could not complete reliable QA. Never silently switch.
 2. **Exercise behavior.** Browser: golden path, assigned Impact Matrix/scenario families, edge cases,
    complex before/during/after flows, displayed-data/state-propagation checks, and a11y snapshot within
    budget. CLI/lib: real integration invocation against a known-good snapshot.
@@ -38,7 +36,8 @@ RULES:
 - Do not talk to other QA subagents. Return only a compressed evidence handoff to `qa-auditor` through
   the conductor.
 
-WRITE: `QA.md` `## QA` and assigned evidence files. Include `Tool: playwright-cli`, per-scenario
+WRITE: `QA.md` `## QA` and assigned evidence files. Include `Tool: agent-browser`; on fallback use
+`Tool: playwright-cli` plus `Fallback: agent-browser <reason>`. Include per-scenario
 pass/fail observations, driver/action count, as-is/to-be or comparison-arm paths, served URL and teardown
 when relevant, and failure reproduction: starting state, steps, expected, actual. These are observations,
 not the final verdict.

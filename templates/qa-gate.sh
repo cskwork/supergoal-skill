@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # /supergoal QA gate — the literal exit condition for the QA phase (GREENFIELD/LEGACY,
-# and any web-bug check in DEBUG). It converts "QA actually drove the app with playwright-cli
+# and any web-bug check in DEBUG). It converts "QA actually drove the app with the approved driver
 # and captured user-observable evidence" from prose (reference/qa.md) into a machine-checkable
 # backstop. QA was the one phase gate that stayed instruction-only, which let a run silently
 # fall back to a headless-Chrome render, skip the as-is/to-be proof, and still pass delivery.
-# playwright-cli is now the single sanctioned driver — this gate rejects any other.
+# agent-browser is the default; playwright-cli requires a recorded fallback reason.
 # NEVER edit this script to make a non-compliant QA pass — re-run QA properly instead.
 #
 # Usage: qa-gate.sh <vault-dir> <browser|cli>
@@ -14,8 +14,8 @@
 # Exit 0 only if:
 #   browser: QA.md has a '## QA' section; qa/as-is-* and qa/to-be-* evidence files
 #            exist (the user-observable proof, same framing); and the driver is named on a
-#            'Tool:' line that is playwright-cli (a silent headless-Chrome render, agent-browser,
-#            or any other tool fails here).
+#            'Tool:' line naming agent-browser, or playwright-cli plus a concrete 'Fallback:' reason
+#            that names why agent-browser could not complete reliable QA.
 #   cli:     QA.md has a '## QA' section recording an integration smoke (no browser
 #            evidence required — CLI/library has no browser).
 
@@ -84,17 +84,39 @@ require_evidence() {
 require_evidence "as-is-*" "before"
 require_evidence "to-be-*" "after"
 
-# 2) The driver that exercised the app must be named on a 'Tool:' line, and it must be playwright-cli
-#    — the single sanctioned driver. No agent-browser, no Playwright MCP, no silent headless render.
-tool_line="$(printf '%s\n' "$QA_SECTION" | grep -iE '^[[:space:]]*[-*]?[[:space:]]*Tool:' | head -1 || true)"
-[ -n "$tool_line" ] \
-  || fail "## QA has no 'Tool:' line — name the driver that exercised the app (must be playwright-cli)"
+# 2) The driver record is singular and exact; copied template or conflicting values are not evidence.
+tool_lines="$(printf '%s\n' "$QA_SECTION" | grep -iE '^[[:space:]]*[-*]?[[:space:]]*Tool:' || true)"
+tool_count="$(printf '%s\n' "$tool_lines" | awk 'NF { count++ } END { print count + 0 }')"
+[ "$tool_count" -gt 0 ] \
+  || fail "## QA has no 'Tool:' line — name the driver that exercised the app"
+[ "$tool_count" -eq 1 ] \
+  || fail "## QA must contain exactly one 'Tool:' line"
+tool_line="$tool_lines"
+tool_value="${tool_line#*:}"
+fallback_lines="$(printf '%s\n' "$QA_SECTION" | grep -iE '^[[:space:]]*[-*]?[[:space:]]*Fallback:' || true)"
+fallback_count="$(printf '%s\n' "$fallback_lines" | awk 'NF { count++ } END { print count + 0 }')"
 
-# 3) The driver must be playwright-cli — the only sanctioned driver. Any other name (agent-browser,
-#    Playwright MCP, a headless-Chrome render) fails here; re-run QA with playwright-cli.
-printf '%s' "$tool_line" | grep -qiF 'playwright-cli' \
-  || fail "## QA 'Tool:' line is not playwright-cli — playwright-cli is the only sanctioned driver (reference/qa.md, reference/playwright-cli.md); re-run QA with it"
-echo "  ok: driven by playwright-cli"
+# 3) agent-browser has no fallback record. playwright-cli requires one concrete failure/limitation.
+if printf '%s' "$tool_value" | grep -qiE '^[[:space:]]*agent-browser[[:space:]]*$'; then
+  [ "$fallback_count" -eq 0 ] \
+    || fail "agent-browser runs must contain no 'Fallback:' line"
+  echo "  ok: driven by agent-browser"
+elif printf '%s' "$tool_value" | grep -qiE '^[[:space:]]*playwright-cli[[:space:]]*$'; then
+  [ "$fallback_count" -gt 0 ] \
+    || fail "playwright-cli is fallback-only — add 'Fallback:' with why agent-browser could not complete reliable QA"
+  [ "$fallback_count" -eq 1 ] \
+    || fail "playwright-cli runs must contain exactly one 'Fallback:' line"
+  fallback_line="$fallback_lines"
+  fallback_value="${fallback_line#*:}"
+  printf '%s' "$fallback_value" | grep -qiF 'agent-browser' \
+    || fail "playwright-cli fallback must name agent-browser and why it could not complete reliable QA"
+  fallback_reason="$(printf '%s' "$fallback_value" | sed -E 's/[Aa][Gg][Ee][Nn][Tt]-[Bb][Rr][Oo][Ww][Ss][Ee][Rr]//')"
+  printf '%s' "$fallback_reason" | grep -qiE '(because[[:space:]]+[[:alnum:]]|could not[[:space:]]+[[:alnum:]]|cannot[[:space:]]+[[:alnum:]]|unable to[[:space:]]+[[:alnum:]]|failed to[[:space:]]+[[:alnum:]]|failure:[[:space:]]*[[:alnum:]]|limitation:[[:space:]]*[[:alnum:]]|unsupported[[:space:]]+[[:alnum:]]|timed out|timeout[[:space:]]+(on|while|during|at)[[:space:]]+[[:alnum:]]|blocked by[[:space:]]+[[:alnum:]]|not (supported|inspectable|reachable|available|reliable))' \
+    || fail "playwright-cli fallback needs a concrete agent-browser limitation/failure reason"
+  echo "  ok: driven by playwright-cli with recorded agent-browser fallback"
+else
+  fail "unsupported browser driver in ## QA 'Tool:' — value must be exactly 'agent-browser' or 'playwright-cli'"
+fi
 
 echo "  ok: as-is/to-be evidence present + driver named"
 echo "== QA GATE PASS =="

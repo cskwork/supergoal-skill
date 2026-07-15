@@ -47,7 +47,7 @@ Before any file mutation, create the run vault's `GOAL.md` from `templates/GOAL.
   it into a detailed spec; `## Success Criteria` seeds falsifiable checkboxes, each naming its
   verification method - full-spec coverage plus grounded edge-case and resilience criteria enumerated at
   plan time, so the user reviews them at the plan approval gate instead of paying for separate improve
-  passes later; web apps also seed `## QA Cases` (browser scenarios for playwright-cli);
+  passes later; web apps also seed `## QA Cases` (agent-browser scenarios; playwright-cli fallback);
 - **Full-spec discovery (Frame owns it, once)**: explore the actual code first (`agents/explore.md`,
   `reference/plan-grounding.md`) - trace the touched paths, existing utilities, and data shapes - then
   re-read the request/ticket, README, design/API docs, and repo/data rules; turn what they require -
@@ -174,7 +174,9 @@ requires `qa-tester` evidence before the auditor; the conditional plan attack be
      criterion with the regression evidence.
    - Code-change scenarios use `reference/qa.md` "Scenario stencil (code changes)", including regression
      scenarios and metamorphic relations when no exact oracle exists.
-   - Browser UI changes require `qa-tester` evidence from `reference/qa.md`: `Tool: playwright-cli`,
+   - Browser UI changes require `qa-tester` evidence from `reference/qa.md`: `Tool: agent-browser`
+     by default; playwright-cli is fallback-only with a recorded reason explaining why agent-browser
+     could not complete reliable QA,
      fixed-route as-is/to-be captures, and passing `bash templates/qa-gate.sh <vault> browser`. The
      auditor consumes the compressed tester summary and evidence paths; it does not drive the browser.
    - Re-run every captured neighbor characterization baseline; unnamed drift is red. API refactor:

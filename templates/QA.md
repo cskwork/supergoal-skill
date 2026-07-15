@@ -23,7 +23,8 @@ Backward-trace: clean | <orphan file:line list>
 
 ## QA
 
-Tool: playwright-cli
+Tool: agent-browser | playwright-cli
+Fallback: <required only for playwright-cli; why agent-browser could not QA properly>
 UI-tier: <Expressive|Functional, UI runs only>
 DB: <dialect, read-only, when used>
 - as-is: `qa/as-is-<view>.png`  to-be: `qa/to-be-<view>.png`

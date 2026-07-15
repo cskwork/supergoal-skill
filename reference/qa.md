@@ -4,7 +4,7 @@ QA drives the real app like a user and records observable evidence. Applies to G
 web-bug DEBUG checks.
 
 UI changes are browser app verification: if product code changes a user-facing browser surface, the run
-must drive that surface with `playwright-cli` and pass `bash templates/qa-gate.sh <vault> browser`.
+must drive that surface with `agent-browser` and pass `bash templates/qa-gate.sh <vault> browser`.
 Lint/typecheck/build/unit/static screenshots can support but not replace browser evidence.
 
 QA-ONLY is the broad regression lane. For "QA only", broad verification, or post-change impact sweep, use
@@ -47,23 +47,22 @@ green case conclusive; record reproduction fidelity and post-deploy confirmation
 
 Browser dumps/screenshots/logs stay in `qa-tester`. Conductor receives summary + evidence paths only.
 
-## Browser context capture - the single driver stage
+## Browser context capture - default and fallback
 
-One stage, one driver: QA black-box, DEBUG observe-first (`screen -> API`), LEGACY preserve-baseline.
-They differ in captured evidence, not driver. `playwright-cli` is the ONLY driver
-(`reference/playwright-cli.md`).
+Use one driver per run. agent-browser is the default browser driver (`reference/agent-browser.md`). Use
+`playwright-cli` only when agent-browser cannot complete reliable QA; record why under `Fallback:` and
+load `reference/playwright-cli.md`.
 
 1. **Serve.** Start the app from the working tree (or the Verify worktree when one is used), poll
    until ready, record URL, tear down at end. Static/single HTML opens via `file://` from that tree.
-2. **Get the driver.** `command -v playwright-cli`; if absent `npm install -g @playwright/cli@0.1.14`,
-   then `playwright-cli install --skills`. Browser: `--browser=chrome` for system Chrome or
-   `npx playwright install chromium`. If install is genuinely blocked, STOP and ask the user to install
-   it - never substitute a headless render or any other tool (`reference/playwright-cli.md`).
-3. **Drive flows.** `open`/`goto`, `snapshot` (get `ref`s), `click`/`type`/`fill`, `screenshot`. Golden
+2. **Get the driver.** `command -v agent-browser`; if absent, `npm install -g agent-browser`, then
+   `agent-browser install`. If it cannot QA the required flow reliably, switch explicitly per
+   `reference/playwright-cli.md`; never use an unrecorded substitute.
+3. **Drive flows.** `open`, `snapshot` (get `@ref`s), `click`/`type`/`fill`, `screenshot`. Golden
    path, edge cases, and a11y must pass. UI/UX jobs also run `reference/ui-ux.md` pre-flight, record a
    `UI-tier: Expressive|Functional` line in `## QA`, and enumerate the
    text/background pairs to `qa/contrast-pairs.json` — `qa-gate.sh` runs the contrast gate and blocks on FAIL.
-4. **Capture the network.** `playwright-cli requests` lists every call; `request <index>` shows
+4. **Capture the network.** `agent-browser network requests` lists calls; `network request <id>` shows
    method + path + status + payload for one. This is the shared evidence for DEBUG `screen -> API` and
    LEGACY baseline (below). The Verify step still re-runs the project's REAL tests with no browser.
 5. **Capture as-is/to-be.** Same route and viewport:
@@ -81,7 +80,7 @@ gitignored; no app-specific selector, route, or credential lives in this skill.
 2. **Build on first entry (when absent).** Within the action budget, do one light mapping pass and save
    it: the entry/auth flow; the `screen -> URL` route list; every click that opens a **new tab or
    popup** and the resulting target; how to switch the driver to that target; stable selectors for key
-   controls; and each screen's real API calls from `playwright-cli requests` (method + path).
+   controls; and each screen's real API calls from `agent-browser network requests` (method + path).
    Write `.domain-agent/qa/nav-map.md` and index it in `index.md`.
 3. **Self-heal on drift.** When a saved entry no longer matches the live site - a selector ref is gone,
    a route 404s/redirects, a popup opens a different target, or an API path/method changed - re-map only
@@ -89,9 +88,8 @@ gitignored; no app-specific selector, route, or credential lives in this skill.
    is how a site change flows back into the map inside the workflow, so the next DEBUG/QA run navigates
    the current site.
 
-**New tab / popup handling.** When an action opens a new tab or popup, `playwright-cli tab-select <index>`
-to that target and re-`snapshot` before interacting, then record `trigger -> target` in nav-map
-(`playwright-cli tab-list`; see `reference/playwright-cli.md`).
+**New tab / popup handling.** Run `agent-browser tab`, switch with `agent-browser tab <tN|label>`, then
+re-`snapshot`; record `trigger -> target` in nav-map (`reference/agent-browser.md`).
 
 ## API behavior baseline (LEGACY preserve)
 
@@ -100,8 +98,8 @@ preserves it. DEBUG's `screen -> endpoint` only localizes. Save to the run vault
 `<vault>/qa/api-baseline-<endpoint>.md`: method + path + status + a representative request and the
 response shape (the contract, not every value).
 
-- **UI-reachable** - reach the screen via `qa/nav-map.md` and capture real calls with `playwright-cli
-  requests` (grep the list by path; `request <index>` for one call's full contract), through `qa-tester`;
+- **UI-reachable** - reach the screen via `qa/nav-map.md` and capture real calls with `agent-browser
+  network requests` (`network request <id>` for one call's full contract), through `qa-tester`;
   promote a confirmed `screen -> API` row back into nav-map.
 - **Backend-only (no UI)** - capture at the HTTP level: a recorded curl/HAR or an HTTP probe (e.g. the
   `verify` skill) against the running endpoint.
@@ -109,14 +107,10 @@ response shape (the contract, not every value).
 After refactor, re-capture the same call and diff; unintended drift is red (role-loop Verify). Baselines
 are per-run vault evidence, never domain pack; strip secrets, tokens, PII.
 
-## Authenticated sessions (native playwright-cli)
+## Authenticated sessions
 
-A real logged-in session is handled by playwright-cli itself - no separate tool. Three native paths
-(`reference/playwright-cli.md`): a named session that keeps cookies/storage across calls
-(`playwright-cli -s=<name> <cmd>`), a saved storage state (`state-save <file>` once authenticated,
-`state-load <file>` later), or CDP attach to the user's existing browser (`playwright-cli open` attach
-flags). The driver line stays `Tool: playwright-cli`; capture as-is/to-be the same way. There is one
-driver, so there is no `Fallback:` line.
+Use an agent-browser named session, `state save`/`state load`, or CDP `connect` for real login state
+(`reference/agent-browser.md`). The same options exist in the Playwright fallback reference.
 
 ## CLI / library
 
@@ -127,7 +121,8 @@ known-good output.
 
 Put evidence under `<vault>/qa/` and summarize in `QA.md` `## QA`:
 
-- `Tool: playwright-cli` (the only sanctioned driver).
+- `Tool: agent-browser` by default; `Tool: playwright-cli` plus `Fallback: agent-browser <reason>` only
+  when the default cannot complete reliable QA.
 - Commands run and pass/fail per check.
 - Exact `qa/as-is-<view>.png` and `qa/to-be-<view>.png` paths.
 - Served URL and teardown note.
@@ -135,9 +130,9 @@ Put evidence under `<vault>/qa/` and summarize in `QA.md` `## QA`:
 ## Exit gate
 
 QA passes only when `bash templates/qa-gate.sh <vault> <browser|cli>` exits 0. Browser runs require
-as-is/to-be evidence and a `Tool: playwright-cli` line. Never edit the gate to pass.
+as-is/to-be evidence and the driver record above. Never edit the gate to pass.
 
 ## Repeatable script
 
-First QA may be hand-driven. On any re-check, stop hand-driving and propose a Playwright CLI script in
-`qa/<flow>.spec.ts`; record its path in `## QA`.
+First QA may be hand-driven. On re-check, save a repeatable agent-browser batch/script; when fallback is
+required, save a Playwright spec. Record the path in `## QA`.

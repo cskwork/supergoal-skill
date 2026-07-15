@@ -7,7 +7,7 @@ No credentials, no raw DB rows, no PII.
 
 # QA report - <objective>
 
-- Date: <YYYY-MM-DD>   Target: <url/env>   Driver: <playwright-cli | CLI smoke>
+- Date: <YYYY-MM-DD>   Target: <url/env>   Driver: <agent-browser | playwright-cli fallback | CLI smoke>
 - Comparison: <functional | data-integrity | before-after | ab | env>
 - Verdict: <PASS | FAIL | PARTIAL>   Actions used: <action_count>/<action_cap>
 

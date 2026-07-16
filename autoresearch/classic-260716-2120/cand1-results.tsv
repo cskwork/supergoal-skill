@@ -1,0 +1,13 @@
+iter	arm	task	reward	f2p	p2p	tok_in	tok_cache	tok_out	agent_s	wall_s
+0	baseline	cliffy-config-file-parsing	1	37/37	451/451	2005024	1917056	12544	482	526
+0	baseline	csstree-shorthand-expansion-compression	0	68/79	16715/16715	605899	568832	10371	333	360
+0	baseline	termenv-preserve-ansi-resets	0	34/35	87/87	1053026	982272	12469	409	563
+0	v080	cliffy-config-file-parsing	0	0/37	451/451	2582260	2476416	14426	480	521
+0	v080	csstree-shorthand-expansion-compression	0	72/79	16715/16715	2996004	2908544	20662	652	679
+0	v080	termenv-preserve-ansi-resets	0	33/35	87/87	1596880	1512448	13354	481	561
+0	recon	cliffy-config-file-parsing	1	37/37	451/451	5079537	4972416	22236	866	908
+0	recon	csstree-shorthand-expansion-compression	0	73/79	16715/16715	1332852	1269120	13215	447	474
+0	recon	termenv-preserve-ansi-resets	0	29/35	87/87	891929	848128	12760	360	440
+1	cand1	cliffy-config-file-parsing	1	37/37	451/451	5206189	5049472	16508	587	630
+1	cand1	csstree-shorthand-expansion-compression	0	73/79	16715/16715	1937687	1864832	15277	397	424
+1	cand1	termenv-preserve-ansi-resets	0	33/35	87/87	954240	912128	10787	286	364

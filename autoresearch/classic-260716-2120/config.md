@@ -38,3 +38,27 @@ Goal: cut the harness arm's +40-60% agent-time/token overhead vs baseline while 
   + cherry-pick 2651fe0 (fast path). Undo: revert those two commits.
 - Caveat: n=1 per cell at low effort; f2p is bimodal. The time result (−24%, consistent sign on
   all 3 tasks) is the robust finding; per-task token deltas are noise-level.
+
+## Medium-effort spot check (2026-07-16/17, iter 2 rows in cand1-results.tsv)
+
+csstree = feature-add proxy, termenv = debug proxy. codex gpt-5.5 medium, same runner.
+
+| task | arm | f2p | agent | tok in |
+|---|---|---|---|---|
+| csstree | basemed | 75/79 | 437s | 1.21M |
+| csstree | reconmed | 78/79 | 492s | 1.81M |
+| csstree | cand1med | **79/79 (reward 1)** | **400s** | 1.45M |
+| termenv | basemed | 34/35 | 493s | 1.32M |
+| termenv | reconmed | 34/35 | 575s | 1.95M |
+| termenv | cand1med | 31/35 | 453s | 1.28M |
+
+- Feature-add: cand1 is the first supergoal arm ever to beat baseline on BOTH quality (79/79 full
+  solve vs 75/79) and agent time (−8%). Fast-path harmlessness vs recon holds (79 ≥ 78).
+- Debug: no supergoal lift — recon ties baseline at +17% time; cand1 −3 f2p at −8% time. Pattern
+  consistent across both efforts (cand1 termenv: −1 at low, −3 at medium).
+- Comprehensive totals across all 5 valid task-runs (low 3 + medium 2): f2p baseline 248/265,
+  recon 251/265, cand1 253/265; agent time baseline 2,154s, recon 2,740s (+27%), cand1 2,123s
+  (−1.4%); input tokens baseline 6.19M, recon 11.07M (+79%), cand1 10.83M (+75%, 97% cached).
+- Pick: cand1 (already landed on dev-v2) — best quality total at time parity with baseline; the
+  only arm that never pays a time tax. Known weakness to watch: repeated small f2p loss on the
+  debug task (n=1 per cell, not yet conclusive).

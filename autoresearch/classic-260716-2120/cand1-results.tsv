@@ -17,3 +17,4 @@ iter	arm	task	reward	f2p	p2p	tok_in	tok_cache	tok_out	agent_s	wall_s
 2	basemed	termenv-preserve-ansi-resets	0	34/35	87/87	1321858	1261824	20437	493	571
 2	reconmed	termenv-preserve-ansi-resets	0	34/35	87/87	1947621	1878400	18895	575	653
 2	cand1med	termenv-preserve-ansi-resets	0	31/35	87/87	1284308	1206528	14146	453	530
+2	basemed2	csstree-shorthand-expansion-compression	0	76/79	16715/16715	1316010		15359	463	497

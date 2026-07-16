@@ -65,3 +65,9 @@ as revert-of-1e4e72c (restores diff-driven regression reconciliation) + cherry-p
   measured; landing only tested combinations keeps the evidence chain honest.
 - Open axis: input tokens stay ~2.2× baseline (97% cached); embed diet projected at 5-7% saving,
   below the 20% keep bar, so the loop closed at iteration 1 (plateau by expected value).
+- Medium spot check (owner asked for a comprehensive pick-and-use view): cand1 full-solved csstree
+  79/79 beating baseline on quality AND time (400s vs 437s) — first supergoal arm to do so; termenv
+  (debug proxy) showed no lift (31/35 vs baseline 34/35, repeated small loss across both efforts).
+  Comprehensive totals (5 valid task-runs): f2p cand1 253 > recon 251 > baseline 248; agent time
+  cand1 −1.4% vs baseline, recon +27%. Verdict: keep cand1 as the shipped variant; watch the
+  debug-task weakness (n=1 per cell).

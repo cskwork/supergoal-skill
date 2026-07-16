@@ -36,6 +36,14 @@ verifier included) and dropped token usage. Now each arm summary carries `metric
   where cost may be absent).
 - Report table and paired deltas include tokens and agent time.
 
+## Medium-effort spot check (added 2026-07-16/17)
+
+baseline/recon/cand1 on csstree (feature-add) + termenv (debug) at medium: cand1 full-solved
+csstree 79/79 beating baseline on quality AND time (400s vs 437s); termenv showed no supergoal
+lift (cand1 31/35 vs baseline 34/35). Comprehensive totals over 5 valid task-runs: f2p 253 (cand1)
+vs 251 (recon) vs 248 (baseline); agent time cand1 −1.4% vs baseline, recon +27%. Details:
+`autoresearch/classic-260716-2120/config.md`.
+
 ## Incidents
 
 - `skrub-duration-encoding`: verifier pytest segfaults at collection (exit 139, both invocations)

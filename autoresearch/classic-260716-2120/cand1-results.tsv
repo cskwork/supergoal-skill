@@ -11,3 +11,9 @@ iter	arm	task	reward	f2p	p2p	tok_in	tok_cache	tok_out	agent_s	wall_s
 1	cand1	cliffy-config-file-parsing	1	37/37	451/451	5206189	5049472	16508	587	630
 1	cand1	csstree-shorthand-expansion-compression	0	73/79	16715/16715	1937687	1864832	15277	397	424
 1	cand1	termenv-preserve-ansi-resets	0	33/35	87/87	954240	912128	10787	286	364
+2	basemed	csstree-shorthand-expansion-compression	0	75/79	16715/16715	1205452	1146752	17507	437	471
+2	reconmed	csstree-shorthand-expansion-compression	0	78/79	16715/16715	1809256	1730944	15352	492	520
+2	cand1med	csstree-shorthand-expansion-compression	1	79/79	16715/16715	1448526	1384576	14724	400	428
+2	basemed	termenv-preserve-ansi-resets	0	34/35	87/87	1321858	1261824	20437	493	571
+2	reconmed	termenv-preserve-ansi-resets	0	34/35	87/87	1947621	1878400	18895	575	653
+2	cand1med	termenv-preserve-ansi-resets	0	31/35	87/87	1284308	1206528	14146	453	530

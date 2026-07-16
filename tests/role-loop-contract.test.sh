@@ -219,5 +219,20 @@ require_text "role-loop gates plan attack to under-specified work" "reference/ro
 # The escalation reviewer carries an explicit adversarial (disprove, not validate) stance.
 require_text "reviewer stance is to disprove, not rubber-stamp" "agents/code-reviewer.md" "try to DISPROVE"
 
+# Diff-driven regression reconciliation (2026-07-15): consumers are enumerated, not guessed;
+# the builder reports scope extensions; Verify reconciles the FINAL diff against consumer
+# coverage and honors a test-scope floor. Closes the predicted-vs-actual blast-radius loop.
+require_text "qa.md enumerates consumers mechanically" "reference/qa.md" "Enumerate consumers, don't guess"
+require_text "qa.md covers every enumerated consumer" "reference/qa.md" "Cover every enumerated consumer"
+require_text "qa.md rejects silently uncovered consumers" "reference/qa.md" "A silently uncovered consumer is red"
+require_text "executor reports scope extensions" "agents/executor.md" "scope-extension: <file:symbol>"
+require_text "conductor captures coverage on scope extension" "reference/role-loop.md" "the conductor captures consumer coverage"
+require_text "boundary crossing refires blast-radius confirm" "reference/role-loop.md" "boundary crossing re-fires the blast-radius confirm"
+require_text "verify reconciles the final diff" "reference/role-loop.md" "the FINAL diff, not the plan, is the regression surface"
+require_text "uncovered consumer is an R-LOOP item" "reference/role-loop.md" "An uncovered consumer or unreported scope-extension is an R-LOOP item"
+require_text "verify has a test-scope floor" "reference/role-loop.md" "Test-scope floor"
+require_text "qa-auditor reconciles the final diff" "agents/qa-auditor.md" "the FINAL diff, not the plan, is the regression surface"
+require_text "qa-auditor honors the test-scope floor" "agents/qa-auditor.md" "Test-scope floor"
+
 printf '\nSummary: %s passed, %s failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

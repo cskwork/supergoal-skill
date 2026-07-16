@@ -1,7 +1,11 @@
 # DeepSWE old-vs-new harness A/B — STATUS (paused mid-run 2026-07-16)
 
-Status: **incomplete — 3 of 10 arm-runs scored; not proven.** Paused for session wrap-up.
-The detached run may still be writing to `/tmp/sg-deepswe-ab/` (see Stop below).
+Status: **superseded 2026-07-16** — continued as the 3-arm low-effort efficiency A/B in
+`../../2026-07-16-supergoal-efficiency-ab/STATUS.md` (baseline / v0.8.0 / regression-reconciliation,
+remaining 4 tasks, time+token metrics). `/tmp/sg-deepswe-ab/` raw outputs were lost to a reboot;
+the interim table below is the only surviving record of the medium-effort pairs.
+
+Previous status: **incomplete — 3 of 10 arm-runs scored; not proven.** Paused for session wrap-up.
 
 ## Design
 

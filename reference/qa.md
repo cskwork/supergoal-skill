@@ -16,10 +16,13 @@ borrow the matrix for high-blast-radius changes.
 Use when GREENFIELD / DEBUG / LEGACY work touches shared code/state: function, module, global state,
 DB row/schema, config, cache, integration contract.
 
-1. Pick reachable neighbor behavior the change could break.
-2. Before editing, put that behavior under a check and save current output to
-   `<vault>/qa/baseline/<neighbor>.txt`.
-3. After editing, re-run the same check and diff against the snapshot.
+1. Enumerate consumers, don't guess: for each symbol/state the plan modifies, list its direct
+   consumers - callers, importers, shared-state readers, contract consumers - via grep/LSP/code
+   graph, whichever the repo has. Record the consumer list in `QA.md` `## Before`.
+2. Cover every enumerated consumer with one of: (a) a characterization baseline saved to
+   `<vault>/qa/baseline/<neighbor>.txt`, (b) a named existing REAL test the verifier re-runs, or
+   (c) a named residual-risk line in `QA.md`. A silently uncovered consumer is red.
+3. After editing, re-run the same checks and diff against the snapshots.
 
 Unnamed drift is red. Intentional drift must be named in `QA.md`. Characterization is a
 regression signal, not a correctness oracle; update snapshots only for intentional bug fixes.

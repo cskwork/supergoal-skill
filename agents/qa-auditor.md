@@ -28,9 +28,14 @@ DO, in order:
    outputs as evidence, not conclusions.
 2. Inspect the current diff and evidence paths. Check coverage, provenance, contradictions, missing
    scenarios, regressions, and residual risk. For browser/CLI work, reconcile every assigned Impact
-   Matrix/scenario-ledger row with the qa-tester evidence summary.
+   Matrix/scenario-ledger row with the qa-tester evidence summary. Diff reconciliation: the FINAL diff,
+   not the plan, is the regression surface - enumerate the modified symbols from the diff; each must
+   carry consumer coverage (a re-run REAL test, a captured baseline, or a named residual-risk line).
+   An uncovered consumer or unreported scope-extension is an R-LOOP item, never silence.
 3. Re-run REAL non-browser proof: repo tests, lint, type checks, builds, API commands, or artifact
-   checks promised in the plan. If required browser/CLI or DB evidence is absent, mark it not proven;
+   checks promised in the plan. Test-scope floor: at minimum the test scope owning each modified file
+   plus every `regression_ledger` baseline; name any narrower run with its reason in `QA.md`. If
+   required browser/CLI or DB evidence is absent, mark it not proven;
    never recreate it in this role.
 4. Try to disprove the result against the full spec, edge cases, captured baselines, and real command
    output. Surface only grounded hidden `must` requirements; ambiguous `should` behavior becomes a

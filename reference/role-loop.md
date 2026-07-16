@@ -41,6 +41,26 @@ Everything else still applies: plan before build, red-first for bugs, smallest c
 reconciliation, regression ledger re-runs, adversarial final verify. A persistent user workspace uses
 the full protocol below unchanged.
 
+## DEBUG hidden-contract gate - a green repro is not done
+
+A fix that only makes the reported repro pass is the top DEBUG failure mode. Before Exact Verify
+ticks a DEBUG run green, the builder shows and the auditor independently re-checks all three:
+
+1. **Invariant owner.** Name the invariant the bug violated and the function that owns it (for a
+   recursion/cycle: the frame that re-enters, read from the traceback - not the frame that
+   reported). A patch that guards a caller or reporting path instead of the owner is not done:
+   refix at the owner, or record in `QA.md` why the owner must not change.
+2. **Alternative-entry repro.** Add one more repro reaching the same root cause through a
+   different caller or compound context (the failing input embedded in a larger expression, a
+   sibling API sharing the broken path). Both repros must pass. If a second entry cannot exist,
+   record why.
+3. **Convention conformance (grounded).** For every value/type the patch introduces or returns -
+   and the symmetric siblings of the changed surface (mul/div, add/sub, encode/decode,
+   open/close) - read 2-3 sibling implementations in the same module and adopt their canonical
+   forms: canonical singletons/constants/types over raw literals, the module's established output
+   conventions over invented ones. Sibling idiom is current-behavior grounding (must-grade), not
+   "silence turned into stricter semantics".
+
 ## Run setup - before any file mutation
 
 Ephemeral workspace (see fast path above): skip this section's worktree and vault-file setup.
@@ -256,6 +276,8 @@ best-effort; observes only, never blocks or gates the loop.
 - Ambiguous edges are not REDs. If a production/domain behavior change has multiple reasonable meanings,
   classify it as `ask-user` or residual risk; do not invent stricter semantics. If generic/no-user, choose
   a conservative, reversible default and record it.
+- Codebase idiom visible in sibling implementations is not ambiguity: conforming the changed surface to it
+  is required (DEBUG hidden-contract gate), and is grounding, not invention.
 - Characterization baseline is a regression signal, not a correctness oracle. A known-bug snapshot changes
   only when the bug fix is intentional and named.
 - Self-review is not a regression gate: generated explanations can approve behavior drift. Require the

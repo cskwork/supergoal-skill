@@ -40,6 +40,9 @@ DO, in order:
 4. Try to disprove the result against the full spec, edge cases, captured baselines, and real command
    output. Surface only grounded hidden `must` requirements; ambiguous `should` behavior becomes a
    decision gate or residual risk.
+5. DEBUG runs: re-check the hidden-contract gate (`reference/role-loop.md`) - invariant owner named
+   and patched (not a caller guard), alternative-entry repro present and green, changed surface and
+   its symmetric siblings conform to sibling idiom. Any miss is an R-LOOP item.
 
 DEFAULT-LOOP WRITE (vault prose follows `GOAL.md`'s language; structural markers stay verbatim):
 - Diff the implementer's changes against `GOAL.md`; only you tick Success Criteria and QA Cases proven

@@ -44,22 +44,29 @@ the full protocol below unchanged.
 ## DEBUG hidden-contract gate - a green repro is not done
 
 A fix that only makes the reported repro pass is the top DEBUG failure mode. Before Exact Verify
-ticks a DEBUG run green, the builder shows and the auditor independently re-checks all three:
+ticks a DEBUG run green, the builder shows and the auditor independently re-checks all three. In an
+ephemeral single-context run the roles collapse, but the gate does not: run it as an explicit
+self-check pass and write the three answers (owner frame, alternative repro, conformance sweep
+result) into the final summary BEFORE committing:
 
-1. **Invariant owner.** Name the invariant the bug violated and the function that owns it (for a
-   recursion/cycle: the frame that re-enters, read from the traceback - not the frame that
-   reported). A patch that guards a caller or reporting path instead of the owner is not done:
-   refix at the owner, or record in `QA.md` why the owner must not change.
+1. **Invariant owner.** Name the invariant the bug violated and the function that owns it. For a
+   RecursionError/cycle: capture the traceback once, enumerate the repeating frame cycle by name,
+   and pick the fix site INSIDE that cycle - it is often in a different module than the API that
+   surfaced the symptom; follow the cycle across modules. A patch that guards a caller, wrapper,
+   or reporting path outside the enumerated cycle is not done: refix at the owner, or record in
+   `QA.md` why the owner must not change.
 2. **Alternative-entry repro.** Add one more repro reaching the same root cause through a
-   different caller or compound context (the failing input embedded in a larger expression, a
-   sibling API sharing the broken path). Both repros must pass. If a second entry cannot exist,
-   record why.
-3. **Convention conformance (grounded).** For every value/type the patch introduces or returns -
-   and the symmetric siblings of the changed surface (mul/div, add/sub, encode/decode,
-   open/close) - read 2-3 sibling implementations in the same module and adopt their canonical
-   forms: canonical singletons/constants/types over raw literals, the module's established output
-   conventions over invented ones. Sibling idiom is current-behavior grounding (must-grade), not
-   "silence turned into stricter semantics".
+   STRUCTURALLY different context - not the same call with another literal: the failing construct
+   embedded inside a function call / nested expression, or a sibling public API sharing the broken
+   path. Both repros must pass. If a second entry cannot exist, record why.
+3. **Convention conformance (grounded).** Applies to every return/raise REACHABLE through the
+   patched path - including pre-existing literals the diff moves, keeps, or re-routes to - and to
+   the symmetric sibling methods of the changed one (`__mul__`/`__truediv__`, add/sub,
+   encode/decode, open/close) even when the diff does not touch them. Read 2-3 sibling
+   implementations in the same module: where they return canonical singletons/constants/types
+   (e.g. `S.One` over raw `1`, sympified values over Python literals) or follow an established
+   output convention, convert the reachable raw forms in the same patch. Sibling idiom is
+   current-behavior grounding (must-grade), not "silence turned into stricter semantics".
 
 ## Run setup - before any file mutation
 

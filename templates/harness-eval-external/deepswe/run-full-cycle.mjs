@@ -35,6 +35,7 @@ Options:
   --reasoning-effort <level>  Codex reasoning effort for both arms (default: low; use none to omit)
   --reasoning-summary <mode>  Codex reasoning summary for both arms (default: none; use none to omit)
   --codex-auth-json <mode>    Codex auth.json usage: auto, force, off (default: auto)
+  --skill-repo <path>         Supergoal checkout embedded into the harness arm (default: this repo)
   --timeout-seconds <n>       Declared agent budget per arm (default: 900)
   --outer-timeout-seconds <n> Runner safety timeout per arm (default: timeout + 3600)
   --arms <list>               Comma-separated arms: baseline,harness (default: both)
@@ -54,6 +55,7 @@ function parseArgs(argv) {
     reasoningEffort: process.env.SG_DEEPSWE_REASONING_EFFORT || "low",
     reasoningSummary: process.env.SG_DEEPSWE_REASONING_SUMMARY || "none",
     codexAuthJson: process.env.SG_DEEPSWE_CODEX_AUTH_JSON || "auto",
+    skillRepo: process.env.SG_DEEPSWE_SKILL_REPO || REPO_ROOT,
     timeoutSeconds: Number(process.env.SG_DEEPSWE_TIMEOUT_SECONDS || 900),
     outerTimeoutSeconds: Number(process.env.SG_DEEPSWE_OUTER_TIMEOUT_SECONDS || 0),
     arms: (process.env.SG_DEEPSWE_ARMS || "baseline,harness").split(",").map((item) => item.trim()),
@@ -84,6 +86,8 @@ function parseArgs(argv) {
       args.reasoningSummary = argv[++i] || usage();
     } else if (arg === "--codex-auth-json") {
       args.codexAuthJson = argv[++i] || usage();
+    } else if (arg === "--skill-repo") {
+      args.skillRepo = argv[++i] || usage();
     } else if (arg === "--timeout-seconds") {
       args.timeoutSeconds = Number(argv[++i] || usage());
     } else if (arg === "--outer-timeout-seconds") {
@@ -115,6 +119,7 @@ function parseArgs(argv) {
   }
   args.benchmarkRoot = resolve(args.benchmarkRoot);
   args.runRoot = resolve(args.runRoot);
+  args.skillRepo = resolve(args.skillRepo);
   return args;
 }
 
@@ -348,7 +353,7 @@ function pierArgs({
   return args;
 }
 
-async function prepareHarness({ benchmarkRoot, runRoot, task, force }) {
+async function prepareHarness({ benchmarkRoot, runRoot, task, force, skillRepo }) {
   const outRoot = join(runRoot, "deep-swe-harness");
   const destTask = join(outRoot, "tasks", task);
   if (existsSync(destTask)) {
@@ -358,13 +363,38 @@ async function prepareHarness({ benchmarkRoot, runRoot, task, force }) {
   ensureDir(outRoot);
   const result = await run(
     "node",
-    [join(SCRIPT_DIR, "prepare-supergoal-arm.mjs"), benchmarkRoot, outRoot, task, REPO_ROOT],
+    [join(SCRIPT_DIR, "prepare-supergoal-arm.mjs"), benchmarkRoot, outRoot, task, skillRepo],
     { timeoutMs: 60 * 1000, logPath: join(runRoot, "logs", "prepare-harness.log") },
   );
   if (result.status !== 0) {
     throw new Error(`prepare-supergoal-arm failed; see ${result.log_path}`);
   }
   return outRoot;
+}
+
+function timingMs(timing) {
+  if (!timing?.started_at || !timing?.finished_at) return null;
+  const ms = new Date(timing.finished_at).getTime() - new Date(timing.started_at).getTime();
+  return Number.isFinite(ms) ? ms : null;
+}
+
+// Efficiency metrics the outer `pier run` duration hides: agent-only wall clock
+// (excludes Docker environment build and verifier) plus token usage from job stats.
+function armMetrics(collection, commandDurationMs) {
+  const trial =
+    collection.trial_result_paths.map(readJsonIfExists).find((item) => item?.agent_execution) || null;
+  const stats = collection.job_result?.stats || {};
+  return {
+    wall_clock_ms: commandDurationMs ?? null,
+    environment_setup_ms: timingMs(trial?.environment_setup),
+    agent_setup_ms: timingMs(trial?.agent_setup),
+    agent_execution_ms: timingMs(trial?.agent_execution),
+    verifier_ms: timingMs(trial?.verifier),
+    n_input_tokens: stats.n_input_tokens ?? null,
+    n_cache_tokens: stats.n_cache_tokens ?? null,
+    n_output_tokens: stats.n_output_tokens ?? null,
+    cost_usd: stats.cost_usd ?? null,
+  };
 }
 
 function armOutcome(commandResult, collection) {
@@ -421,6 +451,12 @@ function classifyPairedDecision(summary) {
     reward: numberDelta(harness.reward, baseline.reward),
     partial: numberDelta(harness.partial, baseline.partial),
     duration_ms: numberDelta(harnessArm.command.duration_ms, baselineArm.command.duration_ms),
+    agent_execution_ms: numberDelta(
+      harnessArm.metrics?.agent_execution_ms,
+      baselineArm.metrics?.agent_execution_ms,
+    ),
+    n_input_tokens: numberDelta(harnessArm.metrics?.n_input_tokens, baselineArm.metrics?.n_input_tokens),
+    n_output_tokens: numberDelta(harnessArm.metrics?.n_output_tokens, baselineArm.metrics?.n_output_tokens),
     cost_usd: numberDelta(costOf(harnessArm), costOf(baselineArm)),
     patch_bytes: numberDelta(harness.patch_bytes, baseline.patch_bytes),
   };
@@ -450,10 +486,13 @@ function formatCost(value) {
 
 function renderReport(summary) {
   const arms = summary.arms;
+  const seconds = (ms) => (typeof ms === "number" ? `${Math.round(ms / 1000)}s` : "n/a");
+  const tokens = (value) => (typeof value === "number" ? String(value) : "n/a");
   const rows = Object.entries(arms)
     .map(([name, arm]) => {
       const score = arm.score;
-      return `| ${name} | ${arm.process_outcome} | ${score.reward ?? "n/a"} | ${score.f2p_passed ?? "n/a"}/${score.f2p_total ?? "n/a"} | ${score.p2p_passed ?? "n/a"}/${score.p2p_total ?? "n/a"} | ${score.partial ?? "n/a"} | ${formatCost(costOf(arm))} | ${score.patch_bytes ?? "n/a"} | ${Math.round(arm.command.duration_ms / 1000)}s |`;
+      const metrics = arm.metrics || {};
+      return `| ${name} | ${arm.process_outcome} | ${score.reward ?? "n/a"} | ${score.f2p_passed ?? "n/a"}/${score.f2p_total ?? "n/a"} | ${score.p2p_passed ?? "n/a"}/${score.p2p_total ?? "n/a"} | ${score.partial ?? "n/a"} | ${tokens(metrics.n_input_tokens)} | ${tokens(metrics.n_cache_tokens)} | ${tokens(metrics.n_output_tokens)} | ${formatCost(costOf(arm))} | ${score.patch_bytes ?? "n/a"} | ${seconds(metrics.agent_execution_ms)} | ${seconds(arm.command.duration_ms)} |`;
     })
     .join("\n");
   const interpretation =
@@ -482,8 +521,8 @@ runner times out, the arm is recorded as \`runner_timeout\`, not silently scored
 
 ## Results
 
-| Arm | Outcome | Reward | F2P | P2P | Partial | Cost | Patch bytes | Wall clock |
-|---|---|---:|---:|---:|---:|---:|---:|---:|
+| Arm | Outcome | Reward | F2P | P2P | Partial | Tok in | Tok cache | Tok out | Cost | Patch bytes | Agent time | Wall clock |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 ${rows}
 
 ## Interpretation
@@ -518,7 +557,16 @@ async function main() {
   const agentTimeoutSec = readAgentTimeout(taskPath);
   const agentTimeoutMultiplier = Number((options.timeoutSeconds / agentTimeoutSec).toFixed(6));
   const harnessRoot = options.arms.includes("harness")
-    ? await prepareHarness({ benchmarkRoot: options.benchmarkRoot, runRoot: options.runRoot, task: options.task, force: options.force })
+    ? await prepareHarness({
+        benchmarkRoot: options.benchmarkRoot,
+        runRoot: options.runRoot,
+        task: options.task,
+        force: options.force,
+        skillRepo: options.skillRepo,
+      })
+    : null;
+  const skillCommit = options.arms.includes("harness")
+    ? (await run("git", ["-C", options.skillRepo, "rev-parse", "HEAD"])).output_tail.trim().split(/\s+/).at(-1)
     : null;
   const useCodexAuthJson = shouldUseCodexAuthJson({ agent: options.agent, mode: options.codexAuthJson });
 
@@ -531,6 +579,8 @@ async function main() {
     base_instruction_sha256: sha256(readFileSync(join(taskPath, "instruction.md"), "utf8")),
     agent: options.agent,
     model: options.model,
+    skill_repo: options.arms.includes("harness") ? options.skillRepo : null,
+    skill_commit: skillCommit,
     reasoning_effort: options.agent === "codex" ? options.reasoningEffort : null,
     reasoning_summary: options.agent === "codex" ? options.reasoningSummary : null,
     codex_auth_json: {
@@ -591,6 +641,8 @@ async function main() {
     run_root: options.runRoot,
     agent: options.agent,
     model: options.model,
+    skill_repo: manifest.skill_repo,
+    skill_commit: manifest.skill_commit,
     reasoning_effort: options.agent === "codex" ? options.reasoningEffort : null,
     reasoning_summary: options.agent === "codex" ? options.reasoningSummary : null,
     codex_auth_json: manifest.codex_auth_json,
@@ -623,6 +675,7 @@ async function main() {
       command,
       collection,
       score: scoreSummary(collection),
+      metrics: armMetrics(collection, command.duration_ms),
     };
     writeFileSync(join(options.runRoot, `${arm}-summary.json`), json(summary.arms[arm]));
   }

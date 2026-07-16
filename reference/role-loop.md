@@ -23,7 +23,27 @@ the spec is explicit, behavior is already stated, the harness is single-process/
 eval compares equal-compute vanilla. Production/domain behavior-changing ambiguity needs user feedback.
 Generic no-user coding ambiguity uses the most conservative, reversible default and records the choice.
 
+## Ephemeral workspace fast path
+
+Detect once at Frame: the workspace is ephemeral when it is a single-task container/CI/benchmark
+checkout - no `.supergoal/`, no existing `docs/changelog/`, no other work in flight, no later reader
+of run artifacts. There the vault/worktree machinery has no consumer, so keep the SAME five gates but
+hold their state in context instead of files:
+
+- no run worktree/branch: work on the current checkout directly; commit only if the task asks for it;
+- no vault files and no changelog directories: keep goal, plan, success criteria, QA state, and the
+  regression ledger as one in-context checklist; plan approval is `auto-approved` as below;
+- run the full suite ONCE at Exact Verify (targeted tests while building); evidence is that one green
+  run plus the final diff reconciliation - do not repeat `git status`/`git diff --check` sweeps;
+- skip `commit-gate.sh`, `qa-gate.sh`, rules-file discovery, and board emits.
+
+Everything else still applies: plan before build, red-first for bugs, smallest correct change, diff
+reconciliation, regression ledger re-runs, adversarial final verify. A persistent user workspace uses
+the full protocol below unchanged.
+
 ## Run setup - before any file mutation
+
+Ephemeral workspace (see fast path above): skip this section's worktree and vault-file setup.
 
 For any GREENFIELD / DEBUG / LEGACY code edit, first resolve the source/base branch and
 target/integration branch. Prefer repo policy or user-provided refs; ask if either is ambiguous. Then

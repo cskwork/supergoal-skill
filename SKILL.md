@@ -11,7 +11,9 @@ Unless explicitly invoked, pure brainstorming and user-driven step-by-step work 
 
 **Standing rules (read first, every mode).** Before classifying the mode, read
 `.supergoal/rules/RULES.md` if present. Honor it across phases as top-priority preference, but rules never
-weaken safety gates. Create/edit it only when the user explicitly asks (`reference/rules.md`).
+weaken safety gates. Create/edit it only when the user explicitly asks (`reference/rules.md`). Check only
+the repo root (`.supergoal/rules/RULES.md`); do not tree-search for it, and skip the check entirely in an
+ephemeral single-task workspace (see role-loop fast path).
 
 ## Core principles
 

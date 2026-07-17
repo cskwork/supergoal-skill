@@ -41,6 +41,36 @@ Everything else still applies: plan before build, red-first for bugs, smallest c
 reconciliation, regression ledger re-runs, adversarial final verify. A persistent user workspace uses
 the full protocol below unchanged.
 
+## DEBUG hidden-contract gate - a green repro is not done
+
+A fix that only makes the reported repro pass is the top DEBUG failure mode. Before Exact Verify
+ticks a DEBUG run green, the builder shows and the auditor independently re-checks all three. The
+gate has a literal output contract: BEFORE committing, print exactly three lines -
+`GATE.owner=<frame/function>`, `GATE.alt_repro=<description>: pass`,
+`GATE.conformance=<returns audited and converted, or "none reachable">` - with the work behind each
+actually done. A DEBUG commit without these three lines is not done. In an ephemeral single-context
+run the roles collapse, but the gate does not:
+
+1. **Invariant owner.** Name the invariant the bug violated and the function that owns it. For a
+   RecursionError/cycle: capture the traceback once, enumerate the repeating frame cycle by name,
+   and pick the fix site INSIDE that cycle - it is often in a different module than the API that
+   surfaced the symptom; follow the cycle across modules. A patch that guards a caller, wrapper,
+   or reporting path outside the enumerated cycle is not done: refix at the owner, or record in
+   `QA.md` why the owner must not change.
+2. **Alternative-entry repro.** Add one more repro reaching the same root cause through a
+   STRUCTURALLY different context - not the same call with another literal: the failing construct
+   embedded inside a function call / nested expression, or a sibling public API sharing the broken
+   path. Both repros must pass. If a second entry cannot exist, record why.
+3. **Convention conformance (concrete action).** Grep every function the patch touches AND its
+   symmetric sibling methods (`__mul__`/`__truediv__`, add/sub, encode/decode, open/close) for raw
+   literal returns: `return 1`, `return 0`, `return -1`, `return True/False/None`, bare string
+   returns. For each hit, read how 2-3 sibling implementations in the same module return the
+   equivalent value; if they return canonical singletons/constants/types (`S.One` over raw `1`,
+   sympified values over Python literals) or follow an established output convention, convert the
+   hit in the same patch - INCLUDING pre-existing literals the diff merely moves, keeps, or
+   re-routes to, and siblings the diff does not touch. Sibling idiom is current-behavior grounding
+   (must-grade), not "silence turned into stricter semantics".
+
 ## Run setup - before any file mutation
 
 Ephemeral workspace (see fast path above): skip this section's worktree and vault-file setup.
@@ -256,6 +286,8 @@ best-effort; observes only, never blocks or gates the loop.
 - Ambiguous edges are not REDs. If a production/domain behavior change has multiple reasonable meanings,
   classify it as `ask-user` or residual risk; do not invent stricter semantics. If generic/no-user, choose
   a conservative, reversible default and record it.
+- Codebase idiom visible in sibling implementations is not ambiguity: conforming the changed surface to it
+  is required (DEBUG hidden-contract gate), and is grounding, not invention.
 - Characterization baseline is a regression signal, not a correctness oracle. A known-bug snapshot changes
   only when the bug fix is intentional and named.
 - Self-review is not a regression gate: generated explanations can approve behavior drift. Require the

@@ -28,6 +28,13 @@ TASKS = {
     "24102": ("parse-mathematica-greek", "Fix parse_mathematica failing on Greek characters"),
     "21847": ("itermonomials-min-degrees", "Fix itermonomials dropping monomials with min_degrees"),
     "23262": ("lambdify-single-tuple", "Fix python code printer for one-element tuples"),
+    # FOLLOWUPS A held-out set (2026-07-17): never touched by any lever iteration.
+    "20212": ("zero-pow-neg-inf", "Fix 0**-oo returning 0 instead of zoo"),
+    "24066": ("collect-factor-exp-dimensionless", "Fix _collect_factor_and_dimension on exp of dimensionless arg"),
+    "24213": ("collect-factor-equivalent-dims", "Fix _collect_factor_and_dimension not detecting equivalent dims in addition"),
+    # FOLLOWUPS A round 2 (2026-07-17): fresh unused instances, harder subsystems (difficulty-matched held-out)
+    "21171": ("latex-singularityfunction-exp", "Fix _print_SingularityFunction crashing on exp kwarg"),
+    "21379": ("subs-polynomialerror", "Fix unexpected PolynomialError from subs() on Piecewise expressions"),
 }
 
 BASE_DOCKERFILE = """FROM python:3.11-slim-bookworm

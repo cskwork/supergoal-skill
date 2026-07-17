@@ -76,3 +76,64 @@ Full report: `docs/experiments/2026-07-17-debug-luna-ab/REPORT.md`; pre-registra
   comparison invalid; re-measured same-model).
 - Infra fixes (not scored): py3.12 distutils removal broke 2021 sympy imports → py3.11 base;
   docker address-pool exhaustion from orphaned pier networks after killed runs → prune.
+
+## Held-out generalization A/B + v092 candidate: mechanism generalizes, score underpowered, baseline still wins
+
+**Decision**: gate mechanism generalizes on a held-out real bug but is NOT statistically proven; the
+`v092` exception-owner edit is directional-only — KEEP on branch `debug-cand-exc-owner` (`e522c30`),
+do NOT merge dev-v2. Full report: `docs/experiments/2026-07-17-debug-luna-ab/REPORT-heldout-FINAL.md`.
+
+- Ran FOLLOWUPS-A: before(v0.9.0 `350eb96`) vs after(v0.9.1 `0715158`) on held-out sympy real bugs
+  never touched by any lever. Round 1 (20212/24066/24213): CEILING — baseline 3/3 all, no
+  discrimination (held-out was novelty-matched, not difficulty-matched). Round 2 fresh instances
+  21171 (floor, 0/3 all) + 21379 (subs→PolynomialError, the one discriminator).
+- **Mechanism, 15/15 deterministic**: on 21379 the patch SITE fully predicts pass/fail — fix
+  `core/mod.py` (invariant owner, the frame that RAISES) → pass with `S.One`; fix `hyperbolic.py`
+  (symptom site where `%` surfaces) → fail. Zero owner↔pass violations across baseline+v090+v091+v092.
+  The gate's check-1 targets exactly this decision, on a task it was never tuned on.
+- **Baseline-first re-confirmed with a mechanism**: baseline 3/3 (reliably finds the owner); v090 1/3,
+  v091 2/3 — both skill versions leak to the symptom site a majority of runs and underperform
+  no-skill. On this task invoking supergoal did worse than not.
+- **n=3 is noise — demonstrated live**: the same gate swung v091 2/3 (seeds 1-3) → v091b 0/3 (seeds
+  4-6). Pooled gate = 2/6. Any single 3-seed cell is uninterpretable (07-17 termenv lesson reproduced).
+- **v092 edit** (generalize check-1 owner rule from RecursionError to ANY raised exception —
+  raises-vs-surfaces; length-neutral, no new check; SKILL.md GATE.owner example aligned; contract
+  tests 154+86+12+4 green): paired A/B v091 vs v092 on fresh seeds 4-6 gave 0/3 → 2/3 on 21379,
+  mechanism-consistent, but 2 discordant pairs p≈0.5 — underpowered. Doesn't crack the floor task
+  (21171 = missing-kwarg printer bug, a different failure class). Directional keep, not a proven win.
+- **Secondary finding**: DEBUG observe-first-at-symptom-boundary (`reference/debugging.md`) may anchor
+  agents at the surface site, partly causing the symptom-fixation the gate corrects — candidate future
+  edit (hand observe-first off to traceback origin for exception bugs).
+- **Why not proven / next build**: clean difficulty-matched held-out sympy instances are nearly
+  exhausted (most ceiling or floor; ~1 discriminator). A powered confirmatory run needs a BugPilot-style
+  FeatAdd hard-instance generator (agent adds a feature that breaks existing tests) rather than more
+  scraped sympy bugs.
+- Rejected: merging v092 on directional evidence (violates the repo's own not-proven discipline +
+  task-adaptation caution); fishing more seeds for significance on one task (optional-stopping,
+  pre-registered against).
+
+## Powered non-inferiority A/B -> MERGE v092 as a safe refinement; FeatAdd generator built
+
+**Decision**: merged `debug-cand-exc-owner` (`e522c30`) into dev-v2 as a safe, directionally-supported
+refinement (NOT a proven win). Built a reusable FeatAdd hard-instance generator for the next powered
+campaign. Report: `docs/experiments/2026-07-17-debug-luna-ab/REPORT-heldout-FINAL.md` (Phase 3).
+
+- **Why non-inferiority instead of a WIN test**: mining the 18-instance sympy pool found ~1 exception-owner
+  discriminator (21379); the rest ceiling/floor. v092's WIN can't be powered from scraped bugs. But v092
+  only changes behavior on raised-exception bugs (off-regime neutral), so a broad run powers
+  NON-INFERIORITY instead. User chose this hybrid path.
+- **Result** (14 tasks x 3 seeds = 42 paired, v091 vs v092, reward.json direct): v091 26/42, v092 28/42;
+  38/42 concordant; discordant 3 (v092) vs 1 (v091); McNemar exact two-sided **p = 0.625**. 12/14 tasks
+  perfectly concordant (8 ceilings both 3/3, 4 floors both 0/3); 21379 in-regime v092 2/3 vs v091 0/3;
+  24909 both 2/3 (seed disagreement = n=3 noise, same rate, NOT a systematic regression).
+- **Merge rationale**: user pre-committed to merge iff non-inferior (no systematic regression) AND
+  in-regime directional benefit -- both hold. Plus length-neutral, contract-clean (154+86+12+4 green),
+  principled generalization (RecursionError -> any raised exception). Explicitly a safe refinement, not a
+  proven correctness win (p=0.625; original gate merged at p=0.020). A proven win still needs a powered
+  in-regime set.
+- **FeatAdd generator** (`templates/harness-eval-external/featadd/`): BugPilot-style -- builder agent adds
+  a feature that breaks existing tests, oracle agent fixes it, broken state becomes a naturalistic debug
+  task (B=fail-to-pass, fix=gold), env image layers feature.diff on `sympy-swe-base:v1`. gen.sh +
+  package.py + features.tsv (4 exception-prone seeds) + README. Env verified (local sympy + venv, pytest/
+  junit parsing). Exists because scraped sympy is exhausted of difficulty-matched held-out; next campaign
+  generates a powered in-regime set to test the gate broadly + v092's WIN.

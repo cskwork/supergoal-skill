@@ -344,7 +344,7 @@
 
       <h3><span class="en">Who is it for?</span><span class="ko">누구를 위한 건가요?</span></h3>
       <p class="en">Developers who already use an AI coding agent and want it to <b>stop declaring "done" when it isn't</b>. If an agent has ever told you "tests pass" on a change that was actually broken or incomplete, that is the exact gap supergoal is built to close.</p>
-      <p class="ko">이미 AI 코딩 에이전트를 쓰면서, 에이전트가 <b>끝나지도 않았는데 "완료"라고 말하는 걸 막고 싶은</b> 개발자를 위한 것입니다. 실제로는 깨졌거나 덜 된 변경인데 에이전트가 "테스트 통과"라고 했던 경험이 있다면, 바로 그 틈을 메우려고 만든 스킬입니다.</p>
+      <p class="ko">이미 AI 코딩 에이전트를 쓰면서, 에이전트가 <b>끝나지도 않았는데 "완료"라고 말하는 걸 막고 싶은</b> 개발자를 위한 것입니다. 실제로는 깨졌거나 덜 끝난 변경인데 에이전트가 "테스트 통과"라고 했던 경험이 있다면, 바로 그 틈을 메우려고 만든 스킬입니다.</p>
 
       <h3><span class="en">The 30-second version</span><span class="ko">30초 요약</span></h3>
       <ol>
@@ -366,7 +366,7 @@
       <p class="sub ko">2 &middot; 핵심 아이디어</p>
       <h2><span class="en">Don't trust green</span><span class="ko">초록불을 그대로 믿지 마라</span></h2>
       <p class="lead en">Everything in supergoal comes from one belief: <b>passing tests is not the same as being correct</b>. Tests only check what someone remembered to write down. The request, the docs, and the edge cases usually say more.</p>
-      <p class="lead ko">supergoal의 모든 것은 한 가지 믿음에서 나옵니다. <b>테스트 통과가 곧 정답은 아니다.</b> 테스트는 누군가 적어 둔 것만 확인합니다. 요청, 문서, 예외 상황이 대개 그보다 더 많은 것을 말하죠.</p>
+      <p class="lead ko">supergoal의 모든 것은 한 가지 믿음에서 나옵니다. <b>테스트 통과가 곧 정답은 아니다.</b> 테스트는 누군가 적어 둔 것만 확인합니다. 요청, 문서, 예외 상황이 대개 그보다 더 많은 것을 담고 있죠.</p>
 
       <h3><span class="en">The writer and the editor</span><span class="ko">작가와 편집자</span></h3>
       <p class="en">Think of two people. The <b>writer</b> is deep in the work and can be fooled by their own assumptions - "I meant it to do that, so it must." The <b>editor</b> reads the same work fresh, with no attachment to how it was made, and tries to poke holes. They sign off only on what actually holds up.</p>
@@ -577,7 +577,7 @@ bash tests/run-all.sh</pre>
       <div class="callout">
         <span class="tag en">Why "fresh context" per gate</span><span class="tag ko">왜 게이트마다 "새 컨텍스트"인가</span>
         <p class="en">Each role starts empty and loads only the file its phase needs. The builder never sees the auditor's doubts; the auditor never sees the builder's rationalizations. That separation is what makes the verify honest - and it keeps each role's attention on one job instead of a bloated history.</p>
-        <p class="ko">각 역할은 빈 상태로 시작해 해당 단계에 필요한 파일만 불러옵니다. 빌더는 감사자의 의심을 보지 못하고, 감사자는 빌더의 자기 합리화를 보지 못합니다. 바로 그 분리가 검증을 정직하게 만들고, 각 역할이 부풀려진 히스토리 대신 한 가지 일에만 집중하게 합니다.</p>
+        <p class="ko">각 역할은 빈 상태로 시작해 해당 단계에 필요한 파일만 불러옵니다. 빌더는 감사자의 의심을 보지 못하고, 감사자는 빌더의 자기 합리화를 보지 못합니다. 바로 그 분리가 검증을 정직하게 만들고, 각 역할이 비대해진 맥락에 휘둘리지 않고 한 가지 일에만 집중하게 합니다.</p>
       </div>
     </section>
 
@@ -586,7 +586,7 @@ bash tests/run-all.sh</pre>
       <p class="sub ko">6 &middot; 실행 볼트</p>
       <h2><span class="en">The run vault - the paper trail</span><span class="ko">실행 볼트 - 작업의 기록장</span></h2>
       <p class="lead en">A code run keeps a small set of Markdown files in a dated folder (a "run vault"). Think of it as a <b>lab notebook</b>: it records what was asked, the agreed plan, what was checked, what failed, and the final sign-off. You can read every file - nothing is hidden.</p>
-      <p class="lead ko">코드 작업은 날짜가 붙은 폴더("실행 볼트")에 작은 Markdown 파일 묶음을 남깁니다. <b>실험 노트</b>라고 생각하세요. 무엇을 요청했는지, 합의된 계획, 무엇을 확인했는지, 무엇이 실패했는지, 최종 승인까지 기록합니다. 모든 파일을 읽을 수 있고 숨기는 것은 없습니다.</p>
+      <p class="lead ko">코드 작업은 날짜가 붙은 폴더("실행 볼트")에 작은 Markdown 파일 묶음을 남깁니다. <b>실험 노트</b>라고 생각하세요. 무엇을 요청했는지, 어떤 계획에 합의했는지, 무엇을 확인하고 무엇이 실패했는지, 최종 승인까지 기록합니다. 모든 파일을 읽을 수 있고 숨기는 것은 없습니다.</p>
 
 <pre class="en">&lt;run vault&gt;/    <span class="c-soft"># a dated folder, e.g. docs/changelog/&lt;YYYY-MM&gt;/&lt;DD-topic&gt;/</span>
   <span class="c-cyan">GOAL.md</span>       <span class="c-soft">request word-for-word + spec + success-criteria checkboxes</span>
@@ -700,7 +700,7 @@ bash tests/run-all.sh</pre>
         <div class="mode nocode">
           <p class="m-name">PROTOTYPE</p>
           <p class="en">Test one uncertain direction with a throwaway proof, then delete it or route the decision into delivery.</p>
-          <p class="ko">불확실한 방향 하나를 버릴 셈치고 만든 증명으로 검증한 뒤, 삭제하거나 결정만 딜리버리로 넘깁니다.</p>
+          <p class="ko">불확실한 방향 하나를 한 번 쓰고 버릴 증명으로 검증한 뒤, 삭제하거나 결정만 딜리버리로 넘깁니다.</p>
           <span class="ex en"><b>/supergoal</b> prototype 3 checkout flows first</span>
           <span class="ex ko"><b>/supergoal</b> 결제 흐름 3가지 먼저 프로토타입</span>
         </div>
@@ -822,7 +822,7 @@ bash tests/run-all.sh</pre>
 
       <h3><span class="en">What is a "worktree" and do I need it?</span><span class="ko">"worktree"가 뭐고 꼭 필요한가요?</span></h3>
       <p class="en">A git worktree is a second working copy of your repo on its own branch, so a run can edit code without touching your main checkout. Code runs use one by default and only merge into your target branch after verification and your acceptance. You do not have to set it up - supergoal handles it.</p>
-      <p class="ko">git worktree는 저장소의 두 번째 작업 사본으로, 자체 브랜치에서 동작합니다. 그래서 작업이 여러분의 메인 체크아웃을 건드리지 않고 코드를 고칠 수 있죠. 코드 작업은 기본적으로 worktree를 쓰고, 검증과 여러분의 수락 뒤에만 대상 브랜치로 병합합니다. 직접 설정할 필요 없이 supergoal이 처리합니다.</p>
+      <p class="ko">git worktree는 저장소의 두 번째 작업 사본으로, 자체 브랜치에서 동작합니다. 그래서 메인 체크아웃은 건드리지 않은 채 작업할 수 있죠. 코드 작업은 기본적으로 worktree를 쓰고, 검증과 여러분의 수락 뒤에만 대상 브랜치로 병합합니다. 직접 설정할 필요 없이 supergoal이 처리합니다.</p>
 
       <h3><span class="en">How is this different from just asking my agent?</span><span class="ko">그냥 에이전트에게 요청하는 것과 뭐가 다른가요?</span></h3>
       <p class="en">Three things a plain pass tends to skip under pressure: a plan you approve before code, a builder that must exit green, and an <b>independent</b> verifier that actively tries to disprove the result against your real tests - with the evidence recorded.</p>
@@ -868,22 +868,22 @@ bash tests/run-all.sh</pre>
         <dd><span class="en">The dated folder of Markdown files (GOAL, PLAN, QA, R-LOOP, Z) that records a code run start to finish.</span><span class="ko">코드 작업의 처음부터 끝까지를 기록하는, 날짜가 붙은 Markdown 파일 폴더(GOAL, PLAN, QA, R-LOOP, Z).</span></dd>
 
         <dt><span class="en">worktree</span><span class="ko">worktree</span></dt>
-        <dd><span class="en">A separate git working copy on its own branch, so a run edits code without disturbing your main checkout.</span><span class="ko">자체 브랜치에서 동작하는 별도의 git 작업 사본. 작업이 메인 체크아웃을 건드리지 않고 코드를 고칠 수 있게 합니다.</span></dd>
+        <dd><span class="en">A separate git working copy on its own branch, so a run edits code without disturbing your main checkout.</span><span class="ko">자체 브랜치에서 동작하는 별도의 git 작업 사본. 덕분에 메인 체크아웃을 건드리지 않고 작업할 수 있습니다.</span></dd>
 
         <dt><span class="en">red-green / test-first</span><span class="ko">red-green / 테스트 우선</span></dt>
         <dd><span class="en">Write a test that fails first (red), then the smallest change that makes it pass (green). For bugs, the failing test also reproduces the bug.</span><span class="ko">먼저 실패하는 테스트(red)를 쓰고, 그것을 통과시키는 가장 작은 변경(green)을 만드는 방식. 버그의 경우 실패 테스트가 버그 재현도 겸합니다.</span></dd>
 
         <dt><span class="en">Before/After Eval</span><span class="ko">Before/After Eval</span></dt>
-        <dd><span class="en">Capture the state before, define the target after, and prove the delta with trusted commands - so the final claim shows the change, not just "tests passed."</span><span class="ko">이전 상태를 기록하고 이후 목표를 정한 뒤, 신뢰할 수 있는 명령으로 그 차이를 증명하는 것. 그래서 최종 주장이 "테스트 통과"가 아니라 실제 변화를 보여 줍니다.</span></dd>
+        <dd><span class="en">Capture the state before, define the target after, and prove the delta with trusted commands - so the final claim shows the change, not just "tests passed."</span><span class="ko">이전 상태를 기록하고 이후 목표를 정한 뒤, 신뢰할 수 있는 명령으로 그 차이를 증명하는 것. 그래서 마무리 보고가 "테스트 통과"가 아니라 실제 변화를 보여 줍니다.</span></dd>
 
         <dt><span class="en">frontier slice</span><span class="ko">frontier slice (프런티어 조각)</span></dt>
-        <dd><span class="en">For a broad new build, the one vertical slice chosen to deliver first, so a foggy request becomes a shippable piece instead of everything at once.</span><span class="ko">넓은 새 작업에서 가장 먼저 완성하기로 고른 하나의 수직 조각. 막연한 요청이 한꺼번에가 아니라 출시 가능한 한 조각이 되게 합니다.</span></dd>
+        <dd><span class="en">For a broad new build, the one vertical slice chosen to deliver first, so a foggy request becomes a shippable piece instead of everything at once.</span><span class="ko">넓은 새 작업에서 가장 먼저 완성하기로 고른 하나의 수직 조각. 막연한 요청을 한꺼번에 처리하는 대신, 출시 가능한 한 조각으로 만듭니다.</span></dd>
 
         <dt><span class="en">Impact Matrix</span><span class="ko">Impact Matrix (영향 매트릭스)</span></dt>
         <dd><span class="en">In QA-ONLY, a map of everything a feature can affect - screens, data paths, roles, before/during/after actions, and failure cases - plus what was not covered.</span><span class="ko">QA-ONLY 모드에서, 기능이 영향을 줄 수 있는 모든 것(화면, 데이터 경로, 권한, 전/중/후 액션, 실패 케이스)과 확인하지 못한 범위까지 담은 지도.</span></dd>
 
         <dt><span class="en">harness</span><span class="ko">harness</span></dt>
-        <dd><span class="en">Any scaffolding wrapped around a model to steer it (supergoal is one). HARNESS-EVAL mode measures whether a given harness actually helps.</span><span class="ko">모델을 이끌기 위해 감싸는 구조물 일체(supergoal도 그중 하나). HARNESS-EVAL 모드는 특정 harness가 실제로 도움이 되는지 측정합니다.</span></dd>
+        <dd><span class="en">Any scaffolding wrapped around a model to steer it (supergoal is one). HARNESS-EVAL mode measures whether a given harness actually helps.</span><span class="ko">모델을 원하는 방향으로 이끌려고 덧씌우는 보조 장치 일체(supergoal도 그중 하나). HARNESS-EVAL 모드는 특정 harness가 실제로 도움이 되는지 측정합니다.</span></dd>
 
         <dt><span class="en">conductor</span><span class="ko">conductor (컨덕터)</span></dt>
         <dd><span class="en">The top-level role that reads your objective, picks the mode, and dispatches the builder/tester/auditor. It stays lean and delegates the heavy reading to each phase's role.</span><span class="ko">목표를 읽고 모드를 고르며 빌더/테스터/감사자를 파견하는 최상위 역할. 가볍게 유지하고, 무거운 읽기 작업은 각 단계의 역할에 맡깁니다.</span></dd>

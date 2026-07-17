@@ -1,0 +1,980 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>/supergoal wiki - how it works, for first-time users</title>
+<meta name="description" content="A plain-language developer wiki for /supergoal: what it is, how to install it, your first run, the five-gate loop, the run vault, roles, modes, principles, FAQ, and a glossary. English and Korean." />
+<meta property="og:title" content="/supergoal wiki - how it works" />
+<meta property="og:description" content="Start-here guide for /supergoal: install, first run, the five-gate loop, the vault, roles, modes, and a glossary. English and Korean." />
+<meta property="og:type" content="article" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%2305070a'/%3E%3Cpath d='M15 34 27 46 49 18' fill='none' stroke='%235cff9a' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+<style>
+  :root {
+    --bg: #05070a;
+    --ink: #f4f7fb;
+    --muted: #a8b4c2;
+    --soft: #728091;
+    --line: rgba(178, 221, 255, .16);
+    --line-strong: rgba(178, 221, 255, .28);
+    --panel: rgba(10, 16, 22, .82);
+    --panel-2: rgba(8, 12, 17, .94);
+    --green: #5cff9a;
+    --green-soft: rgba(92, 255, 154, .13);
+    --cyan: #64d8ff;
+    --cyan-soft: rgba(100, 216, 255, .12);
+    --amber: #ffbf47;
+    --amber-soft: rgba(255, 191, 71, .13);
+    --red: #ff6f6f;
+    --red-soft: rgba(255, 111, 111, .11);
+    --violet: #b69cff;
+    --blue: #6ea8ff;
+    --mono: "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+    --sans: "Avenir Next", "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --radius: 8px;
+    --fs: 1;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; background: var(--bg); scroll-padding-top: 68px; }
+  body {
+    margin: 0;
+    min-width: 320px;
+    background:
+      linear-gradient(180deg, rgba(5, 7, 10, .64), var(--bg) 520px),
+      var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: calc(16px * var(--fs));
+    line-height: 1.62;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: .16;
+    background-image:
+      linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 26px 26px;
+    mask-image: linear-gradient(to bottom, #000, transparent 60%);
+  }
+
+  a { color: var(--cyan); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+  code, kbd, pre, .mono { font-family: var(--mono); }
+  b, strong { color: var(--ink); }
+
+  .wrap { position: relative; z-index: 2; width: min(1200px, calc(100% - 40px)); margin: 0 auto; }
+
+  html[lang="en"] .ko { display: none !important; }
+  html[lang="ko"] .en { display: none !important; }
+  html[lang="ko"] body { word-break: keep-all; }
+
+  /* top bar (shared look with landing) */
+  .gatebar {
+    position: sticky; top: 0; z-index: 30;
+    border-bottom: 1px solid var(--line);
+    background: rgba(5, 7, 10, .82);
+    backdrop-filter: blur(16px) saturate(130%);
+    font-family: var(--mono); font-size: 12px;
+  }
+  .gatebar .wrap { min-height: 52px; display: flex; align-items: center; gap: 12px; }
+  .status-led {
+    width: 9px; height: 9px; border-radius: 99px; background: var(--green);
+    box-shadow: 0 0 18px rgba(92, 255, 154, .9); flex: 0 0 auto; animation: ledPulse 1.8s ease-in-out infinite;
+  }
+  .gatebar .home { color: var(--ink); font-weight: 700; }
+  .gatebar .home span { color: var(--green); }
+  .gatebar .crumb { color: var(--soft); }
+  .gatebar .spacer { margin-left: auto; }
+  .gatebar-controls {
+    display: inline-flex; align-items: center; border: 1px solid var(--line);
+    border-radius: 999px; overflow: hidden; background: rgba(255,255,255,.03); flex: 0 0 auto;
+  }
+  .gatebar button {
+    border: 0; border-left: 1px solid var(--line); padding: 7px 10px;
+    color: var(--muted); background: transparent; font: inherit; cursor: pointer; line-height: 1;
+  }
+  .gatebar button:first-child { border-left: 0; }
+  .gatebar button[aria-pressed="true"] { background: var(--green-soft); color: var(--green); }
+  .gatebar button:disabled { opacity: .38; cursor: default; }
+  .gatebar a.ghlink { color: var(--muted); }
+
+  /* header */
+  .doc-hero { position: relative; z-index: 2; padding: clamp(40px, 7vw, 76px) 0 22px; }
+  .doc-hero .kicker {
+    display: inline-flex; align-items: center; gap: 10px; padding: 7px 12px;
+    border: 1px solid var(--line); border-radius: 999px; background: rgba(5,7,10,.6);
+    color: var(--green); font: 700 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase;
+  }
+  .doc-hero .kicker::before { content: ""; width: 30px; height: 1px; background: linear-gradient(90deg, var(--green), transparent); }
+  .doc-hero h1 { margin: 18px 0 0; font-size: calc(clamp(34px, 6vw, 60px)); line-height: 1.02; font-weight: 900; letter-spacing: -.01em; }
+  .doc-hero h1 span { color: var(--soft); }
+  .doc-hero p { max-width: 68ch; margin: 16px 0 0; color: var(--muted); font-size: calc(18px); }
+  .doc-hero .tldr {
+    margin-top: 20px; padding: 16px 18px; border: 1px solid var(--line); border-left: 3px solid var(--green);
+    border-radius: var(--radius); background: var(--panel); max-width: 78ch;
+  }
+  .doc-hero .tldr b { color: var(--green); font: 800 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+  .doc-hero .tldr p { margin: 8px 0 0; color: var(--ink); font-size: calc(16px); }
+
+  /* layout: sidebar + content */
+  .doc-layout { position: relative; z-index: 2; display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); padding: 30px 0 90px; }
+  .doc-nav { position: sticky; top: 68px; align-self: start; max-height: calc(100vh - 88px); overflow-y: auto; padding-right: 6px; }
+  .doc-nav .nav-title { margin: 0 0 10px; color: var(--soft); font: 800 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+  .doc-nav ol { list-style: none; margin: 0; padding: 0; counter-reset: nav; }
+  .doc-nav li { counter-increment: nav; }
+  .doc-nav a {
+    display: block; padding: 7px 10px 7px 34px; position: relative; border-radius: 6px;
+    color: var(--muted); font-size: calc(14px); line-height: 1.35; border-left: 2px solid transparent;
+  }
+  .doc-nav a::before {
+    content: counter(nav, decimal-leading-zero); position: absolute; left: 8px; top: 7px;
+    color: var(--soft); font: 700 11px/1.35 var(--mono);
+  }
+  .doc-nav a:hover { color: var(--ink); background: rgba(255,255,255,.03); text-decoration: none; }
+  .doc-nav a.active { color: var(--green); background: var(--green-soft); border-left-color: var(--green); }
+  .doc-nav a.active::before { color: var(--green); }
+
+  .doc-nav-mobile { display: none; }
+  .doc-nav-mobile summary {
+    cursor: pointer; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius);
+    background: var(--panel); color: var(--ink); font: 700 13px/1 var(--mono); list-style: none;
+  }
+  .doc-nav-mobile summary::-webkit-details-marker { display: none; }
+  .doc-nav-mobile[open] summary { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+  .doc-nav-mobile ol { list-style: none; margin: 0; padding: 6px; border: 1px solid var(--line); border-top: 0; border-radius: 0 0 var(--radius) var(--radius); background: var(--panel-2); }
+  .doc-nav-mobile a { display: block; padding: 8px 10px; color: var(--muted); font-size: 14px; }
+
+  /* content */
+  .doc-main { min-width: 0; }
+  .doc-section { padding: 8px 0 40px; border-top: 1px solid var(--line); margin-top: 34px; }
+  .doc-section:first-child { border-top: 0; margin-top: 0; }
+  .doc-section > h2 {
+    margin: 0 0 4px; font-size: calc(clamp(24px, 3.4vw, 34px)); line-height: 1.12; letter-spacing: -.01em; scroll-margin-top: 70px;
+  }
+  .doc-section > .sub { margin: 0 0 18px; color: var(--soft); font: 700 12px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+  .doc-section h3 { margin: 26px 0 6px; font-size: calc(19px); line-height: 1.25; }
+  .doc-section p { margin: 10px 0; color: var(--muted); }
+  .doc-section p b, .doc-section li b { color: var(--ink); }
+  .doc-section ul, .doc-section ol { margin: 10px 0; padding-left: 22px; color: var(--muted); }
+  .doc-section li { margin: 6px 0; }
+  .doc-section li::marker { color: var(--soft); }
+
+  .lead { color: var(--ink) !important; font-size: calc(17px); }
+
+  /* code */
+  pre {
+    margin: 14px 0; padding: 16px 18px; border: 1px solid var(--line); border-radius: var(--radius);
+    background: var(--panel-2); color: #d7e6f2; font: calc(13px)/1.7 var(--mono); overflow-x: auto; white-space: pre;
+  }
+  :not(pre) > code {
+    padding: 2px 6px; border: 1px solid var(--line); border-radius: 5px;
+    background: rgba(255,255,255,.04); color: var(--cyan); font-size: .9em; word-break: break-word;
+  }
+  .c-green { color: var(--green); } .c-cyan { color: var(--cyan); } .c-amber { color: var(--amber); }
+  .c-red { color: var(--red); } .c-soft { color: var(--soft); }
+
+  /* callouts */
+  .callout { margin: 16px 0; padding: 14px 16px; border: 1px solid var(--line); border-left: 3px solid var(--cyan); border-radius: var(--radius); background: var(--panel); }
+  .callout.tip { border-left-color: var(--green); }
+  .callout.warn { border-left-color: var(--amber); }
+  .callout .tag { display: block; margin-bottom: 4px; color: var(--cyan); font: 800 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+  .callout.tip .tag { color: var(--green); }
+  .callout.warn .tag { color: var(--amber); }
+  .callout p { margin: 4px 0 0; color: var(--muted); }
+  .callout p:first-of-type { margin-top: 0; }
+
+  /* step cards (loop / first run) */
+  .steps { display: grid; gap: 12px; margin: 18px 0; }
+  .step { position: relative; padding: 16px 18px 16px 58px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
+  .step .n {
+    position: absolute; left: 16px; top: 16px; width: 30px; height: 30px; display: grid; place-items: center;
+    border: 1px solid rgba(92,255,154,.44); color: var(--green); background: var(--green-soft);
+    border-radius: 6px; font: 900 13px/1 var(--mono);
+  }
+  .step h4 { margin: 0 0 4px; font-size: calc(16px); }
+  .step p { margin: 4px 0 0; color: var(--muted); font-size: calc(14px); }
+  .step .who { display: inline-block; margin-top: 8px; padding: 3px 8px; border-radius: 999px; background: rgba(255,255,255,.05); color: var(--soft); font: 700 11px/1.4 var(--mono); }
+  .step .who b { color: var(--cyan); }
+
+  /* tables */
+  .tbl { width: 100%; margin: 16px 0; border-collapse: collapse; font-size: calc(14px); }
+  .tbl th, .tbl td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  .tbl th { color: var(--soft); font: 800 11px/1.3 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+  .tbl td { color: var(--muted); }
+  .tbl td:first-child { color: var(--ink); white-space: nowrap; }
+  .tbl code { white-space: nowrap; }
+  .tbl-scroll { overflow-x: auto; }
+
+  /* mode grid */
+  .mode-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; margin: 18px 0; }
+  .mode { padding: 16px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); border-top: 3px solid var(--green); }
+  .mode.nocode { border-top-color: var(--cyan); }
+  .mode .m-name { margin: 0 0 6px; color: var(--ink); font: 800 12px/1 var(--mono); letter-spacing: .06em; }
+  .mode p { margin: 0 0 8px; color: var(--muted); font-size: calc(13.5px); }
+  .mode .ex { display: block; color: var(--soft); font: 12px/1.5 var(--mono); }
+  .mode .ex b { color: var(--cyan); }
+
+  /* glossary */
+  .glossary { margin: 16px 0; }
+  .glossary dt { margin-top: 16px; color: var(--green); font: 800 14px/1.3 var(--mono); }
+  .glossary dd { margin: 4px 0 0; color: var(--muted); }
+
+  /* misc */
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+  .pill { border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; color: var(--muted); background: rgba(255,255,255,.03); font: 700 12px/1 var(--mono); }
+  .next-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  .next-links a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border: 1px solid var(--line-strong); border-radius: var(--radius); background: rgba(255,255,255,.04); color: var(--ink); font: 700 13px/1 var(--mono); }
+  .next-links a:hover { border-color: rgba(100,216,255,.6); color: var(--cyan); text-decoration: none; }
+
+  footer { position: relative; z-index: 2; padding: 30px 0 60px; color: var(--soft); border-top: 1px solid var(--line); font-size: calc(14px); }
+  footer .wrap { display: flex; gap: 18px; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity .5s ease, transform .5s ease; }
+  .reveal.is-visible { opacity: 1; transform: none; }
+
+  @keyframes ledPulse { 0%,100% { transform: scale(1); opacity: .82; } 50% { transform: scale(1.32); opacity: 1; } }
+
+  @media (max-width: 900px) {
+    .doc-layout { grid-template-columns: 1fr; padding-top: 18px; }
+    .doc-nav { display: none; }
+    .doc-nav-mobile { display: block; margin-bottom: 6px; position: sticky; top: 60px; z-index: 5; }
+    .gatebar .crumb { display: none; }
+  }
+  @media (max-width: 520px) {
+    .gatebar-controls[data-role="fs"] { display: none; }
+    footer .wrap { align-items: flex-start; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="gatebar" aria-label="Wiki controls">
+  <div class="wrap">
+    <span class="status-led" aria-hidden="true"></span>
+    <a class="home" href="index.html"><span>/</span>supergoal</a>
+    <span class="crumb en">/ wiki</span>
+    <span class="crumb ko">/ 위키</span>
+    <span class="spacer"></span>
+    <span class="gatebar-controls" data-role="fs" role="group" aria-label="Text size">
+      <button type="button" data-fs="dec" aria-label="Decrease text size">A-</button>
+      <button type="button" data-fs="inc" aria-label="Increase text size">A+</button>
+    </span>
+    <span class="gatebar-controls" role="group" aria-label="Language">
+      <button type="button" data-lang="en">EN</button>
+      <button type="button" data-lang="ko">KO</button>
+    </span>
+    <a class="ghlink mono" href="https://github.com/cskwork/supergoal-skill">GitHub</a>
+  </div>
+</nav>
+
+<header class="doc-hero" id="top">
+  <div class="wrap">
+    <span class="kicker"><span class="en">Start-here guide</span><span class="ko">처음 오신 분을 위한 안내서</span></span>
+    <h1><span class="en">How <span>/</span>supergoal works</span><span class="ko"><span>/</span>supergoal 사용 설명서</span></h1>
+    <p class="en">A plain-language wiki for your first runs. No jargon assumed - every term is explained, with a worked first run, the loop, the files it writes, and a glossary at the end.</p>
+    <p class="ko">처음 써 보는 분을 위한 쉬운 설명서입니다. 어려운 용어는 모두 풀어서 설명하고, 실제 첫 실행 예시, 작동 루프, 만들어지는 파일들, 그리고 마지막에 용어 사전까지 담았습니다.</p>
+    <div class="tldr">
+      <b>TL;DR</b>
+      <p class="en">You hand <code>/supergoal</code> one objective. It picks the right workflow, makes the <b>smallest correct change</b>, then a fresh set of eyes re-checks it against your <b>real tests and the actual request</b> before calling anything done. It does not trust a green checkmark by itself.</p>
+      <p class="ko"><code>/supergoal</code>에 목표 하나를 맡기면, 알맞은 작업 방식을 고르고 <b>필요한 만큼만 정확히</b> 고칩니다. 그리고 끝내기 전에, 새로운 시선이 <b>프로젝트의 실제 테스트와 원래 요청</b>에 비추어 다시 검증합니다. "테스트 통과" 표시 하나만으로 끝냈다고 하지 않습니다.</p>
+    </div>
+  </div>
+</header>
+
+<div class="wrap doc-layout">
+  <aside class="doc-nav" aria-label="On this page">
+    <p class="nav-title en">On this page</p>
+    <p class="nav-title ko">목차</p>
+    <ol>
+      <li><a href="#start"><span class="en">New here? Read this</span><span class="ko">여기부터 읽으세요</span></a></li>
+      <li><a href="#idea"><span class="en">The core idea</span><span class="ko">핵심 아이디어</span></a></li>
+      <li><a href="#install"><span class="en">Install in 3 steps</span><span class="ko">3단계 설치</span></a></li>
+      <li><a href="#firstrun"><span class="en">Your first run</span><span class="ko">첫 실행 따라하기</span></a></li>
+      <li><a href="#loop"><span class="en">The five-gate loop</span><span class="ko">5단계 루프</span></a></li>
+      <li><a href="#vault"><span class="en">The run vault (files)</span><span class="ko">실행 볼트 (파일들)</span></a></li>
+      <li><a href="#roles"><span class="en">The roles</span><span class="ko">역할들</span></a></li>
+      <li><a href="#modes"><span class="en">The 12 modes</span><span class="ko">12가지 모드</span></a></li>
+      <li><a href="#principles"><span class="en">The five principles</span><span class="ko">5가지 원칙</span></a></li>
+      <li><a href="#faq"><span class="en">FAQ</span><span class="ko">자주 묻는 질문</span></a></li>
+      <li><a href="#glossary"><span class="en">Glossary</span><span class="ko">용어 사전</span></a></li>
+    </ol>
+  </aside>
+
+  <main class="doc-main">
+    <details class="doc-nav-mobile">
+      <summary><span class="en">On this page</span><span class="ko">목차</span></summary>
+      <ol>
+        <li><a href="#start"><span class="en">New here? Read this</span><span class="ko">여기부터 읽으세요</span></a></li>
+        <li><a href="#idea"><span class="en">The core idea</span><span class="ko">핵심 아이디어</span></a></li>
+        <li><a href="#install"><span class="en">Install in 3 steps</span><span class="ko">3단계 설치</span></a></li>
+        <li><a href="#firstrun"><span class="en">Your first run</span><span class="ko">첫 실행 따라하기</span></a></li>
+        <li><a href="#loop"><span class="en">The five-gate loop</span><span class="ko">5단계 루프</span></a></li>
+        <li><a href="#vault"><span class="en">The run vault</span><span class="ko">실행 볼트</span></a></li>
+        <li><a href="#roles"><span class="en">The roles</span><span class="ko">역할들</span></a></li>
+        <li><a href="#modes"><span class="en">The 12 modes</span><span class="ko">12가지 모드</span></a></li>
+        <li><a href="#principles"><span class="en">The five principles</span><span class="ko">5가지 원칙</span></a></li>
+        <li><a href="#faq"><span class="en">FAQ</span><span class="ko">자주 묻는 질문</span></a></li>
+        <li><a href="#glossary"><span class="en">Glossary</span><span class="ko">용어 사전</span></a></li>
+      </ol>
+    </details>
+
+    <section class="doc-section reveal" id="start">
+      <p class="sub en">1 &middot; Start here</p>
+      <p class="sub ko">1 &middot; 여기부터</p>
+      <h2><span class="en">New here? Read this first</span><span class="ko">처음 오셨나요? 이것부터 읽으세요</span></h2>
+      <p class="lead en"><code>/supergoal</code> is an <b>agent skill</b> - a set of instructions your AI coding agent loads when you type <code>/supergoal</code>. It does not replace your agent; it gives it a disciplined way to work.</p>
+      <p class="lead ko"><code>/supergoal</code>은 <b>에이전트 스킬</b>입니다. <code>/supergoal</code>이라고 입력하면 AI 코딩 에이전트가 불러오는 지침 묶음이죠. 에이전트를 대체하는 게 아니라, 에이전트가 <b>규율 있게 일하도록</b> 방식을 바꿔 줍니다.</p>
+
+      <h3><span class="en">What is an "agent skill"?</span><span class="ko">"에이전트 스킬"이 뭔가요?</span></h3>
+      <p class="en">Tools like <b>Claude Code</b>, <b>Codex</b>, and <b>agy</b> let you drop in reusable instruction packs called skills. <code>/supergoal</code> is one such pack. When you invoke it, the agent follows supergoal's playbook for that task instead of just editing files ad hoc.</p>
+      <p class="ko"><b>Claude Code</b>, <b>Codex</b>, <b>agy</b> 같은 도구는 재사용 가능한 지침 묶음(스킬)을 끼워 넣을 수 있습니다. <code>/supergoal</code>이 그런 묶음 중 하나예요. 이걸 부르면 에이전트가 즉흥적으로 파일을 고치는 대신 supergoal의 작업 지침을 따릅니다.</p>
+
+      <h3><span class="en">Who is it for?</span><span class="ko">누구를 위한 건가요?</span></h3>
+      <p class="en">Developers who already use an AI coding agent and want it to <b>stop declaring "done" when it isn't</b>. If an agent has ever told you "tests pass" on a change that was actually broken or incomplete, that is the exact gap supergoal is built to close.</p>
+      <p class="ko">이미 AI 코딩 에이전트를 쓰면서, 에이전트가 <b>끝나지도 않았는데 "완료"라고 말하는 걸 막고 싶은</b> 개발자를 위한 것입니다. 실제로는 깨졌거나 덜 된 변경인데 에이전트가 "테스트 통과"라고 했던 경험이 있다면, 바로 그 틈을 메우려고 만든 스킬입니다.</p>
+
+      <h3><span class="en">The 30-second version</span><span class="ko">30초 요약</span></h3>
+      <ol>
+        <li><span class="en"><b>Route</b> the objective - it reads your request and picks the right workflow (build, fix a bug, add to legacy code, spec, QA, and more).</span><span class="ko"><b>경로 선택</b> - 요청을 읽고 알맞은 작업 방식을 고릅니다 (새로 만들기, 버그 고치기, 기존 코드에 추가, 설계, QA 등).</span></li>
+        <li><span class="en"><b>Change</b> the smallest correct amount - it matches your existing code and does not rewrite whole files to touch a few lines.</span><span class="ko"><b>최소한만 변경</b> - 기존 코드 스타일에 맞추고, 몇 줄 바꾸려고 파일 전체를 다시 쓰지 않습니다.</span></li>
+        <li><span class="en"><b>Verify</b> against ground truth - a fresh reviewer re-runs your real tests and re-reads the request/docs, ticking off only what is actually proven.</span><span class="ko"><b>실체로 검증</b> - 새로운 검토자가 프로젝트의 실제 테스트를 다시 돌리고 요청/문서를 다시 읽어, 정말로 증명된 것만 체크합니다.</span></li>
+        <li><span class="en"><b>Stop</b> at the verified result - no endless refactor, no made-up checklist, no fake green.</span><span class="ko"><b>검증된 결과에서 멈춤</b> - 끝없는 리팩터링도, 스스로 지어낸 체크리스트도, 가짜 통과도 없습니다.</span></li>
+      </ol>
+
+      <div class="callout tip">
+        <span class="tag en">One line to remember</span><span class="tag ko">딱 한 줄만 기억하세요</span>
+        <p class="en">A plain agent trusts the green checkmark. <b>supergoal distrusts it</b> and proves the result independently before it stops.</p>
+        <p class="ko">보통 에이전트는 초록색 통과 표시를 믿습니다. <b>supergoal은 그걸 의심하고</b>, 멈추기 전에 결과를 독립적으로 증명합니다.</p>
+      </div>
+    </section>
+
+    <section class="doc-section reveal" id="idea">
+      <p class="sub en">2 &middot; The core idea</p>
+      <p class="sub ko">2 &middot; 핵심 아이디어</p>
+      <h2><span class="en">Don't trust green</span><span class="ko">초록불을 그대로 믿지 마라</span></h2>
+      <p class="lead en">Everything in supergoal comes from one belief: <b>passing tests is not the same as being correct</b>. Tests only check what someone remembered to write down. The request, the docs, and the edge cases usually say more.</p>
+      <p class="lead ko">supergoal의 모든 것은 한 가지 믿음에서 나옵니다. <b>테스트 통과가 곧 정답은 아니다.</b> 테스트는 누군가 적어 둔 것만 확인합니다. 요청, 문서, 예외 상황이 대개 그보다 더 많은 것을 말하죠.</p>
+
+      <h3><span class="en">The writer and the editor</span><span class="ko">작가와 편집자</span></h3>
+      <p class="en">Think of two people. The <b>writer</b> is deep in the work and can be fooled by their own assumptions - "I meant it to do that, so it must." The <b>editor</b> reads the same work fresh, with no attachment to how it was made, and tries to poke holes. They sign off only on what actually holds up.</p>
+      <p class="ko">두 사람을 떠올려 보세요. <b>작가</b>는 작업에 깊이 빠져 있어서 자기 가정에 속기 쉽습니다 - "이렇게 하려던 거니까 맞겠지." <b>편집자</b>는 같은 글을 처음 보는 눈으로, 어떻게 썼는지에 얽매이지 않고 허점을 찾습니다. 그리고 실제로 버티는 것만 통과시키죠.</p>
+      <p class="en">supergoal builds this separation into every code run: one role <b>builds</b> the change, and a different role - with a <b>fresh, empty context</b> that never saw the building happen - <b>audits</b> it. The auditor cannot be fooled by the builder's assumptions because it does not share them.</p>
+      <p class="ko">supergoal은 코드 작업마다 이 분리를 심어 둡니다. 한 역할이 변경을 <b>만들고(Build)</b>, 만드는 과정을 전혀 보지 않은 <b>새롭고 빈 컨텍스트</b>를 가진 다른 역할이 그것을 <b>감사(Audit)</b>합니다. 감사자는 작성자의 가정을 공유하지 않으므로 거기에 속지 않습니다.</p>
+
+      <h3><span class="en">Ground truth, never a proxy</span><span class="ko">대충 만든 기준이 아니라, 실체로</span></h3>
+      <p class="en">A tempting shortcut is for the agent to write its own checklist and grade itself against it. That is a <b>proxy</b> - and an agent can unconsciously shape the work to pass its own checklist while missing the real point (this trap has a name: <a href="https://en.wikipedia.org/wiki/Goodhart%27s_law">Goodhart's law</a>). supergoal refuses this. It grades only against <b>ground truth</b>: your project's real test suite and the actual request and docs.</p>
+      <p class="ko">에이전트가 스스로 체크리스트를 만들고 거기에 맞춰 자기 점수를 매기는 건 솔깃한 지름길입니다. 하지만 그건 <b>대리 지표(proxy)</b>일 뿐이고, 에이전트는 무의식적으로 자기 체크리스트를 통과하도록 작업을 맞추면서 정작 진짜 목적을 놓칠 수 있습니다 (이 함정엔 이름도 있습니다: <a href="https://en.wikipedia.org/wiki/Goodhart%27s_law">굿하트의 법칙</a>). supergoal은 이를 거부합니다. 오직 <b>실체(ground truth)</b>, 즉 프로젝트의 실제 테스트 스위트와 원래의 요청·문서에만 비추어 채점합니다.</p>
+
+      <div class="callout">
+        <span class="tag en">Not more ceremony - "baseline-first"</span><span class="tag ko">절차를 늘리는 게 아닙니다 - "baseline-first"</span>
+        <p class="en">supergoal deliberately stays lean. The bar it measures against is "a strong model that actually read the real spec." It adds only the few checks a rushed pass tends to skip - a reviewed plan, a builder that must exit green, and an independent verify - not a pile of gates for their own sake.</p>
+        <p class="ko">supergoal은 일부러 가볍게 유지합니다. 기준선은 "실제 스펙을 제대로 읽은 좋은 모델"입니다. 급하게 지나가는 작업이 놓치기 쉬운 몇 가지, 즉 검토된 계획, 반드시 통과 상태로 끝나야 하는 빌더, 독립적인 검증만 더합니다. 형식을 위한 게이트 더미가 아닙니다.</p>
+      </div>
+    </section>
+
+    <section class="doc-section reveal" id="install">
+      <p class="sub en">3 &middot; Install</p>
+      <p class="sub ko">3 &middot; 설치</p>
+      <h2><span class="en">Install in 3 steps</span><span class="ko">3단계로 설치</span></h2>
+      <p class="lead en">This repository <b>is</b> the skill - there is nothing to compile. You put it where your agent looks for skills, then invoke it. The clean way is one canonical copy, <b>symlinked</b> into each agent.</p>
+      <p class="lead ko">이 저장소가 <b>곧 스킬</b>입니다. 컴파일할 것이 없어요. 에이전트가 스킬을 찾는 위치에 두고 부르기만 하면 됩니다. 깔끔한 방법은 원본 하나를 두고 각 에이전트에 <b>심볼릭 링크</b>로 연결하는 것입니다.</p>
+
+      <h3><span class="en">Step 1 - Clone</span><span class="ko">1단계 - 클론</span></h3>
+<pre class="en"><span class="c-soft"># download the skill once, anywhere you keep code</span>
+git clone https://github.com/cskwork/supergoal-skill.git
+cd supergoal-skill
+SRC="$(pwd)"</pre>
+<pre class="ko"><span class="c-soft"># 스킬을 한 번만 내려받습니다 (코드를 두는 곳 어디든)</span>
+git clone https://github.com/cskwork/supergoal-skill.git
+cd supergoal-skill
+SRC="$(pwd)"</pre>
+
+      <h3><span class="en">Step 2 - Link it into your agent(s)</span><span class="ko">2단계 - 에이전트에 연결</span></h3>
+      <p class="en">Create the skills folder for whichever agents you use, then symlink. A symlink means updating the skill later is just <code>git pull</code> in the source - every agent sees it.</p>
+      <p class="ko">사용하는 에이전트의 스킬 폴더를 만든 뒤 심볼릭 링크를 겁니다. 링크로 연결해 두면 나중에 업데이트는 원본에서 <code>git pull</code> 한 번이면 되고, 모든 에이전트에 반영됩니다.</p>
+<pre class="en">mkdir -p ~/.claude/skills ~/.codex/skills ~/.agents/skills
+
+ln -s "$SRC" ~/.claude/skills/supergoal   <span class="c-soft"># Claude Code</span>
+ln -s "$SRC" ~/.codex/skills/supergoal    <span class="c-soft"># Codex</span>
+ln -s "$SRC" ~/.agents/skills/supergoal   <span class="c-soft"># agy / other CLIs</span></pre>
+<pre class="ko">mkdir -p ~/.claude/skills ~/.codex/skills ~/.agents/skills
+
+ln -s "$SRC" ~/.claude/skills/supergoal   <span class="c-soft"># Claude Code</span>
+ln -s "$SRC" ~/.codex/skills/supergoal    <span class="c-soft"># Codex</span>
+ln -s "$SRC" ~/.agents/skills/supergoal   <span class="c-soft"># agy / 기타 CLI</span></pre>
+
+      <h3><span class="en">Step 3 - Use it</span><span class="ko">3단계 - 사용</span></h3>
+<pre class="en"><span class="c-soft"># in your agent CLI, hand it one objective:</span>
+<span class="c-cyan">/supergoal</span> build a CLI todo app in Python and ship it</pre>
+<pre class="ko"><span class="c-soft"># 사용하는 에이전트 CLI에서 목표 하나를 넘깁니다:</span>
+<span class="c-cyan">/supergoal</span> 파이썬으로 CLI 할 일 앱 만들고 배포해줘</pre>
+      <p class="en">Optional but recommended - confirm the install is healthy and not drifting from the source:</p>
+      <p class="ko">선택 사항이지만 권장 - 설치본이 원본과 어긋나지 않았는지 확인합니다:</p>
+<pre class="en"><span class="c-soft"># read-only drift check for an active install</span>
+node templates/skill-install-audit.mjs "$SRC"
+
+<span class="c-soft"># run the repo's own contract tests</span>
+bash tests/run-all.sh</pre>
+<pre class="ko"><span class="c-soft"># 활성 설치본이 원본과 어긋났는지 읽기 전용으로 점검</span>
+node templates/skill-install-audit.mjs "$SRC"
+
+<span class="c-soft"># 저장소 자체 계약 테스트 실행</span>
+bash tests/run-all.sh</pre>
+
+      <div class="callout warn">
+        <span class="tag en">Windows</span><span class="tag ko">Windows 사용자</span>
+        <p class="en">The skill runs on Windows, but the gate/test scripts are POSIX shell - run them under <b>Git Bash</b> or <b>WSL</b> with <code>node</code> on your <code>PATH</code>. If symlinks need admin rights, install by copy (<code>cp -R</code>) and re-run the audit script after copying.</p>
+        <p class="ko">스킬 자체는 Windows에서 동작하지만, 게이트/테스트 스크립트는 POSIX 셸이라 <b>Git Bash</b>나 <b>WSL</b>에서 실행해야 하고 <code>node</code>가 <code>PATH</code>에 있어야 합니다. 심볼릭 링크에 관리자 권한이 필요하면 복사(<code>cp -R</code>)로 설치한 뒤, 복사 후 감사 스크립트를 다시 실행하세요.</p>
+      </div>
+
+      <div class="pill-row">
+        <span class="pill">Agent CLI</span>
+        <span class="pill">Node 18+</span>
+        <span class="pill">git</span>
+        <span class="pill en">git worktree (optional)</span>
+        <span class="pill ko">git worktree (선택)</span>
+        <span class="pill en">your real tests</span>
+        <span class="pill ko">프로젝트 실제 테스트</span>
+      </div>
+    </section>
+
+    <section class="doc-section reveal" id="firstrun">
+      <p class="sub en">4 &middot; Your first run</p>
+      <p class="sub ko">4 &middot; 첫 실행</p>
+      <h2><span class="en">Your first run, walked through</span><span class="ko">첫 실행, 한 걸음씩</span></h2>
+      <p class="lead en">Say you type this into your agent. Here is what actually happens, and the two moments where <b>you</b> are in control.</p>
+      <p class="lead ko">에이전트에 아래처럼 입력했다고 해 봅시다. 실제로 무슨 일이 벌어지는지, 그리고 <b>여러분</b>이 결정권을 쥐는 두 순간을 짚어 봅니다.</p>
+<pre class="en"><span class="c-cyan">/supergoal</span> build a CLI todo app in Python and ship it</pre>
+<pre class="ko"><span class="c-cyan">/supergoal</span> 파이썬으로 CLI 할 일 앱 만들고 배포해줘</pre>
+
+      <div class="steps">
+        <div class="step">
+          <span class="n">1</span>
+          <h4><span class="en">It states the mode</span><span class="ko">모드를 선언합니다</span></h4>
+          <p class="en">First line back is something like <code>Mode: GREENFIELD</code>. "Building a new thing" routes to the GREENFIELD lane. It always tells you the lane it picked in one line.</p>
+          <p class="ko">첫 응답은 <code>Mode: GREENFIELD</code> 같은 한 줄입니다. "새로 만들기"는 GREENFIELD 경로로 갑니다. 어떤 경로를 골랐는지 항상 한 줄로 알려 줍니다.</p>
+        </div>
+        <div class="step">
+          <span class="n">2</span>
+          <h4><span class="en">It writes down the goal</span><span class="ko">목표를 글로 적습니다</span></h4>
+          <p class="en">It creates <code>GOAL.md</code>: your request quoted <b>word for word</b>, a refined spec, and a checklist of <b>Success Criteria</b> - including edge cases you did not spell out (empty list, duplicate item, bad input). This is where hidden requirements surface.</p>
+          <p class="ko"><code>GOAL.md</code>를 만듭니다. 여러분의 요청을 <b>토씨 그대로</b> 인용하고, 다듬은 스펙과 <b>성공 기준</b> 체크리스트를 적습니다. 여러분이 말하지 않은 예외 상황(빈 목록, 중복 항목, 잘못된 입력)까지 포함됩니다. 숨은 요구사항이 드러나는 지점이죠.</p>
+        </div>
+        <div class="step">
+          <span class="n">3</span>
+          <h4><span class="en">It freezes a plan and STOPS for your OK</span><span class="ko">계획을 확정하고, 승인을 기다리며 멈춥니다</span></h4>
+          <p class="en">It writes <code>PLAN.md</code> (the steps, the tools, how it will verify) and <b>waits</b>. Build does not start until you approve. Read it, adjust anything, then say OK.</p>
+          <p class="ko"><code>PLAN.md</code>(단계, 사용할 도구, 검증 방법)를 적고 <b>기다립니다</b>. 여러분이 승인하기 전에는 Build가 시작되지 않습니다. 읽어 보고, 고칠 것이 있으면 고친 뒤 OK 하세요.</p>
+          <span class="who en">You decide: <b>approve or adjust the plan</b></span>
+          <span class="who ko">여러분의 결정: <b>계획 승인 또는 수정</b></span>
+        </div>
+        <div class="step">
+          <span class="n">4</span>
+          <h4><span class="en">A fresh builder implements it</span><span class="ko">새 빌더가 구현합니다</span></h4>
+          <p class="en">A separate role with a clean context reads <b>only the approved plan</b> and builds the smallest correct change, test-first. It will not finish until the test suite is green.</p>
+          <p class="ko">깨끗한 컨텍스트를 가진 별도 역할이 <b>승인된 계획만</b> 읽고, 테스트부터 작성하며 최소한의 올바른 변경을 만듭니다. 테스트 스위트가 통과 상태가 되기 전에는 끝내지 않습니다.</p>
+          <span class="who en">Runs as: <b>the executor / builder</b></span>
+          <span class="who ko">담당: <b>executor(빌더)</b></span>
+        </div>
+        <div class="step">
+          <span class="n">5</span>
+          <h4><span class="en">A fresh auditor tries to disprove it</span><span class="ko">새 감사자가 반증을 시도합니다</span></h4>
+          <p class="en">Another clean-context role re-runs your <b>real</b> tests, compares the change against <code>GOAL.md</code>, and ticks <b>only</b> what is proven. Anything unmet goes to <code>R-LOOP.md</code> and the builder is relaunched to fix it. This loop is capped (3 rounds by default) before it escalates to you.</p>
+          <p class="ko">또 다른 깨끗한 컨텍스트 역할이 여러분의 <b>실제</b> 테스트를 다시 돌리고, 변경을 <code>GOAL.md</code>와 대조해 <b>증명된 것만</b> 체크합니다. 충족되지 않은 항목은 <code>R-LOOP.md</code>로 가고, 빌더가 다시 실행되어 고칩니다. 이 반복은 기본 3회로 제한되며, 그 후엔 여러분에게 넘깁니다.</p>
+          <span class="who en">Runs as: <b>the qa-auditor</b> (owns the verdict)</span>
+          <span class="who ko">담당: <b>qa-auditor</b> (최종 판정 담당)</span>
+        </div>
+        <div class="step">
+          <span class="n">6</span>
+          <h4><span class="en">It finalizes and stops</span><span class="ko">마무리하고 멈춥니다</span></h4>
+          <p class="en">When every box is checked, it writes <code>Z-&lt;date&gt;.md</code> (the "done" stamp with the branch and timestamp), passes the <b>commit gate</b>, and stops - reporting exactly what it verified, with the command output.</p>
+          <p class="ko">모든 항목이 체크되면 <code>Z-&lt;날짜&gt;.md</code>(브랜치와 타임스탬프가 담긴 "완료" 도장)를 쓰고, <b>커밋 게이트</b>를 통과한 뒤 멈춥니다. 무엇을 검증했는지 명령 출력과 함께 정확히 보고합니다.</p>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <span class="tag en">Where you stay in control</span><span class="tag ko">여러분이 통제권을 갖는 지점</span>
+        <p class="en">Only two things interrupt you: <b>(1)</b> approving the plan before any code is written, and <b>(2)</b> consenting to any destructive or irreversible step (like a force-push or dropping data). Everything else runs on its own.</p>
+        <p class="ko">여러분을 멈춰 세우는 건 딱 두 가지입니다. <b>(1)</b> 코드를 쓰기 전 계획 승인, <b>(2)</b> 파괴적이거나 되돌릴 수 없는 단계(force-push, 데이터 삭제 등)에 대한 동의. 나머지는 알아서 진행됩니다.</p>
+      </div>
+    </section>
+
+    <section class="doc-section reveal" id="loop">
+      <p class="sub en">5 &middot; The loop</p>
+      <p class="sub ko">5 &middot; 루프</p>
+      <h2><span class="en">The five-gate loop</span><span class="ko">5단계 게이트 루프</span></h2>
+      <p class="lead en">Every code-changing run (build, debug, legacy) flows through the same five gates. "Gate" just means a checkpoint the run must pass before moving on.</p>
+      <p class="lead ko">코드를 바꾸는 모든 작업(새로 만들기, 디버그, 레거시)은 같은 다섯 게이트를 지납니다. "게이트"는 다음으로 넘어가기 전에 반드시 통과해야 하는 체크포인트를 뜻합니다.</p>
+
+<pre class="en">  Frame  ->  Plan approval  ->  Build  ->  Exact Verify/QA  ->  Finalize
+   |            |                 |              |                   |
+ write        you OK           fresh          fresh              "done" stamp
+ GOAL.md      the plan         builder        auditor            + commit gate
+              (blocking)       (green)        (real tests)</pre>
+<pre class="ko">  Frame  ->  Plan approval  ->  Build  ->  Exact Verify/QA  ->  Finalize
+   |            |                 |              |                   |
+ GOAL.md      여러분 OK         새 빌더        새 감사자           "완료" 도장
+ 작성         (여기서 멈춤)      (통과 필수)    (실제 테스트)       + 커밋 게이트</pre>
+
+      <div class="tbl-scroll">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th><span class="en">Gate</span><span class="ko">게이트</span></th>
+            <th><span class="en">What happens</span><span class="ko">하는 일</span></th>
+            <th><span class="en">Who / your part</span><span class="ko">담당 / 여러분의 역할</span></th>
+            <th><span class="en">Writes</span><span class="ko">남기는 파일</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1. Frame</td>
+            <td><span class="en">Understand the real goal. Quote the request, refine the spec, list falsifiable success criteria including edge cases.</span><span class="ko">진짜 목표를 이해합니다. 요청을 인용하고 스펙을 다듬으며, 예외 상황을 포함한 반증 가능한 성공 기준을 나열합니다.</span></td>
+            <td><span class="en">The conductor. You: nothing yet.</span><span class="ko">컨덕터. 여러분: 아직 없음.</span></td>
+            <td><code>GOAL.md</code></td>
+          </tr>
+          <tr>
+            <td>2. Plan approval</td>
+            <td><span class="en">A self-sufficient plan is frozen. This gate <b>blocks</b> - Build cannot start until it is approved.</span><span class="ko">자체 완결적인 계획이 확정됩니다. 이 게이트는 <b>막아섭니다</b> - 승인 전에는 Build가 시작되지 않습니다.</span></td>
+            <td><span class="en">You: <b>read and approve</b> (or adjust).</span><span class="ko">여러분: <b>읽고 승인</b>(또는 수정).</span></td>
+            <td><code>PLAN.md</code></td>
+          </tr>
+          <tr>
+            <td>3. Build</td>
+            <td><span class="en">A fresh-context builder implements only the approved plan, test-first, and exits only on a green suite.</span><span class="ko">새 컨텍스트 빌더가 승인된 계획만 구현합니다. 테스트부터 쓰고, 스위트가 통과할 때만 끝냅니다.</span></td>
+            <td><span class="en">The executor. You: nothing.</span><span class="ko">executor. 여러분: 없음.</span></td>
+            <td><span class="en">the code + tests</span><span class="ko">코드 + 테스트</span></td>
+          </tr>
+          <tr>
+            <td>4. Exact Verify/QA</td>
+            <td><span class="en">A fresh auditor re-runs the real tests, re-reads request/docs, ticks proven criteria. Gaps relaunch the builder.</span><span class="ko">새 감사자가 실제 테스트를 다시 돌리고 요청/문서를 다시 읽어, 증명된 기준만 체크합니다. 미충족 항목은 빌더를 다시 부릅니다.</span></td>
+            <td><span class="en">The qa-auditor (+ a qa-tester for browser/CLI evidence). You: nothing.</span><span class="ko">qa-auditor (+ 브라우저/CLI 증거가 필요하면 qa-tester). 여러분: 없음.</span></td>
+            <td><code>QA.md</code>, <code>R-LOOP.md</code></td>
+          </tr>
+          <tr>
+            <td>5. Finalize</td>
+            <td><span class="en">Only when every box is checked: write the completion marker, pass the commit gate, merge after acceptance.</span><span class="ko">모든 항목이 체크된 뒤에만: 완료 마커를 쓰고 커밋 게이트를 통과하며, 수락 후 병합합니다.</span></td>
+            <td><span class="en">You: <b>accept</b>; consent for destructive steps.</span><span class="ko">여러분: <b>수락</b>, 파괴적 단계엔 동의.</span></td>
+            <td><code>Z-&lt;date&gt;.md</code></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+
+      <div class="callout">
+        <span class="tag en">Why "fresh context" per gate</span><span class="tag ko">왜 게이트마다 "새 컨텍스트"인가</span>
+        <p class="en">Each role starts empty and loads only the file its phase needs. The builder never sees the auditor's doubts; the auditor never sees the builder's rationalizations. That separation is what makes the verify honest - and it keeps each role's attention on one job instead of a bloated history.</p>
+        <p class="ko">각 역할은 빈 상태로 시작해 해당 단계에 필요한 파일만 불러옵니다. 빌더는 감사자의 의심을 보지 못하고, 감사자는 빌더의 자기 합리화를 보지 못합니다. 바로 그 분리가 검증을 정직하게 만들고, 각 역할이 부풀려진 히스토리 대신 한 가지 일에만 집중하게 합니다.</p>
+      </div>
+    </section>
+
+    <section class="doc-section reveal" id="vault">
+      <p class="sub en">6 &middot; The run vault</p>
+      <p class="sub ko">6 &middot; 실행 볼트</p>
+      <h2><span class="en">The run vault - the paper trail</span><span class="ko">실행 볼트 - 작업의 기록장</span></h2>
+      <p class="lead en">A code run keeps a small set of Markdown files in a dated folder (a "run vault"). Think of it as a <b>lab notebook</b>: it records what was asked, the agreed plan, what was checked, what failed, and the final sign-off. You can read every file - nothing is hidden.</p>
+      <p class="lead ko">코드 작업은 날짜가 붙은 폴더("실행 볼트")에 작은 Markdown 파일 묶음을 남깁니다. <b>실험 노트</b>라고 생각하세요. 무엇을 요청했는지, 합의된 계획, 무엇을 확인했는지, 무엇이 실패했는지, 최종 승인까지 기록합니다. 모든 파일을 읽을 수 있고 숨기는 것은 없습니다.</p>
+
+<pre class="en">&lt;run vault&gt;/    <span class="c-soft"># a dated folder, e.g. docs/changelog/&lt;YYYY-MM&gt;/&lt;DD-topic&gt;/</span>
+  <span class="c-cyan">GOAL.md</span>       <span class="c-soft">request word-for-word + spec + success-criteria checkboxes</span>
+  <span class="c-cyan">PLAN.md</span>       <span class="c-soft">the frozen plan -> your explicit OK</span>
+  <span class="c-cyan">QA.md</span>         <span class="c-soft">Before/After evidence as plain checklist sentences</span>
+  <span class="c-cyan">R-LOOP.md</span>     <span class="c-soft">verify gaps -> the builder is relaunched to fix them</span>
+  <span class="c-cyan">Z-&lt;date&gt;.md</span>   <span class="c-soft">written ONLY when every box is checked (the "done" stamp)</span>
+  <span class="c-cyan">run-state.json</span><span class="c-soft"> resumable state so a run can pick up where it left off</span></pre>
+<pre class="ko">&lt;run vault&gt;/    <span class="c-soft"># 날짜가 붙은 폴더, 예: docs/changelog/&lt;YYYY-MM&gt;/&lt;DD-topic&gt;/</span>
+  <span class="c-cyan">GOAL.md</span>       <span class="c-soft">요청 원문 그대로 + 스펙 + 성공 기준 체크박스</span>
+  <span class="c-cyan">PLAN.md</span>       <span class="c-soft">확정된 계획 -> 여러분의 명시적 OK</span>
+  <span class="c-cyan">QA.md</span>         <span class="c-soft">이전/이후 증거를 평이한 체크리스트 문장으로</span>
+  <span class="c-cyan">R-LOOP.md</span>     <span class="c-soft">검증 미충족 -> 빌더를 다시 불러 수정</span>
+  <span class="c-cyan">Z-&lt;date&gt;.md</span>   <span class="c-soft">모든 항목이 체크됐을 때만 작성 ("완료" 도장)</span>
+  <span class="c-cyan">run-state.json</span><span class="c-soft"> 중단 지점부터 재개할 수 있는 상태</span></pre>
+
+      <div class="tbl-scroll">
+      <table class="tbl">
+        <thead><tr><th><span class="en">File</span><span class="ko">파일</span></th><th><span class="en">In plain terms</span><span class="ko">쉽게 말하면</span></th></tr></thead>
+        <tbody>
+          <tr><td><code>GOAL.md</code></td><td><span class="en">The single source of truth for "what done means." Your request is quoted exactly so it cannot drift, then broken into checkable success criteria.</span><span class="ko">"완료란 무엇인가"의 유일한 기준입니다. 여러분의 요청을 그대로 인용해 변질되지 않게 하고, 확인 가능한 성공 기준으로 쪼갭니다.</span></td></tr>
+          <tr><td><code>PLAN.md</code></td><td><span class="en">The agreed approach, frozen before any code. This is what you approve at gate 2.</span><span class="ko">코드 작성 전에 확정된 합의된 접근법입니다. 게이트 2에서 여러분이 승인하는 대상이죠.</span></td></tr>
+          <tr><td><code>QA.md</code></td><td><span class="en">The evidence: what the state was Before, what it is After, and the commands that prove it.</span><span class="ko">증거입니다. 이전(Before) 상태, 이후(After) 상태, 그리고 그것을 증명하는 명령어를 담습니다.</span></td></tr>
+          <tr><td><code>R-LOOP.md</code></td><td><span class="en">The fix channel. When the auditor finds an unmet criterion, it lands here with a timestamp and the builder is sent back in.</span><span class="ko">수정 통로입니다. 감사자가 미충족 기준을 찾으면 타임스탬프와 함께 여기에 적히고, 빌더가 다시 투입됩니다.</span></td></tr>
+          <tr><td><code>Z-&lt;date&gt;.md</code></td><td><span class="en">The completion marker. Its existence means every success criterion is green - it is written last, never early.</span><span class="ko">완료 마커입니다. 이 파일이 있다는 건 모든 성공 기준이 통과했다는 뜻이며, 항상 마지막에 쓰입니다.</span></td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <div class="callout">
+        <span class="tag en">Small task? You may see no vault</span><span class="tag ko">작은 작업이면? 볼트가 안 보일 수 있어요</span>
+        <p class="en">For throwaway or single-task workspaces (like a CI checkout or a quick benchmark), supergoal uses a <b>fast path</b>: the same five gates apply, but the state is held in the conversation instead of written to files. That is expected, not a bug - the ceremony only appears when it has a real consumer.</p>
+        <p class="ko">일회성이거나 단일 작업용 작업공간(CI 체크아웃, 빠른 벤치마크 등)에서는 supergoal이 <b>빠른 경로(fast path)</b>를 씁니다. 같은 다섯 게이트를 적용하되, 상태를 파일이 아니라 대화 안에 담아 둡니다. 버그가 아니라 의도된 동작입니다. 형식은 실제로 쓸 대상이 있을 때만 나타납니다.</p>
+      </div>
+    </section>
+
+    <section class="doc-section reveal" id="roles">
+      <p class="sub en">7 &middot; The roles</p>
+      <p class="sub ko">7 &middot; 역할들</p>
+      <h2><span class="en">The roles - who does what</span><span class="ko">역할들 - 누가 무엇을 하나</span></h2>
+      <p class="lead en">A code run is not one agent doing everything. It is a small cast, each with a <b>fresh, separate context</b>. Keeping them separate is the whole point (see the writer/editor idea above). Keeping the cast <b>small</b> keeps it fast.</p>
+      <p class="lead ko">코드 작업은 한 에이전트가 전부 하는 게 아닙니다. 각자 <b>새롭고 분리된 컨텍스트</b>를 가진 작은 팀이 합니다. 이들을 분리하는 것이 핵심이고(위의 작가/편집자 비유 참고), 팀을 <b>작게</b> 유지해 빠르게 만듭니다.</p>
+
+      <div class="tbl-scroll">
+      <table class="tbl">
+        <thead><tr>
+          <th><span class="en">Role</span><span class="ko">역할</span></th>
+          <th><span class="en">Persona file</span><span class="ko">지침 파일</span></th>
+          <th><span class="en">Job</span><span class="ko">하는 일</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><td><span class="en">Conductor</span><span class="ko">컨덕터</span></td><td><code>SKILL.md</code></td><td><span class="en">Reads your objective, picks the mode, sets up the run, and dispatches the roles below. Stays lean.</span><span class="ko">목표를 읽고 모드를 고르며, 작업을 설정하고 아래 역할들을 파견합니다. 가볍게 유지합니다.</span></td></tr>
+          <tr><td><span class="en">Builder</span><span class="ko">빌더</span></td><td><code>agents/executor.md</code></td><td><span class="en">Implements the smallest correct change from the approved plan, test-first. Must exit green.</span><span class="ko">승인된 계획을 바탕으로 테스트부터 쓰며 최소한의 올바른 변경을 구현합니다. 통과 상태로 끝내야 합니다.</span></td></tr>
+          <tr><td><span class="en">Tester</span><span class="ko">테스터</span></td><td><code>agents/qa-tester.md</code></td><td><span class="en">Only for browser/CLI work. Drives the real thing, captures evidence (screenshots, output). Reports evidence, no verdict.</span><span class="ko">브라우저/CLI 작업에만 해당. 실제로 조작해 증거(스크린샷, 출력)를 수집합니다. 증거만 보고하고 판정은 하지 않습니다.</span></td></tr>
+          <tr><td><span class="en">Auditor</span><span class="ko">감사자</span></td><td><code>agents/qa-auditor.md</code></td><td><span class="en">The final verifier. Adversarial stance: re-runs real tests, diffs against GOAL.md, owns the verdict and the GOAL ticks.</span><span class="ko">최종 검증자. 반증하려는 자세로 실제 테스트를 다시 돌리고 GOAL.md와 대조하며, 판정과 GOAL 체크를 담당합니다.</span></td></tr>
+          <tr><td><span class="en">Escalation reviewer</span><span class="ko">에스컬레이션 리뷰어</span></td><td><code>agents/code-reviewer.md</code></td><td><span class="en">Opt-in only, for under-specified or risky work - the "plan attack." Not part of the default path.</span><span class="ko">불충분하거나 위험한 작업에만 선택적으로 투입되는 "계획 공격". 기본 경로에는 없습니다.</span></td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="en">The default delivery cast is just <b>one builder + one auditor</b> per iteration, plus a tester only when there is a browser or CLI to drive. Other personas (<code>analyst</code>, <code>architect</code>, <code>designer</code>, <code>debugger</code>, <code>explore</code>, <code>db-reader</code>, <code>security-reviewer</code>) load only when a mode calls for them.</p>
+      <p class="ko">기본 딜리버리 팀은 반복마다 <b>빌더 1명 + 감사자 1명</b>이 전부이고, 조작할 브라우저나 CLI가 있을 때만 테스터가 추가됩니다. 다른 페르소나(<code>analyst</code>, <code>architect</code>, <code>designer</code>, <code>debugger</code>, <code>explore</code>, <code>db-reader</code>, <code>security-reviewer</code>)는 해당 모드가 필요로 할 때만 불러옵니다.</p>
+
+      <div class="callout tip">
+        <span class="tag en">Harness-agnostic</span><span class="tag ko">도구에 얽매이지 않음</span>
+        <p class="en">Every role is a plain file in <code>agents/</code>. That is why dispatch works the same across Claude Code, Codex, agy, and other agent CLIs - supergoal is not tied to any one tool.</p>
+        <p class="ko">모든 역할은 <code>agents/</code> 안의 일반 파일입니다. 그래서 Claude Code, Codex, agy 등 어떤 에이전트 CLI에서도 같은 방식으로 역할을 파견할 수 있습니다. supergoal은 특정 도구에 묶여 있지 않습니다.</p>
+      </div>
+    </section>
+
+    <section class="doc-section reveal" id="modes">
+      <p class="sub en">8 &middot; The modes</p>
+      <p class="sub ko">8 &middot; 모드</p>
+      <h2><span class="en">One command, twelve modes</span><span class="ko">명령 하나, 열두 가지 모드</span></h2>
+      <p class="lead en">You never pick a mode by hand. supergoal reads your objective and routes to the right lane, then tells you which one in one line. Three modes change code and use the full five-gate loop; the other nine write <b>no product code by default</b> and confirm before installing anything.</p>
+      <p class="lead ko">모드를 직접 고를 필요가 없습니다. supergoal이 목표를 읽고 알맞은 경로로 보낸 뒤, 어떤 경로인지 한 줄로 알려 줍니다. 세 모드는 코드를 바꾸며 5단계 루프를 쓰고, 나머지 아홉은 <b>기본적으로 제품 코드를 쓰지 않으며</b> 무언가를 설치하기 전에 확인을 받습니다.</p>
+
+      <h3><span class="en">Code-changing (use the full loop)</span><span class="ko">코드를 바꾸는 모드 (전체 루프 사용)</span></h3>
+      <div class="mode-grid">
+        <div class="mode">
+          <p class="m-name">GREENFIELD</p>
+          <p class="en">Build and ship a new app or tool. Broad requests first get a mini map, then one slice enters Build.</p>
+          <p class="ko">새 앱이나 도구를 만들어 출시합니다. 넓은 요청은 먼저 지도를 그린 뒤 한 조각만 Build로 들어갑니다.</p>
+          <span class="ex en"><b>/supergoal</b> build a habit tracker and ship it</span>
+          <span class="ex ko"><b>/supergoal</b> 습관 추적 앱 만들어서 배포해줘</span>
+        </div>
+        <div class="mode">
+          <p class="m-name">DEBUG</p>
+          <p class="en">Fix a hard failure. Reproduce it with a failing test first, then make the smallest change that turns it green.</p>
+          <p class="ko">까다로운 실패를 고칩니다. 먼저 실패하는 테스트로 재현한 뒤, 통과시키는 가장 작은 변경을 만듭니다.</p>
+          <span class="ex en"><b>/supergoal</b> checkout hangs in prod, fix it</span>
+          <span class="ex ko"><b>/supergoal</b> 결제 페이지가 가끔 멈춰, 고쳐줘</span>
+        </div>
+        <div class="mode">
+          <p class="m-name">LEGACY</p>
+          <p class="en">Add to or refactor existing code. Map the touched area first, then make the smallest accurate edit.</p>
+          <p class="ko">기존 코드에 기능을 더하거나 리팩터링합니다. 영향 범위를 먼저 파악한 뒤 가장 작고 정확하게 수정합니다.</p>
+          <span class="ex en"><b>/supergoal</b> add SSO to our legacy Django app</span>
+          <span class="ex ko"><b>/supergoal</b> 레거시 장고 앱에 SSO 추가해줘</span>
+        </div>
+      </div>
+
+      <h3><span class="en">No-code (plan, verify, learn - no product code by default)</span><span class="ko">코드 없는 모드 (계획·검증·학습 - 기본적으로 제품 코드 없음)</span></h3>
+      <div class="mode-grid">
+        <div class="mode nocode">
+          <p class="m-name">WAYFINDER</p>
+          <p class="en">Spec and split a big, foggy effort into tickets with blockers, and say what to do first.</p>
+          <p class="ko">크고 막연한 작업을 블로커가 있는 티켓들로 나누고, 무엇부터 할지 정합니다.</p>
+          <span class="ex en"><b>/supergoal</b> break this migration into tickets</span>
+          <span class="ex ko"><b>/supergoal</b> 이 마이그레이션을 티켓으로 쪼개줘</span>
+        </div>
+        <div class="mode nocode">
+          <p class="m-name">PROTOTYPE</p>
+          <p class="en">Test one uncertain direction with a throwaway proof, then delete it or route the decision into delivery.</p>
+          <p class="ko">불확실한 방향 하나를 버릴 셈치고 만든 증명으로 검증한 뒤, 삭제하거나 결정만 딜리버리로 넘깁니다.</p>
+          <span class="ex en"><b>/supergoal</b> prototype 3 checkout flows first</span>
+          <span class="ex ko"><b>/supergoal</b> 결제 흐름 3가지 먼저 프로토타입</span>
+        </div>
+        <div class="mode nocode">
+          <p class="m-name">QA-ONLY</p>
+          <p class="en">QA or compare data with no code change. Builds an "Impact Matrix" of everything a feature can affect.</p>
+          <p class="ko">코드 변경 없이 QA하거나 데이터를 비교합니다. 기능이 영향을 줄 수 있는 모든 것의 "영향 매트릭스"를 만듭니다.</p>
+          <span class="ex en"><b>/supergoal</b> QA the checkout flow on staging</span>
+          <span class="ex ko"><b>/supergoal</b> 스테이징에서 결제 흐름 QA해줘</span>
+        </div>
+        <div class="mode nocode">
+          <p class="m-name">REVIEW-ONLY</p>
+          <p class="en">Review a diff or PR with no fixes. Two independent reviewers; every finding is verified before it is reported.</p>
+          <p class="ko">고치지 않고 diff나 PR을 리뷰합니다. 독립 리뷰어 둘이 보고, 발견 사항은 모두 검증한 뒤 보고합니다.</p>
+          <span class="ex en"><b>/supergoal</b> review this PR, no fixes</span>
+          <span class="ex ko"><b>/supergoal</b> 이 PR 리뷰만 해줘</span>
+        </div>
+        <div class="mode nocode">
+          <p class="m-name">ARCHITECTURE</p>
+          <p class="en">Find what to deepen (or draw a diagram). Surveys friction, grills the pick, routes the refactor out to LEGACY/WAYFINDER.</p>
+          <p class="ko">어디를 손볼지 찾거나 다이어그램을 그립니다. 마찰 지점을 조사하고 후보를 검토한 뒤, 리팩터링은 LEGACY/WAYFINDER로 넘깁니다.</p>
+          <span class="ex en"><b>/supergoal</b> find refactoring opportunities</span>
+          <span class="ex ko"><b>/supergoal</b> 리팩터링할 곳 찾아줘</span>
+        </div>
+        <div class="mode nocode">
+          <p class="m-name">TEACH</p>
+          <p class="en">Understand something, no code. Teaches from real sources, then checks you can explain it back.</p>
+          <p class="ko">코드 없이 무언가를 이해합니다. 실제 자료로 가르친 뒤, 여러분이 자기 말로 설명할 수 있는지 확인합니다.</p>
+          <span class="ex en"><b>/supergoal</b> explain how OAuth works</span>
+          <span class="ex ko"><b>/supergoal</b> OAuth 작동 방식 설명해줘</span>
+        </div>
+        <div class="mode nocode">
+          <p class="m-name">LEARN-DOMAIN</p>
+          <p class="en">Map a codebase and persist a grounded <code>.domain-agent/</code> wiki the agent can reuse later.</p>
+          <p class="ko">코드베이스를 파악해, 에이전트가 나중에 다시 쓸 수 있는 검증된 <code>.domain-agent/</code> 위키로 남깁니다.</p>
+          <span class="ex en"><b>/supergoal</b> learn this codebase, build a wiki</span>
+          <span class="ex ko"><b>/supergoal</b> 이 코드베이스 학습해서 위키 만들어줘</span>
+        </div>
+        <div class="mode nocode">
+          <p class="m-name">HARNESS-EVAL</p>
+          <p class="en">Test whether a harness/skill actually helps. Runs the same task with and without it; weak evidence means "Not proven."</p>
+          <p class="ko">harness나 스킬이 실제로 도움이 되는지 검증합니다. 같은 작업을 적용 전후로 돌리고, 증거가 약하면 "입증 안 됨"으로 남깁니다.</p>
+          <span class="ex en"><b>/supergoal</b> does this harness help on 3 cases?</span>
+          <span class="ex ko"><b>/supergoal</b> 이 harness가 3개 케이스에서 도움 되나?</span>
+        </div>
+        <div class="mode nocode">
+          <p class="m-name">SKILL-MINE</p>
+          <p class="en">Turn repeated work into a reusable skill. Mines your history, suggests a few, forges the one you pick.</p>
+          <p class="ko">반복 작업을 재사용 가능한 스킬로 만듭니다. 히스토리를 훑어 몇 개를 제안하고, 고른 하나를 완성합니다.</p>
+          <span class="ex en"><b>/supergoal</b> make a skill from what I keep doing</span>
+          <span class="ex ko"><b>/supergoal</b> 반복하는 작업을 스킬로 만들어줘</span>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <span class="tag en">Not sure which mode?</span><span class="tag ko">어떤 모드인지 모르겠다면?</span>
+        <p class="en">You do not have to know. Describe the real work in plain words and let supergoal route it. If it picks the wrong lane, just say so - it will re-route.</p>
+        <p class="ko">알 필요 없습니다. 하고 싶은 일을 평범한 말로 설명하면 supergoal이 알아서 경로를 정합니다. 잘못된 경로를 골랐다면 그렇게 말해 주세요. 다시 경로를 잡습니다.</p>
+      </div>
+    </section>
+
+    <section class="doc-section reveal" id="principles">
+      <p class="sub en">9 &middot; The principles</p>
+      <p class="sub ko">9 &middot; 원칙</p>
+      <h2><span class="en">The five principles</span><span class="ko">다섯 가지 원칙</span></h2>
+      <p class="lead en">If you remember nothing else, remember these. They apply on every run, in every mode.</p>
+      <p class="lead ko">다른 건 다 잊어도 이것만은 기억하세요. 모든 실행, 모든 모드에 적용됩니다.</p>
+
+      <div class="steps">
+        <div class="step">
+          <span class="n">1</span>
+          <h4><span class="en">Verify against ground truth</span><span class="ko">실체로 검증한다</span></h4>
+          <p class="en">Re-run the project's <b>real</b> tests and re-read the request, ticket, README, and design/API docs for checks the tests miss. Never invent a proxy checklist and optimize to it.</p>
+          <p class="ko">프로젝트의 <b>실제</b> 테스트를 다시 돌리고, 테스트가 놓친 부분은 요청·티켓·README·설계/API 문서에서 다시 확인합니다. 대리 체크리스트를 만들어 거기에 맞추지 않습니다.</p>
+        </div>
+        <div class="step">
+          <span class="n">2</span>
+          <h4><span class="en">Smallest correct change</span><span class="ko">필요한 만큼만 정확히 바꾼다</span></h4>
+          <p class="en">Match the surrounding code. No whole-file rewrite to change a few lines. (This governs code surface area, not UI quality - polished user-facing UI is still baseline correctness.)</p>
+          <p class="ko">주변 코드에 맞춥니다. 몇 줄 바꾸려고 파일 전체를 다시 쓰지 않습니다. (이는 코드 변경 범위에 대한 원칙이지 UI 품질 얘기가 아닙니다 - 다듬어진 사용자 화면은 기본 요건입니다.)</p>
+        </div>
+        <div class="step">
+          <span class="n">3</span>
+          <h4><span class="en">Hidden requirements surface at plan time</span><span class="ko">숨은 요구사항은 계획 단계에서 드러낸다</span></h4>
+          <p class="en">Full-spec coverage and edge cases are discovered at Frame/Plan and written into the criteria you approve - not bolted on in extra passes later.</p>
+          <p class="ko">전체 스펙 커버리지와 예외 상황은 Frame/Plan 단계에서 발굴해, 여러분이 승인하는 기준에 적어 둡니다. 나중에 별도 패스로 덧붙이지 않습니다.</p>
+        </div>
+        <div class="step">
+          <span class="n">4</span>
+          <h4><span class="en">Ask only when genuinely ambiguous</span><span class="ko">정말 애매할 때만 묻는다</span></h4>
+          <p class="en">Questions the code can answer are resolved by reading the code. It interrupts you only for a real fork where the answer changes the outcome.</p>
+          <p class="ko">코드로 답할 수 있는 질문은 코드를 읽어 해결합니다. 답에 따라 결과가 갈리는 진짜 갈림길에서만 여러분을 멈춰 세웁니다.</p>
+        </div>
+        <div class="step">
+          <span class="n">5</span>
+          <h4><span class="en">Hard stops</span><span class="ko">반드시 멈추는 지점</span></h4>
+          <p class="en">A destructive or irreversible step (drop data, force-push, external publish) needs your explicit consent. And if the real tests cannot pass, it reports that honestly - it never fakes a pass.</p>
+          <p class="ko">파괴적이거나 되돌릴 수 없는 단계(데이터 삭제, force-push, 외부 공개)는 여러분의 명시적 동의를 받습니다. 그리고 실제 테스트가 통과할 수 없으면 그대로 정직하게 보고합니다 - 통과를 꾸며 내지 않습니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section reveal" id="faq">
+      <p class="sub en">10 &middot; FAQ</p>
+      <p class="sub ko">10 &middot; 자주 묻는 질문</p>
+      <h2><span class="en">Frequently asked</span><span class="ko">자주 묻는 질문</span></h2>
+
+      <h3><span class="en">Do I have to babysit it?</span><span class="ko">계속 지켜봐야 하나요?</span></h3>
+      <p class="en">Mostly no. It stops for two things: approving the plan (gate 2) and consenting to a destructive step. Otherwise it runs the loop on its own and reports at the end.</p>
+      <p class="ko">대부분 아닙니다. 두 가지에서만 멈춥니다: 계획 승인(게이트 2)과 파괴적 단계에 대한 동의. 그 외에는 스스로 루프를 돌리고 마지막에 보고합니다.</p>
+
+      <h3><span class="en">What if the tests can't pass?</span><span class="ko">테스트가 통과할 수 없으면요?</span></h3>
+      <p class="en">It tells you, with the failing output. Reporting a real failure is a success of the process; faking a green is the one thing it will not do.</p>
+      <p class="ko">실패 출력과 함께 그대로 알려 줍니다. 진짜 실패를 보고하는 것은 이 방식의 성공입니다. 가짜 통과를 만드는 것만은 절대 하지 않습니다.</p>
+
+      <h3><span class="en">Does it work with Codex / Cursor / other agents?</span><span class="ko">Codex / Cursor 등 다른 에이전트에서도 되나요?</span></h3>
+      <p class="en">Yes. Roles are plain files under <code>agents/</code>, so it is harness-agnostic. It is tested across Claude Code, Codex, and agy; any agent CLI that loads skills can use it.</p>
+      <p class="ko">됩니다. 역할이 <code>agents/</code> 아래의 일반 파일이라 특정 도구에 얽매이지 않습니다. Claude Code, Codex, agy에서 검증됐고, 스킬을 불러올 수 있는 에이전트 CLI라면 쓸 수 있습니다.</p>
+
+      <h3><span class="en">What is a "worktree" and do I need it?</span><span class="ko">"worktree"가 뭐고 꼭 필요한가요?</span></h3>
+      <p class="en">A git worktree is a second working copy of your repo on its own branch, so a run can edit code without touching your main checkout. Code runs use one by default and only merge into your target branch after verification and your acceptance. You do not have to set it up - supergoal handles it.</p>
+      <p class="ko">git worktree는 저장소의 두 번째 작업 사본으로, 자체 브랜치에서 동작합니다. 그래서 작업이 여러분의 메인 체크아웃을 건드리지 않고 코드를 고칠 수 있죠. 코드 작업은 기본적으로 worktree를 쓰고, 검증과 여러분의 수락 뒤에만 대상 브랜치로 병합합니다. 직접 설정할 필요 없이 supergoal이 처리합니다.</p>
+
+      <h3><span class="en">How is this different from just asking my agent?</span><span class="ko">그냥 에이전트에게 요청하는 것과 뭐가 다른가요?</span></h3>
+      <p class="en">Three things a plain pass tends to skip under pressure: a plan you approve before code, a builder that must exit green, and an <b>independent</b> verifier that actively tries to disprove the result against your real tests - with the evidence recorded.</p>
+      <p class="ko">급할 때 보통은 건너뛰는 세 가지입니다: 코드 전에 여러분이 승인하는 계획, 반드시 통과 상태로 끝나는 빌더, 그리고 실제 테스트에 비추어 결과를 <b>적극적으로 반증하려 드는 독립</b> 검증자 - 증거까지 기록합니다.</p>
+
+      <h3><span class="en">Will it touch my main branch or delete things?</span><span class="ko">메인 브랜치를 건드리거나 무언가를 지우나요?</span></h3>
+      <p class="en">Not without consent. Work happens on a run branch/worktree, and any destructive or irreversible step is a hard stop that asks you first.</p>
+      <p class="ko">동의 없이는 하지 않습니다. 작업은 실행용 브랜치/worktree에서 이뤄지고, 파괴적이거나 되돌릴 수 없는 단계는 먼저 여러분에게 묻는 하드 스톱입니다.</p>
+
+      <h3><span class="en">It created no vault files for my small task - is that broken?</span><span class="ko">작은 작업엔 볼트 파일이 안 생겼어요 - 고장인가요?</span></h3>
+      <p class="en">No. In a throwaway or single-task workspace it uses the fast path and holds state in the conversation. The same five gates still apply. See <a href="#vault">The run vault</a>.</p>
+      <p class="ko">아닙니다. 일회성이거나 단일 작업용 작업공간에서는 빠른 경로를 써서 상태를 대화 안에 담습니다. 같은 다섯 게이트는 그대로 적용됩니다. <a href="#vault">실행 볼트</a>를 보세요.</p>
+
+      <h3><span class="en">Do I need Node.js?</span><span class="ko">Node.js가 필요한가요?</span></h3>
+      <p class="en">The skill itself is just instructions. Node 18+ is only needed for the optional gate/audit scripts and the repo's own tests (<code>tests/run-all.sh</code>).</p>
+      <p class="ko">스킬 자체는 지침일 뿐입니다. Node 18+는 선택적 게이트/감사 스크립트와 저장소 자체 테스트(<code>tests/run-all.sh</code>)에만 필요합니다.</p>
+    </section>
+
+    <section class="doc-section reveal" id="glossary">
+      <p class="sub en">11 &middot; Glossary</p>
+      <p class="sub ko">11 &middot; 용어 사전</p>
+      <h2><span class="en">Glossary</span><span class="ko">용어 사전</span></h2>
+      <p class="lead en">The handful of terms this wiki uses, in one place.</p>
+      <p class="lead ko">이 위키에서 쓰는 용어를 한자리에 모았습니다.</p>
+
+      <dl class="glossary">
+        <dt>baseline-first</dt>
+        <dd><span class="en">The design stance that the bar is "a strong model that read the real spec." supergoal only adds checks a plain baseline skips - it does not pile on ceremony for its own sake.</span><span class="ko">기준선을 "실제 스펙을 읽은 좋은 모델"로 삼는 설계 태도. supergoal은 일반 기준선이 건너뛰는 검증만 더하고, 형식을 위한 절차를 쌓지 않습니다.</span></dd>
+
+        <dt>ground truth</dt>
+        <dd><span class="en">The real, external standard of correctness: your project's actual test suite and the actual request/docs - as opposed to a checklist the agent made up.</span><span class="ko">정답을 판정하는 진짜 외부 기준. 에이전트가 지어낸 체크리스트가 아니라, 프로젝트의 실제 테스트 스위트와 실제 요청·문서입니다.</span></dd>
+
+        <dt>proxy</dt>
+        <dd><span class="en">A stand-in metric the agent could game - e.g. a self-written checklist. supergoal refuses to grade against a proxy.</span><span class="ko">에이전트가 조작할 수 있는 대체 지표 - 예: 스스로 쓴 체크리스트. supergoal은 대리 지표로 채점하기를 거부합니다.</span></dd>
+
+        <dt>fresh context</dt>
+        <dd><span class="en">A role that starts empty, having seen none of another role's reasoning. It is what lets the auditor judge the builder's work honestly.</span><span class="ko">다른 역할의 사고 과정을 전혀 보지 않은 채 빈 상태로 시작하는 역할. 감사자가 빌더의 작업을 정직하게 판단할 수 있게 해 줍니다.</span></dd>
+
+        <dt>gate</dt>
+        <dd><span class="en">A checkpoint the run must pass before continuing. The five gates are Frame, Plan approval, Build, Exact Verify/QA, Finalize.</span><span class="ko">다음으로 넘어가기 전에 반드시 통과해야 하는 체크포인트. 다섯 게이트는 Frame, Plan approval, Build, Exact Verify/QA, Finalize입니다.</span></dd>
+
+        <dt><span class="en">run vault</span><span class="ko">run vault (실행 볼트)</span></dt>
+        <dd><span class="en">The dated folder of Markdown files (GOAL, PLAN, QA, R-LOOP, Z) that records a code run start to finish.</span><span class="ko">코드 작업의 처음부터 끝까지를 기록하는, 날짜가 붙은 Markdown 파일 폴더(GOAL, PLAN, QA, R-LOOP, Z).</span></dd>
+
+        <dt><span class="en">worktree</span><span class="ko">worktree</span></dt>
+        <dd><span class="en">A separate git working copy on its own branch, so a run edits code without disturbing your main checkout.</span><span class="ko">자체 브랜치에서 동작하는 별도의 git 작업 사본. 작업이 메인 체크아웃을 건드리지 않고 코드를 고칠 수 있게 합니다.</span></dd>
+
+        <dt><span class="en">red-green / test-first</span><span class="ko">red-green / 테스트 우선</span></dt>
+        <dd><span class="en">Write a test that fails first (red), then the smallest change that makes it pass (green). For bugs, the failing test also reproduces the bug.</span><span class="ko">먼저 실패하는 테스트(red)를 쓰고, 그것을 통과시키는 가장 작은 변경(green)을 만드는 방식. 버그의 경우 실패 테스트가 버그 재현도 겸합니다.</span></dd>
+
+        <dt><span class="en">Before/After Eval</span><span class="ko">Before/After Eval</span></dt>
+        <dd><span class="en">Capture the state before, define the target after, and prove the delta with trusted commands - so the final claim shows the change, not just "tests passed."</span><span class="ko">이전 상태를 기록하고 이후 목표를 정한 뒤, 신뢰할 수 있는 명령으로 그 차이를 증명하는 것. 그래서 최종 주장이 "테스트 통과"가 아니라 실제 변화를 보여 줍니다.</span></dd>
+
+        <dt><span class="en">frontier slice</span><span class="ko">frontier slice (프런티어 조각)</span></dt>
+        <dd><span class="en">For a broad new build, the one vertical slice chosen to deliver first, so a foggy request becomes a shippable piece instead of everything at once.</span><span class="ko">넓은 새 작업에서 가장 먼저 완성하기로 고른 하나의 수직 조각. 막연한 요청이 한꺼번에가 아니라 출시 가능한 한 조각이 되게 합니다.</span></dd>
+
+        <dt><span class="en">Impact Matrix</span><span class="ko">Impact Matrix (영향 매트릭스)</span></dt>
+        <dd><span class="en">In QA-ONLY, a map of everything a feature can affect - screens, data paths, roles, before/during/after actions, and failure cases - plus what was not covered.</span><span class="ko">QA-ONLY 모드에서, 기능이 영향을 줄 수 있는 모든 것(화면, 데이터 경로, 권한, 전/중/후 액션, 실패 케이스)과 확인하지 못한 범위까지 담은 지도.</span></dd>
+
+        <dt><span class="en">harness</span><span class="ko">harness</span></dt>
+        <dd><span class="en">Any scaffolding wrapped around a model to steer it (supergoal is one). HARNESS-EVAL mode measures whether a given harness actually helps.</span><span class="ko">모델을 이끌기 위해 감싸는 구조물 일체(supergoal도 그중 하나). HARNESS-EVAL 모드는 특정 harness가 실제로 도움이 되는지 측정합니다.</span></dd>
+
+        <dt><span class="en">conductor</span><span class="ko">conductor (컨덕터)</span></dt>
+        <dd><span class="en">The top-level role that reads your objective, picks the mode, and dispatches the builder/tester/auditor. It stays lean and delegates the heavy reading to each phase's role.</span><span class="ko">목표를 읽고 모드를 고르며 빌더/테스터/감사자를 파견하는 최상위 역할. 가볍게 유지하고, 무거운 읽기 작업은 각 단계의 역할에 맡깁니다.</span></dd>
+      </dl>
+
+      <div class="next-links">
+        <a href="index.html"><span class="en">Back to the landing page</span><span class="ko">랜딩 페이지로</span></a>
+        <a href="https://github.com/cskwork/supergoal-skill"><span class="en">Source on GitHub</span><span class="ko">GitHub 소스</span></a>
+        <a href="#start"><span class="en">Back to top</span><span class="ko">맨 위로</span></a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span><span class="en">Part of the <a href="index.html">/supergoal</a> project. Workflow adapted from oh-my-symphony by cskwork.</span><span class="ko"><a href="index.html">/supergoal</a> 프로젝트의 일부입니다. 워크플로는 cskwork의 oh-my-symphony를 바탕으로 합니다.</span></span>
+    <a href="#top"><span class="en">Back to top</span><span class="ko">맨 위로</span></a>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var langButtons = [].slice.call(document.querySelectorAll("[data-lang]"));
+    var fsButtons = [].slice.call(document.querySelectorAll("[data-fs]"));
+    var storedLang = localStorage.getItem("supergoal-lang");
+    var storedFs = Number(localStorage.getItem("supergoal-fs") || "1");
+    var lang = storedLang || ((navigator.language || "").toLowerCase().indexOf("ko") === 0 ? "ko" : "en");
+    var fs = Math.min(1.18, Math.max(.92, storedFs || 1));
+
+    function syncLang(next) {
+      lang = next === "ko" ? "ko" : "en";
+      root.lang = lang;
+      localStorage.setItem("supergoal-lang", lang);
+      langButtons.forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.lang === lang ? "true" : "false"); });
+    }
+    function syncFs(next) {
+      fs = Math.min(1.18, Math.max(.92, next));
+      root.style.setProperty("--fs", fs.toFixed(2));
+      localStorage.setItem("supergoal-fs", String(fs));
+      fsButtons.forEach(function (b) {
+        if (b.dataset.fs === "dec") b.disabled = fs <= .93;
+        if (b.dataset.fs === "inc") b.disabled = fs >= 1.17;
+      });
+    }
+    langButtons.forEach(function (b) { b.addEventListener("click", function () { syncLang(b.dataset.lang); }); });
+    fsButtons.forEach(function (b) { b.addEventListener("click", function () { syncFs(fs + (b.dataset.fs === "inc" ? .08 : -.08)); }); });
+    syncLang(lang);
+    syncFs(fs);
+  })();
+
+  (function () {
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var reveals = [].slice.call(document.querySelectorAll(".reveal"));
+    if (!("IntersectionObserver" in window) || reduce) {
+      reveals.forEach(function (i) { i.classList.add("is-visible"); });
+    } else {
+      var ro = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("is-visible"); ro.unobserve(e.target); } });
+      }, { threshold: .08 });
+      reveals.forEach(function (i) { ro.observe(i); });
+    }
+
+    // scrollspy: highlight current section in the sidebar
+    var links = [].slice.call(document.querySelectorAll(".doc-nav a"));
+    var map = {};
+    links.forEach(function (a) { map[a.getAttribute("href").slice(1)] = a; });
+    var sections = [].slice.call(document.querySelectorAll(".doc-section"));
+    if ("IntersectionObserver" in window) {
+      var spy = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            links.forEach(function (a) { a.classList.remove("active"); });
+            var active = map[e.target.id];
+            if (active) active.classList.add("active");
+          }
+        });
+      }, { rootMargin: "-64px 0px -70% 0px", threshold: 0 });
+      sections.forEach(function (s) { spy.observe(s); });
+    }
+
+    // close the mobile TOC after picking a link
+    var mobile = document.querySelector(".doc-nav-mobile");
+    if (mobile) {
+      mobile.querySelectorAll("a").forEach(function (a) {
+        a.addEventListener("click", function () { mobile.removeAttribute("open"); });
+      });
+    }
+  })();
+</script>
+</body>
+</html>

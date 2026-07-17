@@ -44,10 +44,12 @@ the full protocol below unchanged.
 ## DEBUG hidden-contract gate - a green repro is not done
 
 A fix that only makes the reported repro pass is the top DEBUG failure mode. Before Exact Verify
-ticks a DEBUG run green, the builder shows and the auditor independently re-checks all three. In an
-ephemeral single-context run the roles collapse, but the gate does not: run it as an explicit
-self-check pass and write the three answers (owner frame, alternative repro, conformance sweep
-result) into the final summary BEFORE committing:
+ticks a DEBUG run green, the builder shows and the auditor independently re-checks all three. The
+gate has a literal output contract: BEFORE committing, print exactly three lines -
+`GATE.owner=<frame/function>`, `GATE.alt_repro=<description>: pass`,
+`GATE.conformance=<returns audited and converted, or "none reachable">` - with the work behind each
+actually done. A DEBUG commit without these three lines is not done. In an ephemeral single-context
+run the roles collapse, but the gate does not:
 
 1. **Invariant owner.** Name the invariant the bug violated and the function that owns it. For a
    RecursionError/cycle: capture the traceback once, enumerate the repeating frame cycle by name,
@@ -59,14 +61,15 @@ result) into the final summary BEFORE committing:
    STRUCTURALLY different context - not the same call with another literal: the failing construct
    embedded inside a function call / nested expression, or a sibling public API sharing the broken
    path. Both repros must pass. If a second entry cannot exist, record why.
-3. **Convention conformance (grounded).** Applies to every return/raise REACHABLE through the
-   patched path - including pre-existing literals the diff moves, keeps, or re-routes to - and to
-   the symmetric sibling methods of the changed one (`__mul__`/`__truediv__`, add/sub,
-   encode/decode, open/close) even when the diff does not touch them. Read 2-3 sibling
-   implementations in the same module: where they return canonical singletons/constants/types
-   (e.g. `S.One` over raw `1`, sympified values over Python literals) or follow an established
-   output convention, convert the reachable raw forms in the same patch. Sibling idiom is
-   current-behavior grounding (must-grade), not "silence turned into stricter semantics".
+3. **Convention conformance (concrete action).** Grep every function the patch touches AND its
+   symmetric sibling methods (`__mul__`/`__truediv__`, add/sub, encode/decode, open/close) for raw
+   literal returns: `return 1`, `return 0`, `return -1`, `return True/False/None`, bare string
+   returns. For each hit, read how 2-3 sibling implementations in the same module return the
+   equivalent value; if they return canonical singletons/constants/types (`S.One` over raw `1`,
+   sympified values over Python literals) or follow an established output convention, convert the
+   hit in the same patch - INCLUDING pre-existing literals the diff merely moves, keeps, or
+   re-routes to, and siblings the diff does not touch. Sibling idiom is current-behavior grounding
+   (must-grade), not "silence turned into stricter semantics".
 
 ## Run setup - before any file mutation
 

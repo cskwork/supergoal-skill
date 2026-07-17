@@ -1,0 +1,99 @@
+seed	task	arm	arm_label	outcome	reward	f2p_passed	f2p_total	p2p_passed	p2p_total	agent_s	skill_commit
+cand1-s1	sympy-21627-cosh-is-zero-recursion	harness	cand1	completed	1	1	1	26	26	144	521163845
+cand1-s1	sympy-23191-vector-pretty-print-order	harness	cand1	completed	0	0	1	3	3	408	521163845
+cand1-s1	sympy-24102-parse-mathematica-greek	harness	cand1	completed	0	1	2	0	0	90	521163845
+cand1-s1	sympy-24909-milli-prefix-product	harness	cand1	completed	0	0	1	2	2	126	521163845
+cand1-s2	sympy-21627-cosh-is-zero-recursion	harness	cand1	completed	0	0	1	26	26	176	521163845
+cand1-s2	sympy-23191-vector-pretty-print-order	harness	cand1	completed	0	0	1	3	3	347	521163845
+cand1-s2	sympy-24102-parse-mathematica-greek	harness	cand1	completed	0	1	2	0	0	81	521163845
+cand1-s2	sympy-24909-milli-prefix-product	harness	cand1	completed	0	0	1	2	2	147	521163845
+cand1-s3	sympy-21627-cosh-is-zero-recursion	harness	cand1	completed	0	0	1	26	26	260	521163845
+cand1-s3	sympy-23191-vector-pretty-print-order	harness	cand1	completed	0	0	1	3	3	240	521163845
+cand1-s3	sympy-24102-parse-mathematica-greek	harness	cand1	completed	0	1	2	0	0	78	521163845
+cand1-s3	sympy-24909-milli-prefix-product	harness	cand1	completed	0	0	1	2	2	119	521163845
+cand2-s1	sympy-21627-cosh-is-zero-recursion	harness	cand2	completed	1	1	1	26	26	194	3c5c3b656
+cand2-s1	sympy-23191-vector-pretty-print-order	harness	cand2	completed	0	0	1	3	3	454	3c5c3b656
+cand2-s1	sympy-24102-parse-mathematica-greek	harness	cand2	completed	0	1	2	0	0	108	3c5c3b656
+cand2-s1	sympy-24909-milli-prefix-product	harness	cand2	completed	0	0	1	2	2	99	3c5c3b656
+cand2-s2	sympy-21627-cosh-is-zero-recursion	harness	cand2	completed	0	0	1	26	26	309	3c5c3b656
+cand2-s2	sympy-23191-vector-pretty-print-order	harness	cand2	completed	0	0	1	3	3	325	3c5c3b656
+cand2-s2	sympy-24102-parse-mathematica-greek	harness	cand2	completed	0	1	2	0	0	112	3c5c3b656
+cand2-s2	sympy-24909-milli-prefix-product	harness	cand2	completed	0	0	1	2	2	172	3c5c3b656
+cand2-s3	sympy-21627-cosh-is-zero-recursion	harness	cand2	completed	1	1	1	26	26	338	3c5c3b656
+cand2-s3	sympy-23191-vector-pretty-print-order	harness	cand2	completed	0	0	1	3	3	308	3c5c3b656
+cand2-s3	sympy-24102-parse-mathematica-greek	harness	cand2	completed	0	1	2	0	0	91	3c5c3b656
+cand2-s3	sympy-24909-milli-prefix-product	harness	cand2	completed	0	0	1	2	2	134	3c5c3b656
+cand3-s1	sympy-21627-cosh-is-zero-recursion	harness	cand3	completed	0	0	1	26	26	281	5b794bde9
+cand3-s1	sympy-23191-vector-pretty-print-order	harness	cand3	completed	1	1	1	3	3	326	5b794bde9
+cand3-s1	sympy-24102-parse-mathematica-greek	harness	cand3	completed	0	1	2	0	0	111	5b794bde9
+cand3-s1	sympy-24909-milli-prefix-product	harness	cand3	completed	1	1	1	2	2	164	5b794bde9
+cand3-s2	sympy-21627-cosh-is-zero-recursion	harness	cand3	completed	0	0	1	26	26	171	5b794bde9
+cand3-s2	sympy-23191-vector-pretty-print-order	harness	cand3	completed	0	0	1	3	3	424	5b794bde9
+cand3-s2	sympy-24102-parse-mathematica-greek	harness	cand3	completed	0	1	2	0	0	106	5b794bde9
+cand3-s2	sympy-24909-milli-prefix-product	harness	cand3	completed	1	1	1	2	2	180	5b794bde9
+cand3-s3	sympy-21627-cosh-is-zero-recursion	harness	cand3	completed	1	1	1	26	26	273	5b794bde9
+cand3-s3	sympy-23191-vector-pretty-print-order	harness	cand3	completed	0	0	1	3	3	250	5b794bde9
+cand3-s3	sympy-24102-parse-mathematica-greek	harness	cand3	completed	0	1	2	0	0	102	5b794bde9
+cand3-s3	sympy-24909-milli-prefix-product	harness	cand3	completed	1	1	1	2	2	140	5b794bde9
+cand3f-s1	sympy-21627-cosh-is-zero-recursion	harness	cand3f	completed	0	0	1	26	26	194	5b794bde9
+cand3f-s1	sympy-23191-vector-pretty-print-order	harness	cand3f	completed	1	1	1	3	3	327	5b794bde9
+cand3f-s1	sympy-24102-parse-mathematica-greek	harness	cand3f	completed	0	1	2	0	0	108	5b794bde9
+cand3f-s1	sympy-24909-milli-prefix-product	harness	cand3f	completed	1	1	1	2	2	179	5b794bde9
+cand3f-s2	sympy-21627-cosh-is-zero-recursion	harness	cand3f	completed	1	1	1	26	26	318	5b794bde9
+cand3f-s2	sympy-23191-vector-pretty-print-order	harness	cand3f	completed	0	0	1	3	3	358	5b794bde9
+cand3f-s2	sympy-24102-parse-mathematica-greek	harness	cand3f	completed	0	1	2	0	0	145	5b794bde9
+cand3f-s2	sympy-24909-milli-prefix-product	harness	cand3f	completed	1	1	1	2	2	221	5b794bde9
+cand3f-s3	sympy-21627-cosh-is-zero-recursion	harness	cand3f	completed	1	1	1	26	26	244	5b794bde9
+cand3f-s3	sympy-23191-vector-pretty-print-order	harness	cand3f	completed	0	0	1	3	3	450	5b794bde9
+cand3f-s3	sympy-24102-parse-mathematica-greek	harness	cand3f	completed	0	1	2	0	0	111	5b794bde9
+cand3f-s3	sympy-24909-milli-prefix-product	harness	cand3f	completed	0	0	1	2	2	175	5b794bde9
+ctrl-s1	sympy-21627-cosh-is-zero-recursion	harness	ctrl	completed	1	1	1	26	26	236	d7fda4e57
+ctrl-s1	sympy-23191-vector-pretty-print-order	harness	ctrl	completed	1	1	1	3	3	326	d7fda4e57
+ctrl-s1	sympy-24102-parse-mathematica-greek	harness	ctrl	completed	0	1	2	0	0	90	d7fda4e57
+ctrl-s1	sympy-24909-milli-prefix-product	harness	ctrl	completed	0	0	1	2	2	162	d7fda4e57
+ctrl-s2	sympy-21627-cosh-is-zero-recursion	harness	ctrl	completed	0	0	1	26	26	335	d7fda4e57
+ctrl-s2	sympy-23191-vector-pretty-print-order	harness	ctrl	completed	0	0	1	3	3	343	d7fda4e57
+ctrl-s2	sympy-24102-parse-mathematica-greek	harness	ctrl	completed	0	1	2	0	0	136	d7fda4e57
+ctrl-s2	sympy-24909-milli-prefix-product	harness	ctrl	completed	0	0	1	2	2	165	d7fda4e57
+ctrl-s3	sympy-21627-cosh-is-zero-recursion	harness	ctrl	completed	1	1	1	26	26	215	d7fda4e57
+ctrl-s3	sympy-23191-vector-pretty-print-order	harness	ctrl	completed	0	0	1	3	3	394	d7fda4e57
+ctrl-s3	sympy-24102-parse-mathematica-greek	harness	ctrl	completed	0	1	2	0	0	81	d7fda4e57
+ctrl-s3	sympy-24909-milli-prefix-product	harness	ctrl	completed	0	0	1	2	2	128	d7fda4e57
+guard-s1	csstree-shorthand-expansion-compression	harness	guard	completed	0	65	79	16715	16715	386	5b794bde9
+guard-s2	csstree-shorthand-expansion-compression	harness	guard	completed	0	71	79	16715	16715	479	5b794bde9
+guardv090-s1	csstree-shorthand-expansion-compression	harness	guardv090	completed	0	64	79	16715	16715	340	350eb9608
+guardv090-s2	csstree-shorthand-expansion-compression	harness	guardv090	completed	0	71	79	16715	16715	508	350eb9608
+v090-s1	sympy-20442-convert-to-orthogonal-units	baseline	baseline	completed	1	1	1	24	24	224	
+v090-s1	sympy-20442-convert-to-orthogonal-units	harness	v090	completed	1	1	1	24	24	105	350eb9608
+v090-s1	sympy-21055-refine-complex-arg	baseline	baseline	completed	1	1	1	13	13	182	
+v090-s1	sympy-21055-refine-complex-arg	harness	v090	completed	1	1	1	13	13	301	350eb9608
+v090-s1	sympy-21627-cosh-is-zero-recursion	baseline	baseline	completed	0	0	1	26	26	240	
+v090-s1	sympy-21627-cosh-is-zero-recursion	harness	v090	completed	0	0	1	26	26	319	350eb9608
+v090-s1	sympy-21847-itermonomials-min-degrees	baseline	baseline	completed	1	1	1	9	9	123	
+v090-s1	sympy-21847-itermonomials-min-degrees	harness	v090	completed	1	1	1	9	9	152	350eb9608
+v090-s1	sympy-22714-point2d-evaluate-false	baseline	baseline	completed	1	1	1	11	11	334	
+v090-s1	sympy-22714-point2d-evaluate-false	harness	v090	completed	1	1	1	11	11	127	350eb9608
+v090-s1	sympy-23191-vector-pretty-print-order	baseline	baseline	completed	0	0	1	2	3	429	
+v090-s1	sympy-23191-vector-pretty-print-order	harness	v090	completed	0	0	1	3	3	337	350eb9608
+v090-s1	sympy-23262-lambdify-single-tuple	baseline	baseline	completed	1	1	1	61	61	148	
+v090-s1	sympy-23262-lambdify-single-tuple	harness	v090	completed	1	1	1	61	61	124	350eb9608
+v090-s1	sympy-24102-parse-mathematica-greek	baseline	baseline	completed	0	1	2	0	0	130	
+v090-s1	sympy-24102-parse-mathematica-greek	harness	v090	completed	0	1	2	0	0	103	350eb9608
+v090-s1	sympy-24909-milli-prefix-product	baseline	baseline	completed	0	0	1	2	2	199	
+v090-s1	sympy-24909-milli-prefix-product	harness	v090	completed	0	0	1	2	2	107	350eb9608
+v090-s2	sympy-21627-cosh-is-zero-recursion	baseline	baseline	completed	0	0	1	26	26	201	
+v090-s2	sympy-21627-cosh-is-zero-recursion	harness	v090	completed	0	0	1	26	26	297	350eb9608
+v090-s2	sympy-23191-vector-pretty-print-order	baseline	baseline	completed	0	0	1	3	3	263	
+v090-s2	sympy-23191-vector-pretty-print-order	harness	v090	completed	0	0	1	3	3	218	350eb9608
+v090-s2	sympy-24102-parse-mathematica-greek	baseline	baseline	completed	0	1	2	0	0	77	
+v090-s2	sympy-24102-parse-mathematica-greek	harness	v090	completed	0	1	2	0	0	113	350eb9608
+v090-s2	sympy-24909-milli-prefix-product	baseline	baseline	completed	0	0	1	2	2	120	
+v090-s2	sympy-24909-milli-prefix-product	harness	v090	completed	0	0	1	2	2	118	350eb9608
+v090-s3	sympy-21627-cosh-is-zero-recursion	baseline	baseline	completed	0	0	1	26	26	171	
+v090-s3	sympy-21627-cosh-is-zero-recursion	harness	v090	completed	0	0	1	26	26	177	350eb9608
+v090-s3	sympy-23191-vector-pretty-print-order	baseline	baseline	completed	0	0	1	3	3	256	
+v090-s3	sympy-23191-vector-pretty-print-order	harness	v090	completed	0	0	1	3	3	210	350eb9608
+v090-s3	sympy-24102-parse-mathematica-greek	baseline	baseline	completed	0	1	2	0	0	93	
+v090-s3	sympy-24102-parse-mathematica-greek	harness	v090	completed	0	1	2	0	0	103	350eb9608
+v090-s3	sympy-24909-milli-prefix-product	baseline	baseline	completed	0	0	1	2	2	176	
+v090-s3	sympy-24909-milli-prefix-product	harness	v090	completed	0	0	1	2	2	135	350eb9608

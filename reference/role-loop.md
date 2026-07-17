@@ -51,12 +51,12 @@ gate has a literal output contract: BEFORE committing, print exactly three lines
 actually done. A DEBUG commit without these three lines is not done. In an ephemeral single-context
 run the roles collapse, but the gate does not:
 
-1. **Invariant owner.** Name the invariant the bug violated and the function that owns it. For a
-   RecursionError/cycle: capture the traceback once, enumerate the repeating frame cycle by name,
-   and pick the fix site INSIDE that cycle - it is often in a different module than the API that
-   surfaced the symptom; follow the cycle across modules. A patch that guards a caller, wrapper,
-   or reporting path outside the enumerated cycle is not done: refix at the owner, or record in
-   `QA.md` why the owner must not change.
+1. **Invariant owner.** Name the invariant the bug violated and the function that owns it. For any
+   raised exception: capture the traceback once and walk it to the deepest frame that RAISES - the
+   owner is that frame (for a RecursionError, the repeating frame cycle, enumerated by name), often
+   in a different module than the API that surfaced the symptom; follow it across modules. A patch
+   that guards the caller/wrapper where the exception SURFACES instead of the frame that raises it
+   is a symptom fix, not done: refix at the owner, or record in `QA.md` why the owner must not change.
 2. **Alternative-entry repro.** Add one more repro reaching the same root cause through a
    STRUCTURALLY different context - not the same call with another literal: the failing construct
    embedded inside a function call / nested expression, or a sibling public API sharing the broken

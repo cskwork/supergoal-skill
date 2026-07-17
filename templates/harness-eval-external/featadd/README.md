@@ -50,6 +50,15 @@ floor) enter an A/B. Then run baseline / v0.9.0 / v0.9.1 / candidate arms as in 
 
 ## Status
 
-Scripts complete and env-verified (pytest runs, B computable). Codex generation runs after any
-concurrent A/B finishes (shared rate-limit ceiling). Feature catalog: `features.tsv` (4 seeds biased
-to exception-prone subsystems: units, polys, relational, piecewise).
+Pipeline verified end-to-end (2026-07-17): base snapshot -> `codex exec` break -> B computation ->
+discard logic all run correctly against local sympy. Codex generation runs after any concurrent A/B
+finishes (shared rate-limit ceiling).
+
+**Yield finding (load-bearing):** the first catalog (additive prompts — "Add support for X", "Add a
+helper") produced 0 keepers across 3 features: a strong model (gpt-5.6-luna) implements additive
+features cleanly WITHOUT breaking existing tests (B=0), and one produced no diff at all. FeatAdd only
+yields regressions when the feature MODIFIES existing behavior that current tests exercise. The catalog
+was therefore rewritten to behavior-modifying prompts ("Change function F's evaluation in place so
+that ...", targeting heavily-tested core/polys/relational/piecewise paths). Rule for new features:
+change an existing evaluation path in place, do not add an opt-in branch guarded to the old behavior.
+Expect a discard rate > 50% even so — rejection sampling is inherent; run several features per keeper.

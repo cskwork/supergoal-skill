@@ -25,8 +25,9 @@ ephemeral single-task workspace (see role-loop fast path).
 - Ask only when genuinely ambiguous; resolve code-answerable questions by reading the code.
 - Docs language: for persistent repo docs (`docs/**`, run vaults, `.domain-agent/**`, ADR/spec/changelog), match the target repo's dominant prose language; mixed/none -> the user's language. Keep identifiers, paths, commands, and machine-checked anchors in canonical English so checks keep matching.
 - DEBUG done-bar: a green reported-repro is NOT done. Before commit, print three literal lines and
-  satisfy them - `GATE.owner=` the invariant-owning frame (for recursion: a frame inside the enumerated
-  traceback cycle), `GATE.alt_repro=` a structurally different second repro now passing, `GATE.conformance=`
+  satisfy them - `GATE.owner=` the invariant-owning frame (for a raised exception: the frame that RAISES
+  it via the traceback, not where it surfaces; for recursion: inside the enumerated cycle),
+  `GATE.alt_repro=` a structurally different second repro now passing, `GATE.conformance=`
   raw-literal returns reachable through the patched path (and its symmetric sibling methods) converted to
   the module's canonical forms (`S.One` over `1`). Full rules: role-loop "DEBUG hidden-contract gate".
 - Hard stops: a destructive or irreversible step (drop data, force-push, external publish) needs explicit consent; if the real tests cannot pass, report it - never fake a pass.

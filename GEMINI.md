@@ -1,4 +1,4 @@
 # supergoal
 
-@./SKILL.md
+@./skills/supergoal/SKILL.md
 

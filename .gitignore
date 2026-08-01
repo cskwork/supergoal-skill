@@ -1,18 +1,6 @@
-node_modules/
-data/
 .DS_Store
-.verify-probe/
-.supergoal/
-teach/*.md
-!teach/README.md
-!teach/USER_PREFERENCE.template.md
-!teach/MISSION-FORMAT.md
-!teach/RESOURCES-FORMAT.md
-!teach/GLOSSARY-FORMAT.md
-!teach/LEARNING-RECORD-FORMAT.md
-teach/*/
-.playwright-mcp/
-*.png
 __pycache__/
-*.pyc
-# docs/experiments/
+*.py[cod]
+evals/results/
+node_modules/
+dist/

@@ -1,4 +1,4 @@
 {
   "name": "supergoal",
-  "description": "Use for \"fix this bug\", \"add/build/plan/spec this feature\", \"prototype this\", \"QA / verify\", \"code review\", \"improve..."
+  "description": "Objective-driven dev router. Use for \"fix bug\", \"add feature\", \"prototype\", \"QA/verify\", or \"code review\"."
 }

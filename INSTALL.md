@@ -6,7 +6,7 @@
 ### Install
 
 ```bash
-claude plugin marketplace add cskwork/supergoal
+claude plugin marketplace add cskwork/supergoal-skill
 claude plugin install supergoal@supergoal
 ```
 
@@ -39,7 +39,7 @@ claude plugin marketplace remove supergoal
 ### Install
 
 ```bash
-codex plugin marketplace add cskwork/supergoal --ref main
+codex plugin marketplace add cskwork/supergoal-skill --ref main
 codex plugin add supergoal@supergoal
 ```
 
@@ -66,14 +66,14 @@ codex plugin marketplace remove supergoal
 ### Install (extension, always-on)
 
 ```bash
-gemini extensions install https://github.com/cskwork/supergoal
+gemini extensions install https://github.com/cskwork/supergoal-skill
 ```
 
 ### Install (command, opt-in)
 
 ```bash
 mkdir -p ~/.gemini/commands
-curl -fsSL https://raw.githubusercontent.com/cskwork/supergoal/main/skills/supergoal/agents/gemini.toml \
+curl -fsSL https://raw.githubusercontent.com/cskwork/supergoal-skill/main/skills/supergoal-skill/agents/gemini.toml \
   -o ~/.gemini/commands/supergoal.toml
 ```
 
@@ -99,8 +99,8 @@ gemini extensions uninstall supergoal
 ### Install
 
 ```bash
-npx skills add cskwork/supergoal
-npx skills add cskwork/supergoal -g
+npx skills add cskwork/supergoal-skill
+npx skills add cskwork/supergoal-skill -g
 ```
 
 Type `/supergoal` in a new agent chat.
@@ -131,7 +131,7 @@ npx skills remove supergoal
 ### Install
 
 ```bash
-agy plugin install https://github.com/cskwork/supergoal
+agy plugin install https://github.com/cskwork/supergoal-skill
 ```
 
 ### Verify

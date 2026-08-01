@@ -1,0 +1,21 @@
+{
+  "name": "supergoal",
+  "interface": {
+    "displayName": "Supergoal"
+  },
+  "plugins": [
+    {
+      "name": "supergoal",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cskwork/supergoal-skill.git",
+        "ref": "main"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

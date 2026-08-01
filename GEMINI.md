@@ -1,0 +1,4 @@
+# supergoal
+
+@./SKILL.md
+

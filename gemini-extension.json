@@ -1,6 +1,6 @@
 {
   "name": "supergoal",
   "version": "0.1.0",
-  "description": "Use for \"fix this bug\", \"add/build/plan/spec this feature\", \"prototype this\", \"QA / verify\", \"code review\", \"improve architecture\", \"teach/explain\", \"learn codebase\", \"make skill\", or \"eval a harness\".",
+  "description": "Use for \"fix this bug\", \"add/build/plan/spec this feature\", \"prototype this\", \"QA / verify\", \"code review\", \"improve...",
   "contextFileName": "GEMINI.md"
 }

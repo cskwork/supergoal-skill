@@ -15,7 +15,7 @@
     "claude-code",
     "codex"
   ],
-  "skills": "./",
+  "skills": "./skills/",
   "interface": {
     "displayName": "Supergoal",
     "shortDescription": "Use for \"fix this bug\", \"add/build/plan/spec this feature\", \"prototype this\", \"Q",

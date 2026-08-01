@@ -1,7 +1,7 @@
 {
   "name": "supergoal",
   "version": "0.1.0",
-  "description": "Use for \"fix this bug\", \"add/build/plan/spec this feature\", \"prototype this\", \"QA / verify\", \"code review\", \"improve...",
+  "description": "Objective-driven dev router. Use for \"fix bug\", \"add feature\", \"prototype\", \"QA/verify\", or \"code review\".",
   "author": {
     "name": "cskwork",
     "url": "https://github.com/cskwork"
@@ -18,8 +18,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Supergoal",
-    "shortDescription": "Use for \"fix this bug\", \"add/build/plan/spec this feature\", \"prototype this\", \"Q",
-    "longDescription": "Use for \"fix this bug\", \"add/build/plan/spec this feature\", \"prototype this\", \"QA / verify\", \"code review\", \"improve...",
+    "shortDescription": "Objective-driven dev router. Use for \"fix bug\", \"add feature\", \"prototype\", \"QA/verify\", or \"code review\".",
+    "longDescription": "Objective-driven dev router. Use for \"fix bug\", \"add feature\", \"prototype\", \"QA/verify\", or \"code review\".",
     "developerName": "cskwork",
     "category": "Productivity",
     "capabilities": [

@@ -1,6 +1,6 @@
 {
   "name": "supergoal",
   "version": "0.1.0",
-  "description": "Use for \"fix this bug\", \"add/build/plan/spec this feature\", \"prototype this\", \"QA / verify\", \"code review\", \"improve...",
+  "description": "Objective-driven dev router. Use for \"fix bug\", \"add feature\", \"prototype\", \"QA/verify\", or \"code review\".",
   "contextFileName": "GEMINI.md"
 }

@@ -1,3 +1,5 @@
+<p align="center"><img src="logo.png" width="120" alt="logo" /></p>
+
 # /supergoal
 
 **English** | [한국어](README.ko.md)

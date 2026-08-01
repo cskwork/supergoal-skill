@@ -6,8 +6,8 @@
     "name": "cskwork",
     "url": "https://github.com/cskwork"
   },
-  "homepage": "https://github.com/cskwork/supergoal",
-  "repository": "https://github.com/cskwork/supergoal",
+  "homepage": "https://github.com/cskwork/supergoal-skill",
+  "repository": "https://github.com/cskwork/supergoal-skill",
   "license": "MIT",
   "keywords": [
     "supergoal",
@@ -25,7 +25,7 @@
     "capabilities": [
       "Instructions"
     ],
-    "websiteURL": "https://github.com/cskwork/supergoal",
+    "websiteURL": "https://github.com/cskwork/supergoal-skill",
     "defaultPrompt": [
       "Use supergoal for this task."
     ],

@@ -10,6 +10,11 @@ After context gathering and before plan freeze, interview only on two triggers:
 
 Applies to GREENFIELD, DEBUG, LEGACY only. LEARN/LEARN-DOMAIN skip.
 
+**Tier scaling** (`reference/role-loop.md` `## Tier selection`): LIGHT skips the interview - state
+assumptions inline and proceed; a load-bearing assumption that proves wrong is a LIGHT->STANDARD
+upgrade trigger. STANDARD uses the rules below unchanged. DEEP removes the one-round cap (see
+`## Question selection`) and always presents the spec for confirmation (`## Spec-out`).
+
 ## Where it runs
 
 Ambiguity runs before grounding. Blast-radius confirm runs after grounding chooses the approach but
@@ -67,14 +72,33 @@ that could change.
 
 ## Question selection
 
-- **Cap at <=5 questions, one clarification round.** Ask only as many as the ambiguity requires; one
-  or two questions are enough when they settle the load-bearing choice.
+- **Cap at <=5 questions, one clarification round** (STANDARD). Ask only as many as the ambiguity
+  requires; one or two questions are enough when they settle the load-bearing choice. DEEP removes
+  the round cap: keep asking one question at a time until no load-bearing unknown remains; the
+  code-first rule and redundancy drops still apply.
 - **Maximize information gain.** Prefer the question that eliminates a whole branch of work.
 - **Drop redundant questions.** If `brief.md`, the Domain Brief, or the Explore map already answers an
   aspect, do not ask it.
 - **One at a time, recommend an answer.** Ask serially, wait for each reply before the next, and give
   your recommended answer for every question so the user can confirm or correct cheaply. Do not batch
   all questions into a single parallel turn.
+
+## Spec-out - spec before plan
+
+Interview answers land in the spec first, not the plan. After the interview (or its logged skip),
+complete the vault `GOAL.md` `## Spec` and `## Success Criteria` BEFORE writing `PLAN.md`; write
+behavior criteria in Given/When/Then form (`templates/GOAL.md`). How the spec meets the user:
+
+- **STANDARD:** present the spec summary and acceptance criteria together with the plan at the
+  existing plan-approval gate - one user touchpoint, no extra round.
+- **DEEP:** present the spec for confirmation BEFORE plan grounding starts; grounding and freeze
+  proceed only from the confirmed spec. A post-grounding blast-radius answer that changes the spec
+  re-presents only the delta with the blast-radius confirm. AFK: proceed on stated assumptions
+  unless `## Hard gate` blocks.
+- **LIGHT:** the spec is the in-context checklist; auto-approved.
+
+Write the presentation in `reference/reporting.md` style. Record the presented spec decisions in
+`PLAN.md` `## Interview` (LIGHT: the in-context checklist).
 
 ## DEBUG variant - ranked hypothesis re-ranking
 
@@ -106,7 +130,8 @@ Write a compact `## Interview` section in `PLAN.md` (DEBUG: next to the hypothes
 `PLAN.md`): each question, the chosen answer or user-approved assumption, and the decision it drove. Do
 not paste the whole exchange. A skipped interview records one line in `PLAN.md` stating why it was
 safe to skip. The plan approval gate (`reference/role-loop.md`) is separate and blocking in interactive
-sessions: the interview confirms approach; the approval gate authorizes Build.
+sessions (STANDARD/DEEP; LIGHT auto-approves per role-loop `## Tier selection`): the interview
+confirms approach; the approval gate authorizes Build.
 
 For a blast-radius confirm, record the impact presented (functions/modules touched, behavior that
 could change), the strength applied (non-blocking / hard gate), and the user's approval or your

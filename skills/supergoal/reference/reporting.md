@@ -1,7 +1,7 @@
 # Reporting - default user-facing writing style
 
 Applies to every user-facing message in every mode: plan/spec presentations, interview questions,
-QA verdicts, phase status, final reports, and `Z-DONE` prose.
+QA verdicts, phase status, final reports, and `Z-*.md` prose.
 
 ## Rules
 

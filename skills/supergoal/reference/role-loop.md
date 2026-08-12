@@ -37,28 +37,40 @@ SAME five gates but hold their state in context instead of files:
 
 - keep the run worktree for code edits in a persistent workspace; an ephemeral workspace (below)
   works on the current checkout directly, committing only if asked;
-- no vault files and no changelog directories: keep goal, plan, success criteria, QA state, and the
-  regression ledger as one in-context checklist; plan approval is `auto-approved` as below;
+- no vault files and no changelog directories: keep goal, plan, success criteria, QA state,
+  completion promise + iteration cap, and the regression ledger as one in-context checklist;
+- plan approval: present the one-screen goal/plan summary in the message and proceed without
+  waiting; record `auto-approved (LIGHT)` in the checklist. The user's approval point moves to
+  acceptance-before-merge; the interactive WAIT rule in `## Run setup` applies to STANDARD/DEEP only;
 - no role fan-out: the conductor frames, builds, and verifies in one context, running the builder and
-  auditor stances as separate passes;
+  auditor stances as separate passes; auditor-pass findings become checklist items fixed in the next
+  in-context pass (LIGHT's R-LOOP);
 - skip the interview (`reference/interview.md` tier scaling): state assumptions inline and proceed;
 - run the full suite ONCE at Exact Verify (targeted tests while building); evidence is that one green
   run plus the final diff reconciliation - do not repeat `git status`/`git diff --check` sweeps;
-- skip `commit-gate.sh`, `qa-gate.sh`, rules-file discovery, and board emits.
+- skip `qa-gate.sh` and board emits; skip rules-file discovery only in an ephemeral workspace (a
+  persistent run already read `RULES.md` at mode classification); `commit-gate.sh` needs a vault, so
+  LIGHT's commit bar replaces it: full-suite green + diff reconciliation + user acceptance, then
+  commit/merge into the verified target branch.
 
 **STANDARD** (default when LIGHT conditions do not all hold) - the full five-gate protocol below,
 fresh context per role.
 
 **DEEP** - STANDARD plus the conditional plan attack (`## Escalation (conditional plan attack;
 optional)`), selected up front when its triggers are already visible at Frame: under-specified,
-wide-blast-radius, security/data/concurrency, or latent-correctness-heavy work. Record the trigger
-as usual; DEEP also unlocks the unlimited interview rounds in `reference/interview.md`.
+wide-blast-radius, security/data/concurrency, or latent-correctness-heavy work - or the user asks
+for it ("thorough"/"deep" is itself a recordable trigger). Record the trigger as usual; DEEP also
+unlocks the unlimited interview rounds in `reference/interview.md`.
 
 **Upgrade is one-way: LIGHT -> STANDARD (-> DEEP).** Upgrade the moment any of these fires:
-production/domain ambiguity surfaces, the grounded change reaches past its explicit target (blast
-radius), or the Build->Verify loop enters its second red iteration. Record the trigger, create the
-vault per `## Run setup`, and continue. Never downgrade mid-run - `SKILL.md`'s no-inline-shortcut
-rule applies to tiers too.
+production/domain ambiguity surfaces, a stated load-bearing assumption proves wrong, the grounded
+change reaches past its explicit target (blast radius), or the Build->Verify loop enters its second
+red iteration (LIGHT's iteration cap). Procedure: record the trigger; transcribe the in-context
+checklist into the vault (`GOAL.md` first; mark any `QA.md` `## Before` entry reconstructed from
+context where the true before-state is gone); keep the in-flight diff (already in the run worktree;
+an ephemeral run creates the worktree now and carries the diff onto it); then run the plan-approval
+gate for the remaining work only. Never downgrade mid-run - `SKILL.md`'s no-inline-shortcut rule
+applies to tiers too.
 
 **Ephemeral workspace (auto-LIGHT).** Detect once at Frame: single-task container/CI/benchmark
 checkout - no `.supergoal/`, no existing `docs/changelog/`, no other work in flight, no later reader
@@ -75,15 +87,16 @@ ticks a DEBUG run green, the builder shows and the auditor independently re-chec
 gate has a literal output contract: BEFORE committing, print exactly three lines -
 `GATE.owner=<frame/function>`, `GATE.alt_repro=<description>: pass`,
 `GATE.conformance=<returns audited and converted, or "none reachable">` - with the work behind each
-actually done. A DEBUG commit without these three lines is not done. In an ephemeral single-context
-run the roles collapse, but the gate does not:
+actually done. A DEBUG commit without these three lines is not done. In a single-context run
+(ephemeral or LIGHT) the roles collapse, but the gate does not:
 
 1. **Invariant owner.** Name the invariant the bug violated and the function that owns it. For any
    raised exception: capture the traceback once and walk it to the deepest frame that RAISES - the
    owner is that frame (for a RecursionError, the repeating frame cycle, enumerated by name), often
    in a different module than the API that surfaced the symptom; follow it across modules. A patch
    that guards the caller/wrapper where the exception SURFACES instead of the frame that raises it
-   is a symptom fix, not done: refix at the owner, or record in `QA.md` why the owner must not change.
+   is a symptom fix, not done: refix at the owner, or record in `QA.md` (LIGHT: the checklist) why
+   the owner must not change.
 2. **Alternative-entry repro.** Add one more repro reaching the same root cause through a
    STRUCTURALLY different context - not the same call with another literal: the failing construct
    embedded inside a function call / nested expression, or a sibling public API sharing the broken
@@ -114,7 +127,8 @@ git worktree add -b <run_branch> <worktree_path> <source/base branch>
 Run Build, Exact Verify/QA, any escalation passes, tests, and vault writes inside that worktree; never
 edit the original checkout. Treat dirty original-checkout files as user work. Commit or merge only
 into the verified target/integration branch after green verification, user acceptance, and only once the
-commit gate passes (`reference/delivery-gate.md`; `bash templates/commit-gate.sh <vault> <browser|cli|none>`).
+commit gate passes (`reference/delivery-gate.md`; `bash templates/commit-gate.sh <vault> <browser|cli|none>`)
+(STANDARD/DEEP; LIGHT commits per its own bar in `## Tier selection`).
 Non-green blocks commit: resolve in-loop; escalate only when stuck.
 
 Before any file mutation, create the run vault's `GOAL.md` from `templates/GOAL.md`, `PLAN.md` from

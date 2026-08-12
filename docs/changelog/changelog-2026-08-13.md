@@ -9,9 +9,10 @@ writing style (mattpocock/skills `wait-what`: ASD-STE100 Simplified Technical En
 
 ### Why
 
-- Own eval history (docs/research-brief.md line): the harness never beat a strong baseline on
-  explicit-spec tasks, and ceremony turns were the measured cost driver. The 2026-07-16 ephemeral
-  fast path (state in context, no vault/worktree) cut agent time to +3.8% of baseline at equal f2p -
+- Own eval history (docs/experiments/2026-07-16-supergoal-efficiency-ab/STATUS.md): the harness
+  never beat a strong baseline on explicit-spec tasks, and ceremony turns were the measured cost
+  driver. The 2026-07-16 ephemeral fast path (state in context, no vault/worktree) cut agent time
+  to +3.8% of baseline at equal-or-better f2p -
   but it only fired in single-task container/CI/benchmark checkouts. Easy tasks in persistent
   workspaces still paid the full five-gate cost.
 - swarm-forge ships two-pack/four-pack/six-pack workflows so a small task never pays six-agent
@@ -46,8 +47,29 @@ writing style (mattpocock/skills `wait-what`: ASD-STE100 Simplified Technical En
 - `tests/run-all.sh` before/after on every commit: failure profile identical to the dev-v2 baseline
   (exit 23 both sides, diff of FAIL/Summary lines empty). NOTE - the suite is broken at baseline:
   test ROOT still points at the repo root while the skill moved to `skills/supergoal/`
-  (commits 6c30586/18f5575), so most path-dependent checks fail pre-existing. Parity, not green, is
+  (commit 18f5575), so most path-dependent checks fail pre-existing. Parity, not green, is
   the evidence here. Repointing the suite is an open follow-up.
 - `.cursor/skills/supergoal/SKILL.md` copy re-synced from the canonical file.
 - NOT yet verified: a harness-eval A/B of LIGHT vs the full loop on an explicit-spec task
   (recommended next eval before shipping a version tag).
+
+### Adversarial review (2026-08-13, post-merge)
+
+Three fresh-context reviewers attacked the merged diff. Regression/contract: PASS - the three
+contract suites run green at a corrected test root (interview 14/14, role-loop 154/154,
+mode-surface-parity 12/12); no asserted string was lost by the rewording. Domain logic and
+cross-file consistency: FAIL with one shared root cause - LIGHT was generalized from
+ephemeral-only to persistent workspaces, but its exemptions were not propagated to the other
+authorities that unconditionally assume vault files (delivery-gate.md contract; SKILL.md Done bar,
+Before/After principle, commit hard-gate, builder-subagent principle; interview.md recording rules;
+role-loop's own Run setup commit sentence). All findings fixed in the follow-up commit: LIGHT
+commit bar defined (full-suite green + diff reconciliation + user acceptance - replaces
+commit-gate.sh, which needs a vault); LIGHT plan approval made self-contained (one-screen summary,
+proceed without waiting; the user's approval point moves to acceptance-before-merge);
+rules-discovery skip narrowed to ephemeral workspaces; the one-way upgrade got a transcription
+procedure (vault backfill with before-state fidelity marks, in-flight diff carried, plan gate for
+remaining work only); "thorough"/"deep" became a recordable DEEP trigger; a wrong load-bearing
+assumption became an upgrade trigger; DEEP spec re-presents only the delta after a blast-radius
+change; `templates/PLAN.md` gained `## Interview`; the run-state `tier` enum narrowed to
+`STANDARD|DEEP`; wiki.html fast-path passages re-worded to tiers; this changelog's citations
+corrected (experiment STATUS.md, commit 18f5575, equal-or-better f2p).

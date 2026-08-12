@@ -92,12 +92,13 @@ behavior criteria in Given/When/Then form (`templates/GOAL.md`). How the spec me
 - **STANDARD:** present the spec summary and acceptance criteria together with the plan at the
   existing plan-approval gate - one user touchpoint, no extra round.
 - **DEEP:** present the spec for confirmation BEFORE plan grounding starts; grounding and freeze
-  proceed only from the confirmed spec. AFK: proceed on stated assumptions unless `## Hard gate`
-  blocks.
+  proceed only from the confirmed spec. A post-grounding blast-radius answer that changes the spec
+  re-presents only the delta with the blast-radius confirm. AFK: proceed on stated assumptions
+  unless `## Hard gate` blocks.
 - **LIGHT:** the spec is the in-context checklist; auto-approved.
 
 Write the presentation in `reference/reporting.md` style. Record the presented spec decisions in
-`PLAN.md` `## Interview`.
+`PLAN.md` `## Interview` (LIGHT: the in-context checklist).
 
 ## DEBUG variant - ranked hypothesis re-ranking
 
@@ -129,7 +130,8 @@ Write a compact `## Interview` section in `PLAN.md` (DEBUG: next to the hypothes
 `PLAN.md`): each question, the chosen answer or user-approved assumption, and the decision it drove. Do
 not paste the whole exchange. A skipped interview records one line in `PLAN.md` stating why it was
 safe to skip. The plan approval gate (`reference/role-loop.md`) is separate and blocking in interactive
-sessions: the interview confirms approach; the approval gate authorizes Build.
+sessions (STANDARD/DEEP; LIGHT auto-approves per role-loop `## Tier selection`): the interview
+confirms approach; the approval gate authorizes Build.
 
 For a blast-radius confirm, record the impact presented (functions/modules touched, behavior that
 could change), the strength applied (non-blocking / hard gate), and the user's approval or your

@@ -8,11 +8,12 @@ set -u
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PASS=0
 FAIL=0
+. "$ROOT/tests/support/contract.sh"
 
 require_text() {
   local label="$1" file="$2" text="$3"
   local normalized
-  normalized="$(tr '\n\t\r' '   ' < "$ROOT/$file" | tr -s ' ')"
+  normalized="$(tr '\n\t\r' '   ' < "$(resolve_path "$file")" | tr -s ' ')"
   if printf '%s' "$normalized" | grep -Fqi -- "$text"; then
     PASS=$((PASS + 1)); printf '  PASS  %s\n' "$label"
   else
@@ -22,7 +23,7 @@ require_text() {
 
 require_file() {
   local label="$1" file="$2"
-  if [ -f "$ROOT/$file" ]; then
+  if [ -f "$(resolve_path "$file")" ]; then
     PASS=$((PASS + 1)); printf '  PASS  %s\n' "$label"
   else
     FAIL=$((FAIL + 1)); printf '  FAIL  %s\n' "$label"; printf '        missing file: %s\n' "$file"
@@ -32,7 +33,7 @@ require_file() {
 reject_text() {
   local label="$1" file="$2" text="$3"
   local normalized
-  normalized="$(tr '\n\t\r' '   ' < "$ROOT/$file" | tr -s ' ')"
+  normalized="$(tr '\n\t\r' '   ' < "$(resolve_path "$file")" | tr -s ' ')"
   if printf '%s' "$normalized" | grep -Fqi -- "$text"; then
     FAIL=$((FAIL + 1)); printf '  FAIL  %s\n' "$label"; printf '        forbidden in %s: %s\n' "$file" "$text"
   else

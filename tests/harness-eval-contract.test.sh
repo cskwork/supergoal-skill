@@ -9,7 +9,8 @@ trap 'rm -rf "$T"' EXIT
 
 PASS=0
 FAIL=0
-GATE="$ROOT/templates/harness-eval-gate.mjs"
+. "$ROOT/tests/support/contract.sh"
+GATE="$SKILL_ROOT/templates/harness-eval-gate.mjs"
 
 pass() {
   PASS=$((PASS + 1))
@@ -24,7 +25,7 @@ fail() {
 require_file() {
   local label="$1"
   local file="$2"
-  if [ -f "$ROOT/$file" ]; then
+  if [ -f "$(resolve_path "$file")" ]; then
     pass "$label"
   else
     fail "$label" "$file missing"
@@ -35,7 +36,7 @@ require_text() {
   local label="$1"
   local file="$2"
   local text="$3"
-  if tr '\n' ' ' < "$ROOT/$file" | grep -Fq -- "$text"; then
+  if tr '\n' ' ' < "$(resolve_path "$file")" | grep -Fq -- "$text"; then
     pass "$label"
   else
     fail "$label" "missing: $text"
@@ -180,7 +181,7 @@ mkresult() {
   local checks="${3:-$PASS_CHECKS}"
   local claim_status="${4:-not_proven}"
   local quality_winner="${5:-harness}"
-  local template="$ROOT/templates/harness-eval-result.json"
+  local template="$SKILL_ROOT/templates/harness-eval-result.json"
 
   cp "$template" "$file"
   if [ "$winner" = "harness" ] &&
@@ -264,15 +265,15 @@ require_text "harness-eval pipeline is verifier-loop-free" "reference/harness-ev
 require_text "eval points at reusable case directory" "reference/harness-eval.md" "templates/harness-eval-cases/"
 require_text "eval names ten dimensions" "reference/harness-eval.md" "feature_completeness"
 require_text "eval avoids inflated claims" "reference/harness-eval.md" "Not proven"
-case_count=$(find "$ROOT/templates/harness-eval-cases" -maxdepth 1 -name 'revfactory-case-*.yaml' | wc -l | tr -d ' ')
-all_case_count=$(find "$ROOT/templates/harness-eval-cases" -maxdepth 1 -name '*.yaml' | wc -l | tr -d ' ')
+case_count=$(find "$SKILL_ROOT/templates/harness-eval-cases" -maxdepth 1 -name 'revfactory-case-*.yaml' | wc -l | tr -d ' ')
+all_case_count=$(find "$SKILL_ROOT/templates/harness-eval-cases" -maxdepth 1 -name '*.yaml' | wc -l | tr -d ' ')
 if [ "$case_count" = "15" ] && [ "$all_case_count" = "15" ]; then
   pass "reusable case set is RevFactory-only 15"
 else
   fail "reusable case set is RevFactory-only 15" "found revfactory=$case_count all=$all_case_count"
 fi
-for case_path in "$ROOT"/templates/harness-eval-cases/*.yaml; do
-  case_file="${case_path#"$ROOT"/}"
+for case_path in "$SKILL_ROOT"/templates/harness-eval-cases/*.yaml; do
+  case_file="${case_path#"$SKILL_ROOT"/}"
   case_name="${case_file##*/}"
   require_text "$case_name records machine checks" "$case_file" "machine_checks"
   require_text "$case_name records hidden checks" "$case_file" "hidden_checks"
@@ -416,7 +417,7 @@ run_case "pure validator accepts canonical result" 0 "errors=0" node --input-typ
   const { validateHarnessEval } = await import(process.argv[2]);
   const result = JSON.parse(fs.readFileSync(process.argv[3], "utf8"));
   console.log(`errors=${validateHarnessEval(result).length}`);
-' validator-smoke "$GATE" "$ROOT/templates/harness-eval-result.json"
+' validator-smoke "$GATE" "$SKILL_ROOT/templates/harness-eval-result.json"
 
 run_case "pure validator rejects invalid result" 0 "same_repo_snapshot" node --input-type=module -e '
   import fs from "node:fs";
@@ -424,9 +425,9 @@ run_case "pure validator rejects invalid result" 0 "same_repo_snapshot" node --i
   const result = JSON.parse(fs.readFileSync(process.argv[3], "utf8"));
   result.same_repo_snapshot = false;
   console.log(validateHarnessEval(result).join("; "));
-' validator-smoke "$GATE" "$ROOT/templates/harness-eval-result.json"
+' validator-smoke "$GATE" "$SKILL_ROOT/templates/harness-eval-result.json"
 
-run_case "gate CLI accepts canonical result" 0 "HARNESS-EVAL PASS" node "$GATE" "$ROOT/templates/harness-eval-result.json"
+run_case "gate CLI accepts canonical result" 0 "HARNESS-EVAL PASS" node "$GATE" "$SKILL_ROOT/templates/harness-eval-result.json"
 run_case "gate CLI reports usage" 2 "usage:" node "$GATE"
 
 mkresult "$T/ok.json" "harness" "$PASS_CHECKS" "proven" "harness"
@@ -440,9 +441,9 @@ cat > "$T/pairs.json" <<'EOF'
   { "case_id": "d", "baseline_pass": false, "harness_pass": true }
 ]
 EOF
-run_case "stats helper emits McNemar table" 0 "discordant_harness_only" node "$ROOT/templates/harness-eval-stats.mjs" "$T/pairs.json"
+run_case "stats helper emits McNemar table" 0 "discordant_harness_only" node "$SKILL_ROOT/templates/harness-eval-stats.mjs" "$T/pairs.json"
 
-run_case "u3 fixture discriminates starter/reference/lazy" 0 "reference:" env SG_EVAL_VALIDATE=1 SG_EVAL_CASE=u3 SG_EVAL_RUN_ROOT="$T/u3-validate" node "$ROOT/templates/harness-eval-cases/run-local-eval.mjs"
+run_case "u3 fixture discriminates starter/reference/lazy" 0 "reference:" env SG_EVAL_VALIDATE=1 SG_EVAL_CASE=u3 SG_EVAL_RUN_ROOT="$T/u3-validate" node "$SKILL_ROOT/templates/harness-eval-cases/run-local-eval.mjs"
 
 mkresult "$T/bad-claim-status.json" "harness" "$PASS_CHECKS" "maybe" "harness"
 run_case "gate blocks unknown claim_status" 1 "claim_status" node "$GATE" "$T/bad-claim-status.json"

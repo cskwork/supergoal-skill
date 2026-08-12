@@ -48,10 +48,9 @@ SAME five gates but hold their state in context instead of files:
 - skip the interview (`reference/interview.md` tier scaling): state assumptions inline and proceed;
 - run the full suite ONCE at Exact Verify (targeted tests while building); evidence is that one green
   run plus the final diff reconciliation - do not repeat `git status`/`git diff --check` sweeps;
-- skip `qa-gate.sh` and board emits; skip rules-file discovery only in an ephemeral workspace (a
-  persistent run already read `RULES.md` at mode classification); `commit-gate.sh` needs a vault, so
-  LIGHT's commit bar replaces it: full-suite green + diff reconciliation + user acceptance, then
-  commit/merge into the verified target branch.
+- skip `qa-gate.sh` and board emits; skip rules-file discovery only in an ephemeral workspace;
+- LIGHT commit bar (replaces `commit-gate.sh`): full-suite green + diff reconciliation + user
+  acceptance, then commit/merge into the verified target branch.
 
 **STANDARD** (default when LIGHT conditions do not all hold) - the full five-gate protocol below,
 fresh context per role.

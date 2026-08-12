@@ -13,16 +13,17 @@ Unless explicitly invoked, pure brainstorming and user-driven step-by-step work 
 `.supergoal/rules/RULES.md` if present. Honor it across phases as top-priority preference, but rules never
 weaken safety gates. Create/edit it only when the user explicitly asks (`reference/rules.md`). Check only
 the repo root (`.supergoal/rules/RULES.md`); do not tree-search for it, and skip the check entirely in an
-ephemeral single-task workspace (see role-loop fast path).
+ephemeral single-task workspace (auto-LIGHT tier; see role-loop `## Tier selection`).
 
 ## Core principles
 
 - Ground truth beats proxy: re-run REAL tests, re-read request/docs, and do not optimize to self-grading.
-- Exact proof beats review; implementation is delegated to a builder subagent.
+- Exact proof beats review; implementation is delegated to a builder subagent (STANDARD/DEEP; LIGHT builds in-conductor).
 - Smallest correct change; match surrounding code. Scope-minimalism governs code surface area, not UI
   quality: polished user-facing UI is baseline correctness.
-- GREENFIELD / DEBUG / LEGACY code changes use Before/After Eval before Build: prove before, target after, and delta with trusted commands (`reference/delivery-gate.md`).
+- GREENFIELD / DEBUG / LEGACY code changes use Before/After Eval before Build: prove before, target after, and delta with trusted commands (`reference/delivery-gate.md`; LIGHT holds the same fields in its in-context checklist).
 - Ask only when genuinely ambiguous; resolve code-answerable questions by reading the code.
+- Report for humans: outcome first, Simplified Technical English prose, the project's own vocabulary (`reference/reporting.md`); machine-checked markers stay verbatim.
 - Docs language: for persistent repo docs (`docs/**`, run vaults, `.domain-agent/**`, ADR/spec/changelog), match the target repo's dominant prose language; mixed/none -> the user's language. Keep identifiers, paths, commands, and machine-checked anchors in canonical English so checks keep matching.
 - DEBUG done-bar: a green reported-repro is NOT done. Before commit, print three literal lines and
   satisfy them - `GATE.owner=` the invariant-owning frame (for a raised exception: the frame that RAISES
@@ -37,7 +38,7 @@ ephemeral single-task workspace (see role-loop fast path).
 After mode detection, resolve the source/base branch and target/integration branch (repo policy, else
 ask). Verify both refs before mutating files, then create a run worktree from the source/base branch. Do
 all code work there. Do not mutate the original checkout. Commit or merge only into the verified
-target/integration branch after verification and user acceptance. Commit is hard-gated by the Commit gate
+target/integration branch after verification and user acceptance. On STANDARD/DEEP, commit is hard-gated by the Commit gate
 (`reference/delivery-gate.md`, backstop `templates/commit-gate.sh`): non-green means fix/ask, never commit
 on assumption. Full contract: `reference/role-loop.md`.
 
@@ -57,6 +58,10 @@ on assumption. Full contract: `reference/role-loop.md`.
 | improve the architecture / find refactoring opportunities / 구조 개선 / draw · diagram · 그려 (arch·flow·sequence·state) | ARCHITECTURE | draw-only ask: render self-contained HTML via `reference/archify.md`, deliver the `.html`, stop. Else friction survey -> candidates -> grill the pick -> route to LEGACY/WAYFINDER (`reference/arch.md`) |
 | test harness/skill effectiveness / with vs without / does the skill help / measure skill lift | HARNESS-EVAL | `reference/harness-eval.md` |
 | turn repeated work into a reusable skill | SKILL-MINE | `reference/skill-mine.md` |
+
+**Tier (code modes; state it with the mode line).** GREENFIELD / DEBUG / LEGACY also declare
+LIGHT / STANDARD / DEEP per `reference/role-loop.md` `## Tier selection`. User words
+"quick"/"light" or "thorough"/"deep" override detection; upgrade is one-way, never downgrade.
 
 The no-code/utility/planning modes - **QA-ONLY**, REVIEW-ONLY, ARCHITECTURE, WAYFINDER, PROTOTYPE, TEACH,
 LEARN-DOMAIN, HARNESS-EVAL, SKILL-MINE - write no product code by default and confirm before installing
@@ -103,6 +108,7 @@ reviewer=`agents/code-reviewer.md`, security=`agents/security-reviewer.md` (othe
 | `reference/domain-context.md` | repo-local Domain Brief |
 | `reference/debugging.md` | DEBUG: hypothesis-ledger diagnose loop |
 | `reference/interview.md` | interview: ambiguity (what) + blast-radius confirm (approach, tiered) |
+| `reference/reporting.md` | any user-facing message: plan/spec presentation, interview questions, verdicts, final report |
 | `reference/delivery-gate.md`, `templates/GOAL.md`, `templates/PLAN.md`, `templates/QA.md`, `templates/R-LOOP.md`, `templates/Z-DONE.md`, `templates/run-state.json`, `templates/commit-gate.sh` | run vault file set + Before/After Eval + resumable run state + commit gate for GREENFIELD / DEBUG / LEGACY code changes |
 | `reference/wayfinder.md` | WAYFINDER: issue map -> vertical tickets -> optional EARS/user-story depth -> blockers -> next frontier; also GREENFIELD internal Frontier Map for broad/foggy new builds |
 | `reference/research.md` | WAYFINDER research-needed tickets; docs/API/source facts that need high-trust cited evidence |
@@ -127,5 +133,5 @@ red-green test + DB evidence if data load-bearing; neighbor snapshots re-run wit
 `GOAL.md` Success Criterion checked, with no orphan scope; `Z-<date>.md` written with run branch +
 completion timestamp; DEBUG prod issue has reproduction fidelity and, if
 non-exact, residual risk + post-deploy confirmation plan; user-facing UI at the Expressive baseline;
-destructive steps consented; commit/merge only after the commit gate passes (`reference/delivery-gate.md`);
+destructive steps consented; commit/merge only after the commit gate passes (`reference/delivery-gate.md`; LIGHT: in-context checklist equivalents, no Z file, commit bar per role-loop `## Tier selection`);
 verified commands reported.

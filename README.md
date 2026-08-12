@@ -28,7 +28,13 @@ the smallest correct change, checks the request and project docs against the rea
    full-spec and edge-case coverage into the plan; the builder implements only the approved plan; the
    tester captures execution evidence; the auditor reruns real tests and owns the verdict, `GOAL.md`
    ticks, and `R-LOOP.md`. The only optional extra dispatch is a trigger-gated pre-Build plan attack for
-   risky/under-specified work.
+   risky/under-specified work. Workflow weight is tiered (swarm-forge-style sized packs): LIGHT for
+   explicit-spec narrow tasks (same five gates, state held in context, no vault or role fan-out),
+   STANDARD for the full loop, DEEP adds the plan attack and an uncapped clarifying interview; user
+   words "quick"/"thorough" override detection and upgrades are one-way. Non-trivial runs spec out
+   the request first - interview answers complete `GOAL.md`'s spec (Given/When/Then criteria) before
+   `PLAN.md` exists. User-facing reports follow `reference/reporting.md`: outcome first, Simplified
+   Technical English, the project's own vocabulary.
 4. **Run Before/After Eval.** Capture the before state, define the after target, write a completion
    promise, and keep a resumable run state plus command manifest so the final claim proves the delta
    instead of just saying "tests passed."
@@ -230,7 +236,7 @@ under **WSL** bash.
 ```
 SKILL.md            thin spine: baseline-first loop, modes, reference map
 agents/             one persona file per role (analyst, architect, executor, debugger, explore, designer, qa-*, db-reader, code-reviewer, security-reviewer)
-reference/          domain-rules · rules (project standing rules) · domain-context · debugging · interview · delivery-gate · plan-grounding · research · market-research · qa · qa-only · db-access · teach · learn-domain · ui-ux · taste-skill-v2 · functional-ui · harness-eval · skill-mine · observability
+reference/          domain-rules · rules (project standing rules) · domain-context · debugging · interview · reporting · delivery-gate · plan-grounding · research · market-research · qa · qa-only · db-access · teach · learn-domain · ui-ux · taste-skill-v2 · functional-ui · harness-eval · skill-mine · observability
 teach/              TEACH-mode format guides + per-topic teaching workspaces
 templates/          GOAL.md · PLAN.md · QA.md · R-LOOP.md · Z-DONE.md · run-state.json · rules.md · qa-gate.sh · qa-only-gate.sh · commit-gate.sh · contrast-gate.mjs · learn-grounding-gate.mjs · qa-report.md · db-access/ · domain-agent/ · domain-onboarding.html · arch-report.html · harness-eval-gate.mjs · harness-eval-stats.mjs · harness-eval-cases/ · skill-mine/ · skill-frontmatter-gate.mjs · skill-install-audit.mjs · skill.md.template · observability/ (sg-emit board state)
 tests/              contract tests + run-all.sh canonical verifier

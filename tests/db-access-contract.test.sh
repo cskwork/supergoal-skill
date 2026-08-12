@@ -41,7 +41,7 @@ cat > "$T/.env" <<'ENV'
 DB_DIALECT=sqlite
 SQLITE_DB_PATH=/tmp/supergoal-db-access-contract.sqlite
 ENV
-DB_ENV_FILE="$T/.env" node "$ROOT/templates/db-access/db-access.mjs" read-only-query 'SELECT 1; DROP TABLE users' >/tmp/supergoal-db-access-contract.out 2>&1
+DB_ENV_FILE="$T/.env" node "$SKILL_ROOT/templates/db-access/db-access.mjs" read-only-query 'SELECT 1; DROP TABLE users' >/tmp/supergoal-db-access-contract.out 2>&1
 ec=$?
 if [ "$ec" -ne 0 ] && grep -Fq "write/admin SQL rejected" /tmp/supergoal-db-access-contract.out; then
   PASS=$((PASS+1)); printf ' PASS write SQL blocked by template\n'

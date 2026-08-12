@@ -11,7 +11,7 @@ trap 'rm -rf "$T"' EXIT
 
 PASS=0
 FAIL=0
-GATE="$ROOT/templates/skill-frontmatter-gate.mjs"
+GATE="$ROOT/skills/supergoal/templates/skill-frontmatter-gate.mjs"
 
 run_case() {
   local label="$1" expected="$2" needle="$3"; shift 3

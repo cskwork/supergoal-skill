@@ -9,7 +9,11 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.argv[2];
-const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
+const read = (file) => {
+  const direct = path.join(root, file);
+  const resolved = fs.existsSync(direct) ? direct : path.join(root, "skills/supergoal", file);
+  return fs.readFileSync(resolved, "utf8");
+};
 const strip = (value) => value.replaceAll("**", "").replaceAll("`", "").trim();
 
 function markdownModes(source) {

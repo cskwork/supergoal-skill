@@ -41,8 +41,7 @@ Fix/feature request -> route to DEBUG/LEGACY; QA-ONLY reports findings and stops
 ## Impact Matrix (detailed QA model)
 
 Before scenarios, build an **Impact Matrix** from the request, release note/diff summary, nav-map,
-domain pack, screen/API calls, and observed behavior, so "changed button works" does not hide adjacent
-regressions.
+domain pack, screen/API calls, and observed behavior.
 
 Include:
 

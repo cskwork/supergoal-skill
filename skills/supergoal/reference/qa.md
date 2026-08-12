@@ -84,9 +84,7 @@ gitignored; no app-specific selector, route, or credential lives in this skill.
    Write `.domain-agent/qa/nav-map.md` and index it in `index.md`.
 3. **Self-heal on drift.** When a saved entry no longer matches the live site - a selector ref is gone,
    a route 404s/redirects, a popup opens a different target, or an API path/method changed - re-map only
-   that slice, correct that row, and bump `config.json.lastUpdated`. Never re-crawl the whole app. This
-   is how a site change flows back into the map inside the workflow, so the next DEBUG/QA run navigates
-   the current site.
+   that slice, correct that row, and bump `config.json.lastUpdated`. Never re-crawl the whole app.
 
 **New tab / popup handling.** Run `agent-browser tab`, switch with `agent-browser tab <tN|label>`, then
 re-`snapshot`; record `trigger -> target` in nav-map (`reference/agent-browser.md`).

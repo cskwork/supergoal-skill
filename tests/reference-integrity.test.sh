@@ -12,9 +12,10 @@ set -u
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PASS=0
 FAIL=0
+. "$ROOT/tests/support/contract.sh"
 
-DOC_FILES=("$ROOT/SKILL.md" "$ROOT/README.md" "$ROOT/README.ko.md")
-for f in "$ROOT"/reference/*.md "$ROOT"/agents/*.md; do DOC_FILES+=("$f"); done
+DOC_FILES=("$SKILL_ROOT/SKILL.md" "$ROOT/README.md" "$ROOT/README.ko.md")
+for f in "$SKILL_ROOT"/reference/*.md "$SKILL_ROOT"/agents/*.md; do DOC_FILES+=("$f"); done
 
 echo "=================================================================="
 echo " /supergoal reference-integrity contract   skill: $ROOT"
@@ -27,7 +28,7 @@ echo "=================================================================="
 MISSING_PATHS="$(
   perl -ne 'while (/(?<![\w\/])((?:reference|agents|templates)\/[A-Za-z0-9_.\/-]*\.(?:md|sh|mjs|js|html|yaml|json|template|example))\b/g) { print "$1\n" }' \
     "${DOC_FILES[@]}" | sort -u | while read -r p; do
-      [ -e "$ROOT/$p" ] || echo "$p"
+      [ -e "$(resolve_path "$p")" ] || echo "$p"
     done
 )"
 if [ -z "$MISSING_PATHS" ]; then
@@ -41,7 +42,7 @@ fi
 MISSING_GATES="$(
   perl -ne 'while (/\b([A-Za-z0-9-]+-gate\.(?:mjs|sh))\b/g) { print "$1\n" }' \
     "${DOC_FILES[@]}" | sort -u | while read -r g; do
-      [ -n "$(find "$ROOT/templates" -name "$g" -print -quit)" ] || echo "$g"
+      [ -n "$(find "$SKILL_ROOT/templates" -name "$g" -print -quit)" ] || echo "$g"
     done
 )"
 if [ -z "$MISSING_GATES" ]; then
@@ -53,9 +54,9 @@ fi
 
 # --- Check 3a: no orphan persona - every agents/*.md is mentioned by stem ----------
 ORPHAN_AGENTS=""
-for f in "$ROOT"/agents/*.md; do
+for f in "$SKILL_ROOT"/agents/*.md; do
   stem="$(basename "$f" .md)"
-  if ! grep -rliq -- "$stem" "$ROOT/SKILL.md" "$ROOT/README.md" "$ROOT"/reference "$ROOT"/templates "$ROOT"/tests 2>/dev/null; then
+  if ! grep -rliq -- "$stem" "$SKILL_ROOT/SKILL.md" "$ROOT/README.md" "$SKILL_ROOT"/reference "$SKILL_ROOT"/templates "$ROOT"/tests 2>/dev/null; then
     ORPHAN_AGENTS="$ORPHAN_AGENTS agents/$stem.md"
   fi
 done
@@ -67,10 +68,10 @@ fi
 
 # --- Check 3b: every reference/*.md is reachable from SKILL.md or a peer ----------
 UNROUTABLE_REFS=""
-for f in "$ROOT"/reference/*.md; do
+for f in "$SKILL_ROOT"/reference/*.md; do
   stem="$(basename "$f" .md)"
-  others=("$ROOT/SKILL.md")
-  for g in "$ROOT"/reference/*.md "$ROOT"/agents/*.md; do
+  others=("$SKILL_ROOT/SKILL.md")
+  for g in "$SKILL_ROOT"/reference/*.md "$SKILL_ROOT"/agents/*.md; do
     [ "$g" = "$f" ] || others+=("$g")
   done
   if ! grep -liq -- "$stem" "${others[@]}" 2>/dev/null; then

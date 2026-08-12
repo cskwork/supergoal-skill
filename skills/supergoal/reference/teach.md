@@ -71,7 +71,7 @@ the user. Format: `teach/MISSION-FORMAT.md`.
 Before teaching a concept, gather it from trusted sources and record them in `RESOURCES.md`
 (`teach/RESOURCES-FORMAT.md`). Prefer primary sources, recognized experts, peer-reviewed work.
 Codebase topics are "sourced" by reading the code read-only (`explore`/`architect`), not by guessing.
-Lessons cite their sources inline - citations are what make a lesson trustworthy. Each lesson
+Lessons cite their sources inline. Each lesson
 recommends one primary source (the single highest-trust resource) for the user to read or watch.
 
 ## Zone of proximal development
@@ -79,7 +79,7 @@ recommends one primary source (the single highest-trust resource) for the user t
 Each lesson should challenge the user *just enough*. If the user names an exact thing to learn, teach
 that. Otherwise compute the ZPD from `learning-records/` (what they already know) + `MISSION.md` (what
 they need next), and teach the most mission-relevant thing that just fits. A lesson should be short and
-completable fast - working memory is small - yet give one tangible win to build on.
+completable fast, yet give one tangible win to build on.
 
 ## Decomposition
 
@@ -111,10 +111,10 @@ idea from its parts, not just recite a tidy label.
   a concept in one line and moves on has not taught it.
 - **Do not compress several concepts into one abstract label.** If a term bundles ideas, split it
   (Decomposition) and develop each part.
-- **Narrow the scope, not the depth.** "Short" means few concepts per lesson (working memory is
-  small), never thin explanations. When a topic is large, cut the scope into more lessons.
+- **Narrow the scope, not the depth.** "Short" means few concepts per lesson, never thin
+  explanations. When a topic is large, cut the scope into more lessons.
 - **Build bottom-up, like a chapter.** Concrete example first, then the rule, then the abstraction's
-  name - the abstraction is the reward for understanding the parts, not a substitute.
+  name.
 - **Prefer a real worked scenario to an analogy.** The most dependable "concrete" is one *real* case
   traced end-to-end with values pulled from the code, data, or sources - never placeholders you made
   up ("never trust parametric knowledge" applies to examples too). An analogy may *open* a page; when
@@ -133,8 +133,7 @@ plainer words, but do not skip the trace. If the process has a failure path, nar
 fallback/stop before the takeaway.
 
 Anchor the trace in one concrete, *real* input (sourced values, not invented) and show how that single
-input changes at each step - "for this case: ...". A trace that follows one real worked example end to
-end beats an abstract step list, and beats an analogy, for the load-bearing explanation. End by showing
+input changes at each step - "for this case: ...". End by showing
 the final output for that input (the actual result the user would see), so the case closes where it began.
 
 <!-- Contract anchor: | 단계 | 사용되는 용어 | 일어나는 일 | 규칙/조건 | 결과/부작용 | -->
@@ -164,8 +163,7 @@ the final output for that input (the actual result the user would see), so the c
    the user can define its role and place in the process plainly. Gaps return to Teach loop.
 5. **Records + journal.** When the user demonstrates genuine, non-trivial understanding (not mere
    coverage), write a learning record `teach/<topic>/learning-records/NNNN-slug.md`
-   (`teach/LEARNING-RECORD-FORMAT.md`) - the records, not a flat journal, set the next ZPD and
-   survive sessions. Promote settled terms into `GLOSSARY.md`. Append the live chat journal to
+   (`teach/LEARNING-RECORD-FORMAT.md`). Promote settled terms into `GLOSSARY.md`. Append the live chat journal to
    `teach/<topic>/<topic>-YYYY-MM-DD.md` (question, bridge, terms, user explanation, open questions);
    create the workspace if missing per `teach/README.md`. For relationship-heavy material, render the
    default Archify diagram first (see **Diagrams**), then write the interactive HTML lesson, run
@@ -191,8 +189,8 @@ menu inside that turn ("미니 퀴즈 - 한 개만"). Resume the choice-tool int
 resumes.
 
 **MUST: randomize the correct option's position.** Do not always place the right answer first; vary
-which slot holds the correct option across questions and turns so the user reads every choice instead
-of pattern-matching on position. Distractors must be real misconceptions, not obvious filler.
+which slot holds the correct option across questions and turns. Distractors must be real
+misconceptions, not obvious filler.
 
 Angles - mix types rather than asking the same kind twice:
 
@@ -266,12 +264,11 @@ theme/export controls.
 The diagram explains the mental model; it does not replace the required quiz. When active manipulation
 is the skill being taught, it also does not replace the simulator or task that provides practice and
 feedback. Skip Archify only for a purely definitional or syntax lesson where no meaningful relationship
-can be drawn, and record that reason in `NOTES.md` so omission is a conscious teaching choice rather
-than drift.
+can be drawn, and record that reason in `NOTES.md`.
 
 ## Reference documents & glossary
 
-Lessons are rarely revisited; reference documents are. After a lesson, distill its compressed essence
+After a lesson, distill its compressed essence
 into `teach/<topic>/reference/*.html` - syntax/snippets, algorithms/flowcharts, poses/sequences,
 routines - formatted for fast lookup. The **glossary** (`GLOSSARY.md`, `teach/GLOSSARY-FORMAT.md`) is
 the most important reference: add a term only once the user can use it correctly, be opinionated about
@@ -288,8 +285,7 @@ respect it and note the preference there.
 
 Lessons are built from reusable components in `teach/<topic>/assets/` (shared stylesheet, quiz
 widgets, simulators, diagram helpers). Reuse is the default: read `assets/` before authoring and build
-from what is there - the shared stylesheet is the first component every workspace earns, so all lessons
-look like one course. When a lesson needs something new and reusable, write it as a component in
+from what is there. When a lesson needs something new and reusable, write it as a component in
 `assets/` and link it; never inline code a future lesson would duplicate.
 
 ## Opening output format

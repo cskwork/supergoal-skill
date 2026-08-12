@@ -1,6 +1,19 @@
 #!/usr/bin/env bash
 
 # Shared assertions for shell contract tests. Callers provide ROOT, PASS, and FAIL.
+# Skill files live under skills/supergoal/; resolve_path falls back there for paths
+# that no longer exist at the repo root (repo-root files like README.md still resolve).
+
+SKILL_ROOT="$ROOT/skills/supergoal"
+[ -d "$SKILL_ROOT" ] || SKILL_ROOT="$ROOT"
+
+resolve_path() {
+  if [ -e "$ROOT/$1" ]; then
+    printf '%s' "$ROOT/$1"
+  else
+    printf '%s' "$SKILL_ROOT/$1"
+  fi
+}
 
 pass_check() {
   PASS=$((PASS + 1))
@@ -15,7 +28,7 @@ fail_check() {
 
 assert_file() {
   local label="$1" file="$2"
-  if [ -f "$ROOT/$file" ]; then
+  if [ -f "$(resolve_path "$file")" ]; then
     pass_check "$label"
   else
     fail_check "$label" "missing file: $file"
@@ -24,7 +37,7 @@ assert_file() {
 
 assert_nonempty_file() {
   local label="$1" file="$2"
-  if [ -s "$ROOT/$file" ]; then
+  if [ -s "$(resolve_path "$file")" ]; then
     pass_check "$label"
   else
     fail_check "$label" "missing/empty file: $file"
@@ -33,7 +46,7 @@ assert_nonempty_file() {
 
 assert_text_ci_normalized() {
   local label="$1" file="$2" text="$3" normalized
-  normalized="$(tr '\n\t\r' '   ' < "$ROOT/$file" | tr -s ' ')"
+  normalized="$(tr '\n\t\r' '   ' < "$(resolve_path "$file")" | tr -s ' ')"
   if printf '%s' "$normalized" | grep -Fqi -- "$text"; then
     pass_check "$label"
   else
@@ -43,7 +56,7 @@ assert_text_ci_normalized() {
 
 refute_text_ci_normalized() {
   local label="$1" file="$2" text="$3" normalized
-  normalized="$(tr '\n\t\r' '   ' < "$ROOT/$file" | tr -s ' ')"
+  normalized="$(tr '\n\t\r' '   ' < "$(resolve_path "$file")" | tr -s ' ')"
   if printf '%s' "$normalized" | grep -Fqi -- "$text"; then
     fail_check "$label" "forbidden in $file: $text"
   else
@@ -53,7 +66,7 @@ refute_text_ci_normalized() {
 
 assert_text_exact() {
   local label="$1" file="$2" text="$3"
-  if grep -Fq -- "$text" "$ROOT/$file"; then
+  if grep -Fq -- "$text" "$(resolve_path "$file")"; then
     pass_check "$label"
   else
     fail_check "$label" "missing exact text in $file: $text"

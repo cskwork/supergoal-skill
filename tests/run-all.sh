@@ -5,15 +5,17 @@
 
 set -uo pipefail
 
-ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+REPO="$(cd "$(dirname "$0")/.." && pwd)"
+ROOT="$REPO/skills/supergoal"
+[ -d "$ROOT" ] || ROOT="$REPO"
 FAILURES=0
 
 echo "== /supergoal all checks =="
 echo "root: $ROOT"
 
-for test in "$ROOT"/tests/*.test.sh; do
+for test in "$REPO"/tests/*.test.sh; do
   echo
-  echo "== bash ${test#"$ROOT"/} =="
+  echo "== bash ${test#"$REPO"/} =="
   if ! bash "$test"; then
     FAILURES=$((FAILURES + 1))
   fi

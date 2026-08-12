@@ -50,8 +50,12 @@ writing style (mattpocock/skills `wait-what`: ASD-STE100 Simplified Technical En
   (commit 18f5575), so most path-dependent checks fail pre-existing. Parity, not green, is
   the evidence here. Repointing the suite is an open follow-up.
 - `.cursor/skills/supergoal/SKILL.md` copy re-synced from the canonical file.
-- NOT yet verified: a harness-eval A/B of LIGHT vs the full loop on an explicit-spec task
-  (recommended next eval before shipping a version tag).
+- NOT yet verified: a harness-eval A/B of LIGHT vs the full loop on an explicit-spec task.
+  Infrastructure was confirmed runnable for v0.11.0 (Docker, DeepSWE checkout, codex auth; `pier`
+  0.3.1 reinstalled via `uv tool install datacurve-pier` after its uv env had been deleted), but the
+  run itself was SKIPPED by owner decision on 2026-08-13. The prepared cell (csstree @ codex
+  gpt-5.5 medium, arms v0.9.2 fast-path text vs dev-v2 tier text, script preserved as a gap for a
+  future session) remains the recommended pre-release check for the next behavior-affecting change.
 
 ### Adversarial review (2026-08-13, post-merge)
 

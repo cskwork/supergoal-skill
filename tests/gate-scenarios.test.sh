@@ -10,6 +10,7 @@
 # Usage: bash tests/gate-scenarios.test.sh   (exit 0 only if all cases pass; run from repo root)
 
 SKILL_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+[ -d "$SKILL_DIR/skills/supergoal" ] && SKILL_DIR="$SKILL_DIR/skills/supergoal"
 T="$(mktemp -d)"
 trap 'rm -rf "$T"' EXIT
 

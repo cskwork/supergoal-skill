@@ -10,6 +10,11 @@ After context gathering and before plan freeze, interview only on two triggers:
 
 Applies to GREENFIELD, DEBUG, LEGACY only. LEARN/LEARN-DOMAIN skip.
 
+**Tier scaling** (`reference/role-loop.md` `## Tier selection`): LIGHT skips the interview - state
+assumptions inline and proceed; a load-bearing assumption that proves wrong is a LIGHT->STANDARD
+upgrade trigger. STANDARD uses the rules below unchanged. DEEP removes the one-round cap (see
+`## Question selection`) and always presents the spec for confirmation (`## Spec-out`).
+
 ## Where it runs
 
 Ambiguity runs before grounding. Blast-radius confirm runs after grounding chooses the approach but
@@ -67,14 +72,32 @@ that could change.
 
 ## Question selection
 
-- **Cap at <=5 questions, one clarification round.** Ask only as many as the ambiguity requires; one
-  or two questions are enough when they settle the load-bearing choice.
+- **Cap at <=5 questions, one clarification round** (STANDARD). Ask only as many as the ambiguity
+  requires; one or two questions are enough when they settle the load-bearing choice. DEEP removes
+  the round cap: keep asking one question at a time until no load-bearing unknown remains - the
+  code-first rule and redundancy drops still apply, so depth never becomes padding.
 - **Maximize information gain.** Prefer the question that eliminates a whole branch of work.
 - **Drop redundant questions.** If `brief.md`, the Domain Brief, or the Explore map already answers an
   aspect, do not ask it.
 - **One at a time, recommend an answer.** Ask serially, wait for each reply before the next, and give
   your recommended answer for every question so the user can confirm or correct cheaply. Do not batch
   all questions into a single parallel turn.
+
+## Spec-out - spec before plan
+
+Interview answers land in the spec first, not the plan. After the interview (or its logged skip),
+complete the vault `GOAL.md` `## Spec` and `## Success Criteria` BEFORE writing `PLAN.md`; write
+behavior criteria in Given/When/Then form (`templates/GOAL.md`). How the spec meets the user:
+
+- **STANDARD:** present the spec summary and acceptance criteria together with the plan at the
+  existing plan-approval gate - one user touchpoint, no extra round.
+- **DEEP:** present the spec for confirmation BEFORE plan grounding starts; grounding and freeze
+  proceed only from the confirmed spec. AFK: proceed on stated assumptions unless `## Hard gate`
+  blocks.
+- **LIGHT:** the spec is the in-context checklist; auto-approved.
+
+Write the presentation in `reference/reporting.md` style. Record the presented spec decisions in
+`PLAN.md` `## Interview`.
 
 ## DEBUG variant - ranked hypothesis re-ranking
 

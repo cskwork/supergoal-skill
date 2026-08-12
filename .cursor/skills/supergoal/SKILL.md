@@ -1,6 +1,6 @@
 ---
 name: supergoal
-description: Objective-driven dev router. Use for "fix bug", "add feature", "prototype", "QA/verify", or "code review".
+description: Objective-driven dev router. Use for "fix bug", "add feature", "prototype", "QA/verify", "code review", or "teach/explain".
 ---
 
 # About

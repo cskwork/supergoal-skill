@@ -11,7 +11,7 @@ trap 'rm -rf "$T"' EXIT
 
 PASS=0
 FAIL=0
-GATE="$ROOT/templates/skill-install-audit.mjs"
+GATE="$ROOT/skills/supergoal/templates/skill-install-audit.mjs"
 
 run_case() {
   local label="$1" expected="$2" needle="$3"; shift 3

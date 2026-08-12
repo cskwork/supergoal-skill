@@ -7,10 +7,11 @@ set -u
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PASS=0
 FAIL=0
+. "$ROOT/tests/support/contract.sh"
 
 require_file() {
   local label="$1" file="$2"
-  if [ -f "$ROOT/$file" ]; then
+  if [ -f "$(resolve_path "$file")" ]; then
     PASS=$((PASS + 1)); printf '  PASS  %s\n' "$label"
   else
     FAIL=$((FAIL + 1)); printf '  FAIL  %s\n' "$label"; printf '        missing file: %s\n' "$file"
@@ -20,7 +21,7 @@ require_file() {
 require_text() {
   local label="$1" file="$2" text="$3"
   local normalized
-  normalized="$(tr '\n\t\r' '   ' < "$ROOT/$file" | tr -s ' ')"
+  normalized="$(tr '\n\t\r' '   ' < "$(resolve_path "$file")" | tr -s ' ')"
   if printf '%s' "$normalized" | grep -Fqi -- "$text"; then
     PASS=$((PASS + 1)); printf '  PASS  %s\n' "$label"
   else
@@ -32,7 +33,7 @@ require_text() {
 require_absent_text() {
   local label="$1" file="$2" text="$3"
   local normalized
-  normalized="$(tr '\n\t\r' '   ' < "$ROOT/$file" | tr -s ' ')"
+  normalized="$(tr '\n\t\r' '   ' < "$(resolve_path "$file")" | tr -s ' ')"
   if printf '%s' "$normalized" | grep -Fqi -- "$text"; then
     FAIL=$((FAIL + 1)); printf '  FAIL  %s\n' "$label"
     printf '        unexpected in %s: %s\n' "$file" "$text"
@@ -43,7 +44,7 @@ require_absent_text() {
 
 require_json() {
   local label="$1" file="$2" filter="$3"
-  if jq -e "$filter" "$ROOT/$file" >/dev/null; then
+  if jq -e "$filter" "$(resolve_path "$file")" >/dev/null; then
     PASS=$((PASS + 1)); printf '  PASS  %s\n' "$label"
   else
     FAIL=$((FAIL + 1)); printf '  FAIL  %s\n' "$label"

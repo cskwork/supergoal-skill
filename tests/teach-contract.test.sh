@@ -12,7 +12,7 @@ FAIL=0
 require_node_check() {
   local label="$1" file="$2"
   local out
-  out="$(node --check "$ROOT/$file" 2>&1)"
+  out="$(node --check "$(resolve_path "$file")" 2>&1)"
   local status=$?
   if [ "$status" -eq 0 ]; then
     PASS=$((PASS + 1))

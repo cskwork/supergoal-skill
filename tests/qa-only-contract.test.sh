@@ -90,7 +90,7 @@ assert_text_ci_normalized "QA template defaults Tool to agent-browser" "template
 assert_text_ci_normalized "QA template exposes fallback reason" "templates/QA.md" "Fallback:"
 
 # ---- Part B: qa-only-gate.sh scenarios -----------------------------------
-GATE="$ROOT/templates/qa-only-gate.sh"
+GATE="$SKILL_ROOT/templates/qa-only-gate.sh"
 T="$(mktemp -d)"; trap 'rm -rf "$T"' EXIT
 
 run_case() {

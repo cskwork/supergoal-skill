@@ -26,6 +26,12 @@
    Frame이 스펙/엣지케이스 커버리지를 계획에 열거하고, 빌더는 승인된 계획만 구현하고, tester는 실행
    증거만 만들며, auditor가 실제 테스트 재실행·최종 판정·`GOAL.md` 체크·`R-LOOP.md`를 소유합니다.
    선택적 추가 디스패치는 위험/모호 작업에서만 켜지는 사전 계획 공격(plan attack) 하나뿐입니다.
+   워크플로 무게는 티어로 나눕니다(swarm-forge식 sized packs): 명시적 스펙의 좁은 작업은 LIGHT(같은
+   다섯 게이트, 상태는 컨텍스트에 유지, vault/역할 팬아웃 없음), 기본은 STANDARD(전체 루프), DEEP은
+   plan attack과 무제한 명확화 인터뷰를 더합니다. "quick"/"thorough" 같은 사용자 말이 감지를
+   오버라이드하고, 승격은 단방향입니다. 비자명한 작업은 스펙부터 확정합니다 - 인터뷰 답이 `PLAN.md`
+   이전에 `GOAL.md` 스펙(Given/When/Then 기준)을 완성합니다. 사용자 대면 보고는
+   `reference/reporting.md`를 따릅니다: 결론 먼저, Simplified Technical English, 프로젝트 고유 용어.
 4. **전/후 평가를 남깁니다.** 변경 전 상태와 변경 후 목표를 먼저 적고, 완료 약속과 재개 가능한
    `run-state.json`, 검증 명령 목록을 남겨서 "테스트 통과"라는 말로만 끝내지 않게 합니다.
 5. **실제 프로젝트 기준으로 증명합니다.** 보이는 테스트가 통과해도 그대로 믿지 않고, 요청/티켓/README/
@@ -221,7 +227,7 @@ bash tests/run-all.sh
 ```
 SKILL.md            핵심 안내: baseline-first 루프, 모드, 레퍼런스 맵
 agents/             역할별 지침 파일 (analyst, architect, executor, debugger, explore, designer, qa-*, db-reader, code-reviewer, security-reviewer)
-reference/          상황별 상세 가이드: domain-rules · rules(프로젝트 상시 규칙) · domain-context · debugging · interview · delivery-gate · plan-grounding · research · market-research · qa · qa-only · db-access · teach · learn-domain · ui-ux · taste-skill-v2 · functional-ui · harness-eval · skill-mine
+reference/          상황별 상세 가이드: domain-rules · rules(프로젝트 상시 규칙) · domain-context · debugging · interview · reporting · delivery-gate · plan-grounding · research · market-research · qa · qa-only · db-access · teach · learn-domain · ui-ux · taste-skill-v2 · functional-ui · harness-eval · skill-mine
 teach/              TEACH 모드 형식 가이드와 주제별 교육 워크스페이스
 templates/          검증 스크립트와 템플릿: GOAL.md · PLAN.md · QA.md · R-LOOP.md · Z-DONE.md · run-state.json · rules.md · qa-gate.sh · qa-only-gate.sh · commit-gate.sh · contrast-gate.mjs · learn-grounding-gate.mjs · qa-report.md · db-access/ · domain-agent/ · domain-onboarding.html · arch-report.html · harness-eval-gate.mjs · harness-eval-stats.mjs · harness-eval-cases/ · skill-mine/ · skill-frontmatter-gate.mjs · skill-install-audit.mjs · skill.md.template · observability/ (sg-emit board state)
 tests/              contract tests + run-all.sh canonical verifier

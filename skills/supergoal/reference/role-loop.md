@@ -41,7 +41,7 @@ SAME five gates but hold their state in context instead of files:
   regression ledger as one in-context checklist; plan approval is `auto-approved` as below;
 - no role fan-out: the conductor frames, builds, and verifies in one context, running the builder and
   auditor stances as separate passes;
-- skip the interview (`reference/interview.md` LIGHT row): state assumptions inline and proceed;
+- skip the interview (`reference/interview.md` tier scaling): state assumptions inline and proceed;
 - run the full suite ONCE at Exact Verify (targeted tests while building); evidence is that one green
   run plus the final diff reconciliation - do not repeat `git status`/`git diff --check` sweeps;
 - skip `commit-gate.sh`, `qa-gate.sh`, rules-file discovery, and board emits.

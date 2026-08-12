@@ -69,9 +69,7 @@ Required controls:
   nested agents contend for a rate-limit ceiling and crash. Retry a transient (rate-limit) crash with
   backoff and record the reason + retry count; a crash surviving its retries stays a recorded loss.
 - role fidelity: the harness arm must exercise the ACTUAL shipped skill role files (SKILL.md +
-  reference/role-loop.md + agents/*.md) or generate its role prompts FROM them and record the source. A
-  hand-paraphrased inline builder/verifier prompt can silently drift from the shipped role text, so
-  it measures a paraphrase, not the skill.
+  reference/role-loop.md + agents/*.md) or generate its role prompts FROM them and record the source.
 
 Required outcome accounting:
 
@@ -95,8 +93,7 @@ actually run in, or the result is an artifact of the wrong setup:
   including the separate adversarial verifier and repair loop.
 - **Single non-interactive process** (e.g. `codex exec`, CI, one-shot eval): the harness should route
   to its INLINE profile. Do NOT force the multi-agent verifier/committee/repair ceremony into one
-  context window - it exhausts the window and the arm crashes (observed: harness arm completed 0 turns,
-  exit 1, tokens recorded 0, 2.15x baseline wall-clock). Score the harness on its INLINE behavior:
+  context window - it exhausts the window and the arm crashes. Score the harness on its INLINE behavior:
   load-only-the-contract, minimal targeted diffs, one scoped sandbox-safe verify pass, stop on green.
 - A crashed / context-exhausted / timed-out arm is a recorded LOSS, not a missing data point. Capture
   `turns_completed`, `exit_code`, and a `crashed` flag; ensure token/tool-call parsing matches the
@@ -173,8 +170,7 @@ Forced default public SWE suite:
 - Suite membership is measured, not labeled: tasks are picked from DeepSWE leaderboard pass rates
   (snapshot 2026-07-06, 13k+ trials over 21 models) - low overall pass rate for difficulty, nonzero
   gpt-5.5 passes so the codex low-effort lane is not a guaranteed floor, languages spread, rust excluded
-  for compile-budget risk. `yjs-map-conflict-detection` was demoted (rank 101/113, 55% overall, local
-  perfect baseline - no headroom). Evidence and a held-out escalation pool live in
+  for compile-budget risk. `yjs-map-conflict-detection` was demoted (no headroom). Evidence and a held-out escalation pool live in
   `templates/harness-eval-external/deepswe/task-set.yaml`.
 - Use `templates/harness-eval-external/deepswe/run-default-suite.mjs` unless the user explicitly asks for
   a single named task. The suite runner serially invokes the full-cycle runner once per task and writes
@@ -186,15 +182,13 @@ Default public scoring candidate:
 
 - `etree-xml-diff-patch` from DeepSWE v1.1: upstream `https://github.com/beevik/etree`, base commit
   `4032e04c8f2e2f35e43ce5d772fcef14a5df4d74`, Go feature request. Use it first for public
-  effectiveness scoring because it requires XML diff, patch, reverse patch, three-way merge, and
-  summaries. It is a candidate, not proof: a completed paired run still has to show baseline headroom or
+  effectiveness scoring. It is a candidate, not proof: a completed paired run still has to show baseline headroom or
   a nonzero harness-vs-baseline delta.
 - `happy-dom-abort-pending-body-reads` is smoke/reliability only under current Codex `gpt-5.5` low
-  settings. The no-interrupt full-cycle run completed both arms and saturated the verifier:
-  baseline and harness both reached `reward=1`, `f2p=14/14`, `p2p=165/165`. Do not use this task as the
+  settings. Do not use this task as the
   default scoring test while it has no baseline headroom.
 - `cliffy-config-file-parsing` is now a secondary broad feature task, not the default low-effort public
-  pilot, because the earlier low-turn Claude attempt exceeded budget and produced no patch.
+  pilot.
 
 External A/B scoring:
 
@@ -213,8 +207,7 @@ External A/B scoring:
   task as signal.
 
 Do not claim a public benchmark win from `u3`. The authz-cache `u3` result only proves hidden-test
-discrimination: starter/lazy can pass visible 3/3 while hidden behavior fails 1/8, and the reference can
-pass hidden 8/8. It is not a harness improvement unless a paired with/without run shows a pass-rate or
+discrimination. It is not a harness improvement unless a paired with/without run shows a pass-rate or
 quality lift.
 
 Reusable seeded case specs (the approved corpus - pick from here, never invent new cases):
@@ -238,8 +231,7 @@ Reusable seeded case specs (the approved corpus - pick from here, never invent n
 Default to the validated RevFactory corpus in `templates/harness-eval-cases/` for comparable, citable
 results; do NOT invent throwaway easy/medium cases. Note that underspecified tasks whose implicit
 requirements are PUBLIC domain knowledge also ceiling out - a strong baseline fills them unprompted
-(evidence: 2026-06-07 csv/lru/semver run, 14/14 both arms; raw dir removed 2026-07-06, conclusion in
-`docs/experiments/README.md`).
+(evidence: `docs/experiments/README.md`).
 The one sanctioned reason to author a fresh fixture is probing the under-specified frontier with a
 LATENT-CORRECTNESS case (see "Pick a discriminating regime" + "Validate the fixture discriminates"); label
 it authored, not corpus, and never run it until the 3-way discrimination check passes.
@@ -258,27 +250,22 @@ Both arms passing everything is inconclusive (ceiling), not a win or a tie.
 ## Pick a discriminating regime (lever = spec-completeness x baseline strength, not "difficulty")
 
 The harness's only correctness lever is surfacing requirements ABSENT from the prompt. On an
-explicit-spec task a capable baseline already passes - expect a TIE at 2-3x cost regardless of tier
-(observed 2026-06-07: medium case-003 14/14=14/14, hard case-002 8/8=8/8 @ gpt-5.5/low; expert case-015
-11/12=11/12 @ spark/high). A nominally "hard" case a strong model aces is still a ceiling. To find signal:
+explicit-spec task a capable baseline already passes - expect a TIE at 2-3x cost regardless of tier.
+A nominally "hard" case a strong model aces is still a ceiling. To find signal:
 
 - Make the baseline actually struggle: weaker model and/or higher reasoning effort, OR a genuinely
   under-specified task - not just a higher difficulty label.
 - Under-specified surfaces a gap vs a 1-PASS baseline only when the unstated requirement is
   LATENT-CORRECTNESS a literal pass OVERLOOKS (security/robustness edge), not canonical textbook behavior:
   deepMerge prototype-pollution showed a gap (baseline shipped the vuln 2/3 as a false-GREEN), CSV
-  quote-handling tied (canonical, baseline does it unprompted). That gap is real value vs a one-shot
-  default (the skill forces the verification that catches the vuln), but the active ingredient is the
-  extra passes, not role-separation - evidence and the which-win-to-claim rule are owned by the
-  compute-confound bullet below. Ambiguous choices are NOT fair hidden checks - test only what one
+  quote-handling tied (canonical, baseline does it unprompted). Ambiguous choices are NOT fair hidden checks - test only what one
   reasonable reading MUST do.
 - If the default hard case ceilings out under low effort, run the authored low-effort discriminator:
   `SG_EVAL_CASE=u3 SG_EVAL_EFFORT=low SG_EVAL_BASELINE_SEEDS=1 SG_EVAL_HARNESS_SEEDS=1 node templates/harness-eval-cases/run-local-eval.mjs`.
   This authorization-cache case is intentionally security/concurrency-heavy: starter and lazy
   implementations pass visible 3/3 but hidden 1/8, while the reference implementation passes hidden
   8/8. n=1 is directional only (see the sample-size rule below).
-- Sample size: n >= 3 per arm is a DIRECTIONAL pilot floor - a +-1-test delta at n=1 is noise, not a win
-  (case-015 read harness 8/9 vs baseline 7/9 one run and an exact tie the next). A PROVEN significance
+- Sample size: n >= 3 per arm is a DIRECTIONAL pilot floor - a +-1-test delta at n=1 is noise, not a win. A PROVEN significance
   claim needs n >= 6 per arm, because the mandated sign-flip permutation test's minimum two-sided p is
   2/2^n (n=3 -> 0.25 and n=5 -> 0.0625 cannot reach 0.05; n=6 -> 0.03125 is the first that can). So n < 6
   is directional only. Always report the per-seed vector, not just the mean. The decision rule (BCa 95%
@@ -294,9 +281,9 @@ explicit-spec task a capable baseline already passes - expect a TIE at 2-3x cost
   compute IS legitimate value - a one-shot is the realistic default, and on u1 the skill caught a
   prototype-pollution vuln the one-shot shipped as a false-GREEN (3.3 vs 2.3). (b) vs an equal-compute
   naive arm (build+N-review, no skill) = "is the skill's STRUCTURE the active ingredient, or just the
-  extra passes?" 2026-06-07 underspecified-n3 run (naive build+3-review 4/4 >= role-loop 3.3/4; raw dir
-  removed 2026-07-06, conclusion in `docs/experiments/README.md`): the skill beat (a) but NOT (b), so the value
-  was the forced passes, not role-separation - useful, but the mechanism could be leaner. Report the win
+  extra passes?" 2026-06-07 underspecified-n3 run (naive build+3-review 4/4 >= role-loop 3.3/4;
+  conclusion in `docs/experiments/README.md`): the skill beat (a) but NOT (b), so the value
+  was the forced passes, not role-separation. Report the win
   as (a) "skill vs default" or (b) "mechanism vs compute"; never imply (b) when you only showed (a).
 - Harness arm design: default to the shipped skill's current forced-verification core:
   Plan+Build -> Exact Verify/QA (plan-time full-spec and edge-case discovery, builder covers the
@@ -306,7 +293,7 @@ explicit-spec task a capable baseline already passes - expect a TIE at 2-3x cost
 
 ## Validate the fixture discriminates BEFORE spending compute
 
-A fixture proves nothing unless it can tell solutions apart. Before running any arm, confirm three ways:
+Before running any arm, confirm three ways:
 1. the stub/starter fails the intended checks (greenfield: all fail; bug-fix: visible pass + planted
    hidden fail; refactor: starter passes ALL, so the case measures preservation),
 2. a reference CORRECT impl passes all visible + hidden,
@@ -349,9 +336,7 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
 - The builder repairs every verifier RED or records `Not proven`; do not advance on a visible-test-only GREEN.
 
 5. Verification (record-only - the eval does NOT impose a verifier/repair loop)
-- Baseline-first: do not drive an adversarial-verifier + repair loop onto the harness arm. Eight evals
-  showed that ceremony costs 2-3x without beating a strong baseline on explicit-spec tasks, and crashes
-  when forced into a single non-interactive process.
+- Baseline-first: do not drive an adversarial-verifier + repair loop onto the harness arm.
 - Record whatever verification the harness ran NATIVELY: an orchestrated harness may run its own verifier
   (record verifier-authored tests + REDs); an INLINE harness records its one scoped verify pass.
 - Ground truth for BOTH arms is the eval's Machine Checks + hidden tests (next), applied equally. Do not
@@ -363,9 +348,7 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
 - Prefer deterministic repo-owned/evaluator-owned commands. Auto-detected commands may add evidence, but
   a proven claim must show which commands were trusted and why.
 - Record EACH test/check individually as `{name, status, evidence, verifies, does_not_verify, confidence}`
-  - never collapse the suite into one all-or-nothing pass. A binary pass/fail hides partial progress
-  (observed: baseline passed 6/9 and harness 4/9, yet a single combined check scored both as the same
-  "fail").
+  - never collapse the suite into one all-or-nothing pass.
 - Track the pass FRACTION per arm; it feeds the gradient correctness score below.
 - `claim_status: proven` requires all baseline and harness checks to pass.
 
@@ -374,8 +357,7 @@ If (2) or (3) does not hold, the case is mis-specified - fix it, do not run it. 
 - Use 10 dimensions, each 0-10: `feature_completeness`, `test_coverage`, `code_quality`, `error_handling`, `efficiency`, `correctness`, `architecture`, `extensibility`, `documentation`, `dev_environment`.
 - Keep the rubric REACHABLE: a fully correct solution must be able to reach >=80, and every dimension
   must stay individually reachable to 10. Do not write anchors that cap dimensions so low that even a
-  perfect solution sums below the pass threshold (a capped rubric summing to 77 made >=80 impossible
-  and flattened the arms to a near-tie).
+  perfect solution sums below the pass threshold.
 - Score `correctness` and `feature_completeness` as a GRADIENT over the fraction of individual
   (visible + hidden) checks passed, not a binary all-pass-or-cap. Anchor the remaining dimensions to
   observable properties (tests present, module structure for multi-module tasks, dependency count,

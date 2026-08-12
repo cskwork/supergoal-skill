@@ -74,8 +74,8 @@ that could change.
 
 - **Cap at <=5 questions, one clarification round** (STANDARD). Ask only as many as the ambiguity
   requires; one or two questions are enough when they settle the load-bearing choice. DEEP removes
-  the round cap: keep asking one question at a time until no load-bearing unknown remains - the
-  code-first rule and redundancy drops still apply, so depth never becomes padding.
+  the round cap: keep asking one question at a time until no load-bearing unknown remains; the
+  code-first rule and redundancy drops still apply.
 - **Maximize information gain.** Prefer the question that eliminates a whole branch of work.
 - **Drop redundant questions.** If `brief.md`, the Domain Brief, or the Explore map already answers an
   aspect, do not ask it.

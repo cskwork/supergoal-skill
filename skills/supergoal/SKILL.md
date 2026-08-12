@@ -23,6 +23,7 @@ ephemeral single-task workspace (see role-loop fast path).
   quality: polished user-facing UI is baseline correctness.
 - GREENFIELD / DEBUG / LEGACY code changes use Before/After Eval before Build: prove before, target after, and delta with trusted commands (`reference/delivery-gate.md`).
 - Ask only when genuinely ambiguous; resolve code-answerable questions by reading the code.
+- Report for humans: outcome first, Simplified Technical English prose, the project's own vocabulary (`reference/reporting.md`); machine-checked markers stay verbatim.
 - Docs language: for persistent repo docs (`docs/**`, run vaults, `.domain-agent/**`, ADR/spec/changelog), match the target repo's dominant prose language; mixed/none -> the user's language. Keep identifiers, paths, commands, and machine-checked anchors in canonical English so checks keep matching.
 - DEBUG done-bar: a green reported-repro is NOT done. Before commit, print three literal lines and
   satisfy them - `GATE.owner=` the invariant-owning frame (for a raised exception: the frame that RAISES
@@ -103,6 +104,7 @@ reviewer=`agents/code-reviewer.md`, security=`agents/security-reviewer.md` (othe
 | `reference/domain-context.md` | repo-local Domain Brief |
 | `reference/debugging.md` | DEBUG: hypothesis-ledger diagnose loop |
 | `reference/interview.md` | interview: ambiguity (what) + blast-radius confirm (approach, tiered) |
+| `reference/reporting.md` | any user-facing message: plan/spec presentation, interview questions, verdicts, final report |
 | `reference/delivery-gate.md`, `templates/GOAL.md`, `templates/PLAN.md`, `templates/QA.md`, `templates/R-LOOP.md`, `templates/Z-DONE.md`, `templates/run-state.json`, `templates/commit-gate.sh` | run vault file set + Before/After Eval + resumable run state + commit gate for GREENFIELD / DEBUG / LEGACY code changes |
 | `reference/wayfinder.md` | WAYFINDER: issue map -> vertical tickets -> optional EARS/user-story depth -> blockers -> next frontier; also GREENFIELD internal Frontier Map for broad/foggy new builds |
 | `reference/research.md` | WAYFINDER research-needed tickets; docs/API/source facts that need high-trust cited evidence |

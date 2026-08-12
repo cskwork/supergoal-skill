@@ -24,7 +24,7 @@ done
 grep -Fq '.enabled' "$ROOT/tui/launch.sh" && ok "launch.sh enables emission (.enabled)" || bad "launch.sh enables emission"
 grep -Fq 'PIDFILE' "$ROOT/tui/launch.sh" && ok "launch.sh is pidfile-guarded (idempotent)" || bad "launch.sh pidfile guard"
 grep -Fq 'textual-serve is not installed' "$ROOT/tui/serve.py" && ok "serve.py degrades gracefully without textual-serve" || bad "serve.py graceful degrade"
-grep -Fq 'observes only' "$ROOT/SKILL.md" && ok "SKILL.md overlay line marks the board observe-only" || bad "SKILL.md overlay line"
+grep -Fq 'observes only' "$ROOT/skills/supergoal/SKILL.md" && ok "SKILL.md overlay line marks the board observe-only" || bad "SKILL.md overlay line"
 
 # Behavioral check needs python3 + textual; skip cleanly otherwise.
 if ! command -v python3 >/dev/null 2>&1 || ! python3 -c 'import textual' >/dev/null 2>&1; then

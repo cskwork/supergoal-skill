@@ -18,10 +18,10 @@ ephemeral single-task workspace (auto-LIGHT tier; see role-loop `## Tier selecti
 ## Core principles
 
 - Ground truth beats proxy: re-run REAL tests, re-read request/docs, and do not optimize to self-grading.
-- Exact proof beats review; implementation is delegated to a builder subagent.
+- Exact proof beats review; implementation is delegated to a builder subagent (STANDARD/DEEP; LIGHT builds in-conductor).
 - Smallest correct change; match surrounding code. Scope-minimalism governs code surface area, not UI
   quality: polished user-facing UI is baseline correctness.
-- GREENFIELD / DEBUG / LEGACY code changes use Before/After Eval before Build: prove before, target after, and delta with trusted commands (`reference/delivery-gate.md`).
+- GREENFIELD / DEBUG / LEGACY code changes use Before/After Eval before Build: prove before, target after, and delta with trusted commands (`reference/delivery-gate.md`; LIGHT holds the same fields in its in-context checklist).
 - Ask only when genuinely ambiguous; resolve code-answerable questions by reading the code.
 - Report for humans: outcome first, Simplified Technical English prose, the project's own vocabulary (`reference/reporting.md`); machine-checked markers stay verbatim.
 - Docs language: for persistent repo docs (`docs/**`, run vaults, `.domain-agent/**`, ADR/spec/changelog), match the target repo's dominant prose language; mixed/none -> the user's language. Keep identifiers, paths, commands, and machine-checked anchors in canonical English so checks keep matching.
@@ -38,7 +38,7 @@ ephemeral single-task workspace (auto-LIGHT tier; see role-loop `## Tier selecti
 After mode detection, resolve the source/base branch and target/integration branch (repo policy, else
 ask). Verify both refs before mutating files, then create a run worktree from the source/base branch. Do
 all code work there. Do not mutate the original checkout. Commit or merge only into the verified
-target/integration branch after verification and user acceptance. Commit is hard-gated by the Commit gate
+target/integration branch after verification and user acceptance. On STANDARD/DEEP, commit is hard-gated by the Commit gate
 (`reference/delivery-gate.md`, backstop `templates/commit-gate.sh`): non-green means fix/ask, never commit
 on assumption. Full contract: `reference/role-loop.md`.
 
@@ -133,5 +133,5 @@ red-green test + DB evidence if data load-bearing; neighbor snapshots re-run wit
 `GOAL.md` Success Criterion checked, with no orphan scope; `Z-<date>.md` written with run branch +
 completion timestamp; DEBUG prod issue has reproduction fidelity and, if
 non-exact, residual risk + post-deploy confirmation plan; user-facing UI at the Expressive baseline;
-destructive steps consented; commit/merge only after the commit gate passes (`reference/delivery-gate.md`);
+destructive steps consented; commit/merge only after the commit gate passes (`reference/delivery-gate.md`; LIGHT: in-context checklist equivalents, no Z file, commit bar per role-loop `## Tier selection`);
 verified commands reported.

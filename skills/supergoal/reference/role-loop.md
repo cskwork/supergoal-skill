@@ -1,7 +1,8 @@
 # ROLE-LOOP - the default loop for GREENFIELD / DEBUG / LEGACY
 
 Use when the user invokes `supergoal` for GREENFIELD / DEBUG / LEGACY feature, bug, or refactor
-work. Once invoked, use this loop; do not downgrade to an inline shortcut.
+work. Once invoked, use this loop; do not downgrade to an inline shortcut. Workflow weight is
+tiered: select LIGHT / STANDARD / DEEP once at Frame (`## Tier selection - LIGHT / STANDARD / DEEP`).
 
 The mandatory core is Frame -> Plan approval -> Build -> Exact Verify/QA -> Finalize: five gates,
 fresh context per role. Default cost envelope: one builder + one auditor verifier per iteration;
@@ -23,23 +24,50 @@ the spec is explicit, behavior is already stated, the harness is single-process/
 eval compares equal-compute vanilla. Production/domain behavior-changing ambiguity needs user feedback.
 Generic no-user coding ambiguity uses the most conservative, reversible default and records the choice.
 
-## Ephemeral workspace fast path
+## Tier selection - LIGHT / STANDARD / DEEP
 
-Detect once at Frame: the workspace is ephemeral when it is a single-task container/CI/benchmark
-checkout - no `.supergoal/`, no existing `docs/changelog/`, no other work in flight, no later reader
-of run artifacts. There the vault/worktree machinery has no consumer, so keep the SAME five gates but
-hold their state in context instead of files:
+Sized packs: pay only for the workflow the task needs. Select once at Frame, announce tier + reason
+in one line next to the mode line, and record it (`run-state.json` `tier` for STANDARD/DEEP; the
+in-context checklist for LIGHT). A user word overrides detection: "quick"/"light" -> LIGHT,
+"thorough"/"deep" -> DEEP.
 
-- no run worktree/branch: work on the current checkout directly; commit only if the task asks for it;
+**LIGHT** - explicit spec AND narrow blast radius: the request names the behavior and its target
+files/symbols, no production/domain ambiguity, no migration/security/concurrency surface. Keep the
+SAME five gates but hold their state in context instead of files:
+
+- keep the run worktree for code edits in a persistent workspace (checkout protection stays); an
+  ephemeral workspace (below) works on the current checkout directly, committing only if asked;
 - no vault files and no changelog directories: keep goal, plan, success criteria, QA state, and the
   regression ledger as one in-context checklist; plan approval is `auto-approved` as below;
+- no role fan-out: the conductor frames, builds, and verifies in one context, running the builder and
+  auditor stances as separate passes;
+- skip the interview (`reference/interview.md` LIGHT row): state assumptions inline and proceed;
 - run the full suite ONCE at Exact Verify (targeted tests while building); evidence is that one green
   run plus the final diff reconciliation - do not repeat `git status`/`git diff --check` sweeps;
 - skip `commit-gate.sh`, `qa-gate.sh`, rules-file discovery, and board emits.
 
-Everything else still applies: plan before build, red-first for bugs, smallest correct change, diff
-reconciliation, regression ledger re-runs, adversarial final verify. A persistent user workspace uses
-the full protocol below unchanged.
+**STANDARD** (default when LIGHT conditions do not all hold) - the full five-gate protocol below,
+fresh context per role.
+
+**DEEP** - STANDARD plus the conditional plan attack (`## Escalation (conditional plan attack;
+optional)`), selected up front when its triggers are already visible at Frame: under-specified,
+wide-blast-radius, security/data/concurrency, or latent-correctness-heavy work. Record the trigger
+as usual; DEEP also unlocks the unlimited interview rounds in `reference/interview.md`.
+
+**Upgrade is one-way: LIGHT -> STANDARD (-> DEEP).** Upgrade the moment any of these fires:
+production/domain ambiguity surfaces, the grounded change reaches past its explicit target (blast
+radius), or the Build->Verify loop enters its second red iteration. Record the trigger, create the
+vault per `## Run setup`, and continue. Never downgrade mid-run - `SKILL.md`'s no-inline-shortcut
+rule applies to tiers too.
+
+**Ephemeral workspace (auto-LIGHT).** Detect once at Frame: single-task container/CI/benchmark
+checkout - no `.supergoal/`, no existing `docs/changelog/`, no other work in flight, no later reader
+of run artifacts. The vault/worktree machinery has no consumer, so LIGHT applies with the worktree
+also dropped.
+
+Everything else still applies in every tier: plan before build, red-first for bugs, smallest correct
+change, diff reconciliation, regression ledger re-runs, adversarial final verify. A persistent user
+workspace on STANDARD/DEEP uses the full protocol below unchanged.
 
 ## DEBUG hidden-contract gate - a green repro is not done
 
@@ -73,7 +101,8 @@ run the roles collapse, but the gate does not:
 
 ## Run setup - before any file mutation
 
-Ephemeral workspace (see fast path above): skip this section's worktree and vault-file setup.
+LIGHT tier (see `## Tier selection`): skip this section's vault-file setup; keep the worktree unless
+the workspace is ephemeral.
 
 For any GREENFIELD / DEBUG / LEGACY code edit, first resolve the source/base branch and
 target/integration branch. Prefer repo policy or user-provided refs; ask if either is ambiguous. Then

@@ -6,10 +6,10 @@
 set -u
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-EMIT="$ROOT/templates/observability/sg-emit.sh"
 PASS=0
 FAIL=0
 . "$ROOT/tests/support/contract.sh"
+EMIT="$SKILL_ROOT/templates/observability/sg-emit.sh"
 
 echo "=================================================================="
 echo " /supergoal OBSERVABILITY (Board state protocol) contract"
@@ -17,8 +17,8 @@ echo "=================================================================="
 
 # Files exist.
 [ -f "$EMIT" ] && pass_check "sg-emit helper exists" || fail_check "sg-emit helper exists" "$EMIT"
-[ -f "$ROOT/templates/observability/heartbeat.schema.json" ] && pass_check "heartbeat schema exists" || fail_check "heartbeat schema exists"
-[ -f "$ROOT/reference/observability.md" ] && pass_check "observability reference exists" || fail_check "observability reference exists"
+[ -f "$SKILL_ROOT/templates/observability/heartbeat.schema.json" ] && pass_check "heartbeat schema exists" || fail_check "heartbeat schema exists"
+[ -f "$SKILL_ROOT/reference/observability.md" ] && pass_check "observability reference exists" || fail_check "observability reference exists"
 
 # Skip the behavioral checks gracefully if jq is unavailable (helper itself degrades to no-op).
 if ! command -v jq >/dev/null 2>&1; then

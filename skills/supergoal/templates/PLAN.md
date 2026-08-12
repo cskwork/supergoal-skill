@@ -9,6 +9,10 @@ dated `## Amendment`.
 - Status: pending | approved-by-user | auto-approved
 - Record: <timestamp; the user's OK verbatim, or "autonomous run (<harness-eval|background|pre-authorized>): auto-approved">
 
+## Interview
+
+- <question -> chosen answer or approved assumption -> the decision it drove; or one line stating why the skip was safe>
+
 ## Intent
 
 - Goal / constraints / tradeoffs / rejected approaches:

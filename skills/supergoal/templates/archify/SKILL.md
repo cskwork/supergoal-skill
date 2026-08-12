@@ -1,6 +1,6 @@
 ---
 name: archify
-description: Create professional architecture, workflow, sequence, data-flow, and lifecycle/state diagrams as standalone HTML...
+description: Create architecture, workflow, sequence, data-flow, and lifecycle/state diagrams as self-contained HTML with inline SVG, dark/light themes, and PNG/JPEG/WebP/SVG export.
 ---
 
 

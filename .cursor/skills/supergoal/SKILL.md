@@ -13,7 +13,7 @@ Unless explicitly invoked, pure brainstorming and user-driven step-by-step work 
 `.supergoal/rules/RULES.md` if present. Honor it across phases as top-priority preference, but rules never
 weaken safety gates. Create/edit it only when the user explicitly asks (`reference/rules.md`). Check only
 the repo root (`.supergoal/rules/RULES.md`); do not tree-search for it, and skip the check entirely in an
-ephemeral single-task workspace (see role-loop fast path).
+ephemeral single-task workspace (auto-LIGHT tier; see role-loop `## Tier selection`).
 
 ## Core principles
 
@@ -23,6 +23,7 @@ ephemeral single-task workspace (see role-loop fast path).
   quality: polished user-facing UI is baseline correctness.
 - GREENFIELD / DEBUG / LEGACY code changes use Before/After Eval before Build: prove before, target after, and delta with trusted commands (`reference/delivery-gate.md`).
 - Ask only when genuinely ambiguous; resolve code-answerable questions by reading the code.
+- Report for humans: outcome first, Simplified Technical English prose, the project's own vocabulary (`reference/reporting.md`); machine-checked markers stay verbatim.
 - Docs language: for persistent repo docs (`docs/**`, run vaults, `.domain-agent/**`, ADR/spec/changelog), match the target repo's dominant prose language; mixed/none -> the user's language. Keep identifiers, paths, commands, and machine-checked anchors in canonical English so checks keep matching.
 - DEBUG done-bar: a green reported-repro is NOT done. Before commit, print three literal lines and
   satisfy them - `GATE.owner=` the invariant-owning frame (for a raised exception: the frame that RAISES
@@ -57,6 +58,11 @@ on assumption. Full contract: `reference/role-loop.md`.
 | improve the architecture / find refactoring opportunities / 구조 개선 / draw · diagram · 그려 (arch·flow·sequence·state) | ARCHITECTURE | draw-only ask: render self-contained HTML via `reference/archify.md`, deliver the `.html`, stop. Else friction survey -> candidates -> grill the pick -> route to LEGACY/WAYFINDER (`reference/arch.md`) |
 | test harness/skill effectiveness / with vs without / does the skill help / measure skill lift | HARNESS-EVAL | `reference/harness-eval.md` |
 | turn repeated work into a reusable skill | SKILL-MINE | `reference/skill-mine.md` |
+
+**Tier (code modes; state it with the mode line).** GREENFIELD / DEBUG / LEGACY also declare a tier -
+LIGHT (explicit spec + narrow blast radius: state in context, no vault, no role fan-out) / STANDARD
+(default full loop) / DEEP (STANDARD + plan attack) - per `reference/role-loop.md` `## Tier selection`.
+User words "quick"/"light" or "thorough"/"deep" override detection; upgrade is one-way, never downgrade.
 
 The no-code/utility/planning modes - **QA-ONLY**, REVIEW-ONLY, ARCHITECTURE, WAYFINDER, PROTOTYPE, TEACH,
 LEARN-DOMAIN, HARNESS-EVAL, SKILL-MINE - write no product code by default and confirm before installing
@@ -103,6 +109,7 @@ reviewer=`agents/code-reviewer.md`, security=`agents/security-reviewer.md` (othe
 | `reference/domain-context.md` | repo-local Domain Brief |
 | `reference/debugging.md` | DEBUG: hypothesis-ledger diagnose loop |
 | `reference/interview.md` | interview: ambiguity (what) + blast-radius confirm (approach, tiered) |
+| `reference/reporting.md` | any user-facing message: plan/spec presentation, interview questions, verdicts, final report |
 | `reference/delivery-gate.md`, `templates/GOAL.md`, `templates/PLAN.md`, `templates/QA.md`, `templates/R-LOOP.md`, `templates/Z-DONE.md`, `templates/run-state.json`, `templates/commit-gate.sh` | run vault file set + Before/After Eval + resumable run state + commit gate for GREENFIELD / DEBUG / LEGACY code changes |
 | `reference/wayfinder.md` | WAYFINDER: issue map -> vertical tickets -> optional EARS/user-story depth -> blockers -> next frontier; also GREENFIELD internal Frontier Map for broad/foggy new builds |
 | `reference/research.md` | WAYFINDER research-needed tickets; docs/API/source facts that need high-trust cited evidence |

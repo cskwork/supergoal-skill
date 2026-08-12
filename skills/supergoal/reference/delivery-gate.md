@@ -9,6 +9,8 @@ Before/After Eval is required for every GREENFIELD / DEBUG / LEGACY code-project
 run vault must contain `GOAL.md` (from `templates/GOAL.md`), an approved `PLAN.md`
 (from `templates/PLAN.md`), `QA.md` with `## Before` filled (from `templates/QA.md`), and
 `run-state.json` from `templates/run-state.json`. Keep all compact: proof/resume ledgers, not transcripts.
+LIGHT tier (role-loop `## Tier selection`) holds the same fields as its in-context checklist; the
+vault-file form applies to STANDARD/DEEP.
 
 Required fields and where each lives:
 

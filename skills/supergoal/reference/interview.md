@@ -90,7 +90,7 @@ complete the vault `GOAL.md` `## Spec` and `## Success Criteria` BEFORE writing 
 behavior criteria in Given/When/Then form (`templates/GOAL.md`). How the spec meets the user:
 
 - **STANDARD:** present the spec summary and acceptance criteria together with the plan at the
-  existing plan-approval gate - one user touchpoint, no extra round.
+  existing plan-approval gate; no extra round.
 - **DEEP:** present the spec for confirmation BEFORE plan grounding starts; grounding and freeze
   proceed only from the confirmed spec. A post-grounding blast-radius answer that changes the spec
   re-presents only the delta with the blast-radius confirm. AFK: proceed on stated assumptions

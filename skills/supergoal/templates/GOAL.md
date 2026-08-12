@@ -15,8 +15,10 @@ unchecked criteria tagged `(surfaced: ...)`. Ambiguous/product-changing candidat
 
 ## Success Criteria
 
-Each item is falsifiable and names its verification method.
+Each item is falsifiable and names its verification method. Prefer Given/When/Then for behavior
+criteria (spec-out: `reference/interview.md`).
 
+- [ ] Given <precondition>, when <action>, then <observable result> - verify: `<command | API call | browser step | diff check>`
 - [ ] <behavior, falsifiable> - verify: `<command | API call | browser step | diff check>`
 - [ ] <surfaced behavior> - verify: `<test file::test name>` (surfaced: implied by <reason it is
   required though the prompt never stated it>)

@@ -1,6 +1,6 @@
 ---
 name: supergoal
-description: Use for "fix this bug", "add/build/plan/spec this feature", "prototype this", "QA / verify", "code review", "improve architecture", "teach/explain", "learn codebase", "make skill", or "eval a harness".
+description: Objective-driven dev router. Use for "fix bug", "add feature", "prototype", "QA/verify", or "code review".
 ---
 
 # About

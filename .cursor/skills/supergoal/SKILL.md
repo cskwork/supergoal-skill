@@ -59,10 +59,9 @@ on assumption. Full contract: `reference/role-loop.md`.
 | test harness/skill effectiveness / with vs without / does the skill help / measure skill lift | HARNESS-EVAL | `reference/harness-eval.md` |
 | turn repeated work into a reusable skill | SKILL-MINE | `reference/skill-mine.md` |
 
-**Tier (code modes; state it with the mode line).** GREENFIELD / DEBUG / LEGACY also declare a tier -
-LIGHT (explicit spec + narrow blast radius: state in context, no vault, no role fan-out) / STANDARD
-(default full loop) / DEEP (STANDARD + plan attack) - per `reference/role-loop.md` `## Tier selection`.
-User words "quick"/"light" or "thorough"/"deep" override detection; upgrade is one-way, never downgrade.
+**Tier (code modes; state it with the mode line).** GREENFIELD / DEBUG / LEGACY also declare
+LIGHT / STANDARD / DEEP per `reference/role-loop.md` `## Tier selection`. User words
+"quick"/"light" or "thorough"/"deep" override detection; upgrade is one-way, never downgrade.
 
 The no-code/utility/planning modes - **QA-ONLY**, REVIEW-ONLY, ARCHITECTURE, WAYFINDER, PROTOTYPE, TEACH,
 LEARN-DOMAIN, HARNESS-EVAL, SKILL-MINE - write no product code by default and confirm before installing

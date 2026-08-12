@@ -1,6 +1,7 @@
 {
   "schema_version": 3,
   "mode": "GREENFIELD|DEBUG|LEGACY",
+  "tier": "LIGHT|STANDARD|DEEP",
   "branches": {
     "source_base_branch": "",
     "target_integration_branch": "",

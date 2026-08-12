@@ -26,7 +26,7 @@ Generic no-user coding ambiguity uses the most conservative, reversible default 
 
 ## Tier selection - LIGHT / STANDARD / DEEP
 
-Sized packs: pay only for the workflow the task needs. Select once at Frame, announce tier + reason
+Select once at Frame, announce tier + reason
 in one line next to the mode line, and record it (`run-state.json` `tier` for STANDARD/DEEP; the
 in-context checklist for LIGHT). A user word overrides detection: "quick"/"light" -> LIGHT,
 "thorough"/"deep" -> DEEP.
@@ -35,8 +35,8 @@ in-context checklist for LIGHT). A user word overrides detection: "quick"/"light
 files/symbols, no production/domain ambiguity, no migration/security/concurrency surface. Keep the
 SAME five gates but hold their state in context instead of files:
 
-- keep the run worktree for code edits in a persistent workspace (checkout protection stays); an
-  ephemeral workspace (below) works on the current checkout directly, committing only if asked;
+- keep the run worktree for code edits in a persistent workspace; an ephemeral workspace (below)
+  works on the current checkout directly, committing only if asked;
 - no vault files and no changelog directories: keep goal, plan, success criteria, QA state, and the
   regression ledger as one in-context checklist; plan approval is `auto-approved` as below;
 - no role fan-out: the conductor frames, builds, and verifies in one context, running the builder and
@@ -62,8 +62,7 @@ rule applies to tiers too.
 
 **Ephemeral workspace (auto-LIGHT).** Detect once at Frame: single-task container/CI/benchmark
 checkout - no `.supergoal/`, no existing `docs/changelog/`, no other work in flight, no later reader
-of run artifacts. The vault/worktree machinery has no consumer, so LIGHT applies with the worktree
-also dropped.
+of run artifacts. LIGHT applies with the worktree also dropped.
 
 Everything else still applies in every tier: plan before build, red-first for bugs, smallest correct
 change, diff reconciliation, regression ledger re-runs, adversarial final verify. A persistent user

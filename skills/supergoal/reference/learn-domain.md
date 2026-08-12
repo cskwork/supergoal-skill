@@ -74,7 +74,7 @@ State to the user, in one short message:
 - the proposed bounded-context list (top-N this pass) and what is deferred,
 - the learning budget.
 
-Proceed unless the user narrows or defers. LEARN-DOMAIN ships nothing; the real risk is wrong scope.
+Proceed unless the user narrows or defers.
 
 ## Step 3 - Map (Aider repo-map pattern)
 
@@ -86,13 +86,12 @@ Build a concise map of important symbols, not full files:
 - Write to `code-map.md` under `## Key Symbols (signatures)` using
   `path :: Owner.symbol(sig) -> ret    # one-line purpose`.
 
-Signatures plus purpose are enough to route. Stay inside the per-pass budget.
+Stay inside the per-pass budget.
 
 ## Step 4 - Deepen (bounded-context fan-out, bottom-up)
 
 Fan out wide-and-shallow: one fresh read-only `explore`/`architect` agent per bounded context (Spring
-layered slice, DDD context, or service). This is the only mode besides GREENFIELD that fans out by
-default, because comprehension is genuinely parallel and read-only.
+layered slice, DDD context, or service).
 
 Each agent builds summaries **bottom-up** and grounded in business meaning:
 
@@ -107,7 +106,7 @@ Caps from `domain-context.md` apply: keep each file narrow; split when a file sp
 
 ## Step 5 - Ground (execution-grounded verification - the key gate)
 
-Static self-review does not predict accuracy. Prove load-bearing facts by running something:
+Prove load-bearing facts by running something:
 
 1. For each invariant and each flow's load-bearing claim, generate a **probe**: a scratch test,
    assertion, focused script, or a targeted command from `test-map.md` that would pass iff the claim

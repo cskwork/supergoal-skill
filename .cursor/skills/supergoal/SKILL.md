@@ -1,6 +1,6 @@
 ---
 name: supergoal
-description: Objective-driven dev router. Use for "fix bug", "add feature", "prototype", "QA/verify", "code review", or "teach/explain".
+description: Objective-driven dev router. Use for "fix bug", "add feature", "build a new app", "prototype", "QA/verify", "code review", "teach/explain", "map this codebase", "break this into tickets", "improve the architecture", "draw a diagram", "measure skill lift", or "turn this into a skill".
 ---
 
 # About
@@ -12,7 +12,7 @@ Unless explicitly invoked, pure brainstorming and user-driven step-by-step work 
 **Standing rules (read first, every mode).** Before classifying the mode, read
 `.supergoal/rules/RULES.md` if present. Honor it across phases as top-priority preference, but rules never
 weaken safety gates. Create/edit it only when the user explicitly asks (`reference/rules.md`). Check only
-the repo root (`.supergoal/rules/RULES.md`); do not tree-search for it, and skip the check entirely in an
+the repo root (`.supergoal/rules/RULES.md`), and skip the check entirely in an
 ephemeral single-task workspace (auto-LIGHT tier; see role-loop `## Tier selection`).
 
 ## Core principles
@@ -53,7 +53,7 @@ on assumption. Full contract: `reference/role-loop.md`.
 | spec / requirements first / break down / tickets / roadmap / big vague effort / frontier / what should we do first | WAYFINDER | map the destination, optional ticket-depth requirements, ticket graph, blockers, and next frontier; no product code by default (`reference/wayfinder.md`) |
 | prototype / spike / try variants / prove approach before build | PROTOTYPE | throwaway proof that answers one question, then delete/quarantine or route to delivery (`reference/prototype.md`) |
 | explain / teach / how does X work (no code) | TEACH | stateful `teach/<topic>/` workspace (`reference/teach.md`); use an Archify diagram by default for structure/flow; lessons must pass `node templates/teach-lesson-gate.mjs` |
-| learn / onboard / map this codebase (persist a wiki) | LEARN-DOMAIN | Survey -> Map -> Ground -> Onboard a `.domain-agent/` wiki (`reference/learn-domain.md`; gate `learn-grounding-gate.mjs`) |
+| learn / onboard / map this codebase (persist a wiki) | LEARN-DOMAIN | Survey -> Map -> Ground -> Onboard a `.domain-agent/` wiki (`reference/learn-domain.md`; gate `templates/learn-grounding-gate.mjs`) |
 | QA / verify / 검증만 / compare data (no code) | QA-ONLY | Impact Matrix QA (`reference/qa-only.md`; gate `templates/qa-only-gate.sh`) |
 | review / audit this code/diff/PR (no fixes) | REVIEW-ONLY | `reference/review-only.md` |
 | improve the architecture / find refactoring opportunities / 구조 개선 / draw · diagram · 그려 (arch·flow·sequence·state) | ARCHITECTURE | draw-only ask: render self-contained HTML via `reference/archify.md`, deliver the `.html`, stop. Else friction survey -> candidates -> grill the pick -> route to LEGACY/WAYFINDER (`reference/arch.md`) |

@@ -2,7 +2,6 @@
 name: debugger
 description: DEBUG-mode root-cause analyst — reproduces the failure, runs hypothesis-driven diagnosis to one confirmed cause, and writes a minimal-fix plan. Alt persona for deep causal tracing — tracer.
 tools: Read, Grep, Glob, Bash, Write
-model: opus
 ---
 
 ROLE: Debugger (DEBUG mode). You run in isolation; you cannot see other agents' transcripts. Operate

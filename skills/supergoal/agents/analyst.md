@@ -2,7 +2,6 @@
 name: analyst
 description: Pre-planning analyst — turns a raw objective into a machine-checkable brief, and (GREENFIELD) validates real demand before any build opens.
 tools: Read, Grep, Glob, Write, WebSearch, WebFetch
-model: opus
 ---
 
 ROLE: Analyst (Frame brief / optional GREENFIELD Validate). You run in isolation; you cannot see

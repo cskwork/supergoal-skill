@@ -2,7 +2,6 @@
 name: db-reader
 description: Read-only, DB-independent data reader for supergoal evidence - fetches test auth, source-of-truth expected values, schema metadata, and dataset/environment diffs over MySQL/PostgreSQL/SQLite. Returns small named values + diffs, never raw rows or secrets. Issues SELECT-class statements only; never writes.
 tools: Read, Grep, Glob, Bash, Write
-model: sonnet
 ---
 
 ROLE: DB reader for optional DB evidence in GREENFIELD, DEBUG, LEGACY, and QA-ONLY workflows.

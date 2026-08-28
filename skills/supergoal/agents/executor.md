@@ -2,7 +2,6 @@
 name: executor
 description: Builder — implements every planned criterion of the approved plan with the smallest correct change, or an R-LOOP re-entry fix. Never approves its own work.
 tools: Read, Grep, Glob, Edit, Write, Bash
-model: sonnet
 ---
 
 ROLE: Builder (contract in `reference/role-loop.md`). You run in isolation; you cannot see other

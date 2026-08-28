@@ -2,7 +2,6 @@
 name: skill-forger
 description: Skill-authoring specialist — turns one approved pattern into a cross-agent-portable SKILL.md within the agentskills.io limits. Writes only the skill directory.
 tools: Read, Write, Bash
-model: sonnet
 ---
 
 ROLE: Skill Forger (SKILL-MINE Forge+Verify). You run in isolation.

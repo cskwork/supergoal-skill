@@ -4,7 +4,7 @@
 
 **목표 하나를 주면, 가장 작은 올바른 변경을 만들고 실제 테스트로 확인합니다.**
 새 도구를 따로 배울 필요는 없습니다. 저장소를 클론하고 스킬 디렉터리에 연결한 뒤 `/supergoal <목표>`.
-랜딩 페이지: **[cskwork.github.io/supergoal-skill](https://cskwork.github.io/supergoal-skill/)**.
+랜딩 페이지: [cskwork.github.io/supergoal-skill](https://cskwork.github.io/supergoal-skill/).
 
 `/supergoal`은 단순히 "바로 수정"하기에는 놓칠 것이 많은 무거운 코딩 목표를 위한 스킬입니다. 목표 하나를
 받아 알맞은 작업 경로를 고르고, 코드 delivery 작업에서는 새 컨텍스트 역할을 사용해 필요한 만큼만 고친 뒤,
@@ -20,18 +20,21 @@
    넓은 새 앱 build는 GREENFIELD에 남기되, 먼저 `wayfinder/` Frontier Map으로 한 개 세로 슬라이스만 delivery에 넣습니다.
 2. **필요한 가이드만 읽습니다.** 루트 `SKILL.md`는 작게 유지하고, 각 경로가 필요한 `reference/`와
    `agents/` 파일만 로드합니다.
-3. **역할마다 새 컨텍스트, 디스패치는 최소로.** 코드 delivery는 다섯 게이트 - Frame -> Plan approval
-   -> Build -> Exact Verify/QA -> Finalize - 로 돌고, 반복(iteration)당 fresh-context 빌더 1회 +
-   최종 auditor 1회를 사용합니다. 브라우저/CLI 작업만 auditor 앞에 증거 전용 tester 1회를 추가합니다.
-   Frame이 스펙/엣지케이스 커버리지를 계획에 열거하고, 빌더는 승인된 계획만 구현하고, tester는 실행
-   증거만 만들며, auditor가 실제 테스트 재실행·최종 판정·`GOAL.md` 체크·`R-LOOP.md`를 소유합니다.
-   선택적 추가 디스패치는 위험/모호 작업에서만 켜지는 사전 계획 공격(plan attack) 하나뿐입니다.
-   워크플로 무게는 티어로 나눕니다(swarm-forge식 sized packs): 명시적 스펙의 좁은 작업은 LIGHT(같은
-   다섯 게이트, 상태는 컨텍스트에 유지, vault/역할 팬아웃 없음), 기본은 STANDARD(전체 루프), DEEP은
-   plan attack과 무제한 명확화 인터뷰를 더합니다. "quick"/"thorough" 같은 사용자 말이 감지를
-   오버라이드하고, 승격은 단방향입니다. 비자명한 작업은 스펙부터 확정합니다 - 인터뷰 답이 `PLAN.md`
-   이전에 `GOAL.md` 스펙(Given/When/Then 기준)을 완성합니다. 사용자 대면 보고는
-   `reference/reporting.md`를 따릅니다: 결론 먼저, Simplified Technical English, 프로젝트 고유 용어.
+3. **역할마다 새 컨텍스트, 디스패치는 최소로.** 코드 delivery는 Frame, Plan approval, Build,
+   Exact Verify/QA, Finalize 다섯 게이트로 돌아갑니다. 반복(iteration)마다 fresh-context 빌더 1회와
+   최종 auditor 1회를 씁니다. 브라우저/CLI 작업에만 auditor 앞에 증거 전용 tester 1회를 추가합니다.
+   Frame이 스펙과 엣지케이스 커버리지를 계획에 열거합니다. 빌더는 승인된 계획만 구현합니다. tester는
+   실행 증거만 만듭니다. auditor가 실제 테스트 재실행, 최종 판정, `GOAL.md` 체크, `R-LOOP.md`를
+   소유합니다. 선택적 추가 디스패치는 위험하거나 모호한 작업에서만 켜지는 사전 계획 공격(plan attack)
+   하나뿐입니다.
+
+   워크플로 무게는 세 티어로 나눕니다. 스펙이 명시된 좁은 작업은 LIGHT로, 같은 다섯 게이트를 돌되
+   상태를 컨텍스트에 유지하고 vault나 역할 팬아웃을 쓰지 않습니다. 기본은 STANDARD로 전체 루프를
+   돕니다. DEEP은 plan attack과 횟수 제한 없는 명확화 인터뷰를 더합니다. 사용자가 "quick"이나
+   "thorough"라고 말하면 자동 감지를 덮어쓰고, 승격은 한 방향으로만 일어납니다. 비자명한 작업은 스펙부터
+   확정합니다. 인터뷰 답이 `PLAN.md`보다 먼저 `GOAL.md` 스펙(Given/When/Then 기준)을 완성합니다.
+   사용자 대면 보고는 `reference/reporting.md`를 따릅니다. 결론 먼저, Simplified Technical English,
+   프로젝트 고유 용어.
 4. **전/후 평가를 남깁니다.** 변경 전 상태와 변경 후 목표를 먼저 적고, 완료 약속과 재개 가능한
    `run-state.json`, 검증 명령 목록을 남겨서 "테스트 통과"라는 말로만 끝내지 않게 합니다.
 5. **실제 프로젝트 기준으로 증명합니다.** 보이는 테스트가 통과해도 그대로 믿지 않고, 요청/티켓/README/
@@ -42,15 +45,15 @@
 
 ## 일반 실행보다 더해지는 것
 
-강력한 모델이 실제 요구사항과 문서를 읽고 작업하는 것이 기준입니다. `/supergoal`은 일반 실행이 바쁜 작업 중에
-건너뛰기 쉬운 부분만 보강합니다: 스펙 커버리지와 엣지케이스까지 미리 열거해 사용자가 검토하는 goal plan,
-green 스위트로만 종료할 수 있는 빌더, 실제 증명 계층으로 결과를 반증하려 드는 독립 검증자 - 그리고 그
-증거를 기록으로 남깁니다. 코드 delivery로 호출된 `/supergoal`은 인라인 단축 실행으로 낮추지 않고
-role-loop를 사용합니다.
+강력한 모델이 실제 요구사항과 문서를 읽고 작업하는 것이 기준입니다. `/supergoal`은 일반 실행이 바쁜 작업
+중에 건너뛰기 쉬운 부분만 보강합니다. 스펙 커버리지와 엣지케이스까지 미리 열거해 사용자가 검토하는 goal
+plan. green 스위트로만 종료할 수 있는 빌더. 프로젝트의 실제 테스트와 문서로 결과를 반증하려 드는 독립
+검증자. 그리고 그 증거를 기록으로 남깁니다. 코드 delivery로 호출된 `/supergoal`은 인라인 단축 실행으로
+낮추지 않고 role-loop를 사용합니다.
 
 각 역할은 `agents/`에 파일로 들어 있습니다. 그래서 Claude Code, Codex, agy 같은 여러 에이전트 CLI에서 특정
-harness에 묶이지 않고 역할을 나눠 실행할 수 있습니다. Frame -> Plan approval -> Build -> Exact Verify/QA ->
-Finalize가 필수 핵심이고, 사전 계획 공격은 요구사항이 충분히 드러나지 않은 작업에서만 쓰는 확장입니다.
+harness에 묶이지 않고 역할을 나눠 실행할 수 있습니다. Frame, Plan approval, Build, Exact Verify/QA,
+Finalize가 필수 핵심입니다. 사전 계획 공격은 요구사항이 충분히 드러나지 않은 작업에서만 쓰는 확장입니다.
 진행 에이전트는 가볍게 유지되고, 역할별 상세 가이드는 서브에이전트 안에서만 로드됩니다. 독립적인 작업
 단위는 병렬로 돌립니다.
 
@@ -67,9 +70,9 @@ Finalize가 필수 핵심이고, 사전 계획 공격은 요구사항이 충분�
 - **진짜 모호할 때만 질문.** 코드로 답할 수 있는 내용은 먼저 코드를 읽어 해결합니다.
 - **멈춰야 할 곳에서 멈춤.** 파괴적이거나 되돌릴 수 없는 작업은 동의를 구합니다. 실제 테스트가 통과하지
   못하면 그대로 보고하고, 통과한 것처럼 말하지 않습니다.
-- **상시 규칙(먼저 읽음).** 대상 프로젝트에 `.supergoal/rules/RULES.md`가 있으면 supergoal은 매 실행 전에 읽고 모든
-  모드에서 최우선 선호로 따릅니다 - 단 안전 게이트는 약화하지 않습니다. 요청할 때만 생성하며, gitignore되고
-  그 외에는 그대로 둡니다(`reference/rules.md`).
+- **상시 규칙(먼저 읽음).** 대상 프로젝트에 `.supergoal/rules/RULES.md`가 있으면 supergoal은 매 실행 전에
+  읽고 모든 모드에서 최우선 선호로 따릅니다. 단 안전 게이트는 약화하지 않습니다. 요청할 때만 생성하며,
+  gitignore되고 그 외에는 그대로 둡니다(`reference/rules.md`).
 
 ## 모드
 
@@ -126,8 +129,8 @@ flowchart TD
 
 **기본 루프(GREENFIELD / DEBUG / LEGACY)는 이렇게 움직입니다:**
 
-1. **Frame**: `GOAL.md`를 가장 먼저 씁니다 - 사용자 요청 원문 인용 + 정제된 스펙 + 반증 가능한
-   Success Criteria 체크박스(웹앱이면 브라우저 QA 케이스 포함). 발견(discovery)은 이 단계가 한 번만
+1. **Frame**: `GOAL.md`를 가장 먼저 씁니다. 사용자 요청 원문 인용, 정제된 스펙, 반증 가능한
+   Success Criteria 체크박스(웹앱이면 브라우저 QA 케이스 포함)를 담습니다. 발견(discovery)은 이 단계가 한 번만
    수행합니다: 사용자 요청/티켓, README, 설계/API 문서, 저장소/데이터 규칙을 읽고 스펙 전체 커버리지와
    엣지케이스/복원력 기준까지 열거해, 다음 게이트에서 사용자가 함께 검토하게 합니다. 이어서 그 파일만
    읽고도 구현할 수 있는 `PLAN.md`(단계, `## Acceptance checklist`, 사용할 도구/스킬, 검증 전략)를
@@ -139,14 +142,14 @@ flowchart TD
    첫 번째 unblocked frontier 티켓의 acceptance check만 delivery `GOAL.md` / `PLAN.md`로 옮깁니다.
    사용자에게 보이는 route는 GREENFIELD로 유지합니다.
 3. **Build**: 새 컨텍스트의 구현자 1명이 `PLAN.md`만 읽고 가장 작은 올바른 변경을 만듭니다. 버그는 실패
-   테스트로 먼저 재현합니다. 계획의 `## Acceptance checklist`에 있는 모든 기준 - Frame에서 발견해 둔
-   엣지케이스/복원력 기준 포함 - 을 구현하고(스펙 문서 재탐색은 하지 않음), 스위트가 green일 때만
-   종료합니다.
+   테스트로 먼저 재현합니다. 계획의 `## Acceptance checklist`에 있는 모든 기준을 구현합니다. 여기에는
+   Frame에서 발견해 둔 엣지케이스와 복원력 기준도 들어갑니다. 스펙 문서를 다시 탐색하지는 않고,
+   스위트가 green일 때만 종료합니다.
 4. **Exact Verify/QA**: 브라우저/CLI 작업은 새 컨텍스트 tester가 실제 시나리오와 증거를 먼저 만들고,
    새 컨텍스트 auditor가 그 증거를 독립적으로 감사합니다. auditor는 실제 비브라우저 테스트를 다시
    돌리고, 구현자의 git diff를 `GOAL.md`와 대조해 충족 기준과 최종 판정을 소유합니다. 비브라우저 작업은
    auditor만 실행합니다. 미충족 기준은 auditor가 `R-LOOP.md`에 타임스탬프 섹션으로 적고 구현자를 다시
-   띄웁니다 - 이 루프백이 유일한 수정 경로입니다.
+   띄웁니다. 이 루프백이 유일한 수정 경로입니다.
 5. **Finalize(완료)**: `GOAL.md`의 모든 체크박스가 채워졌을 때만 작업 브랜치와 완료 시각을 담은
    `Z-<날짜>.md`를 만들고, commit gate를 통과한 뒤 사용자 수락 후 병합합니다. 어떤 명령으로 검증했는지
    함께 보고합니다. Build->Verify 루프는 기본 3회 상한을 두고, 상한에 닿으면 반성 기록을 남기고
@@ -176,11 +179,10 @@ data/API prototype은 가벼운 비시각 경로를 유지합니다.
 
 ## Board (선택형 실시간 대시보드)
 
-동시에 실행되는 에이전트의 진행 상황을 실시간으로 볼 수 있습니다. `bash tui/launch.sh &`는 브라우저에서 보는
-Textual 기반 대시보드를 열고, 각 에이전트의 모드와 단계(Frame -> Plan approval -> Build ->
-Exact Verify/QA -> Finalize, 필요하면 plan attack)를 repo / branch / worktree별 작업 보드로 보여줍니다.
-브랜치는 참고 정보일 뿐 잠금이
-아니므로 여러 에이전트가 같은 브랜치를 공유할 수 있습니다.
+동시에 실행되는 에이전트의 진행 상황을 실시간으로 볼 수 있습니다. `bash tui/launch.sh &`는 브라우저에서
+보는 Textual 기반 대시보드를 엽니다. 각 에이전트의 모드와 단계(Frame, Plan approval, Build,
+Exact Verify/QA, Finalize, 그리고 필요할 때만 plan attack)를 repo, branch, worktree별 작업 보드로
+보여줍니다. 브랜치는 참고 정보일 뿐 잠금이 아니므로 여러 에이전트가 같은 브랜치를 공유할 수 있습니다.
 
 Board는 관찰 전용입니다. 켜지 않아도 모든 모드는 그대로 동작하고, 켜져 있어도 실행을 막거나 통과시키지
 않습니다. 활성화하면 진행 에이전트가 단계 전환마다 `sg-emit`(`templates/observability/`)을 호출해
@@ -242,13 +244,13 @@ examples/           vendored된 경우에만 있는 선택 예제; 없으면 run
 `docs/experiments/2026-07-01-roleloop-coverage-fix-claude-ab/FINDINGS.md`와
 `docs/harness-eval-explained.md`를 참고하세요. 현재 스킬에 반영된 결론은 단순합니다. 명시 스펙이 있는
 과제에서는 요청/문서 확인 패스가 한 번에 처리하는 baseline을 이겼고, 항상 켜진 역할 분담보다 더 단순한 핵심
-장치였습니다. 자체 생성 검증기(proxy)에 맞춰 점수를 맞추면 Goodhart 현상으로 오히려 품질이 낮아질 수
-있습니다. 다음 증거 범위는 합성 fixture가 아니라
+장치였습니다. 자체 생성 검증기(proxy)에 맞춰 점수를 맞추면 결과가 그 검증기에 최적화되어 오히려 품질이
+낮아질 수 있습니다. 다음에 증명할 것은 합성 fixture가 아니라
 `docs/changelog/2026-07/02-production-adoption/plan.md`의 프로덕션 채택 계획입니다. 여기서는 심링크
 배포, 실제 문구 트리거 정확도, 프로덕션 파일럿의 날짜·모드·격차·게이트 결과를 추적합니다.
 과거 예제는 `examples/` 아래에 vendored될 수 있고, 없으면 canonical verifier가 그 선택 단계를 건너뜁니다.
 
-## Harness Eval 레퍼런스
+## Harness eval 레퍼런스
 
 HARNESS-EVAL에서 재사용하는 샘플 케이스는 RevFactory의 `claude-code-harness`에서 가져왔습니다:
 https://github.com/revfactory/claude-code-harness/
@@ -259,11 +261,10 @@ https://github.com/revfactory/claude-code-harness/
 
 ## 크레딧
 
-컨셉과 워크플로는 cskwork의 **oh-my-symphony**에서 차용했습니다
+컨셉과 워크플로는 cskwork의 oh-my-symphony에서 차용했습니다
 (https://github.com/cskwork/oh-my-symphony). WAYFINDER와 research-depth 아이디어는 Matt Pocock의
 공개 스킬, 특히 research와 skill-writing 패턴에서도 많은 개념을 가져왔습니다. UI/interaction
-prototype은 cskwork의 **superdesign-skill**(https://github.com/cskwork/superdesign-skill)로 연결합니다.
-여러 에이전트 CLI에서 쓸 수 있게 구성했습니다.
+prototype은 cskwork의 superdesign-skill(https://github.com/cskwork/superdesign-skill)로 연결합니다.
 
 ## 라이선스
 

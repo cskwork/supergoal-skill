@@ -25,7 +25,7 @@ the smallest correct change, checks the request and project docs against the rea
    `reference/` and `agents/` files only when needed.
 3. **Keep contexts fresh, keep dispatches few.** Code delivery runs five gates: Frame, Plan approval,
    Build, Exact Verify/QA, Finalize. Each iteration uses one fresh-context builder and one auditor.
-   Browser and CLI work adds one evidence-only tester before the auditor. Frame discovers full-spec and
+   Browser/CLI work adds one evidence-only tester before the auditor. Frame discovers full-spec and
    edge-case coverage into the plan. The builder implements only the approved plan. The tester captures
    execution evidence. The auditor reruns the real tests and owns the verdict, the `GOAL.md` ticks, and
    `R-LOOP.md`. One optional extra dispatch exists: a trigger-gated pre-Build plan attack for risky or

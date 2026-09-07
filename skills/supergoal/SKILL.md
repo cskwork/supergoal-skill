@@ -1,6 +1,6 @@
 ---
 name: supergoal
-description: Objective-driven dev router. Use for "fix bug", "add feature", "build a new app", "prototype", "QA/verify", "code review", "teach/explain", "map this codebase", "break this into tickets", "improve the architecture", "draw a diagram", "measure skill lift", or "turn this into a skill".
+description: Route objective-driven development, verification, planning, "teach/explain", codebase learning, and skill evaluation through the Supergoal workflow. Use when Supergoal is requested or an autonomous delivery workflow is needed.
 ---
 
 # About

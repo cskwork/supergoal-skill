@@ -22,7 +22,7 @@
    `agents/` 파일만 로드합니다.
 3. **역할마다 새 컨텍스트, 디스패치는 최소로.** 코드 delivery는 Frame, Plan approval, Build,
    Exact Verify/QA, Finalize 다섯 게이트로 돌아갑니다. 반복(iteration)마다 fresh-context 빌더 1회와
-   최종 auditor 1회를 씁니다. 브라우저/CLI 작업에만 auditor 앞에 증거 전용 tester 1회를 추가합니다.
+   최종 auditor 1회를 씁니다. 브라우저/CLI 작업만 auditor 앞에 증거 전용 tester 1회를 추가합니다.
    Frame이 스펙과 엣지케이스 커버리지를 계획에 열거합니다. 빌더는 승인된 계획만 구현합니다. tester는
    실행 증거만 만듭니다. auditor가 실제 테스트 재실행, 최종 판정, `GOAL.md` 체크, `R-LOOP.md`를
    소유합니다. 선택적 추가 디스패치는 위험하거나 모호한 작업에서만 켜지는 사전 계획 공격(plan attack)

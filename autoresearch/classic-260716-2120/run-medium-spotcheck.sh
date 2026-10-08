@@ -3,7 +3,7 @@
 # and is supergoal a meaningful improvement vs baseline on feature-add (csstree) and debug
 # (termenv) tasks? 2 tasks x 3 arms, serial, same runner/metrics as the low run.
 set -u
-REPO="/Users/danny/Documents/PARA/Resource/supergoal-skill"
+REPO="${HOME}/Documents/PARA/Resource/supergoal-skill"
 BENCH="/tmp/deep-swe-sg"
 OUT="/tmp/sg-deepswe-eff3"
 

@@ -1,8 +1,8 @@
 [SG-EVAL RUN CONTEXT — applies to every role pass]
 You are one role pass of the "supergoal" delivery harness, driven as separate non-interactive CLI invocations over one shared working tree. You cannot see other passes' transcripts; shared state lives ONLY in the repo and the run vault files.
-- App repo (your working directory): /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/app — a git checkout of github.com/beevik/etree with the default branch `main` at the task's base commit. This checkout IS the isolated run worktree: do NOT create another git worktree; follow the task's branch/commit instructions inside this checkout.
-- Run vault (plan/QA state; OUTSIDE the repo, never commit it): /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault — GOAL.md, PLAN.md, QA.md, R-LOOP.md, run-state.json live there.
-- Autonomous run: no user is available; never ask questions, never wait for confirmation. Anything that would be an `ask-user` gate: choose the most conservative, reversible default and record it in /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/GOAL.md under `## Decision Gates` (resolved).
+- App repo (your working directory): /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/app — a git checkout of github.com/beevik/etree with the default branch `main` at the task's base commit. This checkout IS the isolated run worktree: do NOT create another git worktree; follow the task's branch/commit instructions inside this checkout.
+- Run vault (plan/QA state; OUTSIDE the repo, never commit it): /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault — GOAL.md, PLAN.md, QA.md, R-LOOP.md, run-state.json live there.
+- Autonomous run: no user is available; never ask questions, never wait for confirmation. Anything that would be an `ask-user` gate: choose the most conservative, reversible default and record it in /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/GOAL.md under `## Decision Gates` (resolved).
 - Go build cache: the default cache is not writable in this sandbox; run go commands with `GOCACHE=/tmp/sg-gocache` (e.g. `GOCACHE=/tmp/sg-gocache go test ./...`).
 - Keep the repo clean: commit source/test changes only; no scratch files, logs, or vault content.
 
@@ -35,18 +35,18 @@ Source: shipped reference/role-loop.md role 3, SKILL.md step 4, agents/executor.
 
 ROLE: Edge-case Improver (agents/executor.md; fresh-context improver). You run in isolation; you
 cannot see other passes' transcripts. Build and full-spec improve passes already ran; their state is
-in the repo and in /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault.
+in the repo and in /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault.
 
 - Attack degenerate values (null/nil/empty/boundary), missing/extra fields, duplicate input,
   ordering, idempotency, error/recovery, state/protocol transitions, concurrency, compatibility,
   security side effects, and resource cleanup — against the task requirements above and the current
   implementation.
 - For each gap, apply the same threshold: fix only grounded gaps; do not invent stricter semantics
-  from silence. Ambiguity gets a conservative, reversible default recorded in /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/GOAL.md
+  from silence. Ambiguity gets a conservative, reversible default recorded in /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/GOAL.md
   `## Decision Gates` (autonomous run — no user available).
 - Re-run the targeted tests after every fix (`GOCACHE=/tmp/sg-gocache go test ./...`). Keep the diff
   minimal; no padding, rewrites, or unrelated cleanup.
 - RULES: never weaken a test or gate to make it pass. Do not break passing tests. You do NOT declare
   the work verified.
-- Add one `## Commands` row per fix in /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/QA.md. Commit your work on the task branch before
+- Add one `## Commands` row per fix in /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/QA.md. Commit your work on the task branch before
   finishing.

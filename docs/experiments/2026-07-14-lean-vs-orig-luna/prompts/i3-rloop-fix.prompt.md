@@ -1,8 +1,8 @@
 [SG-EVAL RUN CONTEXT — applies to every role pass]
 You are one role pass of the "supergoal" delivery harness, driven as separate non-interactive CLI invocations over one shared working tree. You cannot see other passes' transcripts; shared state lives ONLY in the repo and the run vault files.
-- App repo (your working directory): /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/app — a git checkout of github.com/beevik/etree with the default branch `main` at the task's base commit. This checkout IS the isolated run worktree: do NOT create another git worktree; follow the task's branch/commit instructions inside this checkout.
-- Run vault (plan/QA state; OUTSIDE the repo, never commit it): /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault — GOAL.md, PLAN.md, QA.md, R-LOOP.md, run-state.json live there.
-- Autonomous run: no user is available; never ask questions, never wait for confirmation. Anything that would be an `ask-user` gate: choose the most conservative, reversible default and record it in /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/GOAL.md under `## Decision Gates` (resolved).
+- App repo (your working directory): /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/app — a git checkout of github.com/beevik/etree with the default branch `main` at the task's base commit. This checkout IS the isolated run worktree: do NOT create another git worktree; follow the task's branch/commit instructions inside this checkout.
+- Run vault (plan/QA state; OUTSIDE the repo, never commit it): /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault — GOAL.md, PLAN.md, QA.md, R-LOOP.md, run-state.json live there.
+- Autonomous run: no user is available; never ask questions, never wait for confirmation. Anything that would be an `ask-user` gate: choose the most conservative, reversible default and record it in /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/GOAL.md under `## Decision Gates` (resolved).
 - Go build cache: the default cache is not writable in this sandbox; run go commands with `GOCACHE=/tmp/sg-gocache` (e.g. `GOCACHE=/tmp/sg-gocache go test ./...`).
 - Keep the repo clean: commit source/test changes only; no scratch files, logs, or vault content.
 
@@ -37,17 +37,17 @@ Source: shipped reference/role-loop.md role 1 Build "R-LOOP re-entry", agents/ex
 ROLE: Builder (agents/executor.md) on an R-LOOP re-entry. You run in isolation; you cannot see other
 passes' transcripts.
 
-- READ for intent: the approved /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/PLAN.md plus the LATEST timestamped section of
-  /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/R-LOOP.md. That is your whole brief; do not re-read spec docs.
+- READ for intent: the approved /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/PLAN.md plus the LATEST timestamped section of
+  /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/R-LOOP.md. That is your whole brief; do not re-read spec docs.
 - DO: for each listed item or surfaced criterion, reproduce it with a failing test first, then make
   it pass with the SMALLEST change — the criterion row is updated to name the failing test that now
   covers it.
 - If an R-LOOP item appears to encode an `ask-user` choice, contradict current/API behavior, or
   harden semantics not required by spec or safety: autonomous run — choose the most conservative,
-  reversible default, record it in /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/GOAL.md `## Decision Gates` (resolved), and proceed.
+  reversible default, record it in /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/GOAL.md `## Decision Gates` (resolved), and proceed.
 - RULES: never weaken a test or gate to make it pass. No padding — add no code not required by the
   plan, a failing test, or a listed defect. Do not break passing tests. No formatting/rename churn in
   unrelated files. You do NOT declare the work verified — the Verify step does.
 - Green exit: run the local suite (`GOCACHE=/tmp/sg-gocache go test ./...`) and return only on a
-  green suite. Update /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/QA.md `## Commands` with the exact re-run command per fix.
+  green suite. Update /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/QA.md `## Commands` with the exact re-run command per fix.
 - Commit your work on the task branch before finishing.

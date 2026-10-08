@@ -7,7 +7,7 @@ set -uo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 N="${1:?seedN}"; shift
 TASKS=("$@")
-CUR=/Users/danny/Documents/PARA/Resource/supergoal-skill
+CUR=${HOME}/Documents/PARA/Resource/supergoal-skill
 V090=/tmp/sg-v090
 LOG=/tmp/sg-debug-luna/logs; mkdir -p "$LOG"
 

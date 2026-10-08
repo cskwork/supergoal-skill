@@ -4,7 +4,7 @@
 # Interleaved per task so an interruption still leaves complete comparison pairs.
 # Requires: Docker running, pier, codex + ~/.codex/auth.json, /tmp/deep-swe-sg benchmark checkout.
 set -u
-NEW_REPO="/Users/danny/Documents/PARA/Resource/supergoal-skill"
+NEW_REPO="${HOME}/Documents/PARA/Resource/supergoal-skill"
 OLD_REPO="/tmp/sg-skill-old"                 # git worktree add /tmp/sg-skill-old eb1b5c7
 BENCH="/tmp/deep-swe-sg"
 OUT="/tmp/sg-deepswe-ab"

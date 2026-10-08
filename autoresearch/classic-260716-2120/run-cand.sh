@@ -2,7 +2,7 @@
 # autoresearch iteration runner: one candidate skill repo, 3 valid tasks, harness arm only.
 # Usage: run-cand.sh <arm-label> <skill-repo-path>
 set -u
-REPO="/Users/danny/Documents/PARA/Resource/supergoal-skill"
+REPO="${HOME}/Documents/PARA/Resource/supergoal-skill"
 BENCH="/tmp/deep-swe-sg"
 OUT="/tmp/sg-deepswe-eff3"
 ARM="${1:?arm label}"

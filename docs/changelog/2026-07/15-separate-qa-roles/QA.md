@@ -12,7 +12,7 @@
 
 - [x] default-loop에서 tester는 브라우저/CLI 증거만 만들고 auditor만 최종 판정·GOAL 체크·R-LOOP를 소유한다 - `bash tests/role-loop-contract.test.sh`: 143 passed, 0 failed (frozen_repo).
 - [x] QA-ONLY에서 tester 실행, auditor 판정, 선택적 read-only db-reader 증거 구조가 일관된다 - `bash tests/qa-only-contract.test.sh`: 86 passed, 0 failed (frozen_repo).
-- [x] skill frontmatter와 이름 규칙이 유효하다 - `/opt/anaconda3/bin/python /Users/danny/.agents/skills/.system/skill-creator/scripts/quick_validate.py .`: `Skill is valid!` (evaluator_owned).
+- [x] skill frontmatter와 이름 규칙이 유효하다 - `/opt/anaconda3/bin/python ~/.agents/skills/.system/skill-creator/scripts/quick_validate.py .`: `Skill is valid!` (evaluator_owned).
 - [x] 전체 repository 계약과 재귀 Node template syntax 검사가 통과했다 - `bash tests/run-all.sh`: exit 0, `== /supergoal all checks passed ==` (frozen_repo).
 - [x] `agents/code-reviewer.md`는 base `dev-v2`와 동일하다 - `git diff --exit-code dev-v2 -- agents/code-reviewer.md`: exit 0 (evaluator_owned).
 - [x] 현재 diff에 공백 오류가 없다 - `git diff --check`: exit 0 (evaluator_owned).
@@ -26,7 +26,7 @@ Backward-trace: clean
 |---|---|---|
 | `bash tests/role-loop-contract.test.sh` | frozen_repo | default-loop final verdict ownership |
 | `bash tests/qa-only-contract.test.sh` | frozen_repo | QA-ONLY tester/auditor/db-reader 분리 |
-| `/opt/anaconda3/bin/python /Users/danny/.agents/skills/.system/skill-creator/scripts/quick_validate.py .` | evaluator_owned | skill 구조 유효성 |
+| `/opt/anaconda3/bin/python ~/.agents/skills/.system/skill-creator/scripts/quick_validate.py .` | evaluator_owned | skill 구조 유효성 |
 | `bash tests/run-all.sh` | frozen_repo | 전체 계약 무회귀 |
 | `git diff --exit-code dev-v2 -- agents/code-reviewer.md` | evaluator_owned | reviewer persona 무변경 |
 | `git diff --check` | evaluator_owned | diff 공백 무결성 |

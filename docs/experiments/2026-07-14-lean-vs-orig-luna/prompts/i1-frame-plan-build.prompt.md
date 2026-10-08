@@ -1,8 +1,8 @@
 [SG-EVAL RUN CONTEXT — applies to every role pass]
 You are one role pass of the "supergoal" delivery harness, driven as separate non-interactive CLI invocations over one shared working tree. You cannot see other passes' transcripts; shared state lives ONLY in the repo and the run vault files.
-- App repo (your working directory): /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/app — a git checkout of github.com/beevik/etree with the default branch `main` at the task's base commit. This checkout IS the isolated run worktree: do NOT create another git worktree; follow the task's branch/commit instructions inside this checkout.
-- Run vault (plan/QA state; OUTSIDE the repo, never commit it): /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault — GOAL.md, PLAN.md, QA.md, R-LOOP.md, run-state.json live there.
-- Autonomous run: no user is available; never ask questions, never wait for confirmation. Anything that would be an `ask-user` gate: choose the most conservative, reversible default and record it in /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/GOAL.md under `## Decision Gates` (resolved).
+- App repo (your working directory): /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/app — a git checkout of github.com/beevik/etree with the default branch `main` at the task's base commit. This checkout IS the isolated run worktree: do NOT create another git worktree; follow the task's branch/commit instructions inside this checkout.
+- Run vault (plan/QA state; OUTSIDE the repo, never commit it): /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault — GOAL.md, PLAN.md, QA.md, R-LOOP.md, run-state.json live there.
+- Autonomous run: no user is available; never ask questions, never wait for confirmation. Anything that would be an `ask-user` gate: choose the most conservative, reversible default and record it in /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/GOAL.md under `## Decision Gates` (resolved).
 - Go build cache: the default cache is not writable in this sandbox; run go commands with `GOCACHE=/tmp/sg-gocache` (e.g. `GOCACHE=/tmp/sg-gocache go test ./...`).
 - Keep the repo clean: commit source/test changes only; no scratch files, logs, or vault content.
 
@@ -37,22 +37,22 @@ agents/executor.md — supergoal dev-v2 @ 3e4a1cf.)
 Frame (discovery happens HERE, once — the builder re-reads no spec docs):
 - Explore the actual code first: trace the touched paths, existing utilities, and data shapes; then
   re-read the request (the task text above), README, design/API docs, and repo/data rules.
-- Write /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/GOAL.md FIRST: `## Original Request` (the task text, verbatim), a refined `## Spec`,
+- Write /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/GOAL.md FIRST: `## Original Request` (the task text, verbatim), a refined `## Spec`,
   and falsifiable `## Success Criteria` checkboxes each naming its verification method — full-spec
   coverage PLUS grounded edge-case and resilience criteria enumerated NOW at plan time. Turn what the
   request/docs require — including edge-case and resilience behavior — into criteria grounded in
   observed code, not guesses.
-- Write /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/PLAN.md: `## Intent` records the user goal, constraints, tradeoffs, rejected
+- Write /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/PLAN.md: `## Intent` records the user goal, constraints, tradeoffs, rejected
   approaches, and the completion promise (promised outcome, required proof, stop condition,
   `max_iterations` default 3). `## Steps` + `## Tools & Skills` must be self-sufficient; COPY the
   Success Criteria (including the edge-case and resilience criteria) into PLAN.md
   `## Acceptance checklist` so the builder needs no other file.
 - Plan approval gate — autonomous run: set `Status: auto-approved` with the reason in `## Approval`
-  and `plan_approval: "auto"` in /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/run-state.json, then proceed. Build never starts before
+  and `plan_approval: "auto"` in /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/run-state.json, then proceed. Build never starts before
   this gate.
-- Create /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/QA.md: record the before state in `## Before` (absent feature / red acceptance
+- Create /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/QA.md: record the before state in `## Before` (absent feature / red acceptance
   check) and the command manifest in `## Commands` from repo-owned proof commands. Keep
-  /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/run-state.json current.
+  /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/run-state.json current.
 
 Then Build (ROLE: Builder — agents/executor.md):
 - The approved PLAN.md is your whole brief — discovery already happened at plan time; do not re-read
@@ -66,7 +66,7 @@ Then Build (ROLE: Builder — agents/executor.md):
   only for grounded `must` behavior.
 - Green exit: run the local suite (`GOCACHE=/tmp/sg-gocache go test ./...`) and return only on a
   green suite — the app is left fully functional. Keep the diff minimal.
-- WRITE: source code, plus one `## Commands` row per slice in /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/QA.md with the exact re-run
+- WRITE: source code, plus one `## Commands` row per slice in /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/lean/vault/QA.md with the exact re-run
   command that proves it (`run-to-prove`).
 - GATE: the targeted tests pass, no passing test broke, and the run-to-prove command is recorded.
   Commit your work on the task branch before finishing.

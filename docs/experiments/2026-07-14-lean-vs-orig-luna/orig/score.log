@@ -1,8 +1,8 @@
 [verifier] model.patch applied (27311 bytes)
 [verifier] Resetting files touched by test.patch
 [verifier] Applying test.patch
-go-ctrf-json-reporter: successfully written ctrf json to /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/score/etree-orig/verifier/base-ctrf.json
-go-ctrf-json-reporter: successfully written ctrf json to /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/score/etree-orig/verifier/new-ctrf.json
+go-ctrf-json-reporter: successfully written ctrf json to /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/score/etree-orig/verifier/base-ctrf.json
+go-ctrf-json-reporter: successfully written ctrf json to /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/score/etree-orig/verifier/new-ctrf.json
 [verifier] ===== FAILURES (2) =====
 [verifier] ✗ [f2p] github.com/beevik/etree.TestApplyPatchRemoveTextAndAttr
     === RUN   TestApplyPatchRemoveTextAndAttr

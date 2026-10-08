@@ -7,7 +7,7 @@
 # Requires: Docker running, pier, codex + ~/.codex/auth.json, /tmp/deep-swe-sg checkout,
 # worktrees /tmp/sg-skill-v080 (287c628) and /tmp/sg-skill-recon (8c01712).
 set -u
-REPO="/Users/danny/Documents/PARA/Resource/supergoal-skill"
+REPO="${HOME}/Documents/PARA/Resource/supergoal-skill"
 V080_REPO="/tmp/sg-skill-v080"
 RECON_REPO="/tmp/sg-skill-recon"
 BENCH="/tmp/deep-swe-sg"

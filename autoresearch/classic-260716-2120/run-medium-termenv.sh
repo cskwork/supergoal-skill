@@ -1,7 +1,7 @@
 #!/bin/bash
 # Medium spot check, termenv trio (resume after interrupt): baseline / recon / cand1.
 set -u
-REPO="/Users/danny/Documents/PARA/Resource/supergoal-skill"
+REPO="${HOME}/Documents/PARA/Resource/supergoal-skill"
 BENCH="/tmp/deep-swe-sg"
 OUT="/tmp/sg-deepswe-eff3"
 TASK="termenv-preserve-ansi-resets"

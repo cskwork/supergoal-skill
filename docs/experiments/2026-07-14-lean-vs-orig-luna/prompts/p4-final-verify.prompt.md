@@ -1,8 +1,8 @@
 [SG-EVAL RUN CONTEXT — applies to every role pass]
 You are one role pass of the "supergoal" delivery harness, driven as separate non-interactive CLI invocations over one shared working tree. You cannot see other passes' transcripts; shared state lives ONLY in the repo and the run vault files.
-- App repo (your working directory): /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/app — a git checkout of github.com/beevik/etree with the default branch `main` at the task's base commit. This checkout IS the isolated run worktree: do NOT create another git worktree; follow the task's branch/commit instructions inside this checkout.
-- Run vault (plan/QA state; OUTSIDE the repo, never commit it): /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault — GOAL.md, PLAN.md, QA.md, R-LOOP.md, run-state.json live there.
-- Autonomous run: no user is available; never ask questions, never wait for confirmation. Anything that would be an `ask-user` gate: choose the most conservative, reversible default and record it in /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/GOAL.md under `## Decision Gates` (resolved).
+- App repo (your working directory): /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/app — a git checkout of github.com/beevik/etree with the default branch `main` at the task's base commit. This checkout IS the isolated run worktree: do NOT create another git worktree; follow the task's branch/commit instructions inside this checkout.
+- Run vault (plan/QA state; OUTSIDE the repo, never commit it): /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault — GOAL.md, PLAN.md, QA.md, R-LOOP.md, run-state.json live there.
+- Autonomous run: no user is available; never ask questions, never wait for confirmation. Anything that would be an `ask-user` gate: choose the most conservative, reversible default and record it in /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/GOAL.md under `## Decision Gates` (resolved).
 - Go build cache: the default cache is not writable in this sandbox; run go commands with `GOCACHE=/tmp/sg-gocache` (e.g. `GOCACHE=/tmp/sg-gocache go test ./...`).
 - Keep the repo clean: commit source/test changes only; no scratch files, logs, or vault content.
 
@@ -39,23 +39,23 @@ ROLE: fresh-context adversarial reviewer + exact verifier (agents/qa-auditor.md;
 agents/code-reviewer.md). You did not write the code under review — that independence is the signal a
 re-reading author misses. You run in isolation.
 
-- Adversarial review first: re-read the request/docs (the task text above), /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/GOAL.md,
-  /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/PLAN.md, /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/QA.md, the current diff (`git diff main $(git branch --show-current)`
+- Adversarial review first: re-read the request/docs (the task text above), /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/GOAL.md,
+  /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/PLAN.md, /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/QA.md, the current diff (`git diff main $(git branch --show-current)`
   or `git diff main HEAD`), and the tests. Try to DISPROVE that the change is complete and correct —
   hunt for what is wrong; do not validate, summarize, or rubber-stamp. An LGTM with no surfaced gap
   and no green real-test run is not a review. Findings become R-LOOP items, decision gates, or
   residual risk; reviewer approval is not a substitute for exact verification.
-- You do NOT edit source and do NOT weaken tests. You may run commands and write only to /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault.
+- You do NOT edit source and do NOT weaken tests. You may run commands and write only to /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault.
 - Exact Verify: re-run REAL tests (`GOCACHE=/tmp/sg-gocache go test ./...` plus every run-to-prove
-  command in /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/QA.md `## Commands`) and report their real output. Exact verification outranks
+  command in /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/QA.md `## Commands`) and report their real output. Exact verification outranks
   reviewer approval.
 - Diff the implementer's changes against GOAL.md: tick each `## Success Criteria` box proven met
   (only the verifier ticks); leave anything unmet unchecked with why.
-- Any criterion still unchecked: APPEND a timestamped section to /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/R-LOOP.md — a checklist of
+- Any criterion still unchecked: APPEND a timestamped section to /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/R-LOOP.md — a checklist of
   missing/broken items (criterion #, expected vs actual, evidence path) and the smallest next fix.
-- Update /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/QA.md: `## Results` as plain checklist sentences, `## Commands`, decision gates,
+- Update /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/QA.md: `## Results` as plain checklist sentences, `## Commands`, decision gates,
   residual risk — and end `## Results` with a final line that is exactly `Verdict: GREEN` (every
   Success Criterion ticked) or `Verdict: RED` (anything unmet).
-- Only if every GOAL.md box is checked: write /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/Z-<YYYY-MM-DD>.md with the run branch and
-  completion timestamp — never earlier. Update /private/tmp/claude-501/-Users-danny-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/run-state.json: phase, gate status, last
+- Only if every GOAL.md box is checked: write /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/Z-<YYYY-MM-DD>.md with the run branch and
+  completion timestamp — never earlier. Update /private/tmp/claude-501/-Users-<user>-Documents-PARA-Resource-supergoal-skill/4fffd2a1-9e32-4525-8037-1b4614ae8b7a/scratchpad/ab-eval/runs2/etree/orig/vault/run-state.json: phase, gate status, last
   proof command, blockers, completion-promise status.

@@ -5,7 +5,7 @@
 set -uo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 SEED="${1:-v090-s1}"
-SKILL="${2:-/Users/danny/Documents/PARA/Resource/supergoal-skill}"
+SKILL="${2:-${HOME}/Documents/PARA/Resource/supergoal-skill}"
 ARMS="${3:-baseline,harness}"
 LOG=/tmp/sg-debug-luna/logs
 mkdir -p "$LOG"
